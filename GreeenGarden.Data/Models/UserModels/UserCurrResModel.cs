@@ -19,6 +19,8 @@ namespace GreeenGarden.Data.Models.UserModels
 
         public string? RoleName { get; set; }
 
+        public string? Token { get; set; }
+
     }
 }
 

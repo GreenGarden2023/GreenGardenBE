@@ -51,13 +51,15 @@ namespace GreeenGarden.Business.Service.UserService
                         Message = "Wrong password"
                     };
                 }
-                string token = CreateToken(userModel);
+
+                UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userLoginReqModel.Username);
+                userCurrResModel.Token = CreateToken(userModel);
 
                 return new ResultModel()
                 {
                     IsSuccess = true,
-                    Data = await _userRepo.GetCurrentUser(userLoginReqModel.Username),
-                    Message = token
+                    Data = userCurrResModel,
+                    Message = "Login Successful"
                     
                 };
             }
