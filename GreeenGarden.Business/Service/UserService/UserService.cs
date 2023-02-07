@@ -7,6 +7,7 @@ using Azure.Core;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.AspNet.Identity;
@@ -28,21 +29,59 @@ namespace GreeenGarden.Business.Service.UserService
             _decodeToken = new DecodeToken();
         }
 
-        public async Task<UserLoginResModel> Login(string userName)
+        public async Task<ResultModel> Login(UserLoginReqModel userLoginReqModel)
         {
             try
             {
-                UserLoginResModel userModel = await _userRepo.GetUser(userName);
-                return userModel;
+                UserLoginResModel userModel = await _userRepo.GetUser(userLoginReqModel.Username);
+                if (userModel == null)
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not found"
+                    };
+
+                }
+                if(!VerifyPasswordHash(userLoginReqModel.Password, userModel.PasswordHash, userModel.PasswordSalt))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "Wrong password"
+                    };
+                }
+                string token = CreateToken(userModel);
+
+                return new ResultModel()
+                {
+                    IsSuccess = true,
+                    Data = await _userRepo.GetCurrentUser(userLoginReqModel.Username),
+                    Message = token
+                    
+                };
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new ArgumentException(e.ToString());
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    ResponseFailed = ex.ToString()
+                };
             }
         }
 
-        public async Task<string> Register(UserInsertModel userInsertModel)
+        public async Task<ResultModel> Register(UserInsertModel userInsertModel)
         {
+            UserLoginResModel userModelCheck = await _userRepo.GetUser(userInsertModel.UserName);
+            if (userModelCheck !=null)
+            {
+                return new ResultModel() {
+                    IsSuccess = false,
+                    Message = "Username Duplicated"
+                };
+
+            }
             try
             {
                 CreatePasswordHash(userInsertModel.Password, out byte[] passwordHash, out byte[] passwordSalt);
@@ -58,12 +97,20 @@ namespace GreeenGarden.Business.Service.UserService
                     Mail = userInsertModel.Mail,
                 };
                 await _userRepo.Insert(userModel);
-                return "User registered!!!";
+                return new ResultModel()
+                {
+                    IsSuccess = true,
+                    Message = "Username Registered"
+                };
 
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.ToString());
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    ResponseFailed = ex.ToString()
+                };
             }
         }
 
@@ -75,7 +122,7 @@ namespace GreeenGarden.Business.Service.UserService
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
-        public bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
+        private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
             using (var hmac = new HMACSHA512(passwordSalt))
             {
@@ -83,7 +130,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return computedHash.SequenceEqual(passwordHash);
             }
         }
-        public string CreateToken(UserLoginResModel user)
+        private string CreateToken(UserLoginResModel user)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -107,23 +154,39 @@ namespace GreeenGarden.Business.Service.UserService
             return jwt;
         }
 
-        public async Task<UserCurrResModel> GetCurrentUser(string token)
+        public async Task<ResultModel> GetCurrentUser(string token)
         {
             string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
             if (!userRole.Equals(Commons.ADMIN)
                 && !userRole.Equals(Commons.CUSTOMER)
                 && !userRole.Equals(Commons.MANAGER)
                 && !userRole.Equals(Commons.STAFF)
-                && !userRole.Equals(Commons.DELIVERER)) { throw new ArgumentException("Forbidden: You don't have permission to access this resource"); }
+                && !userRole.Equals(Commons.DELIVERER))
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
             try
             {
                 string userName = _decodeToken.Decode(token, ClaimsIdentity.DefaultNameClaimType);
                 UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userName);
-                return userCurrResModel;
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Data = userCurrResModel,
+                    Message = "Get user successful"
+                };
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new ArgumentException(e.ToString());
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    ResponseFailed = ex.ToString()
+                };
             }
         }
     }

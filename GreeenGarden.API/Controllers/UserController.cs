@@ -3,6 +3,7 @@ using System.Data;
 using System.Security.Cryptography;
 using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
@@ -20,12 +21,12 @@ namespace GreeenGarden.API.Controllers
             _userService = userService;
 		}
     [HttpPost("register")]
-    public async Task<ActionResult<TblUser>> Register(UserInsertModel request)
+    public async Task<ActionResult<ResultModel>> Register(UserInsertModel request)
     {
         try
         {
             var result = await _userService.Register(request);
-            return Ok(result);
+                return result;
         }
         catch (Exception e)
         {
@@ -34,33 +35,29 @@ namespace GreeenGarden.API.Controllers
         }
     }
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserLoginReqModel request)
+        public async Task<ActionResult<ResultModel>> Login(UserLoginReqModel request)
         {
-            var user = await _userService.Login(request.Username);
-
-            if (user == null || user.UserName != request.Username)
+            try
             {
-                return BadRequest("User not found.");
+                var result = await _userService.Login(request);
+                return result;
             }
-
-            if (!_userService.VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+            catch (Exception e)
             {
-                return BadRequest("Wrong password.");
-            }
 
-            string token = _userService.CreateToken(user);;
-            return Ok(token);
+                return BadRequest(e.ToString());
+            }
 
         }
         [HttpGet("get-current-user")]
         [Authorize(Roles = "Admin, Customer, Staff, Deliverer, Manager")]
-        public async Task<IActionResult> abc( )
+        public async Task<ActionResult<ResultModel>> GetCurrentUser( )
         {
             try
             {
                 string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-                UserCurrResModel userCurrResModel = await _userService.GetCurrentUser(token);
-                return Ok(userCurrResModel);
+                var result = await _userService.GetCurrentUser(token);
+                return result;
             }
             catch (Exception e)
             {

@@ -28,7 +28,7 @@ namespace GreeenGarden.Business.Service.CategogyService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Result = listCategories;
+                result.Data = listCategories;
             }
             catch (Exception e )
             {
