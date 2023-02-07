@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Azure.Identity" Version="1.8.1" />
+    <PackageReference Include="Azure.Core" Version="1.28.0" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GreeenGarden.Data\GreeenGarden.Data.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Service\UserService\" />
+    <Folder Include="Service\SecretService\" />
+    <Folder Include="Utilities\TokenService\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Service\UserService\" />
+    <None Remove="Service\SecretService\" />
+    <None Remove="Azure.Identity" />
+    <None Remove="Azure.Core" />
+    <None Remove="Azure.Security.KeyVault.Secrets" />
+    <None Remove="Utilities\TokenService\" />
+  </ItemGroup>
+</Project>
