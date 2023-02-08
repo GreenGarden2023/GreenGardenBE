@@ -18,6 +18,15 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             //_mapper = mapper;
             _context = context;
         }
+
+        public string getImgByCategory(Guid categoryId)
+        {
+            var result = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();
+            if (result == null) return null;
+
+            return result.ImageUrl;
+        }
+
         public Page<TblCategory> queryAllCategories(PaginationRequestModel pagingModel)
         {
             return _context.TblCategories.Where(x => x.Status == "Active").Paginate(pagingModel.curPage, pagingModel.pageSize);

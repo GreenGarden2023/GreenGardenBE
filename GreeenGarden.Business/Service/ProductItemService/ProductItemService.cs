@@ -1,5 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using System;
@@ -31,9 +33,33 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Message = "Don't have any item in size!";
                 }
 
+
+                List<ProductItemModel> dataList = new List<ProductItemModel>();
+                foreach (var p in listItemBySize.Results)
+                {
+                    var ProductItemToShow = new ProductItemModel
+                    {
+                        id= p.Id,
+                        name = p.Name,
+                        price = p.Price,
+                        status = p.Status,
+                        description = p.Description,
+                        subProductId = p.SubProductId,
+                        imgUrl = _proItemRepo.getImgByProductItem(p.Id)
+                    };
+                    dataList.Add(ProductItemToShow);
+                }
+                var response = new PaginationResponseModel<ProductItemModel>()
+                    .Result(dataList)
+                    .PageSize(listItemBySize.PageSize)
+                    .CurPage(listItemBySize.CurrentPage)
+                    .RecordCount(listItemBySize.RecordCount)
+                    .PageCount(listItemBySize.PageCount);
+
+
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = listItemBySize;
+                result.Data = response;
             }
             catch (Exception e)
             {
@@ -44,7 +70,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             return result;
         }
 
-        public async Task<ResultModel> getAllProductItemSizeByProduct(PaginationRequestModel pagingModel, Guid productId)
+        public async Task<ResultModel> getSizesOfProduct(PaginationRequestModel pagingModel, Guid productId)
         {
             var result = new ResultModel();
             try
@@ -79,9 +105,21 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Message = "Item does not exist!";
                 }
 
+                var response = new ProductItemModel()
+                {
+                    id = productItemId,
+                    name = productItem.FirstOrDefault().Name,
+                    price = productItem.FirstOrDefault()?.Price,
+                    status = productItem.FirstOrDefault().Status,
+                    description = productItem.FirstOrDefault().Description,
+                    subProductId = productItem.FirstOrDefault().SubProductId,
+                    imgUrl = _proItemRepo.getImgByProductItem(productItemId)
+                };
+
+
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = productItem;
+                result.Data = response;
             }
             catch (Exception e)
             {

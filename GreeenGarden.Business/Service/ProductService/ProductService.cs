@@ -1,6 +1,8 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using System;
@@ -37,11 +39,38 @@ namespace GreeenGarden.Business.Service.ProductService
                 if (listProdct == null)
                 {
                     result.Message = "List null";
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = listProdct;
+                    return result;
                 }
+
+                List<ProductModel> dataList = new List<ProductModel>();
+                foreach (var p in listProdct.Results)
+                {
+                    var productToShow = new ProductModel
+                    {
+                        id = p.Id,
+                        name = p.Name,
+                        quantity = p.Quantity,
+                        description = p.Description,
+                        status = p.Status,
+                        categoryId = p.CategoryId,
+                        imgUrl = _productRepo.getImgByProduct(p.Id),
+                    };
+                    dataList.Add(productToShow);
+                }
+                var response = new PaginationResponseModel<ProductModel>()
+                    .Result(dataList)
+                    .PageSize(listProdct.PageSize)
+                    .CurPage(listProdct.CurrentPage)
+                    .RecordCount(listProdct.RecordCount)
+                    .PageCount(listProdct.PageCount);
+
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = listProdct;
+                result.Data = response;
             }
             catch (Exception e)
             {

@@ -19,9 +19,9 @@ namespace GreeenGarden.API.Controllers
 
 
         [HttpGet("GetSizesOfProduct")]
-        public async Task<IActionResult> getAllProductItemSizeByProduct([FromQuery] PaginationRequestModel pagingModel, Guid productId)
+        public async Task<IActionResult> getSizesOfProduct([FromQuery] PaginationRequestModel pagingModel, Guid productId)
         {
-            var result = await _service.getAllProductItemSizeByProduct(pagingModel, productId);
+            var result = await _service.getSizesOfProduct(pagingModel, productId);
             if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }

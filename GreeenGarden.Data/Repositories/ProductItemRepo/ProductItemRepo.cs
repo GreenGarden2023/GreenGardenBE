@@ -33,5 +33,17 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
         {
             return _context.TblSubProducts.Where(x => x.ProductId == productId).Paginate(model.curPage, model.pageSize);
         }
+
+        public List<string> getImgByProductItem(Guid productItemId)
+        {
+            var listResult = _context.TblImages.Where(x=>x.ProductItemId == productItemId).ToList();
+            if (listResult == null) return null;
+            var listImg = new List<string>();
+            foreach (var i in listResult)
+            {
+                listImg.Add(i.ImageUrl);
+            }
+            return listImg;
+        }
     }
 }

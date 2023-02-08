@@ -14,5 +14,6 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
     public interface ICategoryRepo
     {
         public Page<TblCategory> queryAllCategories(PaginationRequestModel pagingModel);
+        public string getImgByCategory(Guid categoryId);
     }
 }
