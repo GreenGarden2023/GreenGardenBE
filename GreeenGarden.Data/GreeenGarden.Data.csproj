@@ -10,13 +10,13 @@
     <Folder Include="Entities\" />
     <Folder Include="Enums\" />
     <Folder Include="Utilities\" />
-    <Folder Include="Repositories\" />
     <Folder Include="Repositories\UserRepo\" />
     <Folder Include="Repositories\GenericRepository\" />
     <Folder Include="Models\UserModels\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EntityFrameworkPaginateCore" Version="2.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
