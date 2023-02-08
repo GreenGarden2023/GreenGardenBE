@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
+using GreeenGarden.Data.Repositories.ProductItemRepo;
+using GreeenGarden.Business.Service.ProductItemService;
 
 var builder = WebApplication.CreateBuilder(args);
 // Database
@@ -28,14 +30,15 @@ builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServe
 
 builder.Services.AddScoped<ICategogyService, CategogyService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductItemService, ProductItemService>();
 
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<ICategogyService, CategogyService>();
 
-//
+// Add repository to interface
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
 builder.Services.AddTransient<IProductRepo, ProductRepo>();
+builder.Services.AddTransient<IProductItemRepo, ProductItemRepo>();
 
 
 //Swagger
