@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CategoryRepo;
@@ -26,10 +27,37 @@ namespace GreeenGarden.Business.Service.CategogyService
             try
             {
                 var listCategories = _cateRepo.queryAllCategories(pagingModel);
+                if (listCategories == null)
+                {
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = listCategories;
+                    result.Message = "null";
+                    return result;
+                }
+
+                List<CategoryModel> dataList = new List<CategoryModel>();
+                foreach (var c in listCategories.Results)
+                {
+                    var CategoryToShow = new CategoryModel
+                    {
+                        id = c.Id,
+                        name = c.Name,
+                        status = c.Status,
+                        imgUrl = "" + _cateRepo.getImgByCategory(c.Id)
+                    };
+                    dataList.Add(CategoryToShow);
+                }
+                var response = new PaginationResponseModel<CategoryModel>()
+                    .Result(dataList)
+                    .PageSize(listCategories.PageSize)
+                    .CurPage(listCategories.CurrentPage)
+                    .RecordCount(listCategories.RecordCount)
+                    .PageCount(listCategories.PageCount);
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = listCategories;
+                result.Data = response;
             }
             catch (Exception e )
             {

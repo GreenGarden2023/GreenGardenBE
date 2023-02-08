@@ -18,6 +18,15 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             //_mapper = mapper;
             _context = context;
         }
+
+        public string getImgByProduct(Guid productId)
+        {
+            var result = _context.TblImages.Where(x => x.ProductId == productId).FirstOrDefault();
+            if (result == null) return null;
+
+            return result.ImageUrl;
+        }
+
         public Page<TblProduct> queryAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
         {
             return _context.TblProducts.Where(x => x.Status == "Active"

@@ -20,6 +20,8 @@ using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Business.Service.ProductItemService;
+using GreeenGarden.Data.Repositories.OrderRepo;
+using GreeenGarden.Business.Service.OrderService;
 
 
 using GreeenGarden.Business.Service.ImageService;
@@ -35,7 +37,12 @@ builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServe
 builder.Services.AddScoped<ICategogyService, CategogyService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
+
+builder.Services.AddScoped<IOrderService, OrderService>();
+
+
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
+
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 //
@@ -43,6 +50,7 @@ builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
 builder.Services.AddTransient<IProductRepo, ProductRepo>();
 builder.Services.AddTransient<IProductItemRepo, ProductItemRepo>();
+builder.Services.AddTransient<IOrderRepo, OrderRepo>();
 
 
 //Swagger

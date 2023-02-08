@@ -15,6 +15,8 @@ public partial class TblSubProduct
 
     public Guid ProductId { get; set; }
 
+    public int? Quantity { get; set; }
+
     public virtual TblProduct Product { get; set; } = null!;
 
     public virtual TblSize? Size { get; set; }
