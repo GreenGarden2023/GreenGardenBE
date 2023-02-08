@@ -10,6 +10,8 @@ namespace GreeenGarden.Business.Service.ProductItemService
 {
     public interface IProductItemService
     {
-        Task<ResultModel> getAllProductItemByProduct(PaginationRequestModel pagingModel, Guid productId);
+        Task<ResultModel> getAllProductItemByProductItemSize(PaginationRequestModel pagingModel, Guid productSizeId);
+        Task<ResultModel> getAllProductItemSizeByProduct(PaginationRequestModel pagingModel, Guid productId);
+        Task<ResultModel> getDetailItem(Guid productItemId);
     }
 }
