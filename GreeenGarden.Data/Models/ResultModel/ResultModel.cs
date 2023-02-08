@@ -14,4 +14,11 @@ namespace GreeenGarden.Data.Models.ResultModel
         public object? ResponseFailed { get; set; }
         public string? Message { get; set; }
     }
+
+
+    public class ResponseResult
+    {
+       public object? Paging { get; set; }
+       public object? Result { get; set; }
+    }
 }

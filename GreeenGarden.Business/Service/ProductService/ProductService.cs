@@ -60,13 +60,18 @@ namespace GreeenGarden.Business.Service.ProductService
                     };
                     dataList.Add(productToShow);
                 }
-                var response = new PaginationResponseModel<ProductModel>()
-                    .Result(dataList)
+                var paging = new PaginationResponseModel()
                     .PageSize(listProdct.PageSize)
                     .CurPage(listProdct.CurrentPage)
                     .RecordCount(listProdct.RecordCount)
                     .PageCount(listProdct.PageCount);
 
+
+                var response = new ResponseResult()
+                {
+                    Paging = paging,
+                    Result = dataList
+                };
 
                 result.IsSuccess = true;
                 result.Code = 200;

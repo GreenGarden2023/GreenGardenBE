@@ -6,39 +6,34 @@ using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Models.PaginationModel
 {
-    public class PaginationResponseModel<T>
+    public class PaginationResponseModel
     {
 
-        public PaginationResponseModel<T> SearchText(string searchString)
+        public PaginationResponseModel SearchText(string searchString)
         {
             searchText = searchString;
             return this;
         }
 
-        public PaginationResponseModel<T> PageSize(int size)
+        public PaginationResponseModel PageSize(int size)
         {
             pageSize = size;
             return this;
         }
 
-        public PaginationResponseModel<T> CurPage(int pageNum)
+        public PaginationResponseModel CurPage(int pageNum)
         {
             curPage = pageNum;
             return this;
         }
 
-        public PaginationResponseModel<T> Result(List<T> resultList)
-        {
-            result = resultList;
-            return this;
-        }
-        public PaginationResponseModel<T> RecordCount(int total)
+        public PaginationResponseModel RecordCount(int total)
         {
             recordCount = total;
             return this;
         }
 
-        public PaginationResponseModel<T> PageCount(int numOfPage)
+        public PaginationResponseModel PageCount(int numOfPage)
         {
             pageCount = numOfPage;
             return this;
@@ -50,6 +45,5 @@ namespace GreeenGarden.Data.Models.PaginationModel
         public int curPage { get; set; }
         public int recordCount { get; set; }
         public int pageCount { get; set; }
-        public List<T> result { get; set; }
     }
 }
