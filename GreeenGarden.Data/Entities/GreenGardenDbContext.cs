@@ -45,7 +45,9 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblVoucher> TblVouchers { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=greengarden.database.windows.net;Initial Catalog=GreenGardenDB;Persist Security Info=True;User ID=greengarden;Password=Halonggokhoi!");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -54,7 +56,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblAddendums");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
@@ -69,7 +71,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblAddendumProductItems");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
@@ -90,7 +92,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblCategories");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
         });
 
@@ -99,7 +101,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblFeedBacks");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
@@ -120,7 +122,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblImages");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
             entity.Property(e => e.FeedbackId).HasColumnName("FeedbackID");
@@ -150,7 +152,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblOrders");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.VoucherId).HasColumnName("VoucherID");
@@ -170,7 +172,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblPayments");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
             entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
@@ -189,7 +191,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblProducts");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
 
@@ -204,7 +206,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblProductItems");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.SubProductId).HasColumnName("SubProductID");
 
@@ -227,7 +229,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblSizes");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
         });
 
@@ -236,7 +238,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblSubProducts");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.SizeId).HasColumnName("SizeID");
@@ -256,7 +258,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblTransactions");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
 
@@ -287,7 +289,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblVouchers");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
         });
 

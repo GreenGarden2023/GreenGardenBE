@@ -8,7 +8,10 @@ namespace GreeenGarden.Data.Models.PaginationModel
 {
     public class PaginationRequestModel
     {
-        public PaginationRequestModel() { }
+        public PaginationRequestModel() {
+            pageSize = 5;
+            curPage = 1;
+        }
 
         public PaginationRequestModel SearchText(string searchString)
         {
