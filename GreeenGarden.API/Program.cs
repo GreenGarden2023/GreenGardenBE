@@ -23,7 +23,7 @@ using GreeenGarden.Business.Service.ProductItemService;
 
 
 using GreeenGarden.Business.Service.ImageService;
-
+using GreeenGarden.Business.Service.PaymentService;
 
 var builder = WebApplication.CreateBuilder(args);
 // Database
@@ -35,6 +35,7 @@ builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServe
 builder.Services.AddScoped<ICategogyService, CategogyService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
+builder.Services.AddScoped<IMoMoService, MoMoServices>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 //
