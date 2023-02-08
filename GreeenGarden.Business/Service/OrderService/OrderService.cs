@@ -27,7 +27,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 bool check = _orderRepo.checkRetailProduct(productItemId);
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Result = check;
+                result.Data = check;
             }
             catch (Exception e)
             {
@@ -46,7 +46,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 bool check = _orderRepo.checkWholesaleProduct(subProductId, quantity);
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Result = check;
+                result.Data = check;
             }
             catch (Exception e)
             {

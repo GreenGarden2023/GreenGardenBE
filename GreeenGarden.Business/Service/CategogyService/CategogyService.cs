@@ -31,7 +31,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 {
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Result = listCategories;
+                    result.Data = listCategories;
                     result.Message = "null";
                     return result;
                 }
@@ -48,16 +48,22 @@ namespace GreeenGarden.Business.Service.CategogyService
                     };
                     dataList.Add(CategoryToShow);
                 }
-                var response = new PaginationResponseModel<CategoryModel>()
-                    .Result(dataList)
+                var paging = new PaginationResponseModel()
+                    
                     .PageSize(listCategories.PageSize)
                     .CurPage(listCategories.CurrentPage)
                     .RecordCount(listCategories.RecordCount)
                     .PageCount(listCategories.PageCount);
 
+
+                var response = new ResponseResult()
+                {
+                    Paging = paging,
+                    Result = dataList
+                };
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Result = response;
+                result.Data = response;
             }
             catch (Exception e )
             {

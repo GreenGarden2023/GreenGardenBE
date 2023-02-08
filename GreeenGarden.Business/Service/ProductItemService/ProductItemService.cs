@@ -49,17 +49,21 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     };
                     dataList.Add(ProductItemToShow);
                 }
-                var response = new PaginationResponseModel<ProductItemModel>()
-                    .Result(dataList)
+                var paging = new PaginationResponseModel()
                     .PageSize(listItemBySize.PageSize)
                     .CurPage(listItemBySize.CurrentPage)
                     .RecordCount(listItemBySize.RecordCount)
                     .PageCount(listItemBySize.PageCount);
 
+                var response = new ResponseResult()
+                {
+                    Paging = paging,
+                    Result = dataList
+                };
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Result = response;
+                result.Data = response;
             }
             catch (Exception e)
             {
@@ -83,7 +87,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Result = listProductSize;
+                result.Data = listProductSize;
             }
             catch (Exception e)
             {
@@ -119,7 +123,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Result = response;
+                result.Data = response;
             }
             catch (Exception e)
             {
