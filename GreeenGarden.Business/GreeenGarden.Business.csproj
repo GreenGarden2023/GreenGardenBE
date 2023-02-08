@@ -24,6 +24,7 @@
     <Folder Include="Service\UserService\" />
     <Folder Include="Service\SecretService\" />
     <Folder Include="Utilities\TokenService\" />
+    <Folder Include="Service\ImageService\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,5 +34,6 @@
     <None Remove="Azure.Core" />
     <None Remove="Azure.Security.KeyVault.Secrets" />
     <None Remove="Utilities\TokenService\" />
+    <None Remove="Service\ImageService\" />
   </ItemGroup>
 </Project>
