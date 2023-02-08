@@ -29,6 +29,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.13" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.26.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -39,5 +40,6 @@
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <None Remove="System.IdentityModel.Tokens.Jwt" />
     <None Remove="Models\UserModels\" />
+    <None Remove="Azure.Storage.Blobs" />
   </ItemGroup>
 </Project>

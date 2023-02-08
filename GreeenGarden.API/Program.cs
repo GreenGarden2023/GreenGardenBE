@@ -23,6 +23,10 @@ using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Data.Repositories.OrderRepo;
 using GreeenGarden.Business.Service.OrderService;
 
+
+using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Business.Service.PaymentService;
+
 var builder = WebApplication.CreateBuilder(args);
 // Database
 builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServer(SecretService.GetConnectionString()));
@@ -33,11 +37,15 @@ builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServe
 builder.Services.AddScoped<ICategogyService, CategogyService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
+
 builder.Services.AddScoped<IOrderService, OrderService>();
 
-builder.Services.AddScoped<IUserService, UserService>();
 
-// Add repository to interface
+builder.Services.AddScoped<IMoMoService, MoMoServices>();
+
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+//
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
 builder.Services.AddTransient<IProductRepo, ProductRepo>();
