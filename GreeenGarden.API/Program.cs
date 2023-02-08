@@ -15,17 +15,16 @@ using Swashbuckle.AspNetCore.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
-<<<<<<< Updated upstream
 using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Business.Service.ProductItemService;
 
-=======
+
 using GreeenGarden.Business.Service.ImageService;
 
->>>>>>> Stashed changes
+
 var builder = WebApplication.CreateBuilder(args);
 // Database
 builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServer(SecretService.GetConnectionString()));
@@ -34,17 +33,11 @@ builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServe
 // Add services to interface
 
 builder.Services.AddScoped<ICategogyService, CategogyService>();
-<<<<<<< Updated upstream
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
-
 builder.Services.AddScoped<IUserService, UserService>();
-
-// Add repository to interface
-=======
 builder.Services.AddScoped<IImageService, ImageService>();
 //
->>>>>>> Stashed changes
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
 builder.Services.AddTransient<IProductRepo, ProductRepo>();
