@@ -31,7 +31,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 {
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = listCategories;
+                    result.Result = listCategories;
                     result.Message = "null";
                     return result;
                 }
@@ -57,7 +57,7 @@ namespace GreeenGarden.Business.Service.CategogyService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = response;
+                result.Result = response;
             }
             catch (Exception e )
             {

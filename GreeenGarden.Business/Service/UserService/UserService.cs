@@ -58,7 +58,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = true,
-                    Data = userCurrResModel,
+                    Result = userCurrResModel,
                     Message = "Login Successful"
                     
                 };
@@ -178,7 +178,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = false,
-                    Data = userCurrResModel,
+                    Result = userCurrResModel,
                     Message = "Get user successful"
                 };
             }

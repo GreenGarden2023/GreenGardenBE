@@ -41,7 +41,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     result.Message = "List null";
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = listProdct;
+                    result.Result = listProdct;
                     return result;
                 }
 
@@ -70,7 +70,7 @@ namespace GreeenGarden.Business.Service.ProductService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = response;
+                result.Result = response;
             }
             catch (Exception e)
             {

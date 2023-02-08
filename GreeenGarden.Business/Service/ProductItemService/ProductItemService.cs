@@ -59,7 +59,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = response;
+                result.Result = response;
             }
             catch (Exception e)
             {
@@ -83,7 +83,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = listProductSize;
+                result.Result = listProductSize;
             }
             catch (Exception e)
             {
@@ -119,7 +119,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = response;
+                result.Result = response;
             }
             catch (Exception e)
             {
