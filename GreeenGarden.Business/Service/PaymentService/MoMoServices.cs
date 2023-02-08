@@ -14,9 +14,9 @@ namespace GreeenGarden.Business.Service.PaymentService
         public async Task<string> CreatePayment()
         {
             string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-            string partnerCode = "MOMOFH0Y20221003";
-            string accessKey = "YAX7OxslhYkTXzbK";
-            string serectkey = "jrQjul5BxdOMI7kHvIYAWCka1XIXXF7M";
+            string partnerCode = "";
+            string accessKey = "";
+            string serectkey = "";
             string orderInfo = "test";
             string redirectUrl = "https://calm-plant-066944600.2.azurestaticapps.net";
             string ipnUrl = "https://calm-plant-066944600.2.azurestaticapps.net";
