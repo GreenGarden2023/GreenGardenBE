@@ -13,10 +13,11 @@ namespace GreeenGarden.Business.Service.PaymentService
 
         public async Task<string> CreatePayment()
         {
+            List<string> secrets = SecretService.SecretService.GetPaymentSecrets();
             string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-            string partnerCode = "";
-            string accessKey = "";
-            string serectkey = "";
+            string partnerCode = secrets[0];
+            string accessKey = secrets[1];
+            string serectkey = secrets[2];
             string orderInfo = "test";
             string redirectUrl = "https://calm-plant-066944600.2.azurestaticapps.net";
             string ipnUrl = "https://calm-plant-066944600.2.azurestaticapps.net";
