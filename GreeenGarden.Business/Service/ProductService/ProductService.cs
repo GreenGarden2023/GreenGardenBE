@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Repositories.ProductRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +14,11 @@ namespace GreeenGarden.Business.Service.ProductService
     public class ProductService : IProductService
     {
         //private readonly IMapper _mapper;
-        private readonly GreenGardenDbContext _context;
-        public ProductService(/*IMapper mapper,*/ GreenGardenDbContext context)
+        private readonly IProductRepo _productRepo;
+        public ProductService(/*IMapper mapper,*/ IProductRepo productRepo)
         {
             //_mapper = mapper;
-            _context = context;
+            _productRepo= productRepo;
         }
         public async Task<ResultModel> getAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
         {
@@ -31,9 +32,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     result.Message = "Need categoryId to get product";
                     return result;
                 }
-                var listProdct = _context.TblProducts.Where(x => x.Status == "Active"
-                && x.CategoryId == categoryId
-                && x.Quantity > 0).Paginate(pagingModel.curPage, pagingModel.pageSize);
+                var listProdct = _productRepo.queryAllProductByCategory(pagingModel, categoryId);
 
                 if (listProdct == null)
                 {

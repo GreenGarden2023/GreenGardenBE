@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using GreeenGarden.Business.Service.ProductService;
+using GreeenGarden.Data.Repositories.CategoryRepo;
+using GreeenGarden.Data.Repositories.ProductRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 // Database
@@ -32,6 +34,8 @@ builder.Services.AddScoped<ICategogyService, CategogyService>();
 
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
+builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
+builder.Services.AddTransient<IProductRepo, ProductRepo>();
 
 
 //Swagger
