@@ -136,8 +136,9 @@ namespace GreeenGarden.Business.Service.UserService
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.RoleName),
+                new Claim("rolename", user.RoleName),
+                new Claim("username", user.UserName),
 
             };
 
@@ -173,11 +174,11 @@ namespace GreeenGarden.Business.Service.UserService
             }
             try
             {
-                string userName = _decodeToken.Decode(token, ClaimsIdentity.DefaultNameClaimType);
+                string userName = _decodeToken.Decode(token, "username");
                 UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userName);
                 return new ResultModel()
                 {
-                    IsSuccess = false,
+                    IsSuccess = true,
                     Data = userCurrResModel,
                     Message = "Get user successful"
                 };
