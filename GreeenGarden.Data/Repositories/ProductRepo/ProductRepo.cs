@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,7 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
 
         public Page<TblProduct> queryAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
         {
-            return _context.TblProducts.Where(x => x.Status == "Active"
+            return _context.TblProducts.Where(x => x.Status == Status.ACTIVE
                 && x.CategoryId == categoryId
                 && x.Quantity > 0).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }

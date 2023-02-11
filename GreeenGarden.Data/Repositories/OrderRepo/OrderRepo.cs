@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public bool checkRetailProduct(Guid productItemId)
         {
-            var productItemToCheck = _context.TblProductItems.Where(x=>x.Id == productItemId && x.Status == "Active").FirstOrDefault();
+            var productItemToCheck = _context.TblProductItems.Where(x=>x.Id == productItemId && x.Status == Status.ACTIVE).FirstOrDefault();
             if (productItemToCheck != null) return true;
             return false;
         }
