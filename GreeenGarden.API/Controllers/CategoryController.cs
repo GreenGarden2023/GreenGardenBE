@@ -27,7 +27,7 @@ namespace GreeenGarden.API.Controllers
 
         [HttpGet("CreateCategory")]
         [Authorize(Roles = "Staff, Manager")]
-        public async Task<IActionResult> createCategory(string nameCategory,[FromQuery] IFormFile file)
+        public async Task<IActionResult> createCategory(string nameCategory, IFormFile file)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.createCategory(token, nameCategory, file);
