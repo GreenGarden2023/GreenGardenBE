@@ -23,14 +23,15 @@ namespace GreeenGarden.Business.Service.CategogyService
     {
         private readonly ICategoryRepo _cateRepo;
         private readonly DecodeToken _decodeToken;
-        //private readonly IImageService _imgService;
-        //private readonly IImageService _imgService;
+        private readonly IImageService _imgService;
+       private readonly IImageRepo _imageRepo;
 
-        public CategogyService( ICategoryRepo cateRepo/*, IImageService imgService*/)
+        public CategogyService( ICategoryRepo cateRepo, IImageService imgService, IImageRepo imageRepo)
         {
             _cateRepo = cateRepo;
             _decodeToken = new DecodeToken();
-            //_imgService = imgService;
+            _imgService = imgService;
+            _imageRepo = imageRepo;
         }
 
         public async Task<ResultModel> createCategory(string token, string nameCategory, IFormFile file)
@@ -56,24 +57,23 @@ namespace GreeenGarden.Business.Service.CategogyService
                     Id = Guid.NewGuid(),
                     Status = Status.ACTIVE
                 };
+                await _cateRepo.Insert(newCategory);
 
-                string imgUploadUrl = await ImgUtility.uploadImg(file);
+                var imgUploadUrl = await _imgService.UploadAnImage(file);
                 if (imgUploadUrl !=null)
                 {
                     var newimgCategory = new TblImage()
                     {
                         Id = Guid.NewGuid(),
-                        ImageUrl = imgUploadUrl,
+                        ImageUrl = imgUploadUrl.Data.ToString(),
                         CategoryId = newCategory.Id,
                     };
-                   //await _imgService.InsertImages(newimgCategory);
+                    await _imageRepo.Insert(newimgCategory);
+
                 }
-
-
-                await _cateRepo.Insert(newCategory);
-
+                result.Code = 200;
                 result.IsSuccess = true;
-                result.Message = "create new category successfully";
+                result.Message = "Create new category successfully";
                 return result;
             }
             catch (Exception e)
@@ -81,9 +81,10 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
             }
 
-            return result;
+            
         }
 
         public async Task<ResultModel> getAllCategories(PaginationRequestModel pagingModel)

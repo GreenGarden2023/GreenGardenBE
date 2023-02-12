@@ -30,6 +30,7 @@ using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Business.Service.SubProductService;
 using GreeenGarden.Data.Repositories.SubProductRepo;
+using GreeenGarden.Data.Repositories.ImageRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 // Database
@@ -59,7 +60,7 @@ builder.Services.AddTransient<IProductItemRepo, ProductItemRepo>();
 builder.Services.AddTransient<IOrderRepo, OrderRepo>();
 builder.Services.AddTransient<ISizeRepo, SizeRepo>();
 builder.Services.AddTransient<ISubProductRepo, SubProductRepo>();
-
+builder.Services.AddTransient<IImageRepo, ImageRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>

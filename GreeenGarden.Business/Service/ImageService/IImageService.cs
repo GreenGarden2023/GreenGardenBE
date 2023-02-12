@@ -9,7 +9,7 @@ namespace GreeenGarden.Business.Service.ImageService
 	{
         public Task<ResultModel> UploadImage(IList<IFormFile> files);
         public Task<ResultModel> DeleteImages(List<string> fileURLs);
-        //public Task<string> InsertImages(TblImage model);
+        public Task<ResultModel> UploadAnImage(IFormFile file);
     }
 }
 

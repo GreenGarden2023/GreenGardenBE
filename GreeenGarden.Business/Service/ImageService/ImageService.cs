@@ -11,12 +11,6 @@ namespace GreeenGarden.Business.Service.ImageService
 {
 	public class ImageService : IImageService
     {
-        /*private readonly IImageRepo  _imgRepo;
-        public ImageService(IImageRepo imgRepo)
-        {
-            _imgRepo = imgRepo;
-        }*/
-
         string defaultURL = "https://greengardenstorage.blob.core.windows.net/greengardensimages/";
         public async Task<ResultModel> UploadImage(IList<IFormFile> files)
         {
@@ -55,6 +49,42 @@ namespace GreeenGarden.Business.Service.ImageService
             }
 
         }
+        public async Task<ResultModel> UploadAnImage(IFormFile file)
+        {
+            ResultModel resultsModel = new ResultModel();
+            string url = "";
+            try
+            {
+
+                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
+
+                    using (var stream = new MemoryStream())
+                    {
+                        Guid id = Guid.NewGuid();
+                        string format = Path.GetExtension(file.FileName);
+                        await file.CopyToAsync(stream);
+                        stream.Position = 0;
+                        await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
+                        url = defaultURL + id + format;
+                    }
+                
+                resultsModel.IsSuccess = true;
+                resultsModel.Data = url;
+                resultsModel.Message = "Upload Success";
+
+
+                return resultsModel;
+            }
+            catch (Exception ex)
+            {
+
+                resultsModel.IsSuccess = false;
+                resultsModel.Data = ex.ToString();
+                resultsModel.Message = "Upload Failed";
+                return resultsModel;
+            }
+
+        }
         public async Task<ResultModel> DeleteImages(List<string> fileURLs)
         {
             ResultModel resultsModel = new ResultModel();
@@ -77,21 +107,6 @@ namespace GreeenGarden.Business.Service.ImageService
                 return resultsModel;
             }
         }
-
-        /*public async Task<string> InsertImages(TblImage model)
-        {
-            string result = null;
-            try
-            {
-                await _imgRepo.Insert(model);
-                result = "successfull";
-            }
-            catch (Exception e)
-            {
-                result = e.ToString();
-            }
-            return result;
-        }*/
     }
 }
 
