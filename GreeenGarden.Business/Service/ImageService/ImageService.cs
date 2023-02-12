@@ -15,7 +15,7 @@ namespace GreeenGarden.Business.Service.ImageService
             try
             {
 
-                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages\n\n\n");
+                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
                 foreach (IFormFile file in files)
                 {
                     using (var stream = new MemoryStream())
@@ -33,6 +33,7 @@ namespace GreeenGarden.Business.Service.ImageService
                 resultsModel.IsSuccess = true;
                 resultsModel.Data = urls;
                 resultsModel.Message = "Upload Success";
+               
 
                 return resultsModel;
             }
@@ -51,7 +52,7 @@ namespace GreeenGarden.Business.Service.ImageService
             ResultModel resultsModel = new ResultModel();
             try
             {
-                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages\n\n\n");
+                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
                 foreach (string file in fileURLs)
                 {
                     await blobContainerClient.DeleteBlobAsync(file.Replace(defaultURL, ""));
