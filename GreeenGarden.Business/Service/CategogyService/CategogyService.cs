@@ -11,6 +11,7 @@ using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -50,7 +51,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                         Message = "User not allowed"
                     };
                 }
-
+                //Insert Category
                 var newCategory = new TblCategory()
                 {
                     Name = nameCategory,
@@ -59,8 +60,25 @@ namespace GreeenGarden.Business.Service.CategogyService
                 };
                 await _cateRepo.Insert(newCategory);
 
+                //Insert Image
+                //List<IFormFile> fileInsert = new List<IFormFile>();
+                //fileInsert.Add(file);
+                //var imgUploadUrl = await _imgService.UploadImage(fileInsert);
+                //List<string> imgData = (List<string>)imgUploadUrl.Data;
+                //if (imgUploadUrl !=null)
+                //{
+                //    var newimgCategory = new TblImage()
+                //    {
+                //        Id = Guid.NewGuid(),
+                //        ImageUrl = imgData[0],
+                //        CategoryId = newCategory.Id,
+                //    };
+                //    await _imageRepo.Insert(newimgCategory);
+
+                //}
+
                 var imgUploadUrl = await _imgService.UploadAnImage(file);
-                if (imgUploadUrl !=null)
+                if (imgUploadUrl != null)
                 {
                     var newimgCategory = new TblImage()
                     {
