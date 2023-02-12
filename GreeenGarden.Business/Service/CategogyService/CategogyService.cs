@@ -60,7 +60,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 };
                 await _cateRepo.Insert(newCategory);
 
-                //Insert Image
+                //Insert Image (Convert)
                 //List<IFormFile> fileInsert = new List<IFormFile>();
                 //fileInsert.Add(file);
                 //var imgUploadUrl = await _imgService.UploadImage(fileInsert);
@@ -76,7 +76,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 //    await _imageRepo.Insert(newimgCategory);
 
                 //}
-
+                //Insert Image (New ImageService function)
                 var imgUploadUrl = await _imgService.UploadAnImage(file);
                 if (imgUploadUrl != null)
                 {
