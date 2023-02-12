@@ -25,7 +25,7 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("CreateCategory")]
+        [HttpPost("CreateCategory")]
         [Authorize(Roles = "Staff, Manager")]
         public async Task<IActionResult> createCategory(string nameCategory, IFormFile file)
         {

@@ -59,8 +59,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 };
 
 
-
-                IList<IFormFile> listImg = null;
+                var listImg = new List<IFormFile>();
                 listImg.Add(file);
                 var checkUploadImg = await _imgService.UploadImage(listImg);
                 if (checkUploadImg.IsSuccess == true)
@@ -68,7 +67,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     var newImg = new TblImage()
                     {
                         Id = Guid.NewGuid(),
-                        ImageUrl = checkUploadImg.Data.ToString(),
+                       // ImageUrl = await checkUploadImg.Data[0],
                         CategoryId = newCategory.Id
                     };
                     await _imgRepo.Insert(newImg);

@@ -16,4 +16,11 @@ namespace GreeenGarden.Data.Models.ProductModel
         public Guid categoryId { get; set; }
         public string imgUrl { get; set; }
     }
+    
+    public class ProductCreateRequestModel
+    {
+        public string name { get; set; }
+        public string? description { get; set; }
+        public Guid categoryId { get; set; }
+    }
 }
