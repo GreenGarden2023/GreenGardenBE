@@ -11,11 +11,11 @@ namespace GreeenGarden.Business.Service.ImageService
 {
 	public class ImageService : IImageService
     {
-        private readonly IImageRepo  _imgRepo;
+        /*private readonly IImageRepo  _imgRepo;
         public ImageService(IImageRepo imgRepo)
         {
             _imgRepo = imgRepo;
-        }
+        }*/
 
         string defaultURL = "https://greengardenstorage.blob.core.windows.net/greengardensimages/";
         public async Task<ResultModel> UploadImage(IList<IFormFile> files)
@@ -77,7 +77,7 @@ namespace GreeenGarden.Business.Service.ImageService
             }
         }
 
-        public async Task<string> InsertImages(TblImage model)
+        /*public async Task<string> InsertImages(TblImage model)
         {
             string result = null;
             try
@@ -90,7 +90,7 @@ namespace GreeenGarden.Business.Service.ImageService
                 result = e.ToString();
             }
             return result;
-        }
+        }*/
     }
 }
 
