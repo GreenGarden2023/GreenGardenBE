@@ -34,5 +34,11 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
         {
             return _context.TblCategories.Where(x => x.Status == Status.ACTIVE).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
+
+        public TblCategory selectDetailCategory(Guid categoryId)
+        {
+            return _context.TblCategories.Where(x => x.Id == categoryId).FirstOrDefault();
+            throw new NotImplementedException();
+        }
     }
 }

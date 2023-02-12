@@ -1,12 +1,22 @@
 ﻿using System;
 using Azure.Storage.Blobs;
+using GreeenGarden.Business.Utilities.TokenService;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.ProductRepo;
 using Microsoft.AspNetCore.Http;
 
 namespace GreeenGarden.Business.Service.ImageService
 {
 	public class ImageService : IImageService
-	{
+    {
+        private readonly IImageRepo  _imgRepo;
+        public ImageService(IImageRepo imgRepo)
+        {
+            _imgRepo = imgRepo;
+        }
+
         string defaultURL = "https://greengardenstorage.blob.core.windows.net/greengardensimages/";
         public async Task<ResultModel> UploadImage(IList<IFormFile> files)
         {
@@ -27,8 +37,6 @@ namespace GreeenGarden.Business.Service.ImageService
                         await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
                         urls.Add(defaultURL + id + format);
                     }
-
-
                 }
                 resultsModel.IsSuccess = true;
                 resultsModel.Data = urls;
@@ -67,6 +75,21 @@ namespace GreeenGarden.Business.Service.ImageService
                 resultsModel.Message = "Delete Files Failed";
                 return resultsModel;
             }
+        }
+
+        public async Task<string> InsertImages(TblImage model)
+        {
+            string result = null;
+            try
+            {
+                await _imgRepo.Insert(model);
+                result = "successfull";
+            }
+            catch (Exception e)
+            {
+                result = e.ToString();
+            }
+            return result;
         }
     }
 }

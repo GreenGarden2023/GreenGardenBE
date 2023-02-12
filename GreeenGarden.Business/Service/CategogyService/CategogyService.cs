@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Business.Utilities.ImgUtility;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
@@ -20,18 +21,16 @@ namespace GreeenGarden.Business.Service.CategogyService
 {
     public class CategogyService : ICategogyService
     {
-        //private readonly IMapper _mapper;
         private readonly ICategoryRepo _cateRepo;
         private readonly DecodeToken _decodeToken;
-        private readonly IImageService _imgService;
-        private readonly IImageRepo _imgRepo;
+        //private readonly IImageService _imgService;
+        //private readonly IImageService _imgService;
 
-        public CategogyService(/*IMapper mapper,*/ ICategoryRepo cateRepo, IImageService imgService)
+        public CategogyService( ICategoryRepo cateRepo/*, IImageService imgService*/)
         {
-            //_mapper = mapper;
             _cateRepo = cateRepo;
-            _decodeToken = new DecodeToken(); 
-            _imgService = imgService;
+            _decodeToken = new DecodeToken();
+            //_imgService = imgService;
         }
 
         public async Task<ResultModel> createCategory(string token, string nameCategory, IFormFile file)
@@ -58,19 +57,16 @@ namespace GreeenGarden.Business.Service.CategogyService
                     Status = Status.ACTIVE
                 };
 
-
-                var listImg = new List<IFormFile>();
-                listImg.Add(file);
-                var checkUploadImg = await _imgService.UploadImage(listImg);
-                if (checkUploadImg.IsSuccess == true)
+                string imgUploadUrl = await ImgUtility.uploadImg(file);
+                if (imgUploadUrl !=null)
                 {
-                    var newImg = new TblImage()
+                    var newimgCategory = new TblImage()
                     {
                         Id = Guid.NewGuid(),
-                       // ImageUrl = await checkUploadImg.Data[0],
-                        CategoryId = newCategory.Id
+                        ImageUrl = imgUploadUrl,
+                        CategoryId = newCategory.Id,
                     };
-                    await _imgRepo.Insert(newImg);
+                   //await _imgService.InsertImages(newimgCategory);
                 }
 
 
@@ -87,7 +83,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
 
-            throw new NotImplementedException();
+            return result;
         }
 
         public async Task<ResultModel> getAllCategories(PaginationRequestModel pagingModel)
