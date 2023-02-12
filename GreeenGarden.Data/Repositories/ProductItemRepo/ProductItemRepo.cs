@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,12 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 
         public Page<TblProductItem> queryAllItemByProductSize(PaginationRequestModel model, Guid productSizeId)
         {
-            return _context.TblProductItems.Where(x=>x.SubProductId == productSizeId && x.Status == "Active").Paginate(model.curPage, model.pageSize);
+            return _context.TblProductItems.Where(x=>x.SubProductId == productSizeId && x.Status == Status.ACTIVE).Paginate(model.curPage, model.pageSize);
         }
 
         public IQueryable<TblProductItem> queryDetailItemByProductSize(Guid productItemId)
         {
-            return _context.TblProductItems.Where(x => x.Id == productItemId && x.Status == "Active");
+            return _context.TblProductItems.Where(x => x.Id == productItemId && x.Status == Status.ACTIVE);
         }
 
         public Page<TblSubProduct> queryAllSizeByProduct(PaginationRequestModel model, Guid productId)

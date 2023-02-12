@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,13 @@ namespace GreeenGarden.Data.Models.ProductModel
         public string status { get; set; }
         public Guid categoryId { get; set; }
         public string imgUrl { get; set; }
+    }
+    
+    public class ProductCreateRequestModel
+    {
+        public string name { get; set; }
+        public string? description { get; set; }
+        public Guid categoryId { get; set; }
+        public IFormFile? imgFile { get; set; }
     }
 }
