@@ -13,5 +13,6 @@ namespace GreeenGarden.Business.Service.CategogyService
     {
         Task<ResultModel> getAllCategories(PaginationRequestModel pagingModel);
         Task<ResultModel> createCategory(string token, string nameCategory, IFormFile file);
+        Task<ResultModel> updateCategory(string token,Guid CategoryId, string nameCategory, string status, IFormFile file);
     }
 }
