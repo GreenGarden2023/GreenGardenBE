@@ -197,7 +197,6 @@ public partial class GreenGardenDbContext : DbContext
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblProducts)
                 .HasForeignKey(d => d.CategoryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblProducts_tblCategories");
         });
 
@@ -245,7 +244,6 @@ public partial class GreenGardenDbContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.TblSubProducts)
                 .HasForeignKey(d => d.ProductId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSubProducts_tblProducts");
 
             entity.HasOne(d => d.Size).WithMany(p => p.TblSubProducts)

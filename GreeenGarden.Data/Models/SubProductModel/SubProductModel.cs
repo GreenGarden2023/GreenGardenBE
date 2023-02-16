@@ -14,7 +14,7 @@ namespace GreeenGarden.Data.Models.SubProductModel
         public Guid productId { get; set; }
         public Guid sizeId { get; set; }
         public string name { get; set; }
-        public float price { get; set; }
+        public string price { get; set; }
 
     }
 }

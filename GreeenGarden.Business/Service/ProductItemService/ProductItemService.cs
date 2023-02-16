@@ -1,9 +1,14 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
+using GreeenGarden.Data.Repositories.ProductRepo;
+using GreeenGarden.Data.Repositories.SubProductRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,10 +21,18 @@ namespace GreeenGarden.Business.Service.ProductItemService
     {
         //private readonly IMapper _mapper;
         private readonly IProductItemRepo _proItemRepo;
-        public ProductItemService(/*IMapper mapper,*/ IProductItemRepo proItemRepo)
+        private readonly IImageService _imgService;
+        private readonly IImageRepo _imageRepo;
+        private readonly ISubProductRepo _subRepo;
+        private readonly IProductRepo _proRepo;
+        public ProductItemService(/*IMapper mapper,*/ IProductItemRepo proItemRepo, IProductRepo proRepo, ISubProductRepo subRepo, IImageRepo imageRepo, IImageService imgService)
         {
             //_mapper = mapper;
             _proItemRepo= proItemRepo;
+            _imgService = imgService;
+            _imageRepo = imageRepo;
+            _subRepo = subRepo;
+            _proRepo = proRepo;
         }
 
         public async Task<ResultModel> getAllProductItemByProductItemSize(PaginationRequestModel pagingModel, Guid productSizeId)
@@ -130,6 +143,71 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> createProductItem(ProductItemCreateRequestModel model, string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var newProductItem = new TblProductItem()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.name,
+                    Description = model.description,
+                    SubProductId = model.subProductId,
+                    Price = model.price,
+                    Status = Status.ACTIVE,
+                };
+                await _proItemRepo.Insert(newProductItem);
+
+                foreach (var i in model.imgFile)
+                {
+                    var imgUploadUrl = await _imgService.UploadAnImage(i);
+                    var newImgProduct = new TblImage()
+                    {
+                        Id = Guid.NewGuid(),
+                        ImageUrl = imgUploadUrl.Data.ToString(),
+                        ProductItemId = newProductItem.Id,
+                    };
+                    await _imageRepo.Insert(newImgProduct);
+                }
+
+                bool checkSizeUnique = _subRepo.checkSizeUnique(model.subProductId);
+
+                var subProduct = _subRepo.queryDetailBySubId(model.subProductId);
+                subProduct.Quantity = subProduct.Quantity+1;
+                if (checkSizeUnique == false)
+                {
+                    var minMax = new float[2];
+                    /*minMax = (float[]) subProduct.Price.Split("-");
+                    if (minMax[0] < [float] subProduct.Price)
+                    {
+
+                    }*/
+                }
+                _subRepo.updateSubProduct(subProduct); 
+
+                var product = _proRepo.queryAProductByProId(subProduct.ProductId);
+                product.Quantity = product.Quantity+1;
+                _proRepo.updateProduct(product);
+
+
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Create new product successfully";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
             }
             return result;
         }

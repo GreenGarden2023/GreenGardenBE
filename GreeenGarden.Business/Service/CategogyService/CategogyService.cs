@@ -61,23 +61,24 @@ namespace GreeenGarden.Business.Service.CategogyService
                 await _cateRepo.Insert(newCategory);
 
                 //Insert Image (Convert)
-                //List<IFormFile> fileInsert = new List<IFormFile>();
-                //fileInsert.Add(file);
-                //var imgUploadUrl = await _imgService.UploadImage(fileInsert);
-                //List<string> imgData = (List<string>)imgUploadUrl.Data;
-                //if (imgUploadUrl !=null)
-                //{
-                //    var newimgCategory = new TblImage()
-                //    {
-                //        Id = Guid.NewGuid(),
-                //        ImageUrl = imgData[0],
-                //        CategoryId = newCategory.Id,
-                //    };
-                //    await _imageRepo.Insert(newimgCategory);
+                /*List<IFormFile> fileInsert = new List<IFormFile>();
+                fileInsert.Add(file);
+                var imgUploadUrl = await _imgService.UploadImage(fileInsert);
+                List<string> imgData = (List<string>)imgUploadUrl.Data;
+                if (imgUploadUrl !=null)
+                {
+                    var newimgCategory = new TblImage()
+                    {
+                        Id = Guid.NewGuid(),
+                        ImageUrl = imgData[0],
+                        CategoryId = newCategory.Id,
+                    };
+                    await _imageRepo.Insert(newimgCategory);
 
-                //}
-                //Insert Image (New ImageService function)
+                }
+                Insert Image (New ImageService function)*/
                 var imgUploadUrl = await _imgService.UploadAnImage(file);
+
                 if (imgUploadUrl != null)
                 {
                     var newimgCategory = new TblImage()
@@ -89,8 +90,16 @@ namespace GreeenGarden.Business.Service.CategogyService
                     await _imageRepo.Insert(newimgCategory);
 
                 }
+                var categoryToShow = new CategoryModel()
+                {
+                    id = newCategory.Id,
+                    name = newCategory.Name,
+                    status = newCategory.Status,
+                    imgUrl = imgUploadUrl.Data.ToString()
+                };
                 result.Code = 200;
                 result.IsSuccess = true;
+                result.Data = categoryToShow;
                 result.Message = "Create new category successfully";
                 return result;
             }

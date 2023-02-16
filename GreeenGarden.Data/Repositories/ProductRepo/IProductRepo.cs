@@ -14,5 +14,7 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
     {
         public Page<TblProduct> queryAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId);
         public string getImgByProduct(Guid productId);
+        public TblProduct queryAProductByProId(Guid? proId);
+        public void updateProduct(TblProduct product);
     }
 }

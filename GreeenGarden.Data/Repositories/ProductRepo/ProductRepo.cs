@@ -35,5 +35,16 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
                 && x.CategoryId == categoryId
                 && x.Quantity > 0).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
+
+        public TblProduct queryAProductByProId(Guid? proId)
+        {
+            return _context.TblProducts.Where(x => x.Id == proId).FirstOrDefault();
+        }
+
+        public void updateProduct(TblProduct product)
+        {
+            _context.TblProducts.Update(product);
+            _context.SaveChangesAsync();
+        }
     }
 }

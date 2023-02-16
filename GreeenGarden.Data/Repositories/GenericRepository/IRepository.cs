@@ -9,6 +9,7 @@ namespace GreeenGarden.Data.Repositories.GenericRepository
         Task<Guid> Insert(T entity);
         // Update / Delete = Enum status equal 0
         Task Update();
+
     }
 }
 
