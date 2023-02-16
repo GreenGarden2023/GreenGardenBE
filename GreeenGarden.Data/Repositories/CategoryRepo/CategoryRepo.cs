@@ -46,8 +46,8 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             var category = await _context.TblCategories.Where(x =>x.Id == categoryId).FirstAsync();
             category.Name = name;
             if (status != null) category.Status = status;
-            _context.Update(category);
-            _context.SaveChangesAsync();
+             _context.Update(category);
+            await _context.SaveChangesAsync();
             return category;
         }
     }

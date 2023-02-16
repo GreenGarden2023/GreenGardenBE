@@ -126,26 +126,18 @@ namespace GreeenGarden.Business.Service.ImageService
                 {
                     var imgToDelete = new List<string>() { imgBefore.ImageUrl };
                     await DeleteImages(imgToDelete);
-                    
-                    
+
                 }
 
                 var uploadImg = await UploadAnImage(file);
                 if (uploadImg.IsSuccess)
                 {
-                    TblImage tblImage = new TblImage()
-                    {
-                        ImageUrl = uploadImg.Data.ToString(),
-                        CategoryId = CategoryId
-                    };
-                    await _imageRepo.Insert(tblImage);
-                    //await _imageRepo.UpdateImgForCategory(CategoryId, uploadImg.Data.ToString());
+
+                    await _imageRepo.UpdateImgForCategory(CategoryId, uploadImg.Data.ToString());
                     result.IsSuccess = true;
                     result.Data = uploadImg.Data.ToString();
                     return result;
                 }
-                result.IsSuccess = false;
-                result.Data = "Something went wrong";
                 return result;
 
             }

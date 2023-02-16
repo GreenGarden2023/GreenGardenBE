@@ -173,18 +173,24 @@ namespace GreeenGarden.Business.Service.CategogyService
             try
             {
                 var categoryUpdate = await _cateRepo.updateCategory(CategoryId, nameCategory, status); //Update tblCategory
-                var imgUpdate = await _imgService.UpdateImageCategory(CategoryId, file);
-                var categoryToShow = new CategoryModel()
+               if(categoryUpdate != null)
                 {
-                    id = CategoryId,
-                    name = nameCategory,
-                    status = status,
-                    imgUrl = imgUpdate.Data.ToString(),
-                };
+                    var imgUpdate = await _imgService.UpdateImageCategory(CategoryId, file);
+                    if(imgUpdate != null)
+                    {
+                        var categoryToShow = new CategoryModel()
+                        {
+                            id = CategoryId,
+                            name = nameCategory,
+                            status = status,
+                            imgUrl = imgUpdate.Data.ToString(),
+                        };
 
-                result.IsSuccess = true;
-                result.Data = categoryToShow;
-                result.Message = "null";
+                        result.IsSuccess = true;
+                        result.Data = categoryToShow;
+                        result.Message = "null";
+                    }
+                }
                 return result;
 
             }
