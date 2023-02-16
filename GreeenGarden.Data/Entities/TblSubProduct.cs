@@ -13,11 +13,11 @@ public partial class TblSubProduct
 
     public Guid? SizeId { get; set; }
 
-    public Guid ProductId { get; set; }
+    public Guid? ProductId { get; set; }
 
     public int? Quantity { get; set; }
 
-    public virtual TblProduct Product { get; set; } = null!;
+    public virtual TblProduct? Product { get; set; }
 
     public virtual TblSize? Size { get; set; }
 

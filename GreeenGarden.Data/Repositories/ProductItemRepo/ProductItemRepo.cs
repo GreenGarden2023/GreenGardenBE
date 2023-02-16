@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.ProductItemRepo
 {
-    public class ProductItemRepo : IProductItemRepo
+    public class ProductItemRepo : Repository<TblProductItem>, IProductItemRepo
     {
         //private readonly IMapper _mapper;
         private readonly GreenGardenDbContext _context;
-        public ProductItemRepo(/*IMapper mapper,*/ GreenGardenDbContext context)
+        public ProductItemRepo(/*IMapper mapper,*/ GreenGardenDbContext context) : base(context)
         {
             //_mapper = mapper;
             _context = context;

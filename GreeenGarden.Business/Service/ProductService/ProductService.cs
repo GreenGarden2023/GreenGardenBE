@@ -1,4 +1,5 @@
 ﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
@@ -7,6 +8,7 @@ using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CategoryRepo;
+using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -23,13 +25,15 @@ namespace GreeenGarden.Business.Service.ProductService
         //private readonly IMapper _mapper;
         private readonly IProductRepo _productRepo;
         private readonly DecodeToken _decodeToken;
-        private readonly IProductRepo _proRepo;
-        private readonly ICategoryRepo _categoryRepo;
-        public ProductService(/*IMapper mapper,*/ IProductRepo productRepo)
+        private readonly IImageService _imgService;
+        private readonly IImageRepo _imageRepo;
+        public ProductService(/*IMapper mapper,*/ IProductRepo productRepo, IImageService imgService, IImageRepo imageRepo)
         {
             //_mapper = mapper;
             _productRepo= productRepo;
             _decodeToken = new DecodeToken();
+            _imgService = imgService;
+            _imageRepo = imageRepo;
         }
 
         public async Task<ResultModel> createProduct(ProductCreateRequestModel model, string token)
@@ -57,8 +61,22 @@ namespace GreeenGarden.Business.Service.ProductService
                     Status = Status.ACTIVE,
                     CategoryId = model.categoryId
                 };
-                // create, update tbl img()
                 await _productRepo.Insert(newProduct);
+
+                // create, update tbl img()
+
+                var imgUploadUrl = await _imgService.UploadAnImage(model.imgFile);
+                if (imgUploadUrl != null)
+                {
+                    var newimgCategory = new TblImage()
+                    {
+                        Id = Guid.NewGuid(),
+                        ImageUrl = imgUploadUrl.Data.ToString(),
+                        ProductId = newProduct.Id,
+                    };
+                    await _imageRepo.Insert(newimgCategory);
+
+                }
 
                 result.IsSuccess = true;
                 result.Message = "create new product successfully";
