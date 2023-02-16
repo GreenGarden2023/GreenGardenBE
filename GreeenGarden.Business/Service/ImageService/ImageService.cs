@@ -126,11 +126,26 @@ namespace GreeenGarden.Business.Service.ImageService
                 {
                     var imgToDelete = new List<string>() { imgBefore.ImageUrl };
                     await DeleteImages(imgToDelete);
-                    var uploadImg =  await UploadAnImage(file);
-                    if (uploadImg.IsSuccess) await _imageRepo.UpdateImgForCategory(CategoryId, uploadImg.Data.ToString());
+                    
+                    
+                }
+
+                var uploadImg = await UploadAnImage(file);
+                if (uploadImg.IsSuccess)
+                {
+                    TblImage tblImage = new TblImage()
+                    {
+                        ImageUrl = uploadImg.Data.ToString(),
+                        CategoryId = CategoryId
+                    };
+                    await _imageRepo.Insert(tblImage);
+                    //await _imageRepo.UpdateImgForCategory(CategoryId, uploadImg.Data.ToString());
                     result.IsSuccess = true;
                     result.Data = uploadImg.Data.ToString();
+                    return result;
                 }
+                result.IsSuccess = false;
+                result.Data = "Something went wrong";
                 return result;
 
             }
@@ -139,8 +154,8 @@ namespace GreeenGarden.Business.Service.ImageService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
             }
-            return result;
         }
     }
 }

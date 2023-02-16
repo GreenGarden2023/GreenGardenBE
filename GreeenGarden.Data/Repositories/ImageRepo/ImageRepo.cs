@@ -19,14 +19,27 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             _context = context;
         }
 
+        //public async Task<TblImage> GetImgUrl(Guid? imgId, Guid? categoryId, Guid? ProductItemID, Guid? FeedbackID, Guid? productId)
+        //{
+        //    if (imgId != null) return await _context.TblImages.Where(x => x.Id == imgId).FirstAsync();
+        //    if (categoryId != null) return await _context.TblImages.Where(x => x.CategoryId == categoryId).FirstAsync();
+        //    if (ProductItemID != null) return await _context.TblImages.Where(x => x.ProductItemId == ProductItemID).FirstAsync();
+        //    if (productId != null) return await _context.TblImages.Where(x => x.ProductId == productId).FirstAsync();
+        //    if (FeedbackID != null) return await _context.TblImages.Where(x => x.FeedbackId == FeedbackID).FirstAsync();
+        //    return null;
+        //}
         public async Task<TblImage> GetImgUrl(Guid? imgId, Guid? categoryId, Guid? ProductItemID, Guid? FeedbackID, Guid? productId)
         {
-            if (imgId != null) return await _context.TblImages.Where(x => x.Id == imgId).FirstAsync();
-            if (categoryId != null) return await _context.TblImages.Where(x => x.CategoryId == categoryId).FirstAsync();
-            if (ProductItemID != null) return await _context.TblImages.Where(x => x.ProductItemId == ProductItemID).FirstAsync();
-            if (productId != null) return await _context.TblImages.Where(x => x.ProductId == productId).FirstAsync();
-            if (FeedbackID != null) return await _context.TblImages.Where(x => x.FeedbackId == FeedbackID).FirstAsync();
-            return null;
+            var query = from c in context.TblImages
+                        where c.CategoryId.Equals(categoryId)
+                        select new { c };
+            var result = await query.Select(x => new TblImage()
+            {
+                Id = x.c.Id,
+                CategoryId = x.c.CategoryId,
+                ImageUrl = x.c.ImageUrl
+            }).FirstOrDefaultAsync();
+            return result;
         }
 
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
