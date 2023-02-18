@@ -9,6 +9,7 @@ using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.SubProductRepo;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
         public async Task<ResultModel> getAllProductItemByProductItemSize(PaginationRequestModel pagingModel, Guid productSizeId)
         {
             var result = new ResultModel();
-            try
+           /* try
             {
                 var listItemBySize = _proItemRepo.queryAllItemByProductSize(pagingModel, productSizeId);
                 if (listItemBySize == null)
@@ -83,7 +84,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
+            }*/
             return result;
         }
 
@@ -92,15 +93,15 @@ namespace GreeenGarden.Business.Service.ProductItemService
             var result = new ResultModel();
             try
             {
-                var listProductSize = _proItemRepo.queryAllSizeByProduct(pagingModel, productId);
+              /*  var listProductSize = _proItemRepo.queryAllSizeByProduct(pagingModel, productId);
                 if (listProductSize == null)
                 {
                     result.Message = "Don't have any size of this product";
                 }
-
+*/
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = listProductSize;
+                //result.Data = listProductSize;
             }
             catch (Exception e)
             {
@@ -129,7 +130,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     price = productItem.FirstOrDefault()?.Price,
                     status = productItem.FirstOrDefault().Status,
                     description = productItem.FirstOrDefault().Description,
-                    subProductId = productItem.FirstOrDefault().SubProductId,
+                    //subProductId = productItem.FirstOrDefault().SubProductId,
                     imgUrl = _proItemRepo.getImgByProductItem(productItemId)
                 };
 
@@ -147,56 +148,41 @@ namespace GreeenGarden.Business.Service.ProductItemService
             return result;
         }
 
-        public async Task<ResultModel> createProductItem(ProductItemCreateRequestModel model, string token)
+        public async Task<ResultModel> createProductItem(ProductItemCreateRequestModel model, IList<IFormFile> imgFile, string token)
         {
             var result = new ResultModel();
 
-            var subProduct = await _subRepo.querySubAndSize(model.subProductId);
-            if (subProduct.size.Equals(Size.UNIQUE))
-            {
-                var newProductItem = new TblProductItem()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = model.name,
-                    Description = model.description,
-                    SubProductId = model.subProductId,
-                    Price = model.price,
-                    Status = Status.ACTIVE,
-                };
-                await _proItemRepo.Insert(newProductItem);
-
-            }
-            else
-            {
-                var newProductItem = new TblProductItem()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = model.name,
-                    Description = model.description,
-                    SubProductId = model.subProductId,
-                    Price = null,
-                    Status = Status.ACTIVE,
-                };
-                await _proItemRepo.Insert(newProductItem);
-            }
-
-
-
-
             try
             {
-                var newProductItem = new TblProductItem()
+                var subProduct = await _subRepo.querySubAndSize(model.subProductId);
+                var newProductItem = new TblProductItem();
+                if (subProduct.size.Equals(Size.UNIQUE))
                 {
-                    Id = Guid.NewGuid(),
-                    Name = model.name,
-                    Description = model.description,
-                    SubProductId = model.subProductId,
-                    Price = model.price,
-                    Status = Status.ACTIVE,
-                };
-                await _proItemRepo.Insert(newProductItem);
 
-                foreach (var i in model.imgFile)
+                    newProductItem.Id = Guid.NewGuid();
+                    newProductItem.Name = model.name;
+                        newProductItem.Description = model.description;
+                        //newProductItem.SubProductId = model.subProductId;
+                    newProductItem.Price = model.price;
+                    newProductItem.Status = Status.ACTIVE;
+                    await _proItemRepo.Insert(newProductItem);
+                    _subRepo.updateWhenCreateItemUnique(model.subProductId, model.price);
+                    _proRepo.increaseQuantity(model.subProductId, 1);
+                }
+                else
+                {
+                    newProductItem.Id = Guid.NewGuid();
+                    newProductItem.Name = model.name;
+                    newProductItem.Description = model.description;
+                    //newProductItem.SubProductId = model.subProductId;
+                    newProductItem.Price = null;
+                    newProductItem.Status = Status.ACTIVE;
+                    await _proItemRepo.Insert(newProductItem);
+                    _subRepo.updateWhenUpdateItemSimilar(model.subProductId);
+                    _proRepo.increaseQuantity(model.subProductId, 1);
+                }
+
+                foreach (var i in imgFile)
                 {
                     var imgUploadUrl = await _imgService.UploadAnImage(i);
                     var newImgProduct = new TblImage()
@@ -223,5 +209,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
             }
             return result;
         }
+
     }
 }

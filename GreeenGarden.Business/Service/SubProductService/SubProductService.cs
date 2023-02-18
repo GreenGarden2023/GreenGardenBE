@@ -66,5 +66,10 @@ namespace GreeenGarden.Business.Service.SubProductService
             }
             return result;
         }
+
+        public Task<ResultModel> getProductSize(Guid productId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

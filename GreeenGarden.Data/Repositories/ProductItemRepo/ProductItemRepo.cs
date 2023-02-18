@@ -21,20 +21,20 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             _context = context;
         }
 
-        public Page<TblProductItem> queryAllItemByProductSize(PaginationRequestModel model, Guid productSizeId)
+        /*public Page<TblProductItem> queryAllItemByProductSize(PaginationRequestModel model, Guid productSizeId)
         {
             return _context.TblProductItems.Where(x=>x.SubProductId == productSizeId && x.Status == Status.ACTIVE).Paginate(model.curPage, model.pageSize);
-        }
+        }*/
 
         public IQueryable<TblProductItem> queryDetailItemByProductSize(Guid productItemId)
         {
             return _context.TblProductItems.Where(x => x.Id == productItemId && x.Status == Status.ACTIVE);
         }
 
-        public Page<TblSubProduct> queryAllSizeByProduct(PaginationRequestModel model, Guid productId)
+       /* public Page<TblSubProduct> queryAllSizeByProduct(PaginationRequestModel model, Guid productId)
         {
             return _context.TblSubProducts.Where(x => x.ProductId == productId).Paginate(model.curPage, model.pageSize);
-        }
+        }*/
 
         public List<string> getImgByProductItem(Guid productItemId)
         {

@@ -27,8 +27,8 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public bool checkWholesaleProduct(Guid subProductId, int quantity)
         {
-            var subProductToCheck = _context.TblSubProducts.Where(x=>x.Id== subProductId && x.Quantity >= quantity).FirstOrDefault();
-            if (subProductToCheck != null) return true;
+            /*var subProductToCheck = _context.TblSubProducts.Where(x => x.Id == subProductId && x.Quantity >= quantity).FirstOrDefault();
+            if (subProductToCheck != null) return true;*/
             return false;
         }
     }

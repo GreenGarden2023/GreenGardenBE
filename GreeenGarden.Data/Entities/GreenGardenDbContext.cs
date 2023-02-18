@@ -35,10 +35,6 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblRole> TblRoles { get; set; }
 
-    public virtual DbSet<TblSize> TblSizes { get; set; }
-
-    public virtual DbSet<TblSubProduct> TblSubProducts { get; set; }
-
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
@@ -207,11 +203,10 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.SubProductId).HasColumnName("SubProductID");
 
-            entity.HasOne(d => d.SubProduct).WithMany(p => p.TblProductItems)
-                .HasForeignKey(d => d.SubProductId)
-                .HasConstraintName("FK_tblProductItems_tblSubProducts");
+            entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
+                .HasForeignKey(d => d.ProductId)
+                .HasConstraintName("FK_tblProductItems_tblProducts");
         });
 
         modelBuilder.Entity<TblRole>(entity =>
@@ -221,34 +216,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-        });
-
-        modelBuilder.Entity<TblSize>(entity =>
-        {
-            entity.ToTable("tblSizes");
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("ID");
-        });
-
-        modelBuilder.Entity<TblSubProduct>(entity =>
-        {
-            entity.ToTable("tblSubProducts");
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("ID");
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.SizeId).HasColumnName("SizeID");
-
-            entity.HasOne(d => d.Product).WithMany(p => p.TblSubProducts)
-                .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK_tblSubProducts_tblProducts");
-
-            entity.HasOne(d => d.Size).WithMany(p => p.TblSubProducts)
-                .HasForeignKey(d => d.SizeId)
-                .HasConstraintName("FK_tblSubProducts_tblSizes1");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

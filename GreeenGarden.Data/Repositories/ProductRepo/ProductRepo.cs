@@ -3,6 +3,7 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +28,15 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             if (result == null) return null;
 
             return result.ImageUrl;
+        }
+
+        public async void increaseQuantity(Guid subId, int plus)
+        {
+            /*var subPro = await _context.TblSubProducts.Where(x => x.Id == subId).FirstAsync();
+            var result = await _context.TblProducts.Where(x => x.Equals(subPro.ProductId)).FirstAsync();
+            result.Quantity = result.Quantity + plus;
+            _context.Update(result);
+            await _context.SaveChangesAsync();*/
         }
 
         public Page<TblProduct> queryAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
