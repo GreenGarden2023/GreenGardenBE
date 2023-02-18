@@ -56,5 +56,50 @@ namespace GreeenGarden.Business.Service.OrderService
             }
             return result;
         }
+
+        public async Task<ResultModel> createOrder(string token, Guid productItem, Guid productSize, int quantity, DateTime startDate, DateTime endDate)
+        {
+            var result = new ResultModel();
+            try
+            {
+                // check token
+
+                if (productItem != null)
+                {
+                   bool check = _orderRepo.checkRetailProduct(productItem);
+                    if (!check)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "dont have ProductItem";
+                        return result;
+                    }
+                }
+                if (productSize !=null)
+                {
+                    bool check = _orderRepo.checkWholesaleProduct(productSize, quantity);
+                    if (!check)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Product size dont enought item";
+                        return result;
+                    }
+                }
+                if (startDate < DateTime.Now || startDate >= endDate)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "startDate invalid";
+                    return result;
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }

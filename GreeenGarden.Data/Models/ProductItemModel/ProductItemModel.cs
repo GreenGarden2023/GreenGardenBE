@@ -23,7 +23,7 @@ namespace GreeenGarden.Data.Models.ProductItemModel
         public double? price { get; set; }
         public string description { get; set; }
         public string name { get; set; }
-        public Guid? subProductId { get; set; }
+        public Guid subProductId { get; set; }
         public IList<IFormFile> imgFile { get; set; }
 
     }

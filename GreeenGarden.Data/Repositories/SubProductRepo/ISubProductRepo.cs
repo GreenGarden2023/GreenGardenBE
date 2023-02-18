@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.SubProductModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,10 @@ namespace GreeenGarden.Data.Repositories.SubProductRepo
     public interface ISubProductRepo : IRepository<TblSubProduct>
     {
         public TblSubProduct queryDetailBySubId(Guid? SubId);
+
         public bool checkSizeUnique(Guid? SubId);
         public void updateSubProduct(TblSubProduct subProduct);
+        public Task<SubProductAndSize> querySubAndSize(Guid SubId);
+        public void increaseQuantity(Guid subId, int plus); 
     }
 }
