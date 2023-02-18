@@ -150,6 +150,39 @@ namespace GreeenGarden.Business.Service.ProductItemService
         public async Task<ResultModel> createProductItem(ProductItemCreateRequestModel model, string token)
         {
             var result = new ResultModel();
+
+            var subProduct = await _subRepo.querySubAndSize(model.subProductId);
+            if (subProduct.size.Equals(Size.UNIQUE))
+            {
+                var newProductItem = new TblProductItem()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.name,
+                    Description = model.description,
+                    SubProductId = model.subProductId,
+                    Price = model.price,
+                    Status = Status.ACTIVE,
+                };
+                await _proItemRepo.Insert(newProductItem);
+
+            }
+            else
+            {
+                var newProductItem = new TblProductItem()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = model.name,
+                    Description = model.description,
+                    SubProductId = model.subProductId,
+                    Price = null,
+                    Status = Status.ACTIVE,
+                };
+                await _proItemRepo.Insert(newProductItem);
+            }
+
+
+
+
             try
             {
                 var newProductItem = new TblProductItem()
@@ -174,27 +207,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     };
                     await _imageRepo.Insert(newImgProduct);
                 }
-
-                bool checkSizeUnique = _subRepo.checkSizeUnique(model.subProductId);
-
-                var subProduct = _subRepo.queryDetailBySubId(model.subProductId);
-                subProduct.Quantity = subProduct.Quantity+1;
-                if (checkSizeUnique == false)
-                {
-                    var minMax = new float[2];
-                    /*minMax = (float[]) subProduct.Price.Split("-");
-                    if (minMax[0] < [float] subProduct.Price)
-                    {
-
-                    }*/
-                }
-                _subRepo.updateSubProduct(subProduct); 
-
-                var product = _proRepo.queryAProductByProId(subProduct.ProductId);
-                product.Quantity = product.Quantity+1;
-                _proRepo.updateProduct(product);
-
-
 
 
                 result.Code = 200;

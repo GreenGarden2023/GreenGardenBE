@@ -3,6 +3,7 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,16 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
         public TblCategory selectDetailCategory(Guid categoryId)
         {
             return _context.TblCategories.Where(x => x.Id == categoryId).FirstOrDefault();
-            throw new NotImplementedException();
+        }
+
+        public async Task<TblCategory> updateCategory(Guid categoryId, string name, string status)
+        {
+            var category = await _context.TblCategories.Where(x =>x.Id == categoryId).FirstAsync();
+            category.Name = name;
+            if (status != null) category.Status = status;
+             _context.Update(category);
+            await _context.SaveChangesAsync();
+            return category;
         }
     }
 }

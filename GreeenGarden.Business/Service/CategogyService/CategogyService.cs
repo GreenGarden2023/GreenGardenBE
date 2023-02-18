@@ -166,5 +166,41 @@ namespace GreeenGarden.Business.Service.CategogyService
             }
             return result;
         }
+
+        public async Task<ResultModel> updateCategory(string token, Guid CategoryId, string nameCategory, string status, IFormFile file)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var categoryUpdate = await _cateRepo.updateCategory(CategoryId, nameCategory, status); //Update tblCategory
+               if(categoryUpdate != null)
+                {
+                    var imgUpdate = await _imgService.UpdateImageCategory(CategoryId, file);
+                    if(imgUpdate != null)
+                    {
+                        var categoryToShow = new CategoryModel()
+                        {
+                            id = CategoryId,
+                            name = nameCategory,
+                            status = status,
+                            imgUrl = imgUpdate.Data.ToString(),
+                        };
+
+                        result.IsSuccess = true;
+                        result.Data = categoryToShow;
+                        result.Message = "null";
+                    }
+                }
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }

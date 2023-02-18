@@ -42,7 +42,9 @@ namespace GreeenGarden.Business.Service.SubProductService
                 {
                     Id = Guid.NewGuid(),
                     Name = model.name,
-                    Price = model.price,
+                    MinPrice = model.minPrice,
+                    Price= model.price,
+                    MaxPrice= model.maxPrice,
                     ProductId = model.productId,
                     SizeId = model.sizeId,
                     Quantity = 0
