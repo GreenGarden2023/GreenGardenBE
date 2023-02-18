@@ -16,5 +16,6 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         public string getImgByProduct(Guid productId);
         public TblProduct queryAProductByProId(Guid? proId);
         public void updateProduct(TblProduct product);
+        public void increaseQuantity(Guid subId, int plus);
     }
 }

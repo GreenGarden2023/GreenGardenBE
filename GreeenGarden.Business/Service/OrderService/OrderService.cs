@@ -22,7 +22,7 @@ namespace GreeenGarden.Business.Service.OrderService
         public async Task<ResultModel> checkRetailProduct(Guid productItemId)
         {
             var result = new ResultModel();
-            try
+            /*try
             {
                 bool check = _orderRepo.checkRetailProduct(productItemId);
                 result.IsSuccess = true;
@@ -34,7 +34,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
+            }*/
             return result;
         }
 
@@ -60,7 +60,7 @@ namespace GreeenGarden.Business.Service.OrderService
         public async Task<ResultModel> createOrder(string token, Guid productItem, Guid productSize, int quantity, DateTime startDate, DateTime endDate)
         {
             var result = new ResultModel();
-            try
+           /* try
             {
                 // check token
 
@@ -98,7 +98,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
+            }*/
             return result;
         }
     }

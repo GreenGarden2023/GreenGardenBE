@@ -38,7 +38,7 @@ namespace GreeenGarden.API.Controllers
 
         [HttpPost("updateCategory")]
         [Authorize(Roles = "Staff, Manager")]
-        public async Task<IActionResult> updateCategory(Guid CategoryId, string nameCategory, string status, IFormFile file)
+        public async Task<IActionResult> updateCategory([FromBody] Guid CategoryId, string nameCategory, string status, IFormFile file)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.updateCategory(token, CategoryId, nameCategory, status, file);

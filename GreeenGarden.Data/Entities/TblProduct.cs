@@ -21,5 +21,5 @@ public partial class TblProduct
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 
-    public virtual ICollection<TblSubProduct> TblSubProducts { get; } = new List<TblSubProduct>();
+    public virtual ICollection<TblProductItem> TblProductItems { get; } = new List<TblProductItem>();
 }

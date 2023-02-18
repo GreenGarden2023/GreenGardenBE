@@ -22,7 +22,7 @@ namespace GreeenGarden.Data.Repositories.SubProductRepo
 
         public bool checkSizeUnique(Guid? SubId)
         {
-            var checkResult = _context.TblSubProducts.Join(
+           /* var checkResult = _context.TblSubProducts.Join(
                 _context.TblSizes, 
                 x=>x.SizeId, 
                 s=>s.Id,(x,s)=> new
@@ -31,27 +31,22 @@ namespace GreeenGarden.Data.Repositories.SubProductRepo
             if (checkResult.Name == Size.UNIQUE)
             {
                 return true;
-            }
+            }*/
             return false;
         }
 
-        public void increaseQuantity(Guid subId, int plus)
-        {
-            var result = _context.TblSubProducts.Where(x=>x.Id== subId).FirstOrDefault();
 
-            throw new NotImplementedException();
-        }
-
-        public TblSubProduct queryDetailBySubId(Guid? SubId)
+        public async Task< TblSubProduct> queryDetailBySubId(Guid? SubId)
         {
-            var subProduct = _context.TblSubProducts.Where(x=>x.Id== SubId).FirstOrDefault();
+            /*var subProduct = await _context.TblSubProducts.Where(x=>x.Id== SubId).FirstAsync();
             if (subProduct == null) return null;
-            return subProduct;
+            return subProduct;*/
+            return null;
         }
 
         public async Task<SubProductAndSize> querySubAndSize(Guid SubId)
         {
-            var query = from su in _context.TblSubProducts
+            /*var query = from su in _context.TblSubProducts
                         join si in _context.TblSizes
                         on su.SizeId equals si.Id
                         where su.Id.Equals(SubId)
@@ -65,15 +60,37 @@ namespace GreeenGarden.Data.Repositories.SubProductRepo
                 maxPrice =x.su.MaxPrice,
                 minPrice = x.su.MinPrice
             }).FirstOrDefaultAsync();
-            return result;
+            return result;*/
+            return null;
         }
+
 
         public void updateSubProduct(TblSubProduct subProduct)
         {
-            _context.TblSubProducts.Update(subProduct);
-            _context.SaveChangesAsync();
+            /*_context.TblSubProducts.Update(subProduct);
+            _context.SaveChangesAsync();*/
         }
 
+        public async void updateWhenCreateItemUnique(Guid subId, double price)
+        {
+            /*var result = await _context.TblSubProducts.Where(x => x.Id == subId).FirstAsync();
+            result.Quantity = result.Quantity + 1;
+            if (price != null)
+            {
+                if (result.MaxPrice < price) result.MaxPrice = price;
+                if (result.MinPrice > price) result.MinPrice = price;
+            }
+            _context.Update(result);
+            await _context.SaveChangesAsync();*/
+        }
 
+        public async void updateWhenUpdateItemSimilar(Guid guid)
+        {
+            /*var result = await _context.TblSubProducts.Where(x => x.Id == guid).FirstAsync();
+            result.Quantity = result.Quantity + 1;
+           
+            _context.Update(result);
+            await _context.SaveChangesAsync();*/
+        }
     }
 }

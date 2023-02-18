@@ -15,9 +15,13 @@ public partial class TblProductItem
 
     public string? Description { get; set; }
 
-    public Guid? SubProductId { get; set; }
+    public Guid? ProductId { get; set; }
 
-    public virtual TblSubProduct? SubProduct { get; set; }
+    public string? Size { get; set; }
+
+    public int? Quantity { get; set; }
+
+    public virtual TblProduct? Product { get; set; }
 
     public virtual ICollection<TblAddendumProductItem> TblAddendumProductItems { get; } = new List<TblAddendumProductItem>();
 
