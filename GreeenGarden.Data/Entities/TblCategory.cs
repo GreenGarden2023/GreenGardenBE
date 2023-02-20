@@ -11,6 +11,8 @@ public partial class TblCategory
 
     public string? Status { get; set; }
 
+    public string? Description { get; set; }
+
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 
     public virtual ICollection<TblProduct> TblProducts { get; } = new List<TblProduct>();

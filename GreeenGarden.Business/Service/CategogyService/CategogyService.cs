@@ -35,49 +35,47 @@ namespace GreeenGarden.Business.Service.CategogyService
             _imageRepo = imageRepo;
         }
 
-        public async Task<ResultModel> createCategory(string token, string nameCategory, IFormFile file)
+        public async Task<ResultModel> createCategory(string token, CategoryCreateModel categoryCreateModel)
         {
             var result = new ResultModel();
+            string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+            if (!userRole.Equals(Commons.MANAGER)
+                && !userRole.Equals(Commons.STAFF))
+            {
+                result.Code = 403;
+                result.IsSuccess = false;
+                result.Message = "User role invalid";
+                return result;
+            }
+            if (String.IsNullOrEmpty(categoryCreateModel.Name))
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Category name cannot be empty.";
+                return result;
+            }
+            if (categoryCreateModel.Image == null)
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Category image not found.";
+                return result;
+            }
             try
             {
                 
-                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                if (!userRole.Equals(Commons.MANAGER)
-                    && !userRole.Equals(Commons.STAFF))
-                {
-                    return new ResultModel()
-                    {
-                        IsSuccess = false,
-                        Message = "User not allowed"
-                    };
-                }
+                
                 //Insert Category
                 var newCategory = new TblCategory()
                 {
-                    Name = nameCategory,
+                    Name = categoryCreateModel.Name,
                     Id = Guid.NewGuid(),
-                    Status = Status.ACTIVE
+                    Status = Status.ACTIVE,
+                    Description = categoryCreateModel.Description
                 };
                 await _cateRepo.Insert(newCategory);
 
-                //Insert Image (Convert)
-                /*List<IFormFile> fileInsert = new List<IFormFile>();
-                fileInsert.Add(file);
-                var imgUploadUrl = await _imgService.UploadImage(fileInsert);
-                List<string> imgData = (List<string>)imgUploadUrl.Data;
-                if (imgUploadUrl !=null)
-                {
-                    var newimgCategory = new TblImage()
-                    {
-                        Id = Guid.NewGuid(),
-                        ImageUrl = imgData[0],
-                        CategoryId = newCategory.Id,
-                    };
-                    await _imageRepo.Insert(newimgCategory);
-
-                }
-                Insert Image (New ImageService function)*/
-                var imgUploadUrl = await _imgService.UploadAnImage(file);
+                var imgUploadUrl = await _imgService.UploadAnImage(categoryCreateModel.Image);
 
                 if (imgUploadUrl != null)
                 {
@@ -167,28 +165,65 @@ namespace GreeenGarden.Business.Service.CategogyService
             return result;
         }
 
-        public async Task<ResultModel> updateCategory(string token, Guid CategoryId, string nameCategory, string status, IFormFile file)
+        public async Task<ResultModel> updateCategory(string token, CategoryUpdateModel categoryUpdateModel)
         {
             var result = new ResultModel();
+            string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+            if (!userRole.Equals(Commons.MANAGER)
+                && !userRole.Equals(Commons.STAFF))
+            {
+                result.Code = 403;
+                result.IsSuccess = false;
+                result.Message = "User role invalid";
+                return result;
+            }
+            if (String.IsNullOrEmpty(categoryUpdateModel.Name) &&
+                String.IsNullOrEmpty(categoryUpdateModel.Description) &&
+                String.IsNullOrEmpty(categoryUpdateModel.Status) &&
+                 categoryUpdateModel.Image == null) {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Please update atleast 1 parameter";
+                return result;
+            }
+
+
+            if (categoryUpdateModel == null)
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Category invalid.";
+                return result;
+            }
             try
             {
-                var categoryUpdate = await _cateRepo.updateCategory(CategoryId, nameCategory, status); //Update tblCategory
-               if(categoryUpdate != null)
+                var categoryUpdate = await _cateRepo.updateCategory(categoryUpdateModel);
+                if (categoryUpdate == null)
                 {
-                    var imgUpdate = await _imgService.UpdateImageCategory(CategoryId, file);
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Can not find category with ID: "+ categoryUpdateModel.ID;
+                    return result;
+                }
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Category updated without image change";
+                if (categoryUpdate != null && categoryUpdateModel.Image != null)
+                {
+                    var imgUpdate = await _imgService.UpdateImageCategory(categoryUpdateModel.ID, categoryUpdateModel.Image);
                     if(imgUpdate != null)
                     {
                         var categoryToShow = new CategoryModel()
                         {
-                            id = CategoryId,
-                            name = nameCategory,
-                            status = status,
+                            id = categoryUpdateModel.ID,
+                            name = categoryUpdateModel.Name,
+                            status = categoryUpdateModel.Status,
                             imgUrl = imgUpdate.Data.ToString(),
                         };
 
                         result.IsSuccess = true;
-                        result.Data = categoryToShow;
-                        result.Message = "null";
+                        result.Code = 200;
+                        result.Message = "Category updated with image change";
                     }
                 }
                 return result;

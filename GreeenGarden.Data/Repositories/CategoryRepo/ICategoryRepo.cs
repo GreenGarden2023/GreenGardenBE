@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
@@ -17,6 +18,6 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
         public Page<TblCategory> queryAllCategories(PaginationRequestModel pagingModel);
         public string getImgByCategory(Guid categoryId);
         public TblCategory selectDetailCategory(Guid categoryId);
-        public Task<TblCategory> updateCategory(Guid categoryId, string name, string status);
+        public Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel);
     }
 }

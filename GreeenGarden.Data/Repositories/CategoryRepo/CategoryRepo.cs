@@ -1,9 +1,11 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,11 +43,30 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             return _context.TblCategories.Where(x => x.Id == categoryId).FirstOrDefault();
         }
 
-        public async Task<TblCategory> updateCategory(Guid categoryId, string name, string status)
+        public async Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel)
         {
-            var category = await _context.TblCategories.Where(x =>x.Id == categoryId).FirstAsync();
-            category.Name = name;
-            if (status != null) category.Status = status;
+            //var category = await _context.TblCategories.Where(x =>x.Id == categoryUpdateModel.ID).FirstAsync();
+
+            var query = from cate in context.TblCategories
+                        where cate.Id.Equals(categoryUpdateModel.ID)
+                        select new { cate };
+
+            var category = await query.Select(x => x.cate).FirstOrDefaultAsync();
+            if (category == null)
+            {
+                return null;
+            }
+            if (!String.IsNullOrEmpty(categoryUpdateModel.Name))
+            {
+                category.Name = categoryUpdateModel.Name;
+            }
+            if (!String.IsNullOrEmpty(categoryUpdateModel.Description))
+            {
+                category.Description = categoryUpdateModel.Description;
+            }
+            if (!String.IsNullOrEmpty(categoryUpdateModel.Status)) category.Status = categoryUpdateModel.Status;
+
+
              _context.Update(category);
             await _context.SaveChangesAsync();
             return category;

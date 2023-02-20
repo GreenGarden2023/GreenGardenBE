@@ -17,6 +17,8 @@ public partial class TblProduct
 
     public Guid? CategoryId { get; set; }
 
+    public string? Type { get; set; }
+
     public virtual TblCategory? Category { get; set; }
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();

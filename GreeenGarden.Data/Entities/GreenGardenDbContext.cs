@@ -6,10 +6,6 @@ namespace GreeenGarden.Data.Entities;
 
 public partial class GreenGardenDbContext : DbContext
 {
-    public GreenGardenDbContext()
-    {
-    }
-
     public GreenGardenDbContext(DbContextOptions<GreenGardenDbContext> options)
         : base(options)
     {
@@ -40,8 +36,6 @@ public partial class GreenGardenDbContext : DbContext
     public virtual DbSet<TblUser> TblUsers { get; set; }
 
     public virtual DbSet<TblVoucher> TblVouchers { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +82,9 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Name).HasMaxLength(200);
+            entity.Property(e => e.Status).HasMaxLength(50);
         });
 
         modelBuilder.Entity<TblFeedBack>(entity =>
