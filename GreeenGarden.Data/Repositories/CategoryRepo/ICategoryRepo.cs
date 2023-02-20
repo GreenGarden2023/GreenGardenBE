@@ -19,5 +19,6 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
         public string getImgByCategory(Guid categoryId);
         public TblCategory selectDetailCategory(Guid categoryId);
         public Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel);
+        public bool checkCategoryNameExist(string categoryName);
     }
 }

@@ -43,6 +43,11 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             return _context.TblCategories.Where(x => x.Id == categoryId).FirstOrDefault();
         }
 
+        public bool checkCategoryNameExist(string categoryName)
+        {
+            var result = _context.TblCategories.Where(x => x.Name.Contains(categoryName)).FirstOrDefault();
+            if (result != null) { return true; } else { return false; }
+        }
         public async Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel)
         {
             //var category = await _context.TblCategories.Where(x =>x.Id == categoryUpdateModel.ID).FirstAsync();

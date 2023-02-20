@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -47,18 +48,27 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.Message = "User role invalid";
                 return result;
             }
-            if (String.IsNullOrEmpty(categoryCreateModel.Name))
+
+
+            if (String.IsNullOrEmpty(categoryCreateModel.Name) || categoryCreateModel.Name.Length <2 || categoryCreateModel.Name.Length > 50)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Category name cannot be empty.";
+                result.Message = "Category name is greater than 2 and less than 50 characters";
+                return result;
+            }
+            if (_cateRepo.checkCategoryNameExist(categoryCreateModel.Name))
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Category name duplicated";
                 return result;
             }
             if (categoryCreateModel.Image == null)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Category image not found.";
+                result.Message = "Category image not found";
                 return result;
             }
             try
@@ -68,7 +78,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 //Insert Category
                 var newCategory = new TblCategory()
                 {
-                    Name = categoryCreateModel.Name,
+                    Name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(categoryCreateModel.Name.ToLower()),
                     Id = Guid.NewGuid(),
                     Status = Status.ACTIVE,
                     Description = categoryCreateModel.Description
@@ -187,14 +197,29 @@ namespace GreeenGarden.Business.Service.CategogyService
                 return result;
             }
 
-
-            if (categoryUpdateModel == null)
+            if (String.IsNullOrEmpty(categoryUpdateModel.Name) || categoryUpdateModel.Name.Length < 2 || categoryUpdateModel.Name.Length > 50)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Category invalid.";
+                result.Message = "Category name is greater than 2 and less than 50 characters";
                 return result;
             }
+            if (_cateRepo.checkCategoryNameExist(categoryUpdateModel.Name))
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Category name is duplicated";
+                return result;
+            }
+
+            if (String.IsNullOrEmpty(categoryUpdateModel.Status) || categoryUpdateModel.Status.Length < 2 || categoryUpdateModel.Status.Length > 50)
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Category status is greater than 2 and less than 50 characters";
+                return result;
+            }
+
             try
             {
                 var categoryUpdate = await _cateRepo.updateCategory(categoryUpdateModel);
