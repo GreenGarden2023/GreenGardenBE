@@ -33,9 +33,14 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             return result.ImageUrl;
         }
 
-        public Page<TblCategory> queryAllCategories(PaginationRequestModel pagingModel)
+        public Page<TblCategory> GetAllCategory(PaginationRequestModel pagingModel)
         {
-            return _context.TblCategories.Where(x => x.Status == Status.ACTIVE).Paginate(pagingModel.curPage, pagingModel.pageSize);
+            return _context.TblCategories.Paginate(pagingModel.curPage, pagingModel.pageSize);
+        }
+
+        public Page<TblCategory> GetCategoryByStatus(PaginationRequestModel pagingModel, string status)
+        {
+            return _context.TblCategories.Where(x => x.Status == status).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
 
         public TblCategory selectDetailCategory(Guid categoryId)

@@ -15,7 +15,8 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
 {
     public interface ICategoryRepo : IRepository<TblCategory>
     {
-        public Page<TblCategory> queryAllCategories(PaginationRequestModel pagingModel);
+        public Page<TblCategory> GetCategoryByStatus(PaginationRequestModel pagingModel, string status);
+        public Page<TblCategory> GetAllCategory(PaginationRequestModel pagingModel);
         public string getImgByCategory(Guid categoryId);
         public TblCategory selectDetailCategory(Guid categoryId);
         public Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel);

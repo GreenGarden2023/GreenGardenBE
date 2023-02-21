@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Business.Service.CategogyService;
+﻿using System.ComponentModel.DataAnnotations;
+using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
@@ -23,6 +24,14 @@ namespace GreeenGarden.API.Controllers
         public async Task<IActionResult> getAllCategories([FromQuery] PaginationRequestModel pagingModel)
         {
             var result = await _service.getAllCategories(pagingModel);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpGet("get-category-by-status")]
+        public async Task<IActionResult> getCategoryByStatus([FromQuery] PaginationRequestModel pagingModel, [Required] string status)
+        {
+            var result = await _service.GetCategoryByStatus(pagingModel, status);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

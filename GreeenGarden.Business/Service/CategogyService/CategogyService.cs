@@ -128,7 +128,7 @@ namespace GreeenGarden.Business.Service.CategogyService
             var result = new ResultModel();
             try
             {
-                var listCategories = _cateRepo.queryAllCategories(pagingModel);
+                var listCategories = _cateRepo.GetAllCategory(pagingModel);
                 if (listCategories == null)
                 {
                     result.IsSuccess = true;
@@ -170,6 +170,61 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.Data = response;
             }
             catch (Exception e )
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GetCategoryByStatus(PaginationRequestModel pagingModel, string status)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var listCategories = _cateRepo.GetCategoryByStatus(pagingModel, status);
+                if (listCategories == null)
+                {
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = listCategories;
+                    result.Message = "null";
+                    return result;
+                }
+
+                List<CategoryModel> dataList = new List<CategoryModel>();
+                foreach (var c in listCategories.Results)
+                {
+                    var CategoryToShow = new CategoryModel
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Status = c.Status,
+                        ImgUrl = "" + _cateRepo.getImgByCategory(c.Id),
+                        Description = c.Description
+
+                    };
+                    dataList.Add(CategoryToShow);
+                }
+                var paging = new PaginationResponseModel()
+
+                    .PageSize(listCategories.PageSize)
+                    .CurPage(listCategories.CurrentPage)
+                    .RecordCount(listCategories.RecordCount)
+                    .PageCount(listCategories.PageCount);
+
+
+                var response = new ResponseResult()
+                {
+                    Paging = paging,
+                    Result = dataList
+                };
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = response;
+            }
+            catch (Exception e)
             {
                 result.IsSuccess = false;
                 result.Code = 400;
