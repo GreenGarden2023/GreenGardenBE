@@ -1,7 +1,6 @@
 ﻿using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
-using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Models.ResultModel;
@@ -10,11 +9,6 @@ using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.SubProductRepo;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Business.Service.ProductItemService
 {
@@ -29,7 +23,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
         public ProductItemService(/*IMapper mapper,*/ IProductItemRepo proItemRepo, IProductRepo proRepo, ISubProductRepo subRepo, IImageRepo imageRepo, IImageService imgService)
         {
             //_mapper = mapper;
-            _proItemRepo= proItemRepo;
+            _proItemRepo = proItemRepo;
             _imgService = imgService;
             _imageRepo = imageRepo;
             _subRepo = subRepo;
@@ -39,52 +33,52 @@ namespace GreeenGarden.Business.Service.ProductItemService
         public async Task<ResultModel> getAllProductItemByProductItemSize(PaginationRequestModel pagingModel, Guid productSizeId)
         {
             var result = new ResultModel();
-           /* try
-            {
-                var listItemBySize = _proItemRepo.queryAllItemByProductSize(pagingModel, productSizeId);
-                if (listItemBySize == null)
-                {
-                    result.Message = "Don't have any item in size!";
-                }
+            /* try
+             {
+                 var listItemBySize = _proItemRepo.queryAllItemByProductSize(pagingModel, productSizeId);
+                 if (listItemBySize == null)
+                 {
+                     result.Message = "Don't have any item in size!";
+                 }
 
 
-                List<ProductItemModel> dataList = new List<ProductItemModel>();
-                foreach (var p in listItemBySize.Results)
-                {
-                    var ProductItemToShow = new ProductItemModel
-                    {
-                        id= p.Id,
-                        name = p.Name,
-                        price = p.Price,
-                        status = p.Status,
-                        description = p.Description,
-                        subProductId = p.SubProductId,
-                        imgUrl = _proItemRepo.getImgByProductItem(p.Id)
-                    };
-                    dataList.Add(ProductItemToShow);
-                }
-                var paging = new PaginationResponseModel()
-                    .PageSize(listItemBySize.PageSize)
-                    .CurPage(listItemBySize.CurrentPage)
-                    .RecordCount(listItemBySize.RecordCount)
-                    .PageCount(listItemBySize.PageCount);
+                 List<ProductItemModel> dataList = new List<ProductItemModel>();
+                 foreach (var p in listItemBySize.Results)
+                 {
+                     var ProductItemToShow = new ProductItemModel
+                     {
+                         id= p.Id,
+                         name = p.Name,
+                         price = p.Price,
+                         status = p.Status,
+                         description = p.Description,
+                         subProductId = p.SubProductId,
+                         imgUrl = _proItemRepo.getImgByProductItem(p.Id)
+                     };
+                     dataList.Add(ProductItemToShow);
+                 }
+                 var paging = new PaginationResponseModel()
+                     .PageSize(listItemBySize.PageSize)
+                     .CurPage(listItemBySize.CurrentPage)
+                     .RecordCount(listItemBySize.RecordCount)
+                     .PageCount(listItemBySize.PageCount);
 
-                var response = new ResponseResult()
-                {
-                    Paging = paging,
-                    Result = dataList
-                };
+                 var response = new ResponseResult()
+                 {
+                     Paging = paging,
+                     Result = dataList
+                 };
 
-                result.IsSuccess = true;
-                result.Code = 200;
-                result.Data = response;
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
-                result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }*/
+                 result.IsSuccess = true;
+                 result.Code = 200;
+                 result.Data = response;
+             }
+             catch (Exception e)
+             {
+                 result.IsSuccess = false;
+                 result.Code = 400;
+                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+             }*/
             return result;
         }
 
@@ -93,12 +87,12 @@ namespace GreeenGarden.Business.Service.ProductItemService
             var result = new ResultModel();
             try
             {
-              /*  var listProductSize = _proItemRepo.queryAllSizeByProduct(pagingModel, productId);
-                if (listProductSize == null)
-                {
-                    result.Message = "Don't have any size of this product";
-                }
-*/
+                /*  var listProductSize = _proItemRepo.queryAllSizeByProduct(pagingModel, productId);
+                  if (listProductSize == null)
+                  {
+                      result.Message = "Don't have any size of this product";
+                  }
+  */
                 result.IsSuccess = true;
                 result.Code = 200;
                 //result.Data = listProductSize;
@@ -161,8 +155,8 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                     newProductItem.Id = Guid.NewGuid();
                     newProductItem.Name = model.name;
-                        newProductItem.Description = model.description;
-                        //newProductItem.SubProductId = model.subProductId;
+                    newProductItem.Description = model.description;
+                    //newProductItem.SubProductId = model.subProductId;
                     newProductItem.Price = model.price;
                     newProductItem.Status = Status.ACTIVE;
                     await _proItemRepo.Insert(newProductItem);

@@ -1,6 +1,4 @@
-﻿using System;
-using GreeenGarden.Business.Service.PaymentService;
-using Microsoft.AspNetCore.Authorization;
+﻿using GreeenGarden.Business.Service.PaymentService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
@@ -10,10 +8,10 @@ namespace GreeenGarden.API.Controllers
     public class PaymentController : ControllerBase
     {
         private readonly IMoMoService _moMoService;
-		public PaymentController(IMoMoService moMoService)
-		{
+        public PaymentController(IMoMoService moMoService)
+        {
             _moMoService = moMoService;
-		}
+        }
         [HttpPost("create-payment")]
         public async Task<IActionResult> CreatePayment()
         {

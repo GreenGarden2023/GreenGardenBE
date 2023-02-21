@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.ResultModel
+﻿namespace GreeenGarden.Data.Models.ResultModel
 {
     public class ResultModel
     {
@@ -18,7 +12,7 @@ namespace GreeenGarden.Data.Models.ResultModel
 
     public class ResponseResult
     {
-       public object? Paging { get; set; }
-       public object? Result { get; set; }
+        public object? Paging { get; set; }
+        public object? Result { get; set; }
     }
 }

@@ -1,8 +1,7 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.UserModels
+﻿namespace GreeenGarden.Data.Models.UserModels
 {
-	public class UserLoginResModel
-	{
+    public class UserLoginResModel
+    {
 
         public string UserName { get; set; } = null!;
 

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.PaginationModel
+﻿namespace GreeenGarden.Data.Models.PaginationModel
 {
     public class PaginationRequestModel
     {
-        public PaginationRequestModel() {
+        public PaginationRequestModel()
+        {
             pageSize = 5;
             curPage = 1;
         }

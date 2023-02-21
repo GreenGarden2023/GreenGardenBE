@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GreeenGarden.Data.Entities;
+﻿namespace GreeenGarden.Data.Entities;
 
 public partial class TblProductItem
 {
@@ -20,6 +17,8 @@ public partial class TblProductItem
     public Guid? SizeId { get; set; }
 
     public int? Quantity { get; set; }
+
+    public string? Type { get; set; }
 
     public virtual TblProduct? Product { get; set; }
 

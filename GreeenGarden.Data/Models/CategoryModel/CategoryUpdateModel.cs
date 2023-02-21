@@ -1,11 +1,9 @@
-﻿
-using System;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
 
 namespace GreeenGarden.Data.Models.CategoryModel
 {
-	public class CategoryUpdateModel
+    public class CategoryUpdateModel
     {
         [Required]
         public Guid ID { get; set; }

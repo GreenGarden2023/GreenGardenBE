@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.GenericRepository
@@ -27,14 +25,14 @@ namespace GreeenGarden.Data.Repositories.GenericRepository
             await Update();
             return (Guid)entity.GetType().GetProperty("Id").GetValue(entity);
         }
-    
+
 
         public async Task Update()
-            {
-                await context.SaveChangesAsync();
-            }
+        {
+            await context.SaveChangesAsync();
+        }
 
-        
+
     }
 }
 

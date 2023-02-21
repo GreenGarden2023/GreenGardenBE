@@ -1,13 +1,6 @@
-﻿using EntityFrameworkPaginateCore;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
-using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.ProductItemRepo
 {
@@ -31,14 +24,14 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             return _context.TblProductItems.Where(x => x.Id == productItemId && x.Status == Status.ACTIVE);
         }
 
-       /* public Page<TblSubProduct> queryAllSizeByProduct(PaginationRequestModel model, Guid productId)
-        {
-            return _context.TblSubProducts.Where(x => x.ProductId == productId).Paginate(model.curPage, model.pageSize);
-        }*/
+        /* public Page<TblSubProduct> queryAllSizeByProduct(PaginationRequestModel model, Guid productId)
+         {
+             return _context.TblSubProducts.Where(x => x.ProductId == productId).Paginate(model.curPage, model.pageSize);
+         }*/
 
         public List<string> getImgByProductItem(Guid productItemId)
         {
-            var listResult = _context.TblImages.Where(x=>x.ProductItemId == productItemId).ToList();
+            var listResult = _context.TblImages.Where(x => x.ProductItemId == productItemId).ToList();
             if (listResult == null) return null;
             var listImg = new List<string>();
             foreach (var i in listResult)

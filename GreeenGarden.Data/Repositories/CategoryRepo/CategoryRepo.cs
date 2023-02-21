@@ -1,16 +1,9 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.CategoryRepo
 {
@@ -53,6 +46,11 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             var result = _context.TblCategories.Where(x => x.Name.Contains(categoryName)).FirstOrDefault();
             if (result != null) { return true; } else { return false; }
         }
+        public bool checkCategoryIDExist(Guid categoryID)
+        {
+            var result = _context.TblCategories.Where(x => x.Id.Equals(categoryID)).FirstOrDefault();
+            if (result != null) { return true; } else { return false; }
+        }
         public async Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel)
         {
             //var category = await _context.TblCategories.Where(x =>x.Id == categoryUpdateModel.ID).FirstAsync();
@@ -80,7 +78,7 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             }
 
 
-             _context.Update(category);
+            _context.Update(category);
             await _context.SaveChangesAsync();
             return category;
         }

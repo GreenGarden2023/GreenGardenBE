@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.SubProductModel
+﻿namespace GreeenGarden.Data.Models.SubProductModel
 {
     public class SubProductModel
     {
@@ -22,7 +16,7 @@ namespace GreeenGarden.Data.Models.SubProductModel
 
     public class SubProductAndSize
     {
-        public Guid subProductId { get; set;}
+        public Guid subProductId { get; set; }
         public string name { get; set; }
         public double? price { get; set; }
         public string size { get; set; }

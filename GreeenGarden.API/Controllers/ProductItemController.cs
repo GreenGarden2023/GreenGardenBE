@@ -1,5 +1,4 @@
-﻿using GreeenGarden.Business.Service.CategogyService;
-using GreeenGarden.Business.Service.ProductItemService;
+﻿using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +38,7 @@ namespace GreeenGarden.API.Controllers
 
 
         [HttpGet("get-item-detail")]
-        public async Task<IActionResult> getDetailItem( Guid productItemId)
+        public async Task<IActionResult> getDetailItem(Guid productItemId)
         {
             var result = await _service.getDetailItem(productItemId);
             if (result.IsSuccess && result.Code == 200) return Ok(result);
@@ -47,7 +46,7 @@ namespace GreeenGarden.API.Controllers
         }
 
         [HttpPost("create-product-item")]
-        public async Task<IActionResult> createProductItem([FromForm] ProductItemCreateRequestModel model,[FromQuery] IList<IFormFile> imgFile)
+        public async Task<IActionResult> createProductItem([FromForm] ProductItemCreateRequestModel model, [FromQuery] IList<IFormFile> imgFile)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.createProductItem(model, imgFile, token);

@@ -1,17 +1,16 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.UserRepo
 {
-	public class UserRepo : Repository<TblUser>, IUserRepo
-	{
-		public UserRepo(GreenGardenDbContext context) : base(context)
-		{
+    public class UserRepo : Repository<TblUser>, IUserRepo
+    {
+        public UserRepo(GreenGardenDbContext context) : base(context)
+        {
 
-		}
+        }
         public async Task<UserLoginResModel> GetUser(string userName)
         {
             var query = from u in context.TblUsers

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Data;
-using System.Security.Cryptography;
-using GreeenGarden.Business.Service.UserService;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,23 +12,23 @@ namespace GreeenGarden.API.Controllers
     {
         private readonly IUserService _userService;
         public UserController(IUserService userService)
-        { 
+        {
             _userService = userService;
-		}
-    [HttpPost("register")]
-    public async Task<ActionResult<ResultModel>> Register(UserInsertModel request)
-    {
-        try
+        }
+        [HttpPost("register")]
+        public async Task<ActionResult<ResultModel>> Register(UserInsertModel request)
         {
-            var result = await _userService.Register(request);
+            try
+            {
+                var result = await _userService.Register(request);
                 return result;
-        }
-        catch (Exception e)
-        {
+            }
+            catch (Exception e)
+            {
 
-            return BadRequest(e.ToString());
+                return BadRequest(e.ToString());
+            }
         }
-    }
         [HttpPost("login")]
         public async Task<ActionResult<ResultModel>> Login(UserLoginReqModel request)
         {
@@ -51,7 +46,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-current-user")]
         [Authorize(Roles = "Admin, Customer, Staff, Deliverer, Manager")]
-        public async Task<ActionResult<ResultModel>> GetCurrentUser( )
+        public async Task<ActionResult<ResultModel>> GetCurrentUser()
         {
             try
             {

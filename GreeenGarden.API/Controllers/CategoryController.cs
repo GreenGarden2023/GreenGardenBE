@@ -1,10 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using GreeenGarden.Business.Service.CategogyService;
+﻿using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
-using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace GreeenGarden.API.Controllers
 {
@@ -40,7 +39,7 @@ namespace GreeenGarden.API.Controllers
         [Authorize(Roles = "Staff, Manager")]
         public async Task<IActionResult> createCategory([FromForm] CategoryCreateModel categoryCreateModel)
         {
-            
+
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.createCategory(token, categoryCreateModel);
             if (result.IsSuccess) return Ok(result);

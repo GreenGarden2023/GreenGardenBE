@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using GreeenGarden.Business.Service.ImageService;
-using GreeenGarden.Business.Utilities.ImgUtility;
+﻿using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
@@ -9,15 +7,8 @@ using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Business.Service.CategogyService
 {
@@ -26,9 +17,9 @@ namespace GreeenGarden.Business.Service.CategogyService
         private readonly ICategoryRepo _cateRepo;
         private readonly DecodeToken _decodeToken;
         private readonly IImageService _imgService;
-       private readonly IImageRepo _imageRepo;
+        private readonly IImageRepo _imageRepo;
 
-        public CategogyService( ICategoryRepo cateRepo, IImageService imgService, IImageRepo imageRepo)
+        public CategogyService(ICategoryRepo cateRepo, IImageService imgService, IImageRepo imageRepo)
         {
             _cateRepo = cateRepo;
             _decodeToken = new DecodeToken();
@@ -50,7 +41,7 @@ namespace GreeenGarden.Business.Service.CategogyService
             }
 
 
-            if (String.IsNullOrEmpty(categoryCreateModel.Name) || categoryCreateModel.Name.Length <2 || categoryCreateModel.Name.Length > 50)
+            if (String.IsNullOrEmpty(categoryCreateModel.Name) || categoryCreateModel.Name.Length < 2 || categoryCreateModel.Name.Length > 50)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
@@ -73,8 +64,8 @@ namespace GreeenGarden.Business.Service.CategogyService
             }
             try
             {
-                
-                
+
+
                 //Insert Category
                 var newCategory = new TblCategory()
                 {
@@ -120,7 +111,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 return result;
             }
 
-            
+
         }
 
         public async Task<ResultModel> getAllCategories(PaginationRequestModel pagingModel)
@@ -153,7 +144,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     dataList.Add(CategoryToShow);
                 }
                 var paging = new PaginationResponseModel()
-                    
+
                     .PageSize(listCategories.PageSize)
                     .CurPage(listCategories.CurrentPage)
                     .RecordCount(listCategories.RecordCount)
@@ -169,7 +160,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.Code = 200;
                 result.Data = response;
             }
-            catch (Exception e )
+            catch (Exception e)
             {
                 result.IsSuccess = false;
                 result.Code = 400;
@@ -248,7 +239,8 @@ namespace GreeenGarden.Business.Service.CategogyService
             if (String.IsNullOrEmpty(categoryUpdateModel.Name) &&
                 String.IsNullOrEmpty(categoryUpdateModel.Description) &&
                 String.IsNullOrEmpty(categoryUpdateModel.Status) &&
-                 categoryUpdateModel.Image == null) {
+                 categoryUpdateModel.Image == null)
+            {
                 result.Code = 400;
                 result.IsSuccess = false;
                 result.Message = "Please update atleast 1 parameter";
@@ -279,7 +271,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
-                    result.Message = "Can not find category with ID: "+ categoryUpdateModel.ID;
+                    result.Message = "Can not find category with ID: " + categoryUpdateModel.ID;
                     return result;
                 }
                 result.IsSuccess = true;
@@ -288,17 +280,8 @@ namespace GreeenGarden.Business.Service.CategogyService
                 if (categoryUpdate != null && categoryUpdateModel.Image != null)
                 {
                     var imgUpdate = await _imgService.UpdateImageCategory(categoryUpdateModel.ID, categoryUpdateModel.Image);
-                    if(imgUpdate != null)
+                    if (imgUpdate != null)
                     {
-                        var categoryToShow = new CategoryModel()
-                        {
-                            Id = categoryUpdateModel.ID,
-                            Name = categoryUpdateModel.Name,
-                            Status = categoryUpdateModel.Status,
-                            ImgUrl = imgUpdate.Data.ToString(),
-                            Description = categoryUpdateModel.Description
-                        };
-
                         result.IsSuccess = true;
                         result.Code = 200;
                         result.Message = "Category updated with image change";

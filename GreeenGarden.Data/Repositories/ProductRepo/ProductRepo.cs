@@ -2,13 +2,9 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.ProductRepo
 {
@@ -42,8 +38,12 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         public Page<TblProduct> queryAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
         {
             return _context.TblProducts.Where(x => x.Status == Status.ACTIVE
-                && x.CategoryId == categoryId
-                && x.Quantity > 0).Paginate(pagingModel.curPage, pagingModel.pageSize);
+                && x.CategoryId == categoryId).Paginate(pagingModel.curPage, pagingModel.pageSize);
+        }
+
+        public Page<TblProduct> queryAllProduct(PaginationRequestModel pagingModel)
+        {
+            return _context.TblProducts.Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
 
         public TblProduct queryAProductByProId(Guid? proId)
@@ -51,10 +51,38 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             return _context.TblProducts.Where(x => x.Id == proId).FirstOrDefault();
         }
 
-        public void updateProduct(TblProduct product)
+        public async Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel)
         {
-            _context.TblProducts.Update(product);
-            _context.SaveChangesAsync();
+
+            var query = from prod in context.TblProducts
+                        where prod.Id.Equals(productUpdateModel.ID)
+                        select new { prod };
+
+            var product = await query.Select(x => x.prod).FirstOrDefaultAsync();
+            if (product == null)
+            {
+                return false;
+            }
+            if (!String.IsNullOrEmpty(productUpdateModel.Name) && !productUpdateModel.Name.Equals(product.Name))
+            {
+                product.Name = productUpdateModel.Name;
+            }
+            if (!String.IsNullOrEmpty(productUpdateModel.Description) && !productUpdateModel.Description.Equals(product.Description))
+            {
+                product.Description = productUpdateModel.Description;
+            }
+            if (!String.IsNullOrEmpty(productUpdateModel.Status) && !productUpdateModel.Status.Equals(product.Status))
+            {
+                product.Status = productUpdateModel.Status;
+            }
+            if (productUpdateModel.CategoryId != Guid.Empty && !productUpdateModel.CategoryId.Equals(product.CategoryId))
+            {
+                product.CategoryId = productUpdateModel.CategoryId;
+            }
+
+            _context.Update(product);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

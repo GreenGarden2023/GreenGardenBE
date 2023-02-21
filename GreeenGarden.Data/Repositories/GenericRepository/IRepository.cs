@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Repositories.GenericRepository
+﻿namespace GreeenGarden.Data.Repositories.GenericRepository
 {
     public interface IRepository<T> where T : class
     {

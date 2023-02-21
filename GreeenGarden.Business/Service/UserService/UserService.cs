@@ -1,30 +1,24 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using Azure.Core;
-using GreeenGarden.Business.Utilities.TokenService;
+﻿using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.UserRepo;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace GreeenGarden.Business.Service.UserService
 {
-    
-	public class UserService : IUserService
-	{
+
+    public class UserService : IUserService
+    {
         private readonly IUserRepo _userRepo;
         private readonly DecodeToken _decodeToken;
 
         public UserService(IUserRepo userRepo)
-		{
+        {
             _userRepo = userRepo;
             _decodeToken = new DecodeToken();
         }
@@ -43,7 +37,7 @@ namespace GreeenGarden.Business.Service.UserService
                     };
 
                 }
-                if(!VerifyPasswordHash(userLoginReqModel.Password, userModel.PasswordHash, userModel.PasswordSalt))
+                if (!VerifyPasswordHash(userLoginReqModel.Password, userModel.PasswordHash, userModel.PasswordSalt))
                 {
                     return new ResultModel()
                     {
@@ -60,7 +54,7 @@ namespace GreeenGarden.Business.Service.UserService
                     IsSuccess = true,
                     Data = userCurrResModel,
                     Message = "Login Successful"
-                    
+
                 };
             }
             catch (Exception ex)
@@ -76,9 +70,10 @@ namespace GreeenGarden.Business.Service.UserService
         public async Task<ResultModel> Register(UserInsertModel userInsertModel)
         {
             UserLoginResModel userModelCheck = await _userRepo.GetUser(userInsertModel.UserName);
-            if (userModelCheck !=null)
+            if (userModelCheck != null)
             {
-                return new ResultModel() {
+                return new ResultModel()
+                {
                     IsSuccess = false,
                     Message = "Username Duplicated"
                 };

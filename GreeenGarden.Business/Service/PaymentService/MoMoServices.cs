@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 
 
 namespace GreeenGarden.Business.Service.PaymentService
@@ -9,7 +8,7 @@ namespace GreeenGarden.Business.Service.PaymentService
 
 
 
-        public MoMoServices() {}
+        public MoMoServices() { }
 
         public async Task<string> CreatePayment()
         {
@@ -69,10 +68,10 @@ namespace GreeenGarden.Business.Service.PaymentService
             string responseFromMomo = await Task.FromResult(PaymentRequest.sendPaymentRequest(endpoint, message.ToString()));
             Console.WriteLine(responseFromMomo);
             return responseFromMomo;
-            
+
         }
 
-       
+
 
     }
 }

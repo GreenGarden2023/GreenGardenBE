@@ -1,20 +1,15 @@
-﻿using System;
-using Azure.Storage.Blobs;
-using GreeenGarden.Business.Utilities.TokenService;
-using GreeenGarden.Data.Entities;
+﻿using Azure.Storage.Blobs;
 using GreeenGarden.Data.Models.ResultModel;
-using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
-using GreeenGarden.Data.Repositories.ProductRepo;
 using Microsoft.AspNetCore.Http;
 
 namespace GreeenGarden.Business.Service.ImageService
 {
-	public class ImageService : IImageService
+    public class ImageService : IImageService
     {
         private readonly IImageRepo _imageRepo;
 
-        public ImageService( IImageRepo imageRepo)
+        public ImageService(IImageRepo imageRepo)
         {
             _imageRepo = imageRepo;
         }
@@ -43,7 +38,7 @@ namespace GreeenGarden.Business.Service.ImageService
                 resultsModel.IsSuccess = true;
                 resultsModel.Data = urls;
                 resultsModel.Message = "Upload Success";
-               
+
 
                 return resultsModel;
             }
@@ -66,16 +61,16 @@ namespace GreeenGarden.Business.Service.ImageService
 
                 BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
 
-                    using (var stream = new MemoryStream())
-                    {
-                        Guid id = Guid.NewGuid();
-                        string format = Path.GetExtension(file.FileName);
-                        await file.CopyToAsync(stream);
-                        stream.Position = 0;
-                        await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
-                        url = defaultURL + id + format;
-                    }
-                
+                using (var stream = new MemoryStream())
+                {
+                    Guid id = Guid.NewGuid();
+                    string format = Path.GetExtension(file.FileName);
+                    await file.CopyToAsync(stream);
+                    stream.Position = 0;
+                    await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
+                    url = defaultURL + id + format;
+                }
+
                 resultsModel.IsSuccess = true;
                 resultsModel.Data = url;
                 resultsModel.Message = "Upload Success";
@@ -122,7 +117,7 @@ namespace GreeenGarden.Business.Service.ImageService
             try
             {
                 var imgBefore = await _imageRepo.GetImgUrl(null, CategoryId, null, null, null);
-                if (imgBefore !=null)
+                if (imgBefore != null)
                 {
                     var imgToDelete = new List<string>() { imgBefore.ImageUrl };
                     await DeleteImages(imgToDelete);
@@ -134,6 +129,39 @@ namespace GreeenGarden.Business.Service.ImageService
                 {
 
                     await _imageRepo.UpdateImgForCategory(CategoryId, uploadImg.Data.ToString());
+                    result.IsSuccess = true;
+                    result.Data = uploadImg.Data.ToString();
+                    return result;
+                }
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+        public async Task<ResultModel> UpdateImageProduct(Guid productID, IFormFile file)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var imgBefore = await _imageRepo.GetImgUrl(null, productID, null, null, null);
+                if (imgBefore != null)
+                {
+                    var imgToDelete = new List<string>() { imgBefore.ImageUrl };
+                    await DeleteImages(imgToDelete);
+
+                }
+
+                var uploadImg = await UploadAnImage(file);
+                if (uploadImg.IsSuccess)
+                {
+
+                    await _imageRepo.UpdateImgForProduct(productID, uploadImg.Data.ToString());
                     result.IsSuccess = true;
                     result.Data = uploadImg.Data.ToString();
                     return result;

@@ -1,18 +1,10 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.SubProductModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.SubProductRepo
 {
-    public class SubProductRepo : Repository<TblSubProduct> , ISubProductRepo
+    public class SubProductRepo : Repository<TblSubProduct>, ISubProductRepo
     {
         private readonly GreenGardenDbContext _context;
         public SubProductRepo(GreenGardenDbContext context) : base(context)
@@ -22,21 +14,21 @@ namespace GreeenGarden.Data.Repositories.SubProductRepo
 
         public bool checkSizeUnique(Guid? SubId)
         {
-           /* var checkResult = _context.TblSubProducts.Join(
-                _context.TblSizes, 
-                x=>x.SizeId, 
-                s=>s.Id,(x,s)=> new
-                {x.Id,s.Name}).Where(o=>o.Id == SubId).FirstOrDefault();
+            /* var checkResult = _context.TblSubProducts.Join(
+                 _context.TblSizes, 
+                 x=>x.SizeId, 
+                 s=>s.Id,(x,s)=> new
+                 {x.Id,s.Name}).Where(o=>o.Id == SubId).FirstOrDefault();
 
-            if (checkResult.Name == Size.UNIQUE)
-            {
-                return true;
-            }*/
+             if (checkResult.Name == Size.UNIQUE)
+             {
+                 return true;
+             }*/
             return false;
         }
 
 
-        public async Task< TblSubProduct> queryDetailBySubId(Guid? SubId)
+        public async Task<TblSubProduct> queryDetailBySubId(Guid? SubId)
         {
             /*var subProduct = await _context.TblSubProducts.Where(x=>x.Id== SubId).FirstAsync();
             if (subProduct == null) return null;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GreeenGarden.Data.Enums
+﻿namespace GreeenGarden.Data.Enums
 {
     public class Status
     {

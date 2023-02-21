@@ -1,5 +1,4 @@
-﻿using GreeenGarden.Business.Service.CategogyService;
-using GreeenGarden.Business.Service.SubProductService;
+﻿using GreeenGarden.Business.Service.SubProductService;
 using GreeenGarden.Data.Models.SubProductModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -1,18 +1,18 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace GreeenGarden.Data.Models.CategoryModel
+namespace GreeenGarden.Data.Models.ProductModel
 {
-    public class CategoryCreateModel
+
+    public class ProductCreateModel
     {
         [Required]
         public string? Name { get; set; }
-
         public string? Description { get; set; }
-
         [Required]
-        public IFormFile? Image { get; set; }
+        public Guid CategoryId { get; set; }
+        [Required]
+        public IFormFile? ImgFile { get; set; }
 
     }
 }
-

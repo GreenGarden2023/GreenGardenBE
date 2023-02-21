@@ -1,8 +1,7 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.UserModels
+﻿namespace GreeenGarden.Data.Models.UserModels
 {
-	public class UserCurrResModel
-	{
+    public class UserCurrResModel
+    {
         public Guid Id { get; set; }
 
         public string UserName { get; set; } = null!;

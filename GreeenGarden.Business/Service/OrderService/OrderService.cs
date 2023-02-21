@@ -1,11 +1,5 @@
 ﻿using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
-using GreeenGarden.Data.Repositories.ProductRepo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -16,7 +10,7 @@ namespace GreeenGarden.Business.Service.OrderService
         public OrderService(/*IMapper mapper,*/ IOrderRepo orderRepo)
         {
             //_mapper = mapper;
-            _orderRepo= orderRepo;
+            _orderRepo = orderRepo;
         }
 
         public async Task<ResultModel> checkRetailProduct(Guid productItemId)
@@ -60,44 +54,44 @@ namespace GreeenGarden.Business.Service.OrderService
         public async Task<ResultModel> createOrder(string token, Guid productItem, Guid productSize, int quantity, DateTime startDate, DateTime endDate)
         {
             var result = new ResultModel();
-           /* try
-            {
-                // check token
+            /* try
+             {
+                 // check token
 
-                if (productItem != null)
-                {
-                   bool check = _orderRepo.checkRetailProduct(productItem);
-                    if (!check)
-                    {
-                        result.IsSuccess = false;
-                        result.Message = "dont have ProductItem";
-                        return result;
-                    }
-                }
-                if (productSize !=null)
-                {
-                    bool check = _orderRepo.checkWholesaleProduct(productSize, quantity);
-                    if (!check)
-                    {
-                        result.IsSuccess = false;
-                        result.Message = "Product size dont enought item";
-                        return result;
-                    }
-                }
-                if (startDate < DateTime.Now || startDate >= endDate)
-                {
-                    result.IsSuccess = false;
-                    result.Message = "startDate invalid";
-                    return result;
-                }
+                 if (productItem != null)
+                 {
+                    bool check = _orderRepo.checkRetailProduct(productItem);
+                     if (!check)
+                     {
+                         result.IsSuccess = false;
+                         result.Message = "dont have ProductItem";
+                         return result;
+                     }
+                 }
+                 if (productSize !=null)
+                 {
+                     bool check = _orderRepo.checkWholesaleProduct(productSize, quantity);
+                     if (!check)
+                     {
+                         result.IsSuccess = false;
+                         result.Message = "Product size dont enought item";
+                         return result;
+                     }
+                 }
+                 if (startDate < DateTime.Now || startDate >= endDate)
+                 {
+                     result.IsSuccess = false;
+                     result.Message = "startDate invalid";
+                     return result;
+                 }
 
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
-                result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }*/
+             }
+             catch (Exception e)
+             {
+                 result.IsSuccess = false;
+                 result.Code = 400;
+                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+             }*/
             return result;
         }
     }

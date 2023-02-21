@@ -1,11 +1,10 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.UserModels
+﻿namespace GreeenGarden.Data.Models.UserModels
 {
-	public class UserInsertModel
-	{
+    public class UserInsertModel
+    {
         public string UserName { get; set; } = null!;
 
-        public string Password{ get; set; } = null!;
+        public string Password { get; set; } = null!;
 
         public string? FullName { get; set; }
 

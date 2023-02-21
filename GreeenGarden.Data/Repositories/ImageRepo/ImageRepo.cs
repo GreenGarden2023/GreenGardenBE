@@ -1,11 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.ImageRepo
 {
@@ -45,12 +40,25 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
         {
             var imgCategory = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();
-            if (imgCategory != null) {
+            if (imgCategory != null)
+            {
                 imgCategory.ImageUrl = imgUrl;
             }
             _context.Update(imgCategory);
             await _context.SaveChangesAsync();
             return imgCategory;
+        }
+
+        public async Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl)
+        {
+            var imgProduct = _context.TblImages.Where(x => x.ProductId == ProductID).FirstOrDefault();
+            if (imgProduct != null)
+            {
+                imgProduct.ImageUrl = ImgUrl;
+            }
+            _context.Update(imgProduct);
+            await _context.SaveChangesAsync();
+            return imgProduct;
         }
     }
 }

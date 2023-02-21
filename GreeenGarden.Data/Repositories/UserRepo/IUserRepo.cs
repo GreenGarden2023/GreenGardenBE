@@ -1,5 +1,4 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.GenericRepository;
 

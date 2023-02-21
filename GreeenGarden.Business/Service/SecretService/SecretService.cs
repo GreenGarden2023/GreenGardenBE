@@ -1,12 +1,11 @@
-﻿using System;
-using Azure.Core;
+﻿using Azure.Core;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 
 namespace GreeenGarden.Business.Service.SecretService
 {
-	public static class SecretService
-	{
+    public static class SecretService
+    {
         public static string URI = "https://ggkeyvault2023.vault.azure.net/";
         public static string GetConnectionString()
         {
