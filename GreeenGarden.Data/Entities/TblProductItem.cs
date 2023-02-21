@@ -17,11 +17,13 @@ public partial class TblProductItem
 
     public Guid? ProductId { get; set; }
 
-    public string? Size { get; set; }
+    public Guid? SizeId { get; set; }
 
     public int? Quantity { get; set; }
 
     public virtual TblProduct? Product { get; set; }
+
+    public virtual TblSize? Size { get; set; }
 
     public virtual ICollection<TblAddendumProductItem> TblAddendumProductItems { get; } = new List<TblAddendumProductItem>();
 

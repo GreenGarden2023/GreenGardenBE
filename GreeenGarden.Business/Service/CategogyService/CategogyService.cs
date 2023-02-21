@@ -100,10 +100,11 @@ namespace GreeenGarden.Business.Service.CategogyService
                 }
                 var categoryToShow = new CategoryModel()
                 {
-                    id = newCategory.Id,
-                    name = newCategory.Name,
-                    status = newCategory.Status,
-                    imgUrl = imgUploadUrl.Data.ToString()
+                    Id = newCategory.Id,
+                    Name = newCategory.Name,
+                    Status = newCategory.Status,
+                    ImgUrl = imgUploadUrl.Data.ToString(),
+                    Description = newCategory.Description
                 };
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -142,10 +143,12 @@ namespace GreeenGarden.Business.Service.CategogyService
                 {
                     var CategoryToShow = new CategoryModel
                     {
-                        id = c.Id,
-                        name = c.Name,
-                        status = c.Status,
-                        imgUrl = "" + _cateRepo.getImgByCategory(c.Id)
+                        Id = c.Id,
+                        Name = c.Name,
+                        Status = c.Status,
+                        ImgUrl = "" + _cateRepo.getImgByCategory(c.Id),
+                        Description = c.Description
+
                     };
                     dataList.Add(CategoryToShow);
                 }
@@ -240,10 +243,11 @@ namespace GreeenGarden.Business.Service.CategogyService
                     {
                         var categoryToShow = new CategoryModel()
                         {
-                            id = categoryUpdateModel.ID,
-                            name = categoryUpdateModel.Name,
-                            status = categoryUpdateModel.Status,
-                            imgUrl = imgUpdate.Data.ToString(),
+                            Id = categoryUpdateModel.ID,
+                            Name = categoryUpdateModel.Name,
+                            Status = categoryUpdateModel.Status,
+                            ImgUrl = imgUpdate.Data.ToString(),
+                            Description = categoryUpdateModel.Description
                         };
 
                         result.IsSuccess = true;

@@ -9,5 +9,5 @@ public partial class TblSize
 
     public string? Name { get; set; }
 
-    public virtual ICollection<TblSubProduct> TblSubProducts { get; } = new List<TblSubProduct>();
+    public virtual ICollection<TblProductItem> TblProductItems { get; } = new List<TblProductItem>();
 }

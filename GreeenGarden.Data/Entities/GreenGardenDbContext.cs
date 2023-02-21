@@ -31,6 +31,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblRole> TblRoles { get; set; }
 
+    public virtual DbSet<TblSize> TblSizes { get; set; }
+
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
@@ -202,6 +204,10 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_tblProductItems_tblProducts");
+
+            entity.HasOne(d => d.Size).WithMany(p => p.TblProductItems)
+                .HasForeignKey(d => d.SizeId)
+                .HasConstraintName("FK_tblProductItems_tblSizes");
         });
 
         modelBuilder.Entity<TblRole>(entity =>
@@ -211,6 +217,14 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+        });
+
+        modelBuilder.Entity<TblSize>(entity =>
+        {
+            entity.ToTable("tblSizes");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.Name).HasColumnName("name");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

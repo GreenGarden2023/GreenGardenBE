@@ -8,9 +8,10 @@ namespace GreeenGarden.Data.Models.CategoryModel
 {
     public class CategoryModel
     {
-        public Guid id { get; set; }
-        public string name { get; set; }
-        public string status { get; set; }
-        public string imgUrl { get; set; }
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
+        public string? Status { get; set; }
+        public string? ImgUrl { get; set; }
+        public string? Description { get; set; }
     }
 }
