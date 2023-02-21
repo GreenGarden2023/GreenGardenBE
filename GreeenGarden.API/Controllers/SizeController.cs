@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("size/")]
     //[Authorize]
     [ApiController]
     public class SizeController : Controller
@@ -16,7 +16,7 @@ namespace GreeenGarden.API.Controllers
             _service = service;
         }
 
-        [HttpPost("CreateSize")]
+        [HttpPost("create-size")]
         [Authorize(Roles = "Staff, Manager")]
         public async Task<IActionResult> createSize(string sizeName)
         {

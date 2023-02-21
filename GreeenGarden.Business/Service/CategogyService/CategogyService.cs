@@ -207,13 +207,6 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.Message = "Category name is greater than 2 and less than 50 characters";
                 return result;
             }
-            if (_cateRepo.checkCategoryNameExist(categoryUpdateModel.Name))
-            {
-                result.Code = 400;
-                result.IsSuccess = false;
-                result.Message = "Category name is duplicated";
-                return result;
-            }
 
             if (String.IsNullOrEmpty(categoryUpdateModel.Status) || categoryUpdateModel.Status.Length < 2 || categoryUpdateModel.Status.Length > 50)
             {
@@ -222,6 +215,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.Message = "Category status is greater than 2 and less than 50 characters";
                 return result;
             }
+
 
             try
             {

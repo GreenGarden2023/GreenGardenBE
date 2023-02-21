@@ -61,15 +61,18 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             {
                 return null;
             }
-            if (!String.IsNullOrEmpty(categoryUpdateModel.Name))
+            if (!String.IsNullOrEmpty(categoryUpdateModel.Name) && !categoryUpdateModel.Name.Equals(category.Name))
             {
                 category.Name = categoryUpdateModel.Name;
             }
-            if (!String.IsNullOrEmpty(categoryUpdateModel.Description))
+            if (!String.IsNullOrEmpty(categoryUpdateModel.Description) && !categoryUpdateModel.Description.Equals(category.Description))
             {
                 category.Description = categoryUpdateModel.Description;
             }
-            if (!String.IsNullOrEmpty(categoryUpdateModel.Status)) category.Status = categoryUpdateModel.Status;
+            if (!String.IsNullOrEmpty(categoryUpdateModel.Status) && !categoryUpdateModel.Status.Equals(category.Status))
+            {
+                category.Status = categoryUpdateModel.Status;
+            }
 
 
              _context.Update(category);

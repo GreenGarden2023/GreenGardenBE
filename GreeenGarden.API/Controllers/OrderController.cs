@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("order/")]
     //[Authorize]
     [ApiController]
     public class OrderController : Controller
@@ -15,7 +15,7 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpGet("CheckWholesaleProduct")]
+        [HttpGet("check-wholesale-product")]
         public async Task<IActionResult> checkWholesaleProduct(Guid subProductId, int quantity)
         {
             var result = await _service.checkWholesaleProduct(subProductId, quantity);
@@ -25,7 +25,7 @@ namespace GreeenGarden.API.Controllers
 
 
 
-        [HttpGet("CheckRetailProduct")]
+        [HttpGet("check-retail-product")]
         public async Task<IActionResult> checkRetailProduct(Guid productItemId)
         {
             var result = await _service.checkRetailProduct(productItemId);

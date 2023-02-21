@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("product/")]
     //[Authorize]
     [ApiController]
     public class ProductController : Controller
@@ -18,7 +18,7 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpGet("getAllProductByCategory")]
+        [HttpGet("get-products-by-category")]
         public async Task<IActionResult> getAllProductByCategory([FromQuery] PaginationRequestModel pagingModel, Guid categoryId)
         {
             var result = await _service.getAllProductByCategory(pagingModel, categoryId);
@@ -27,7 +27,7 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpPost("CreateProduct")]
+        [HttpPost("create-product")]
         [Authorize(Roles = "Staff, Manager")]
         public async Task<IActionResult> createProduct([FromForm] ProductCreateRequestModel model)
         {

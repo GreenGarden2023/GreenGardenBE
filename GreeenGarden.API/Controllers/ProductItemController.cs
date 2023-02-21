@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("product-item/")]
     //[Authorize]
     [ApiController]
     public class ProductItemController : Controller
@@ -19,7 +19,7 @@ namespace GreeenGarden.API.Controllers
 
 
 
-        [HttpGet("GetSizesOfProduct")]
+        [HttpGet("get-product-sizes")]
         public async Task<IActionResult> getSizesOfProduct([FromQuery] PaginationRequestModel pagingModel, Guid productId)
         {
             var result = await _service.getSizesOfProduct(pagingModel, productId);
@@ -29,7 +29,7 @@ namespace GreeenGarden.API.Controllers
 
 
 
-        [HttpGet("GetItemsOfProductSize")]
+        [HttpGet("get-product-size-items")]
         public async Task<IActionResult> getAllProductItemByProductItemSize([FromQuery] PaginationRequestModel pagingModel, Guid productSizeId)
         {
             var result = await _service.getAllProductItemByProductItemSize(pagingModel, productSizeId);
@@ -38,7 +38,7 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpGet("GetDetailItem")]
+        [HttpGet("get-item-detail")]
         public async Task<IActionResult> getDetailItem( Guid productItemId)
         {
             var result = await _service.getDetailItem(productItemId);
@@ -46,7 +46,7 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("CreateProductItem")]
+        [HttpPost("create-product-item")]
         public async Task<IActionResult> createProductItem([FromForm] ProductItemCreateRequestModel model,[FromQuery] IList<IFormFile> imgFile)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];

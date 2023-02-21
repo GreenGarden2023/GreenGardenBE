@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("product-size/")]
     //[Authorize]
     [ApiController]
     public class ProductSizeController : Controller
@@ -19,7 +19,7 @@ namespace GreeenGarden.API.Controllers
 
 
 
-        [HttpPost("CreateProductSize")]
+        [HttpPost("create-product-size")]
         [Authorize(Roles = "Staff, Manager")]
         public async Task<IActionResult> createCategory([FromForm] SizeItemRequestModel model)
         {
