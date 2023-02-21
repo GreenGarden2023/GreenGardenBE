@@ -40,11 +40,15 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             return _context.TblProducts.Where(x => x.Status == Status.ACTIVE
                 && x.CategoryId == categoryId).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
-
+        public Page<TblProduct> queryAllProductByStatus(PaginationRequestModel pagingModel, string status)
+        {
+            return _context.TblProducts.Where(x => x.Status.Equals(status)).Paginate(pagingModel.curPage, pagingModel.pageSize);
+        }
         public Page<TblProduct> queryAllProduct(PaginationRequestModel pagingModel)
         {
             return _context.TblProducts.Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
+
 
         public TblProduct queryAProductByProId(Guid? proId)
         {

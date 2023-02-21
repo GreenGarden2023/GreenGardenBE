@@ -162,6 +162,68 @@ namespace GreeenGarden.Business.Service.ProductService
             }
             return result;
         }
+        public async Task<ResultModel> getAllProductByStatus(PaginationRequestModel pagingModel, string status)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (String.IsNullOrEmpty(status))
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Please enter status";
+                    return result;
+                }
+                var listProdct = _productRepo.queryAllProductByStatus(pagingModel, status);
+
+                if (listProdct == null)
+                {
+                    result.Message = "List null";
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = listProdct;
+                    return result;
+                }
+
+                List<ProductModel> dataList = new List<ProductModel>();
+                foreach (var p in listProdct.Results)
+                {
+                    var productToShow = new ProductModel
+                    {
+                        id = p.Id,
+                        name = p.Name,
+                        description = p.Description,
+                        status = p.Status,
+                        categoryId = p.CategoryId,
+                        imgUrl = _productRepo.getImgByProduct(p.Id),
+                    };
+                    dataList.Add(productToShow);
+                }
+                var paging = new PaginationResponseModel()
+                    .PageSize(listProdct.PageSize)
+                    .CurPage(listProdct.CurrentPage)
+                    .RecordCount(listProdct.RecordCount)
+                    .PageCount(listProdct.PageCount);
+
+
+                var response = new ResponseResult()
+                {
+                    Paging = paging,
+                    Result = dataList
+                };
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = response;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
         public async Task<ResultModel> getAllProduct(PaginationRequestModel pagingModel)
         {
             var result = new ResultModel();

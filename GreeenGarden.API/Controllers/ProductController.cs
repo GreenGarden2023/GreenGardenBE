@@ -26,6 +26,13 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("get-products-by-status")]
+        public async Task<IActionResult> getAllProductByStatus([FromQuery] PaginationRequestModel pagingModel, [Required] string status)
+        {
+            var result = await _service.getAllProductByStatus(pagingModel, status);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            return BadRequest(result);
+        }
         [HttpGet("get-all-products")]
         public async Task<IActionResult> getAllProduct([FromQuery] PaginationRequestModel pagingModel)
         {
