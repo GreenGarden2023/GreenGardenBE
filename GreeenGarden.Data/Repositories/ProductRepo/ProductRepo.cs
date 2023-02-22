@@ -37,8 +37,7 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
 
         public Page<TblProduct> queryAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
         {
-            return _context.TblProducts.Where(x => x.Status == Status.ACTIVE
-                && x.CategoryId == categoryId).Paginate(pagingModel.curPage, pagingModel.pageSize);
+            return _context.TblProducts.Where(x => x.CategoryId == categoryId).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
         public Page<TblProduct> queryAllProductByStatus(PaginationRequestModel pagingModel, string status)
         {

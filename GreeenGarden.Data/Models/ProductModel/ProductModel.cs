@@ -2,13 +2,12 @@
 {
     public class ProductModel
     {
-        public Guid id { get; set; }
-        public string name { get; set; }
-        public int? quantity { get; set; }
-        public string description { get; set; }
-        public string status { get; set; }
-        public Guid? categoryId { get; set; }
-        public string imgUrl { get; set; }
+        public Guid Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public string? Status { get; set; }
+        public Guid? CategoryId { get; set; }
+        public string? ImgUrl { get; set; }
     }
 
 

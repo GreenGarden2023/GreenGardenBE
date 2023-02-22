@@ -69,10 +69,19 @@ namespace GreeenGarden.Business.Service.ProductService
                     CategoryId = model.CategoryId
                 };
                 var insertResult = await _productRepo.Insert(newProduct);
+                ProductModel productResModel = new ProductModel(){
+                    Id = newProduct.Id,
+                    Name = newProduct.Name,
+                    Description = newProduct.Description,
+                    Status = newProduct.Status,
+                    CategoryId = newProduct.CategoryId,
 
+                };
+            
                 // create, update tbl img()
 
                 var imgUploadUrl = await _imgService.UploadAnImage(model.ImgFile);
+                productResModel.ImgUrl = imgUploadUrl.Data.ToString();
                 if (imgUploadUrl != null)
                 {
                     var newimgCategory = new TblImage()
@@ -82,11 +91,12 @@ namespace GreeenGarden.Business.Service.ProductService
                         ProductId = newProduct.Id,
                     };
                     await _imageRepo.Insert(newimgCategory);
-
+                    
                 }
 
                 result.IsSuccess = true;
                 result.Code = 200;
+                result.Data = productResModel;
                 result.Message = "Create new product successfully";
                 return result;
 
@@ -128,12 +138,12 @@ namespace GreeenGarden.Business.Service.ProductService
                 {
                     var productToShow = new ProductModel
                     {
-                        id = p.Id,
-                        name = p.Name,
-                        description = p.Description,
-                        status = p.Status,
-                        categoryId = p.CategoryId,
-                        imgUrl = _productRepo.getImgByProduct(p.Id),
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Status = p.Status,
+                        CategoryId = p.CategoryId,
+                        ImgUrl = _productRepo.getImgByProduct(p.Id),
                     };
                     dataList.Add(productToShow);
                 }
@@ -190,12 +200,12 @@ namespace GreeenGarden.Business.Service.ProductService
                 {
                     var productToShow = new ProductModel
                     {
-                        id = p.Id,
-                        name = p.Name,
-                        description = p.Description,
-                        status = p.Status,
-                        categoryId = p.CategoryId,
-                        imgUrl = _productRepo.getImgByProduct(p.Id),
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Status = p.Status,
+                        CategoryId = p.CategoryId,
+                        ImgUrl = _productRepo.getImgByProduct(p.Id),
                     };
                     dataList.Add(productToShow);
                 }
@@ -246,12 +256,12 @@ namespace GreeenGarden.Business.Service.ProductService
                 {
                     var productToShow = new ProductModel
                     {
-                        id = p.Id,
-                        name = p.Name,
-                        description = p.Description,
-                        status = p.Status,
-                        categoryId = p.CategoryId,
-                        imgUrl = _productRepo.getImgByProduct(p.Id),
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Status = p.Status,
+                        CategoryId = p.CategoryId,
+                        ImgUrl = _productRepo.getImgByProduct(p.Id),
                     };
                     dataList.Add(productToShow);
                 }
