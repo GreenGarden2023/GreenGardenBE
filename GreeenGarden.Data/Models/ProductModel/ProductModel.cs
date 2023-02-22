@@ -8,6 +8,8 @@
         public string? Status { get; set; }
         public Guid? CategoryId { get; set; }
         public string? ImgUrl { get; set; }
+        public bool? IsForSale { get; set; }
+        public bool? IsForRent { get; set; }
     }
 
 

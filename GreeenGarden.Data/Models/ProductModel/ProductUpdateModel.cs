@@ -12,5 +12,7 @@ namespace GreeenGarden.Data.Models.ProductModel
         public string? Status { get; set; }
         public Guid CategoryId { get; set; }
         public IFormFile? Image { get; set; }
+        public bool? IsForSale { get; set; }
+        public bool? IsForRent { get; set; }
     }
 }

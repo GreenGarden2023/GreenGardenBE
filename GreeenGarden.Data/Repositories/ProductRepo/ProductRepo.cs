@@ -85,6 +85,15 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             {
                 product.CategoryId = productUpdateModel.CategoryId;
             }
+            if ( !productUpdateModel.IsForRent.Equals(product.IsForRent))
+            {
+                product.IsForRent = productUpdateModel.IsForRent;
+            }
+            if ( !productUpdateModel.IsForSale.Equals(product.IsForSale))
+            {
+                product.IsForSale = productUpdateModel.IsForSale;
+            }
+
 
             _context.Update(product);
             await _context.SaveChangesAsync();

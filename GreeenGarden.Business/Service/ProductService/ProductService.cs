@@ -67,7 +67,9 @@ namespace GreeenGarden.Business.Service.ProductService
                     Name = model.Name,
                     Description = model.Description,
                     Status = Status.ACTIVE,
-                    CategoryId = model.CategoryId
+                    CategoryId = model.CategoryId,
+                    IsForRent = model.IsForRent,
+                    IsForSale = model.IsForSale
                 };
                 var insertResult = await _productRepo.Insert(newProduct);
                 ProductModel productResModel = new ProductModel(){
@@ -76,6 +78,8 @@ namespace GreeenGarden.Business.Service.ProductService
                     Description = newProduct.Description,
                     Status = newProduct.Status,
                     CategoryId = newProduct.CategoryId,
+                    IsForRent = newProduct.IsForRent,
+                    IsForSale = newProduct.IsForSale
 
                 };
             
@@ -138,6 +142,8 @@ namespace GreeenGarden.Business.Service.ProductService
                         Status = p.Status,
                         CategoryId = p.CategoryId,
                         ImgUrl =  _imageRepo.GetImgUrlProduct(p.Id).Result.ImageUrl,
+                        IsForSale = p.IsForSale,
+                        IsForRent = p.IsForRent
                     };
                     dataList.Add(productToShow);
                 }
@@ -203,6 +209,8 @@ namespace GreeenGarden.Business.Service.ProductService
                         Status = p.Status,
                         CategoryId = p.CategoryId,
                         ImgUrl = _imageRepo.GetImgUrlProduct(p.Id).Result.ImageUrl,
+                        IsForRent = p.IsForRent,
+                        IsForSale = p.IsForSale
                     };
                     dataList.Add(productToShow);
                 }

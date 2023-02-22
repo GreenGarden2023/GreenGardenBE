@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblProduct
 {
@@ -11,6 +14,10 @@ public partial class TblProduct
     public string? Status { get; set; }
 
     public Guid? CategoryId { get; set; }
+
+    public bool? IsForRent { get; set; }
+
+    public bool? IsForSale { get; set; }
 
     public virtual TblCategory? Category { get; set; }
 
