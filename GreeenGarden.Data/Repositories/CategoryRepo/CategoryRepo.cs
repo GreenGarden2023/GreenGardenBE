@@ -36,9 +36,9 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             return _context.TblCategories.Where(x => x.Status == status).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
 
-        public TblCategory selectDetailCategory(Guid categoryId)
+        public async Task<TblCategory> selectDetailCategory(Guid categoryId)
         {
-            return _context.TblCategories.Where(x => x.Id == categoryId).FirstOrDefault();
+            return await _context.TblCategories.Where(x => x.Id == categoryId).FirstOrDefaultAsync();
         }
 
         public bool checkCategoryNameExist(string categoryName)

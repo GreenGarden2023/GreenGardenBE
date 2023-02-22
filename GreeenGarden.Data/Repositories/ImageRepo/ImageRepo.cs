@@ -23,7 +23,8 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         //    if (FeedbackID != null) return await _context.TblImages.Where(x => x.FeedbackId == FeedbackID).FirstAsync();
         //    return null;
         //}
-        public async Task<TblImage> GetImgUrl(Guid? imgId, Guid? categoryId, Guid? ProductItemID, Guid? FeedbackID, Guid? productId)
+
+        public async Task<TblImage> GetImgUrlCategory(Guid categoryId)
         {
             var query = from c in context.TblImages
                         where c.CategoryId.Equals(categoryId)
@@ -36,7 +37,19 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             }).FirstOrDefaultAsync();
             return result;
         }
-
+        public async Task<TblImage> GetImgUrlProduct(Guid productID)
+        {
+            var query = from c in context.TblImages
+                        where c.ProductId.Equals(productID)
+                        select new { c };
+            var result = await query.Select(x => new TblImage()
+            {
+                Id = x.c.Id,
+                ProductId = x.c.ProductId,
+                ImageUrl = x.c.ImageUrl
+            }).FirstOrDefaultAsync();
+            return result;
+        }
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
         {
             var imgCategory = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();

@@ -2,6 +2,7 @@
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Models.ResultModel;
@@ -110,19 +111,12 @@ namespace GreeenGarden.Business.Service.ProductService
             return result;
         }
 
-        public async Task<ResultModel> getAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
+        public async Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status)
         {
             var result = new ResultModel();
             try
             {
-                if (categoryId == Guid.Parse("00000000-0000-0000-0000-000000000000"))
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Need categoryId to get product";
-                    return result;
-                }
-                var listProdct = _productRepo.queryAllProductByCategory(pagingModel, categoryId);
+                var listProdct = await  _productRepo.queryAllProductByCategoryAndStatus(pagingModel, categoryID, status );
 
                 if (listProdct == null)
                 {
@@ -143,7 +137,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         Description = p.Description,
                         Status = p.Status,
                         CategoryId = p.CategoryId,
-                        ImgUrl = _productRepo.getImgByProduct(p.Id),
+                        ImgUrl =  _imageRepo.GetImgUrlProduct(p.Id).Result.ImageUrl,
                     };
                     dataList.Add(productToShow);
                 }
@@ -153,72 +147,19 @@ namespace GreeenGarden.Business.Service.ProductService
                     .RecordCount(listProdct.RecordCount)
                     .PageCount(listProdct.PageCount);
 
-
-                var response = new ResponseResult()
+                var getCategory = await _categoryRepo.selectDetailCategory(categoryID);
+                CategoryModel categoryModel = new CategoryModel()
                 {
-                    Paging = paging,
-                    Result = dataList
+                    Id = getCategory.Id,
+                    Name = getCategory.Name,
+                    Status = getCategory.Status,
+                    Description = getCategory.Description,
+                    ImgUrl = _imageRepo.GetImgUrlCategory(categoryID).Result.ImageUrl
                 };
-
-                result.IsSuccess = true;
-                result.Code = 200;
-                result.Data = response;
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
-                result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
-            return result;
-        }
-        public async Task<ResultModel> getAllProductByStatus(PaginationRequestModel pagingModel, string status)
-        {
-            var result = new ResultModel();
-            try
-            {
-                if (String.IsNullOrEmpty(status))
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Please enter status";
-                    return result;
-                }
-                var listProdct = _productRepo.queryAllProductByStatus(pagingModel, status);
-
-                if (listProdct == null)
-                {
-                    result.Message = "List null";
-                    result.IsSuccess = true;
-                    result.Code = 200;
-                    result.Data = listProdct;
-                    return result;
-                }
-
-                List<ProductModel> dataList = new List<ProductModel>();
-                foreach (var p in listProdct.Results)
-                {
-                    var productToShow = new ProductModel
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Description = p.Description,
-                        Status = p.Status,
-                        CategoryId = p.CategoryId,
-                        ImgUrl = _productRepo.getImgByProduct(p.Id),
-                    };
-                    dataList.Add(productToShow);
-                }
-                var paging = new PaginationResponseModel()
-                    .PageSize(listProdct.PageSize)
-                    .CurPage(listProdct.CurrentPage)
-                    .RecordCount(listProdct.RecordCount)
-                    .PageCount(listProdct.PageCount);
-
-
-                var response = new ResponseResult()
+                var response = new ProductResponseResult()
                 {
                     Paging = paging,
+                    Category = categoryModel,
                     Result = dataList
                 };
 
@@ -261,7 +202,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         Description = p.Description,
                         Status = p.Status,
                         CategoryId = p.CategoryId,
-                        ImgUrl = _productRepo.getImgByProduct(p.Id),
+                        ImgUrl = _imageRepo.GetImgUrlProduct(p.Id).Result.ImageUrl,
                     };
                     dataList.Add(productToShow);
                 }

@@ -18,13 +18,7 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             _context = context;
         }
 
-        public string getImgByProduct(Guid productId)
-        {
-            var result = _context.TblImages.Where(x => x.ProductId == productId).FirstOrDefault();
-            if (result == null) return null;
-
-            return result.ImageUrl;
-        }
+       
 
         public async void increaseQuantity(Guid subId, int plus)
         {
@@ -35,14 +29,23 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             await _context.SaveChangesAsync();*/
         }
 
-        public Page<TblProduct> queryAllProductByCategory(PaginationRequestModel pagingModel, Guid categoryId)
+
+        public async Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status)
         {
-            return _context.TblProducts.Where(x => x.CategoryId == categoryId).Paginate(pagingModel.curPage, pagingModel.pageSize);
+            if (String.IsNullOrEmpty(status) || status.Trim().ToLower().Equals("all") || status.Trim().ToLower().Equals(""))
+            {
+                var result = await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+                return result;
+               
+            }
+            else {
+                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+                
+            }
         }
-        public Page<TblProduct> queryAllProductByStatus(PaginationRequestModel pagingModel, string status)
-        {
-            return _context.TblProducts.Where(x => x.Status.Equals(status)).Paginate(pagingModel.curPage, pagingModel.pageSize);
-        }
+
+
         public Page<TblProduct> queryAllProduct(PaginationRequestModel pagingModel)
         {
             return _context.TblProducts.Paginate(pagingModel.curPage, pagingModel.pageSize);

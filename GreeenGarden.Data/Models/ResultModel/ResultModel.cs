@@ -15,4 +15,12 @@
         public object? Paging { get; set; }
         public object? Result { get; set; }
     }
+
+    public class ProductResponseResult
+    {
+
+        public object? Paging { get; set; }
+        public object? Category { get; set; }
+        public object? Result { get; set; }
+    }
 }

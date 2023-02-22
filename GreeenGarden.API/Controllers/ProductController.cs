@@ -19,17 +19,11 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpGet("get-products-by-category")]
-        public async Task<IActionResult> getAllProductByCategory([FromQuery] PaginationRequestModel pagingModel, [Required] Guid categoryId)
+
+        [HttpGet("get-products-by-category-status")]
+        public async Task<IActionResult> getAllProductByStatus([FromQuery] PaginationRequestModel pagingModel, [Required]Guid categoryID, string? status)
         {
-            var result = await _service.getAllProductByCategory(pagingModel, categoryId);
-            if (result.IsSuccess && result.Code == 200) return Ok(result);
-            return BadRequest(result);
-        }
-        [HttpGet("get-products-by-status")]
-        public async Task<IActionResult> getAllProductByStatus([FromQuery] PaginationRequestModel pagingModel, [Required] string status)
-        {
-            var result = await _service.getAllProductByStatus(pagingModel, status);
+            var result = await _service.getAllProductByCategoryStatus(pagingModel, categoryID, status);
             if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }

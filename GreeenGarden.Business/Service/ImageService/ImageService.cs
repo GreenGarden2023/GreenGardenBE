@@ -116,7 +116,7 @@ namespace GreeenGarden.Business.Service.ImageService
             var result = new ResultModel();
             try
             {
-                var imgBefore = await _imageRepo.GetImgUrl(null, CategoryId, null, null, null);
+                var imgBefore = await _imageRepo.GetImgUrlCategory(CategoryId);
                 if (imgBefore != null)
                 {
                     var imgToDelete = new List<string>() { imgBefore.ImageUrl };
@@ -149,7 +149,7 @@ namespace GreeenGarden.Business.Service.ImageService
             var result = new ResultModel();
             try
             {
-                var imgBefore = await _imageRepo.GetImgUrl(null, productID, null, null, null);
+                var imgBefore = await _imageRepo.GetImgUrlProduct(productID);
                 if (imgBefore != null)
                 {
                     var imgToDelete = new List<string>() { imgBefore.ImageUrl };
