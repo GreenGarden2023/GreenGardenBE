@@ -9,7 +9,7 @@ public partial class TblProductItem
 
     public string? Name { get; set; }
 
-    public double? Price { get; set; }
+    public double? SalePrice { get; set; }
 
     public string? Status { get; set; }
 
@@ -22,6 +22,10 @@ public partial class TblProductItem
     public int? Quantity { get; set; }
 
     public string? Type { get; set; }
+
+    public double? RentPrice { get; set; }
+
+    public string? Content { get; set; }
 
     public virtual TblProduct? Product { get; set; }
 

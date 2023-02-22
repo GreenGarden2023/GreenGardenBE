@@ -115,12 +115,12 @@ namespace GreeenGarden.Business.Service.ProductService
             return result;
         }
 
-        public async Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status)
+        public async Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
         {
             var result = new ResultModel();
             try
             {
-                var listProdct = await  _productRepo.queryAllProductByCategoryAndStatus(pagingModel, categoryID, status );
+                var listProdct = await  _productRepo.queryAllProductByCategoryAndStatus(pagingModel, categoryID, status, rentSale );
 
                 if (listProdct == null)
                 {

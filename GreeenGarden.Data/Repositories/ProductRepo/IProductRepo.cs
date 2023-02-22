@@ -10,7 +10,7 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
     public interface IProductRepo : IRepository<TblProduct>
     {
         public Page<TblProduct> queryAllProduct(PaginationRequestModel pagingModel);
-        public Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel,Guid categoryID, string? status);
+        public Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel,Guid categoryID, string? status, string? rentSale);
         public TblProduct queryAProductByProId(Guid? proId);
         public Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel);
         public void increaseQuantity(Guid subId, int plus);
