@@ -10,6 +10,7 @@ namespace GreeenGarden.Business.Service.ImageService
         public Task<ResultModel> UploadAnImage(IFormFile file);
         public Task<ResultModel> UpdateImageCategory(Guid CategoryId, IFormFile file);
         public Task<ResultModel> UpdateImageProduct(Guid ProductID, IFormFile file);
+        public Task<ResultModel> UpdateImageProductItem(Guid ProductItemID, List<IFormFile> files);
     }
 }
 

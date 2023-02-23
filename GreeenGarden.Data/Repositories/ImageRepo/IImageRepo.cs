@@ -7,6 +7,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
     {
         Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl);
         Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl);
+        Task<bool> UpdateImgForProductItem(Guid ProductItemID, List<string> ImgUrls);
         Task<TblImage> GetImgUrlCategory( Guid categoryId);
         Task<TblImage> GetImgUrlProduct(Guid productId);
         Task<List<TblImage>> GetImgUrlProductItem(Guid productItemId);

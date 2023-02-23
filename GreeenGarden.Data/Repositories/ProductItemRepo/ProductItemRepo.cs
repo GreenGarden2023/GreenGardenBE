@@ -4,7 +4,9 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
+using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ProductItemRepo
 {
@@ -76,6 +78,60 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 
         }
 
+        public async Task<bool> UpdateProductItem(ProductItemUpdateModel productItemUpdateModel)
+        {
+            var query = from prod in context.TblProductItems
+                        where prod.Id.Equals(productItemUpdateModel.Id)
+                        select new { prod };
+            var product = await query.Select(x => x.prod).FirstOrDefaultAsync();
+            if (product == null)
+            {
+                return false;
+            }
+            if (!String.IsNullOrEmpty(productItemUpdateModel.Name) && !productItemUpdateModel.Name.Equals(product.Name))
+            {
+                product.Name = productItemUpdateModel.Name;
+            }
+            if (productItemUpdateModel.SalePrice != null && productItemUpdateModel.SalePrice != 0 && !productItemUpdateModel.SalePrice.Equals(product.SalePrice))
+            {
+                product.SalePrice = productItemUpdateModel.SalePrice;
+            }
+            if (!String.IsNullOrEmpty(productItemUpdateModel.Status) && !productItemUpdateModel.Status.Equals(product.Status))
+            {
+                product.Status = productItemUpdateModel.Status;
+            }
+            if (!String.IsNullOrEmpty(productItemUpdateModel.Description) && !productItemUpdateModel.Description.Equals(product.Description))
+            {
+                product.Description = productItemUpdateModel.Description;
+            }
+            if (productItemUpdateModel.ProductId != null && productItemUpdateModel.ProductId != Guid.Empty && !productItemUpdateModel.ProductId.Equals(product.ProductId))
+            {
+                product.ProductId = productItemUpdateModel.ProductId;
+            }
+            if (productItemUpdateModel.SizeId != Guid.Empty && productItemUpdateModel.SizeId != null && !productItemUpdateModel.SizeId.Equals(product.SizeId))
+            {
+                product.SizeId = (Guid)productItemUpdateModel.SizeId;
+            }
+            if (productItemUpdateModel.Quantity != null && productItemUpdateModel.Quantity != 0 && !productItemUpdateModel.Quantity.Equals(product.Quantity))
+            {
+                product.Quantity = productItemUpdateModel.Quantity;
+            }
+            if (!String.IsNullOrEmpty(productItemUpdateModel.Type) && !productItemUpdateModel.Type.Equals(product.Type))
+            {
+                product.Type = productItemUpdateModel.Type;
+            }
+            if (productItemUpdateModel.RentPrice != null && productItemUpdateModel.RentPrice != 0 && !productItemUpdateModel.RentPrice.Equals(product.RentPrice))
+            {
+                product.RentPrice = productItemUpdateModel.RentPrice;
+            }
+            if (!String.IsNullOrEmpty(productItemUpdateModel.Content) && !productItemUpdateModel.Content.Equals(product.Content))
+            {
+                product.Content = productItemUpdateModel.Content;
+            }
+            _context.Update(product);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
     
 }

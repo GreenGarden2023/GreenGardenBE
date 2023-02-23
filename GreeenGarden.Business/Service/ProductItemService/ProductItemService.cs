@@ -213,7 +213,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Paging = paging,
                     Category = categoryRes,
                     Product = productRes,
-                    ProductItems = listData,
+                    ProductItems          = listData,
                 };
                 result.IsSuccess = true;
                 result.Code = 200;
@@ -231,9 +231,55 @@ namespace GreeenGarden.Business.Service.ProductItemService
             
         }
 
-        public Task<ResultModel> UpdateProductItem(ProductItemUpdateModel productItemUpdateModel, string token)
+        public async Task<ResultModel> UpdateProductItem(ProductItemUpdateModel productItemUpdateModel, string token)
         {
-            throw new NotImplementedException();
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+                var productItemUpdate = await _proItemRepo.UpdateProductItem(productItemUpdateModel);
+
+                if (productItemUpdate == false)
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Can not find product item with ID: " + productItemUpdateModel.Id;
+                    return result;
+                }
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Product item updated without image change";
+                if (productItemUpdate != false && productItemUpdateModel.Images != null)
+                {
+                    var productImgUpdate = await _imgService.UpdateImageProductItem(productItemUpdateModel.Id, productItemUpdateModel.Images);
+                    if (productImgUpdate != null)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Product updated with image change";
+                    }
+                }
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
         }
     }
 }

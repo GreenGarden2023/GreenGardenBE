@@ -75,5 +75,22 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             await _context.SaveChangesAsync();
             return imgProduct;
         }
+
+        public async Task<bool> UpdateImgForProductItem(Guid ProductItemID, List<string> ImgUrls)
+        {
+            bool result = false;
+            foreach (string imgUrl in ImgUrls) {
+                var imgProduct = _context.TblImages.Where(x => x.ProductItemId == ProductItemID).FirstOrDefault();
+                if (imgProduct != null)
+                {
+                    imgProduct.ImageUrl = imgUrl;
+                }
+                 _context.Update(imgProduct);
+                await _context.SaveChangesAsync();
+                result = true;
+                if(result == false){ return result; }
+            }
+            return result;
+        }
     }
 }
