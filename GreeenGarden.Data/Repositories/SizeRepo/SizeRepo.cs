@@ -1,5 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.SizeRepo
 {
@@ -11,6 +12,11 @@ namespace GreeenGarden.Data.Repositories.SizeRepo
         {
             //_mapper = mapper;
             _context = context;
+        }
+
+        public async Task<List<TblSize>> GetProductItemSizes()
+        {
+            return await _context.TblSizes.ToListAsync();
         }
     }
 }

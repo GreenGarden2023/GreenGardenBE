@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.SizeModel;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using System.Security.Claims;
 
@@ -56,6 +57,26 @@ namespace GreeenGarden.Business.Service.SizeService
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
+            return result;
+        }
+
+        public async Task<ResultModel> GetSizes()
+        {
+            var sizes = await _sizeRepo.GetProductItemSizes();
+            List<SizeModel> sizeModels = new();
+            foreach(TblSize size in sizes)
+            {
+                var viewSize = new SizeModel()
+                {
+                    Id = size.Id,
+                    SizeName = size.Name
+                };
+                sizeModels.Add(viewSize);
+            }
+            var result = new ResultModel();
+            result.IsSuccess = true;
+            result.Code = 200;
+            result.Data = sizeModels;
             return result;
         }
     }

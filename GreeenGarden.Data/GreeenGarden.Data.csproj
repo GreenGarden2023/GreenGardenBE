@@ -12,6 +12,7 @@
     <Folder Include="Repositories\UserRepo\" />
     <Folder Include="Repositories\GenericRepository\" />
     <Folder Include="Models\UserModels\" />
+    <Folder Include="Models\SizeModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,5 +41,6 @@
     <None Remove="System.IdentityModel.Tokens.Jwt" />
     <None Remove="Models\UserModels\" />
     <None Remove="Azure.Storage.Blobs" />
+    <None Remove="Models\SizeModel\" />
   </ItemGroup>
 </Project>

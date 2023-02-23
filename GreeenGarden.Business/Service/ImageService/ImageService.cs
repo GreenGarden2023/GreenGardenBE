@@ -15,7 +15,7 @@ namespace GreeenGarden.Business.Service.ImageService
         }
 
         string defaultURL = "https://greengardenstorage.blob.core.windows.net/greengardensimages/";
-        public async Task<ResultModel> UploadImage(IList<IFormFile> files)
+        public async Task<ResultModel> UploadImages(IList<IFormFile> files)
         {
             ResultModel resultsModel = new ResultModel();
             List<string> urls = new List<string>();

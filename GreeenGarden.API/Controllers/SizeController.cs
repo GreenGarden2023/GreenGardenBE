@@ -24,5 +24,13 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("get-sizes")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetSizes( )
+        {
+            var result = await _service.GetSizes();
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

@@ -10,24 +10,29 @@ namespace GreeenGarden.Data.Models.ProductItemModel
         public string? Name { get; set; }
 
         public double? SalePrice { get; set; }
+
         [Required]
         public string? Status { get; set; }
 
         public string? Description { get; set; }
+
         [Required]
         public Guid? ProductId { get; set; }
+
         [Required]
         public Guid? SizeId { get; set; }
 
         public int? Quantity { get; set; }
+
         [Required]
         public string? Type { get; set; }
 
         public double? RentPrice { get; set; }
 
         public string? Content { get; set; }
+
         [Required]
-        public List<IFormFile>? ImgURLs { get; set; }
+        public List<IFormFile>? Images { get; set; }
     }
 }
 

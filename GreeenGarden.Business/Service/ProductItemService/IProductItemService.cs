@@ -9,6 +9,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
     {
 
         Task<ResultModel> GetProductItems(PaginationRequestModel pagingModel, Guid productID, Guid? sizeID, string? type, string? status);
-        Task<ResultModel> CreateProductItems(ProductItemCreateModel productItemCreateModel);
+        Task<ResultModel> CreateProductItems(ProductItemCreateModel productItemCreateModel, string token);
     }
 }

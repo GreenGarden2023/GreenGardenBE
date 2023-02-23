@@ -30,7 +30,7 @@ namespace GreeenGarden.API.Controllers
             };
             try
             {
-                var result = await _imageService.UploadImage(files);
+                var result = await _imageService.UploadImages(files);
                 if (result.IsSuccess == false)
                 {
                     return BadRequest(result);

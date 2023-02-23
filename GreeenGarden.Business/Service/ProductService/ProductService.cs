@@ -58,7 +58,7 @@ namespace GreeenGarden.Business.Service.ProductService
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Product not found";
+                    result.Message = "Product image not found";
                     return result;
                 }
                 var newProduct = new TblProduct()
@@ -111,8 +111,9 @@ namespace GreeenGarden.Business.Service.ProductService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
             }
-            return result;
+            
         }
 
         public async Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
