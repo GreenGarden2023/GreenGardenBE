@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Business.Service.SizeService;
+using GreeenGarden.Data.Models.SizeModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,10 +18,10 @@ namespace GreeenGarden.API.Controllers
 
         [HttpPost("create-size")]
         [Authorize(Roles = "Staff, Manager")]
-        public async Task<IActionResult> createSize(string sizeName)
+        public async Task<IActionResult> createSize([FromForm]SizeCreateModel sizeCreateModel)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.createSize(sizeName, token);
+            var result = await _service.CreateSize(sizeCreateModel, token);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

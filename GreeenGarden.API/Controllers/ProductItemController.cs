@@ -27,10 +27,19 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("create-product-item")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> createProduct([FromForm] ProductItemCreateModel model)
+        public async Task<IActionResult> CreateProduct([FromForm] ProductItemCreateModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.CreateProductItems(model, token);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+        [HttpPost("update-product-item")]
+        [Authorize(Roles = "Staff, Manager, Admin")]
+        public async Task<IActionResult> UpdateProduct([FromForm] ProductItemUpdateModel model)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.UpdateProductItem(model, token);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

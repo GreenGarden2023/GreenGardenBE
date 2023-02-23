@@ -1,4 +1,5 @@
-﻿using EntityFrameworkPaginateCore;
+﻿using System.Threading.Tasks;
+using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
@@ -34,46 +35,34 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         {
             if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && !String.IsNullOrEmpty(status))
             {
-
-                Console.WriteLine("===========sale-true===============");
                 return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                 && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())
                 && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            ////////////
             else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && !String.IsNullOrEmpty(status))
             {
-                Console.WriteLine("===========rent-true===============");
                 return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                 && x.IsForRent == true
                 && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            ////////////
             else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && String.IsNullOrEmpty(status))
             {
-                Console.WriteLine("===========sale-false===============");
                 return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                 && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            ////////////
             else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && String.IsNullOrEmpty(status))
             {
-                Console.WriteLine("===========rent-false===============");
                 return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                 && x.IsForRent == true
                 ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            ////////////
             else if (String.IsNullOrEmpty(rentSale) && !String.IsNullOrEmpty(status))
             {
-                Console.WriteLine("===========false-true===============");
                 return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                 && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            ////////////
             else
             {
-                Console.WriteLine("===========false-false===============");
                 return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
@@ -86,9 +75,9 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         }
 
 
-        public TblProduct queryAProductByProId(Guid? proId)
+        public async Task<TblProduct> queryAProductByProId(Guid? proId)
         {
-            return _context.TblProducts.Where(x => x.Id == proId).FirstOrDefault();
+            return await _context.TblProducts.Where(x => x.Id == proId).FirstOrDefaultAsync();
         }
 
         public async Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel)

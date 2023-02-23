@@ -3,12 +3,17 @@ using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
+using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.SizeModel;
+using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
+using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.SubProductRepo;
 using Microsoft.AspNetCore.Http;
 
@@ -16,20 +21,22 @@ namespace GreeenGarden.Business.Service.ProductItemService
 {
     public class ProductItemService : IProductItemService
     {
-        //private readonly IMapper _mapper;
         private readonly IProductItemRepo _proItemRepo;
         private readonly IImageService _imgService;
         private readonly DecodeToken _decodeToken;
         private readonly IImageRepo _imageRepo;
         private readonly IProductRepo _proRepo;
-        public ProductItemService(/*IMapper mapper,*/ IProductItemRepo proItemRepo, IProductRepo proRepo, IImageRepo imageRepo, IImageService imgService)
+        private readonly ICategoryRepo _categoryRepo;
+        private readonly ISizeRepo _sizeRepo;
+        public ProductItemService(ISizeRepo sizeRepo, IProductItemRepo proItemRepo, IProductRepo proRepo, IImageRepo imageRepo, IImageService imgService, ICategoryRepo categoryRepo)
         {
-            //_mapper = mapper;
             _proItemRepo = proItemRepo;
             _imgService = imgService;
             _decodeToken = new DecodeToken();
             _imageRepo = imageRepo;
             _proRepo = proRepo;
+            _categoryRepo = categoryRepo;
+            _sizeRepo = sizeRepo;
         }
 
         public async Task<ResultModel> CreateProductItems(ProductItemCreateModel productItemCreateModel, string token)
@@ -45,6 +52,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -100,7 +108,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Status = productItemCreateModel.Status,
                     Description = productItemCreateModel.Description,
                     ProductId = productItemCreateModel.ProductId,
-                    SizeId = productItemCreateModel.SizeId,
+                    Size = await _sizeRepo.Get(productItemCreateModel.SizeId),
                     Quantity = productItemCreateModel.Quantity,
                     Type = productItemCreateModel.Type,
                     RentPrice = productItemCreateModel.RentPrice,
@@ -142,7 +150,12 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 foreach (var pi in listProductItem.Results)
                 {
                     var getProdItemIMGs = await _imageRepo.GetImgUrlProductItem(pi.Id);
-
+                    var size = await _sizeRepo.Get(pi.SizeId);
+                    var sizeRes = new SizeModel()
+                    {
+                        Id = size.Id,
+                        SizeName = size.Name
+                    };
                     List<string> prodItemIMGs = new();
                     foreach(var img in getProdItemIMGs)
                     {
@@ -156,7 +169,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Status = pi.Status,
                         Description = pi.Description,
                         ProductId = pi.ProductId,
-                        SizeId = pi.SizeId,
+                        Size = sizeRes,
                         Quantity = pi.Quantity,
                         Type = pi.Type,
                         RentPrice = pi.RentPrice,
@@ -171,10 +184,36 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     .RecordCount(listProductItem.RecordCount)
                     .PageCount(listProductItem.PageCount);
 
-                var response = new ResponseResult()
+                var product = await _proRepo.queryAProductByProId(productID);
+                var productIMG =  await _imageRepo.GetImgUrlProduct(product.Id);
+                var productRes = new ProductModel()
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    Status = product.Status,
+                    CategoryId = product.CategoryId,
+                    ImgUrl = productIMG.ImageUrl,
+                    IsForRent = product.IsForRent,
+                    IsForSale = product.IsForSale
+
+                };
+                var category = await _categoryRepo.Get(product.CategoryId);
+                var categoryIMG = await _imageRepo.GetImgUrlCategory(category.Id);
+                var categoryRes = new CategoryModel()
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    Status = category.Status,
+                    ImgUrl = categoryIMG.ImageUrl,
+                    Description = category.Description
+                };
+                var response = new ProductItemResponseResult()
                 {
                     Paging = paging,
-                    Result = listData,
+                    Category = categoryRes,
+                    Product = productRes,
+                    ProductItems = listData,
                 };
                 result.IsSuccess = true;
                 result.Code = 200;
@@ -190,6 +229,11 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 return result;
             }
             
+        }
+
+        public Task<ResultModel> UpdateProductItem(ProductItemUpdateModel productItemUpdateModel, string token)
+        {
+            throw new NotImplementedException();
         }
     }
 }

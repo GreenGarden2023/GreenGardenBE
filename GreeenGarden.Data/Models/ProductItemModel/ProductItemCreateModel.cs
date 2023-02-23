@@ -20,7 +20,7 @@ namespace GreeenGarden.Data.Models.ProductItemModel
         public Guid? ProductId { get; set; }
 
         [Required]
-        public Guid? SizeId { get; set; }
+        public Guid SizeId { get; set; }
 
         public int? Quantity { get; set; }
 

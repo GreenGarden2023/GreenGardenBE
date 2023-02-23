@@ -18,7 +18,7 @@ namespace GreeenGarden.Business.Service.SizeService
             _decodeToken = new DecodeToken();
         }
 
-        public async Task<ResultModel> createSize(string sizeName, string token)
+        public async Task<ResultModel> CreateSize(SizeCreateModel sizeCreateModel, string token)
         {
             var result = new ResultModel();
             try
@@ -30,24 +30,33 @@ namespace GreeenGarden.Business.Service.SizeService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
 
-                if (sizeName == null) return new ResultModel()
+                if (String.IsNullOrEmpty(sizeCreateModel.SizeName) || sizeCreateModel.SizeName.Length < 2) return new ResultModel()
                 {
                     IsSuccess = false,
-                    Message = "SizeName not null"
+                    Code = 400,
+                    Message = "SizeName Invalid"
                 };
                 var newSize = new TblSize()
                 {
                     Id = Guid.NewGuid(),
-                    Name = sizeName
+                    Name = sizeCreateModel.SizeName
                 };
                 await _sizeRepo.Insert(newSize);
+                var newSizeRes = new SizeModel()
+                {
+                    Id = newSize.Id,
+                    SizeName = newSize.Name
+                };
 
                 result.IsSuccess = true;
-                result.Message = "create new size successfully";
+                result.Code = 200;
+                result.Data = newSizeRes;
+                result.Message = "Create new size successfully";
                 return result;
 
             }
