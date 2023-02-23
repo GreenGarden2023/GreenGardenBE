@@ -7,9 +7,8 @@ namespace GreeenGarden.Business.Service.ProductItemService
 {
     public interface IProductItemService
     {
-        Task<ResultModel> getAllProductItemByProductItemSize(PaginationRequestModel pagingModel, Guid productSizeId);
-        Task<ResultModel> getSizesOfProduct(PaginationRequestModel pagingModel, Guid productId);
-        Task<ResultModel> getDetailItem(Guid productItemId);
-        Task<ResultModel> createProductItem(ProductItemCreateRequestModel model, IList<IFormFile> imgFile, string token);
+
+        Task<ResultModel> GetProductItems(PaginationRequestModel pagingModel, Guid productID, Guid? sizeID, string? type, string? status);
+        Task<ResultModel> CreateProductItems(ProductItemCreateModel productItemCreateModel);
     }
 }

@@ -1,13 +1,13 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.ProductItemRepo
 {
     public interface IProductItemRepo : IRepository<TblProductItem>
     {
-        /*public Page<TblSubProduct> queryAllSizeByProduct(PaginationRequestModel model, Guid productId);
-        public Page<TblProductItem> queryAllItemByProductSize(PaginationRequestModel model, Guid productSizeId);*/
-        public IQueryable<TblProductItem> queryDetailItemByProductSize(Guid productItemId);
-        public List<string> getImgByProductItem(Guid productItemId);
+        Task<Page<TblProductItem>> GetProductItems(PaginationRequestModel pagingModel, Guid productID, Guid? SizeID, string? type, string? status);
     }
 }

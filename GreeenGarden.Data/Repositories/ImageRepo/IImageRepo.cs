@@ -9,5 +9,6 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl);
         Task<TblImage> GetImgUrlCategory( Guid categoryId);
         Task<TblImage> GetImgUrlProduct(Guid productId);
+        Task<List<TblImage>> GetImgUrlProductItem(Guid productItemId);
     }
 }

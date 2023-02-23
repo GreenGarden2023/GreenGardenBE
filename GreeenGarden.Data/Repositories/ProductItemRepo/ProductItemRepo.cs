@@ -1,44 +1,81 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using System.Linq;
+using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.ProductItemRepo
 {
     public class ProductItemRepo : Repository<TblProductItem>, IProductItemRepo
     {
-        //private readonly IMapper _mapper;
         private readonly GreenGardenDbContext _context;
-        public ProductItemRepo(/*IMapper mapper,*/ GreenGardenDbContext context) : base(context)
+        public ProductItemRepo( GreenGardenDbContext context) : base(context)
         {
-            //_mapper = mapper;
             _context = context;
         }
 
-        /*public Page<TblProductItem> queryAllItemByProductSize(PaginationRequestModel model, Guid productSizeId)
+        public async Task<Page<TblProductItem>> GetProductItems(PaginationRequestModel pagingModel, Guid productID, Guid? sizeID, string? type, string? status)
         {
-            return _context.TblProductItems.Where(x=>x.SubProductId == productSizeId && x.Status == Status.ACTIVE).Paginate(model.curPage, model.pageSize);
-        }*/
-
-        public IQueryable<TblProductItem> queryDetailItemByProductSize(Guid productItemId)
-        {
-            return _context.TblProductItems.Where(x => x.Id == productItemId && x.Status == Status.ACTIVE);
-        }
-
-        /* public Page<TblSubProduct> queryAllSizeByProduct(PaginationRequestModel model, Guid productId)
-         {
-             return _context.TblSubProducts.Where(x => x.ProductId == productId).Paginate(model.curPage, model.pageSize);
-         }*/
-
-        public List<string> getImgByProductItem(Guid productItemId)
-        {
-            var listResult = _context.TblImages.Where(x => x.ProductItemId == productItemId).ToList();
-            if (listResult == null) return null;
-            var listImg = new List<string>();
-            foreach (var i in listResult)
+            if (sizeID == Guid.Empty  && String.IsNullOrEmpty(type) && String.IsNullOrEmpty(status))
             {
-                listImg.Add(i.ImageUrl);
+                
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            return listImg;
+            ///
+            else if (sizeID != Guid.Empty && !String.IsNullOrEmpty(type) && String.IsNullOrEmpty(status))
+            {
+                
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)
+                && x.SizeId.Equals(sizeID)
+                && x.Type.Equals(type)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ///
+            else if (sizeID != Guid.Empty && String.IsNullOrEmpty(type) && !String.IsNullOrEmpty(status))
+            {
+
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)
+                && x.SizeId.Equals(sizeID)
+                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ///
+            else if (sizeID != Guid.Empty && String.IsNullOrEmpty(type) && String.IsNullOrEmpty(status))
+            {
+
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)
+                && x.SizeId.Equals(sizeID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ///
+            else if (sizeID == Guid.Empty  && !String.IsNullOrEmpty(type) && !String.IsNullOrEmpty(status))
+            {
+
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)
+                && x.Type.Equals(type)
+                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ///
+            else if (sizeID == Guid.Empty  && !String.IsNullOrEmpty(type) && String.IsNullOrEmpty(status))
+            {
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)
+                && x.Type.Equals(type)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ///
+            else if (sizeID == Guid.Empty  && String.IsNullOrEmpty(type) && !String.IsNullOrEmpty(status))
+            {
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)
+                 && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ///
+            else {
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)
+                && x.SizeId.Equals(sizeID)
+                && x.Status.Trim().ToLower().Equals(status)
+                && x.Type.Equals(type)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+
         }
+
     }
+    
 }

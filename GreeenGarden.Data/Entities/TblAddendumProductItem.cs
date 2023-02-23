@@ -9,6 +9,8 @@ public partial class TblAddendumProductItem
 
     public double? ProductItemPrice { get; set; }
 
+    public int? Quantity { get; set; }
+
     public Guid ProductItemId { get; set; }
 
     public Guid AddendumId { get; set; }

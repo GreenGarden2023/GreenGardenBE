@@ -6,24 +6,11 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 {
     public class ImageRepo : Repository<TblImage>, IImageRepo
     {
-        //private readonly IMapper _mapper;
         private readonly GreenGardenDbContext _context;
-        public ImageRepo(/*IMapper mapper,*/ GreenGardenDbContext context) : base(context)
+        public ImageRepo(GreenGardenDbContext context) : base(context)
         {
-            //_mapper = mapper;
             _context = context;
         }
-
-        //public async Task<TblImage> GetImgUrl(Guid? imgId, Guid? categoryId, Guid? ProductItemID, Guid? FeedbackID, Guid? productId)
-        //{
-        //    if (imgId != null) return await _context.TblImages.Where(x => x.Id == imgId).FirstAsync();
-        //    if (categoryId != null) return await _context.TblImages.Where(x => x.CategoryId == categoryId).FirstAsync();
-        //    if (ProductItemID != null) return await _context.TblImages.Where(x => x.ProductItemId == ProductItemID).FirstAsync();
-        //    if (productId != null) return await _context.TblImages.Where(x => x.ProductId == productId).FirstAsync();
-        //    if (FeedbackID != null) return await _context.TblImages.Where(x => x.FeedbackId == FeedbackID).FirstAsync();
-        //    return null;
-        //}
-
         public async Task<TblImage> GetImgUrlCategory(Guid categoryId)
         {
             var query = from c in context.TblImages
@@ -50,6 +37,21 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             }).FirstOrDefaultAsync();
             return result;
         }
+
+        public async Task<List<TblImage>> GetImgUrlProductItem(Guid productItemId)
+        {
+            var query = from c in context.TblImages
+                        where c.ProductItemId.Equals(productItemId)
+                        select new { c };
+            var result = await query.Select(x => new TblImage()
+            {
+                Id = x.c.Id,
+                ProductId = x.c.ProductId,
+                ImageUrl = x.c.ImageUrl
+            }).ToListAsync();
+            return result;
+        }
+
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
         {
             var imgCategory = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();

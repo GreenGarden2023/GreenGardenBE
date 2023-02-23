@@ -32,51 +32,50 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
 
         public async Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
         {
-            if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale"))
+            if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && !String.IsNullOrEmpty(status))
             {
-                if (String.IsNullOrEmpty(status) || status.Trim().ToLower().Equals("all") || status.Trim().ToLower().Equals(""))
-                {
-                    var result = await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID) && x.IsForRent == false && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-                    return result;
 
-                }
-                else
-                {
-                    return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-                    && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-
-                }
+                Console.WriteLine("===========sale-true===============");
+                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())
+                && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            else if (!String.IsNullOrEmpty(rentSale) &&  rentSale.Trim().ToLower().Equals("rent"))
+            ////////////
+            else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && !String.IsNullOrEmpty(status))
             {
-                if (String.IsNullOrEmpty(status) || status.Trim().ToLower().Equals("all") || status.Trim().ToLower().Equals(""))
-                {
-                    var result = await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID) && x.IsForRent == true && x.IsForSale == false).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-                    return result;
-
-                }
-                else
-                {
-                    return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-                    && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-
-                }
+                Console.WriteLine("===========rent-true===============");
+                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                && x.IsForRent == true
+                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
+            ////////////
+            else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && String.IsNullOrEmpty(status))
+            {
+                Console.WriteLine("===========sale-false===============");
+                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ////////////
+            else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && String.IsNullOrEmpty(status))
+            {
+                Console.WriteLine("===========rent-false===============");
+                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                && x.IsForRent == true
+                ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ////////////
+            else if (String.IsNullOrEmpty(rentSale) && !String.IsNullOrEmpty(status))
+            {
+                Console.WriteLine("===========false-true===============");
+                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            ////////////
             else
             {
-                if (String.IsNullOrEmpty(status) || status.Trim().ToLower().Equals("all") || status.Trim().ToLower().Equals(""))
-                {
-                    var result = await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-                    return result;
-
-                }
-                else
-                {
-                    return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-                    && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-
-                }
-
+                Console.WriteLine("===========false-false===============");
+                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+               ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
         }
 
