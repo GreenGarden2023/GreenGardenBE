@@ -257,8 +257,38 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Message = "Can not find product item with ID: " + productItemUpdateModel.Id;
                     return result;
                 }
+                var newProdItem = await _proItemRepo.Get(productItemUpdateModel.Id);
+                var getProdItemIMGs = await _imageRepo.GetImgUrlProductItem(newProdItem.Id);
+                var size = await _sizeRepo.Get(newProdItem.SizeId);
+                var sizeRes = new SizeModel()
+                {
+                    Id = size.Id,
+                    SizeName = size.Name
+                };
+                List<string> prodItemIMGs = new();
+                foreach (var img in getProdItemIMGs)
+                {
+                    prodItemIMGs.Add(img.ImageUrl);
+                }
+                var newProductItem = new ProductItemModel
+                {
+                    Id = newProdItem.Id,
+                    Name = newProdItem.Name,
+                    SalePrice = newProdItem.SalePrice,
+                    Status = newProdItem.Status,
+                    Description = newProdItem.Description,
+                    ProductId = newProdItem.ProductId,
+                    Size = sizeRes,
+                    Quantity = newProdItem.Quantity,
+                    Type = newProdItem.Type,
+                    RentPrice = newProdItem.RentPrice,
+                    Content = newProdItem.Content,
+                    ImgURLs = prodItemIMGs
+                };
+
                 result.IsSuccess = true;
                 result.Code = 200;
+                result.Data = newProductItem;
                 result.Message = "Product item updated without image change";
                 if (productItemUpdate != false && productItemUpdateModel.Images != null)
                 {
@@ -267,6 +297,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     {
                         result.IsSuccess = true;
                         result.Code = 200;
+                        result.Data = newProductItem;
                         result.Message = "Product updated with image change";
                     }
                 }
