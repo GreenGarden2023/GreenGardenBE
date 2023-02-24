@@ -1,30 +1,53 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Repositories.GenericRepository;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.OrderRepo
 {
-    public class OrderRepo : IOrderRepo
+    public class OrderRepo : Repository<TblOrder>, IOrderRepo
     {
-        //private readonly IMapper _mapper;
         private readonly GreenGardenDbContext _context;
-        public OrderRepo(/*IMapper mapper,*/ GreenGardenDbContext context)
+        public OrderRepo( GreenGardenDbContext context) : base(context)
         {
-            //_mapper = mapper;
             _context = context;
         }
-
-        public bool checkRetailProduct(Guid productItemId)
+        public async Task<TblProductItem> getProductToCompare(Guid productId)
         {
-            var productItemToCheck = _context.TblProductItems.Where(x => x.Id == productItemId && x.Status == Status.ACTIVE).FirstOrDefault();
-            if (productItemToCheck != null) return true;
-            return false;
+            return await _context.TblProductItems.Where(x => x.Id == productId).FirstAsync();
         }
 
-        public bool checkWholesaleProduct(Guid subProductId, int quantity)
+        public async Task<TblUser> getUserByUsername(string username)
         {
-            /*var subProductToCheck = _context.TblSubProducts.Where(x => x.Id == subProductId && x.Quantity >= quantity).FirstOrDefault();
-            if (subProductToCheck != null) return true;*/
-            return false;
+            return await _context.TblUsers.Where(x => x.UserName == username).FirstAsync();
+        }
+
+        public async Task<TblAddendum> insertAddendum(TblAddendum entities)
+        {
+            await _context.TblAddendums.AddAsync(entities);
+            await _context.SaveChangesAsync();
+            return entities;
+        }
+
+        public async Task<TblAddendumProductItem> insertAddendumProductItem(TblAddendumProductItem entities)
+        {
+            await _context.TblAddendumProductItems.AddAsync(entities);
+            await _context.SaveChangesAsync();
+            return entities;
+        }
+
+        public async Task<TblProductItem> minusQuantityProductItem(Guid productItemId, int quantity)
+        {
+            var productItem = await _context.TblProductItems.Where(x => x.Id == productItemId).FirstAsync();
+            productItem.Quantity = productItem.Quantity - quantity;
+            _context.Update(productItem);
+            await _context.SaveChangesAsync();
+            return productItem;
         }
     }
 }
