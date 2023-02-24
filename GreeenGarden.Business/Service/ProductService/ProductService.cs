@@ -56,7 +56,6 @@ namespace GreeenGarden.Business.Service.ProductService
                 {
                     Id = Guid.NewGuid(),
                     Name = model.name,
-                    Quantity = 0,
                     Description= model.description,
                     Status = Status.ACTIVE,
                     CategoryId = model.categoryId
@@ -122,7 +121,6 @@ namespace GreeenGarden.Business.Service.ProductService
                     {
                         id = p.Id,
                         name = p.Name,
-                        quantity = p.Quantity,
                         description = p.Description,
                         status = p.Status,
                         categoryId = p.CategoryId,

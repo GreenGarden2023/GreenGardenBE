@@ -6,5 +6,6 @@ namespace GreeenGarden.Data.Enums
     {
         public static readonly string ACTIVE = "Active";
         public static readonly string DISABLE = "Disable";
+        public static readonly string UNPAID = "Unpaid";
     }
 }

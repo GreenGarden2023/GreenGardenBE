@@ -1,4 +1,6 @@
 ﻿using GreeenGarden.Business.Service.OrderService;
+using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
@@ -15,21 +17,12 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpGet("CheckWholesaleProduct")]
-        public async Task<IActionResult> checkWholesaleProduct(Guid subProductId, int quantity)
+        [HttpPost("create-Order")]
+        public async Task<IActionResult> createOrder([FromBody] OrderModel model)
         {
-            var result = await _service.checkWholesaleProduct(subProductId, quantity);
-            if (result.IsSuccess && result.Code == 200) return Ok(result);
-            return BadRequest(result);
-        }
-
-
-
-        [HttpGet("CheckRetailProduct")]
-        public async Task<IActionResult> checkRetailProduct(Guid productItemId)
-        {
-            var result = await _service.checkRetailProduct(productItemId);
-            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1]; 
+            var result = await _service.createOrder(token, model);
+            if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
     }

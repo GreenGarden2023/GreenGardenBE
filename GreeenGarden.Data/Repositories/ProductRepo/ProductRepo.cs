@@ -43,7 +43,7 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         {
             return _context.TblProducts.Where(x => x.Status == Status.ACTIVE
                 && x.CategoryId == categoryId
-                && x.Quantity > 0).Paginate(pagingModel.curPage, pagingModel.pageSize);
+                ).Paginate(pagingModel.curPage, pagingModel.pageSize);
         }
 
         public TblProduct queryAProductByProId(Guid? proId)

@@ -19,6 +19,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblFeedBack> TblFeedBacks { get; set; }
 
+    public virtual DbSet<TblFile> TblFiles { get; set; }
+
     public virtual DbSet<TblImage> TblImages { get; set; }
 
     public virtual DbSet<TblOrder> TblOrders { get; set; }
@@ -29,7 +31,13 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblProductItem> TblProductItems { get; set; }
 
+    public virtual DbSet<TblReport> TblReports { get; set; }
+
+    public virtual DbSet<TblReportDetail> TblReportDetails { get; set; }
+
     public virtual DbSet<TblRole> TblRoles { get; set; }
+
+    public virtual DbSet<TblSize> TblSizes { get; set; }
 
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
@@ -106,6 +114,19 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblFeedBacks_tblUsers");
+        });
+
+        modelBuilder.Entity<TblFile>(entity =>
+        {
+            entity.ToTable("tblFile");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.FileUrl)
+                .HasMaxLength(500)
+                .HasColumnName("FileURL");
+            entity.Property(e => e.ReportDetailId).HasColumnName("ReportDetailID");
         });
 
         modelBuilder.Entity<TblImage>(entity =>
@@ -198,10 +219,49 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Name).HasMaxLength(200);
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.Type).HasMaxLength(50);
 
             entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_tblProductItems_tblProducts");
+
+            entity.HasOne(d => d.Size).WithMany(p => p.TblProductItems)
+                .HasForeignKey(d => d.SizeId)
+                .HasConstraintName("FK_tblProductItems_tblSizes");
+        });
+
+        modelBuilder.Entity<TblReport>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_Report");
+
+            entity.ToTable("tblReport");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<TblReportDetail>(entity =>
+        {
+            entity.ToTable("tblReportDetail");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.ReportId).HasColumnName("ReportID");
+            entity.Property(e => e.Summary).HasMaxLength(500);
+
+            entity.HasOne(d => d.Report).WithMany(p => p.TblReportDetails)
+                .HasForeignKey(d => d.ReportId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblReportDetail_tblReport");
         });
 
         modelBuilder.Entity<TblRole>(entity =>
@@ -211,6 +271,14 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+        });
+
+        modelBuilder.Entity<TblSize>(entity =>
+        {
+            entity.ToTable("tblSizes");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.Name).HasColumnName("name");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

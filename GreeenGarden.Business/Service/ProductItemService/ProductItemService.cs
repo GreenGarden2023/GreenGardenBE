@@ -127,7 +127,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 {
                     id = productItemId,
                     name = productItem.FirstOrDefault().Name,
-                    price = productItem.FirstOrDefault()?.Price,
+                    price = productItem.FirstOrDefault()?.RentPrice,
                     status = productItem.FirstOrDefault().Status,
                     description = productItem.FirstOrDefault().Description,
                     //subProductId = productItem.FirstOrDefault().SubProductId,
@@ -163,7 +163,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     newProductItem.Name = model.name;
                         newProductItem.Description = model.description;
                         //newProductItem.SubProductId = model.subProductId;
-                    newProductItem.Price = model.price;
+                    newProductItem.RentPrice = model.price;
                     newProductItem.Status = Status.ACTIVE;
                     await _proItemRepo.Insert(newProductItem);
                     _subRepo.updateWhenCreateItemUnique(model.subProductId, model.price);
@@ -175,7 +175,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     newProductItem.Name = model.name;
                     newProductItem.Description = model.description;
                     //newProductItem.SubProductId = model.subProductId;
-                    newProductItem.Price = null;
+                    newProductItem.RentPrice = null;
                     newProductItem.Status = Status.ACTIVE;
                     await _proItemRepo.Insert(newProductItem);
                     _subRepo.updateWhenUpdateItemSimilar(model.subProductId);
