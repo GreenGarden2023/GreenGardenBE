@@ -25,5 +25,14 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpGet("get-Detail-Addendum")]
+        public async Task<IActionResult> getDetailAddendum(Guid addendumId)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.getDetailAddendum(addendumId);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

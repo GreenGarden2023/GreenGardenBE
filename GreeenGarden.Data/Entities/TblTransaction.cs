@@ -9,9 +9,7 @@ public partial class TblTransaction
 
     public string? Type { get; set; }
 
-    public Guid? AddendumId { get; set; }
+    public Guid? PaymentId { get; set; }
 
-    public virtual TblAddendum? Addendum { get; set; }
-
-    public virtual ICollection<TblPayment> TblPayments { get; } = new List<TblPayment>();
+    public virtual TblPayment? Payment { get; set; }
 }

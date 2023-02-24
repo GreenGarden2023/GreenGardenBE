@@ -11,5 +11,9 @@ namespace GreeenGarden.Business.Service.OrderService
     public interface IOrderService
     {
         Task<ResultModel> createOrder(string token, OrderModel model);
+        Task<ResultModel> getDetailAddendum(Guid addendumId);
+        Task<ResultModel> getListAddendum(string token, Guid orderId);
+        Task<ResultModel> payByCashForAddendum(string token, Guid addendumId);
+
     }
 }

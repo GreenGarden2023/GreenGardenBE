@@ -81,7 +81,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     TotalPrice = totalPrice,
                     Deposit = totalPrice / 100 * 10,
                     ReducedMoney = 0,
-                    OrderId = order.Id
+                    OrderId = order.Id,
+                    RemainMoney = totalPrice
                 };
                 await _orderRepo.insertAddendum(addendum);
 
@@ -103,8 +104,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = model;
-                return result;
+                result.Data = await _orderRepo.getDetailAddendum(addendum.Id);
             }
             catch (Exception e)
             {
@@ -114,6 +114,69 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
             return result;
+        }
+
+        public async Task<ResultModel> getDetailAddendum(Guid addendumId)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var detailAddendum = await _orderRepo.getDetailAddendum(addendumId);
+
+                result.Code= 200;
+                result.IsSuccess = true;
+                result.Data = detailAddendum;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> getListAddendum(string token, Guid orderId)
+        {
+            var result = new ResultModel();
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> payByCashForAddendum(string token, Guid addendumId)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var addendum = await _orderRepo.GetAddendum(addendumId);
+                /*var transaction = new TblTransaction() {
+                    Id = Guid.NewGuid(),
+                    AddendumId = addendumId,
+                    Type = ""
+                };*/
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+
         }
     }
 }

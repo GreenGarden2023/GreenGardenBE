@@ -1,7 +1,9 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.AddendumModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,45 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         {
             _context = context;
         }
+
+        public async Task<TblAddendum> GetAddendum(Guid AddendumId)
+        {
+            return await _context.TblAddendums.Where(x=>x.Id == AddendumId).FirstAsync();
+        }
+
+        public async Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId)
+        {
+            var result = new AdddendumResponseModel();
+            var addendum = await _context.TblAddendums.Where(x => x.Id == AddendumId).FirstAsync();
+            var addendumProductItem = await _context.TblAddendumProductItems.Where(x =>x.AddendumId== AddendumId).ToListAsync();
+            result.Id = addendum.Id;
+            result.TransportFee = addendum.TransportFee;
+            result.StartDateRent = addendum.StartDateRent;
+            result.EndDateRent = addendum.EndDateRent;
+            result.Deposit = addendum.Deposit;
+            result.ReducedMoney= addendum.ReducedMoney;
+            result.TotalPrice = addendum.TotalPrice;
+            result.Status= addendum.Status;
+            result.OrderID = addendum.OrderId;
+            result.ProductItems = new List<addendumProductItemResponseModel>();
+            foreach (var item in addendumProductItem)
+            {
+                var Items = new addendumProductItemResponseModel()
+                {
+                    ProductItemID = item.ProductItemId,
+                    ProductItemPrice = item.ProductItemPrice,
+                    Quantity = item.Quantity
+                };
+                result.ProductItems.Add(Items);
+            }
+            return result;
+        }
+
+        public Task<TblAddendum> getListAddendum(Guid OrderId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<TblProductItem> getProductToCompare(Guid productId)
         {
             return await _context.TblProductItems.Where(x => x.Id == productId).FirstAsync();

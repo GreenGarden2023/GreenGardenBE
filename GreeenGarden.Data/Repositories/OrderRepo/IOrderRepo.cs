@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.AddendumModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,9 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public Task<TblAddendum> insertAddendum(TblAddendum entities);
         public Task<TblAddendumProductItem> insertAddendumProductItem(TblAddendumProductItem entities);
         public Task<TblProductItem> minusQuantityProductItem(Guid productItemId, int quantity);
+        public Task<TblAddendum> getListAddendum(Guid OrderId);
+        public Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId);
+        public Task<TblAddendum> GetAddendum(Guid AddendumId);
+
     }
 }
