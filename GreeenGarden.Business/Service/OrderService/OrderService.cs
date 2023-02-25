@@ -70,6 +70,9 @@ namespace GreeenGarden.Business.Service.OrderService
                     }
                     totalPrice = totalPrice + (item.Quantity * product.RentPrice);
                 }
+
+                deposit = totalPrice / 100 * 20;
+
                 var addendum = new TblAddendum()
                 {
                     Id = Guid.NewGuid(),
@@ -77,11 +80,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     StartDateRent = model.StartDateRent,
                     EndDateRent = model.EndDateRent,
                     Status = Status.UNPAID,
-                    TotalPrice = totalPrice,
-                    Deposit = totalPrice / 100 * 10,
+                    TotalPrice = totalPrice + deposit,
+                    Deposit = deposit,
                     ReducedMoney = 0,
                     OrderId = order.Id,
-                    RemainMoney = totalPrice,
+                    RemainMoney = totalPrice + deposit,
                     Address = model.Address
                 };
                 await _orderRepo.insertAddendum(addendum);
@@ -149,6 +152,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     totalPrice = totalPrice + (item.quantity * product.RentPrice);
                 }
 
+                deposit = totalPrice / 100 * 20;
+
                 var order = new TblOrder()
                 {
                     Id = Guid.NewGuid(),
@@ -167,11 +172,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     StartDateRent = model.startDate,
                     EndDateRent = model.endDate,
                     Status = Status.UNPAID,
-                    TotalPrice = totalPrice,
-                    Deposit = totalPrice / 100 * 10,
+                    TotalPrice = totalPrice + deposit,
+                    Deposit = deposit,
                     ReducedMoney = 0,
                     OrderId = order.Id,
-                    RemainMoney = totalPrice,
+                    RemainMoney = totalPrice + deposit,
                     Address = model.Address
                 };
                 await _orderRepo.insertAddendum(addendum);
