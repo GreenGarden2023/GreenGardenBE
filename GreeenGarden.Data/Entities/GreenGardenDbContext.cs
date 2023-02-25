@@ -181,21 +181,18 @@ public partial class GreenGardenDbContext : DbContext
 
         modelBuilder.Entity<TblPayment>(entity =>
         {
+            entity.HasKey(e => e.Id).HasName("PK_tblTransactions");
+
             entity.ToTable("tblPayments");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
-            entity.Property(e => e.OrderId).HasColumnName("OrderID");
+            entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
 
-            entity.HasOne(d => d.Addendum).WithMany(p => p.TblPayments)
-                .HasForeignKey(d => d.AddendumId)
-                .HasConstraintName("FK_tblPayments_tblAddendums");
-
-            entity.HasOne(d => d.Order).WithMany(p => p.TblPayments)
-                .HasForeignKey(d => d.OrderId)
-                .HasConstraintName("FK_tblPayments_tblOrders");
+            entity.HasOne(d => d.Transaction).WithMany(p => p.TblPayments)
+                .HasForeignKey(d => d.TransactionId)
+                .HasConstraintName("FK_tblPayments_tblTransactions");
         });
 
         modelBuilder.Entity<TblProduct>(entity =>
@@ -285,17 +282,24 @@ public partial class GreenGardenDbContext : DbContext
 
         modelBuilder.Entity<TblTransaction>(entity =>
         {
+            entity.HasKey(e => e.Id).HasName("PK_tblPayments");
+
             entity.ToTable("tblTransactions");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.DatetimePay).HasColumnType("datetime");
-            entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
+            entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
+            entity.Property(e => e.DatetimePaid).HasColumnType("datetime");
+            entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
-            entity.HasOne(d => d.Payment).WithMany(p => p.TblTransactions)
-                .HasForeignKey(d => d.PaymentId)
-                .HasConstraintName("FK_tblTransactions_tblPayments");
+            entity.HasOne(d => d.Addendum).WithMany(p => p.TblTransactions)
+                .HasForeignKey(d => d.AddendumId)
+                .HasConstraintName("FK_tblPayments_tblAddendums");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.TblTransactions)
+                .HasForeignKey(d => d.OrderId)
+                .HasConstraintName("FK_tblPayments_tblOrders");
         });
 
         modelBuilder.Entity<TblUser>(entity =>
