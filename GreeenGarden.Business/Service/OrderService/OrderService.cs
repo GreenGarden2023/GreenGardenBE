@@ -36,7 +36,12 @@ namespace GreeenGarden.Business.Service.OrderService
                 double? totalPrice = 0;
                 double? deposit = 0;
                 var order = await _orderRepo.GetOrder(model.OrderId);
-                if (order.UserId != user.Id)
+                if (order == null) {
+                    result.IsSuccess = false;
+                    result.Data = "This order dont't exist, please check again!";
+                    return result;
+                }
+                if (!order.UserId.Equals(user.Id))
                 {
                     result.IsSuccess = false;
                     result.Data = "This order isn't belong user: " + user.Id;
@@ -56,7 +61,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         result.Data = "Product " + product.Name + " don't enough quantity!";
                         return result;
                     }
-                    if (product.Status != Status.ACTIVE)
+                    if (!product.Status.Equals(Status.ACTIVE))
                     {
                         result.IsSuccess = false;
                         result.Data = "Product " + product.Name + " don't exist!";

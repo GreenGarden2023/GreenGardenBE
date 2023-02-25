@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("order/")]
     //[Authorize]
     [ApiController]
     public class OrderController : Controller
@@ -17,7 +17,7 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpPost("create-Order")]
+        [HttpPost("create-order")]
         public async Task<IActionResult> createOrder([FromBody] OrderModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
@@ -27,7 +27,7 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpPost("add-Addendum-By-Order")]
+        [HttpPost("add-addendum-by-order")]
         public async Task<IActionResult> addAddendumByOrder([FromBody] addendumToAddByOrderModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
@@ -36,7 +36,7 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("get-Detail-Addendum")]
+        [HttpGet("get-detail-addendum")]
         public async Task<IActionResult> getDetailAddendum(Guid addendumId)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
@@ -45,7 +45,7 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("get-List-Addendum")]
+        [HttpGet("get-list-addendum")]
         public async Task<IActionResult> getListAddendum(Guid orderId)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
@@ -54,7 +54,7 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("get-List-Order")]
+        [HttpGet("get-list-order")]
         public async Task<IActionResult> getListOrder()
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
