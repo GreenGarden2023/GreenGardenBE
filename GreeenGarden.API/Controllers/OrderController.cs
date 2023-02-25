@@ -26,11 +26,30 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
+
+        [HttpPost("add-Addendum-By-Order")]
+        public async Task<IActionResult> addAddendumByOrder([FromBody] addendumToAddByOrderModel model)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.addAddendumByOrder(token, model);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
         [HttpGet("get-Detail-Addendum")]
         public async Task<IActionResult> getDetailAddendum(Guid addendumId)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.getDetailAddendum(addendumId);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpGet("get-List-Addendum")]
+        public async Task<IActionResult> getListAddendum(Guid orderId)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.getListAddendum(token, orderId);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

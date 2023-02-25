@@ -1,5 +1,7 @@
-﻿using GreeenGarden.Data.Models.OrderModel;
+﻿using GreeenGarden.Data.Models.AddendumModel;
+using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.TransactionModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> createOrder(string token, OrderModel model);
         Task<ResultModel> getDetailAddendum(Guid addendumId);
         Task<ResultModel> getListAddendum(string token, Guid orderId);
-        Task<ResultModel> payByCashForAddendum(string token, Guid addendumId);
+        Task<ResultModel> addAddendumByOrder(string token, addendumToAddByOrderModel model);
 
     }
 }

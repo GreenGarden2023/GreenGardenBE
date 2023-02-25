@@ -9,7 +9,7 @@ namespace GreeenGarden.Data.Models.AddendumModel
     public class AddendumModel
     {
     }
-    public class AdddendumResponseModel 
+    public class AdddendumResponseModel
     {
         public Guid Id { get; set; }
         public double? TransportFee { get; set; }
@@ -20,7 +20,8 @@ namespace GreeenGarden.Data.Models.AddendumModel
         public double? TotalPrice { get; set; }
         public string? Status { get; set; }
         public Guid OrderID { get; set; }
-        public List<addendumProductItemResponseModel>? ProductItems { get; set; } 
+        public double? RemainMoney { get; set; }
+        public List<addendumProductItemResponseModel>? ProductItems { get; set; }
     }
     public class addendumProductItemResponseModel
     {
@@ -29,4 +30,16 @@ namespace GreeenGarden.Data.Models.AddendumModel
         public Guid? ProductItemID { get; set; }
     }
 
+    public class listAddendumResponse
+    {
+        public Guid Id { set; get; }
+        public Guid OrderID { set; get; }
+        public DateTime? StartDateRent { set; get; }
+        public DateTime? EndDateRent { set; get; }
+        public string? Status { set; get; }
+        public double? Deposit { set; get; }
+        public double? TotalPrice { set; get; }
+        public double? RemainMoney { set; get; }
+        public List<addendumProductItemResponseModel>? ProductItems { get; set; }
+    }
 }

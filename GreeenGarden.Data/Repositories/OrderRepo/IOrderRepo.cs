@@ -16,9 +16,10 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public Task<TblAddendum> insertAddendum(TblAddendum entities);
         public Task<TblAddendumProductItem> insertAddendumProductItem(TblAddendumProductItem entities);
         public Task<TblProductItem> minusQuantityProductItem(Guid productItemId, int quantity);
-        public Task<TblAddendum> getListAddendum(Guid OrderId);
+        public Task<List<listAddendumResponse>> getListAddendum(Guid OrderId);
         public Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId);
         public Task<TblAddendum> GetAddendum(Guid AddendumId);
+        public Task<TblOrder> GetOrder(Guid OrderId);
 
     }
 }
