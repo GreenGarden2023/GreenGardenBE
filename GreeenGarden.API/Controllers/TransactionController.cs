@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("transaction/")]
     //[Authorize]
     [ApiController]
     public class TransactionController : Controller
