@@ -19,7 +19,7 @@ public partial class TblOrder
 
     public virtual ICollection<TblAddendum> TblAddenda { get; } = new List<TblAddendum>();
 
-    public virtual ICollection<TblPayment> TblPayments { get; } = new List<TblPayment>();
+    public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 
     public virtual TblUser User { get; set; } = null!;
 

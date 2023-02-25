@@ -135,7 +135,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 foreach (var item in model.Items)
                 {
-                    var product = await _orderRepo.getProductToCompare(item.productId);
+                    var product = await _orderRepo.getProductToCompare(item.productItemId);
                     if (item.quantity > product.Quantity)
                     {
                         result.IsSuccess = false;
@@ -188,7 +188,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 foreach (var item in model.Items)
                 {
-                    var product = await _orderRepo.getProductToCompare(item.productId);
+                    var product = await _orderRepo.getProductToCompare(item.productItemId);
                     var addendumProductItems = new TblAddendumProductItem()
                     {
                         Id = Guid.NewGuid(),

@@ -32,29 +32,31 @@ namespace GreeenGarden.Business.Service.TransactionService
             try
             {
                 var addendum = await _orderRepo.GetAddendum(model.AddendumId);
-                var payment = new TblPayment()
-                {
-                    Id = Guid.NewGuid(),
-                    PaymentMethod = model.PaymentMethod,
-                    OrderId = addendum.OrderId,
-                    AddendumId = addendum.Id,
-                    Amount = model.Amount,
-                    Type = model.Type,
-                    Status = Status.UNPAID,
-                };
-                await _transactionRepo.insertPayment(payment);
-
                 var transaction = new TblTransaction()
                 {
                     Id = Guid.NewGuid(),
+                    OrderId = addendum.OrderId,
+                    AddendumId = addendum.Id,
                     Amount = model.NumberMoney,
-                    PaymentId = payment.Id,
-                    DatetimePay = DateTime.Now,
-                    Status = Status.SUCCESSED,    
+                    Type = TransactionType.RECEIVED,
+                    Status = Status.SUCCESSED,
+                    DatetimePaid= DateTime.Now,
                 };
                 await _transactionRepo.insert(transaction);
+                var payment = new TblPayment()
+                {
+                    Id = Guid.NewGuid(),
+                    Status = Status.SUCCESSED,
+                    PaymentMethod = PaymentMethod.CASH,
+                    TransactionId = transaction.Id,
+                };
+                await _transactionRepo.insertPayment(payment);
                 await _transactionRepo.miniusAddendumtAmount(addendum.Id, model.NumberMoney);
 
+                if (await _transactionRepo.checkRemainMoney(addendum.Id) == 0)
+                {
+                    await _transactionRepo.changeStatusAddendum(addendum.Id, Status.SUCCESSED);
+                }
 
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -70,24 +72,6 @@ namespace GreeenGarden.Business.Service.TransactionService
 
         }
 
-        public async Task<ResultModel> payByCashForPayment(string token, TransactionModel model)
-        {
-            var result = new ResultModel();
-            try
-            {
-
-                result.Code = 200;
-                result.IsSuccess = true;
-                result.Data = "";
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
-                result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
-            return result;
-
-        }
+        
     }
 }

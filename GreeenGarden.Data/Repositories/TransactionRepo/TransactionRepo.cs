@@ -15,6 +15,22 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
         {
             _context = context;
         }
+
+        public async Task<TblAddendum?> changeStatusAddendum(Guid addendumId, string status)
+        {
+            var addendum = await _context.TblAddendums.Where(x=>x.Id.Equals(addendumId)).FirstOrDefaultAsync();
+            addendum.Status = Enums.Status.SUCCESSED;
+            _context.Update(addendum);
+            await _context.SaveChangesAsync();
+            return addendum;
+        }
+
+        public async Task<double?> checkRemainMoney(Guid addendumId)
+        {
+            var addendum = await _context.TblAddendums.Where(x=>x.Id.Equals(addendumId)).FirstOrDefaultAsync();
+            return addendum.ReducedMoney;
+        }
+
         public async Task<TblTransaction> insert(TblTransaction transaction)
         {
             await _context.TblTransactions.AddAsync(transaction);

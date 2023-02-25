@@ -14,7 +14,6 @@ namespace GreeenGarden.Data.Models.TransactionModel
         public Guid AddendumId { get; set; }
         public string? PaymentMethod { get; set; }
         public string? Type { get; set; }
-        public double? Amount { get; set; }  
         public double? NumberMoney { get; set; }
     }
     public class TransactionRequestModel 

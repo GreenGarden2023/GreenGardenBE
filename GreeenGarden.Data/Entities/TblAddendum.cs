@@ -31,5 +31,5 @@ public partial class TblAddendum
 
     public virtual ICollection<TblAddendumProductItem> TblAddendumProductItems { get; } = new List<TblAddendumProductItem>();
 
-    public virtual ICollection<TblPayment> TblPayments { get; } = new List<TblPayment>();
+    public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }

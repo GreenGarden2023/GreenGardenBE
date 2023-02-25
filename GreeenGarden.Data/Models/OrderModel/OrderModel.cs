@@ -17,7 +17,7 @@ namespace GreeenGarden.Data.Models.OrderModel
 
     public class Item
     {
-        public Guid productId { get; set; }
+        public Guid productItemId { get; set; }
         public int quantity { get; set; }
     }
 
