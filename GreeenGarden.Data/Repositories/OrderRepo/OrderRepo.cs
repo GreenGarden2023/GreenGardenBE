@@ -1,6 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.AddendumModel;
+using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
@@ -86,6 +87,24 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         }
 
+        public async Task<List<listOrderResponseModel>> GetListOrder(Guid userID)
+        {
+            var result = new List<listOrderResponseModel>();
+            var listOrder = await _context.TblOrders.Where(x=>x.UserId == userID).ToListAsync();
+            foreach (var order in listOrder) {
+                var orderResponseModel = new listOrderResponseModel()
+                {
+                    CreateDate = order.CreateDate,
+                    OrderId = order.Id,
+                    Status = order.Status,
+                    TotalPrice = order.TotalPrice,
+                    VoucherID = order.VoucherId
+                };
+                result.Add(orderResponseModel);
+            }
+            return result;
+        }
+
         public async Task<TblOrder> GetOrder(Guid OrderId)
         {
             return await _context.TblOrders.Where(x=>x.Id== OrderId).FirstOrDefaultAsync();
@@ -94,6 +113,11 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public async Task<TblProductItem> getProductToCompare(Guid productId)
         {
             return await _context.TblProductItems.Where(x => x.Id == productId).FirstAsync();
+        }
+
+        public async Task<TblUser> GetUser(string username)
+        {
+            return await _context.TblUsers.Where(x => x.UserName == username).FirstOrDefaultAsync();
         }
 
         public async Task<TblUser> getUserByUsername(string username)

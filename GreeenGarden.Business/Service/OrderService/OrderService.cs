@@ -9,6 +9,7 @@ using GreeenGarden.Data.Repositories.ProductRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,9 +32,16 @@ namespace GreeenGarden.Business.Service.OrderService
             var result = new ResultModel();
             try
             {
+                var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
                 double? totalPrice = 0;
                 double? deposit = 0;
                 var order = await _orderRepo.GetOrder(model.OrderId);
+                if (order.UserId != user.Id)
+                {
+                    result.IsSuccess = false;
+                    result.Data = "This order isn't belong user: " + user.Id;
+                    return result;
+                }
                 if (order.Status == Status.UNPAID) {
                     result.IsSuccess = false;
                     result.Data = "Please pay in full before making a new transaction!";
@@ -62,6 +70,9 @@ namespace GreeenGarden.Business.Service.OrderService
                     }
                     totalPrice = totalPrice + (item.Quantity * product.RentPrice);
                 }
+
+                deposit = totalPrice / 100 * 20;
+
                 var addendum = new TblAddendum()
                 {
                     Id = Guid.NewGuid(),
@@ -69,11 +80,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     StartDateRent = model.StartDateRent,
                     EndDateRent = model.EndDateRent,
                     Status = Status.UNPAID,
-                    TotalPrice = totalPrice,
-                    Deposit = totalPrice / 100 * 10,
+                    TotalPrice = totalPrice + deposit,
+                    Deposit = deposit,
                     ReducedMoney = 0,
                     OrderId = order.Id,
-                    RemainMoney = totalPrice,
+                    RemainMoney = totalPrice + deposit,
                     Address = model.Address
                 };
                 await _orderRepo.insertAddendum(addendum);
@@ -113,8 +124,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
             try
             {
-                string username = _decodeToken.Decode(token, "username");
-                var tblUser = await _orderRepo.getUserByUsername(username);
+                var tblUser = await _orderRepo.getUserByUsername(_decodeToken.Decode(token, "username"));
                 double? totalPrice = 0;
                 double? deposit = 0;
 
@@ -142,6 +152,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     totalPrice = totalPrice + (item.quantity * product.RentPrice);
                 }
 
+                deposit = totalPrice / 100 * 20;
+
                 var order = new TblOrder()
                 {
                     Id = Guid.NewGuid(),
@@ -160,11 +172,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     StartDateRent = model.startDate,
                     EndDateRent = model.endDate,
                     Status = Status.UNPAID,
-                    TotalPrice = totalPrice,
-                    Deposit = totalPrice / 100 * 10,
+                    TotalPrice = totalPrice + deposit,
+                    Deposit = deposit,
                     ReducedMoney = 0,
                     OrderId = order.Id,
-                    RemainMoney = totalPrice,
+                    RemainMoney = totalPrice + deposit,
                     Address = model.Address
                 };
                 await _orderRepo.insertAddendum(addendum);
@@ -238,7 +250,27 @@ namespace GreeenGarden.Business.Service.OrderService
             }
             return result;
         }
-    
-        
+
+        public async Task<ResultModel> getListOrder(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
+                var order = await _orderRepo.GetListOrder(user.Id);
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = order;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+
+        }
     }
 }

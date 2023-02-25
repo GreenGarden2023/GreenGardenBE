@@ -36,4 +36,12 @@ namespace GreeenGarden.Data.Models.OrderModel
         public List<addendumProductItemRequestModel>? ProductItems { get; set; }
 
     }
+    public class listOrderResponseModel
+    {
+        public Guid OrderId { set; get; }
+        public double? TotalPrice { set; get; }
+        public DateTime? CreateDate { set; get; }
+        public string? Status { set; get; }
+        public Guid? VoucherID { set; get; }
+    }
 }

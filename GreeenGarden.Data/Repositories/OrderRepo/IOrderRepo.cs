@@ -1,5 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.AddendumModel;
+using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId);
         public Task<TblAddendum> GetAddendum(Guid AddendumId);
         public Task<TblOrder> GetOrder(Guid OrderId);
+        public Task<TblUser> GetUser(string username);
+        public Task<List<listOrderResponseModel>> GetListOrder(Guid userID);
 
     }
 }

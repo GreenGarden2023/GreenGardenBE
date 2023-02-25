@@ -38,13 +38,5 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
             return addendum;
         }
 
-        public async Task<TblPayment> miniusPaymentAmount(Guid paymentId, double? miniusMoney)
-        {
-            var payment = await _context.TblPayments.Where(x => x.Id == paymentId).FirstOrDefaultAsync();
-            payment.RemainMoney -= miniusMoney;
-            _context.TblPayments.Update(payment);
-            await _context.SaveChangesAsync();
-            return payment;
-        }
     }
 }

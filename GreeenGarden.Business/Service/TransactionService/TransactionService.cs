@@ -41,7 +41,6 @@ namespace GreeenGarden.Business.Service.TransactionService
                     Amount = model.Amount,
                     Type = model.Type,
                     Status = Status.UNPAID,
-                    RemainMoney = model.Amount
                 };
                 await _transactionRepo.insertPayment(payment);
 
@@ -51,10 +50,9 @@ namespace GreeenGarden.Business.Service.TransactionService
                     Amount = model.NumberMoney,
                     PaymentId = payment.Id,
                     DatetimePay = DateTime.Now,
-                    Status = Status.SUCCESSED,                    
+                    Status = Status.SUCCESSED,    
                 };
                 await _transactionRepo.insert(transaction);
-                await _transactionRepo.miniusPaymentAmount(payment.Id, model.NumberMoney);
                 await _transactionRepo.miniusAddendumtAmount(addendum.Id, model.NumberMoney);
 
 
