@@ -290,6 +290,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.DatetimePay).HasColumnType("datetime");
             entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
 
             entity.HasOne(d => d.Payment).WithMany(p => p.TblTransactions)

@@ -25,6 +25,8 @@ public partial class TblAddendum
 
     public double? RemainMoney { get; set; }
 
+    public string? Address { get; set; }
+
     public virtual TblOrder Order { get; set; } = null!;
 
     public virtual ICollection<TblAddendumProductItem> TblAddendumProductItems { get; } = new List<TblAddendumProductItem>();

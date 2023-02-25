@@ -39,6 +39,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             result.TotalPrice = addendum.TotalPrice;
             result.Status= addendum.Status;
             result.OrderID = addendum.OrderId;
+            result.RemainMoney = addendum.RemainMoney;
             result.ProductItems = new List<addendumProductItemResponseModel>();
             foreach (var item in addendumProductItem)
             {
@@ -53,9 +54,41 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         }
 
-        public Task<TblAddendum> getListAddendum(Guid OrderId)
+        public async Task<List<listAddendumResponse>> getListAddendum(Guid OrderId)
         {
-            throw new NotImplementedException();
+            var result = new List<listAddendumResponse>();
+            var addendumResponse = new listAddendumResponse();
+            var addendum = await _context.TblAddendums.Where(x => x.OrderId == OrderId).ToListAsync();
+            foreach (var item in addendum)
+            {
+                addendumResponse.Id= item.Id;
+                addendumResponse.OrderID= item.OrderId;
+                addendumResponse.StartDateRent = item.StartDateRent;
+                addendumResponse.EndDateRent = item.EndDateRent;
+                addendumResponse.Status= item.Status;
+                addendumResponse.Deposit = item.Deposit;
+                addendumResponse.TotalPrice = item.TotalPrice;
+                addendumResponse.RemainMoney= item.RemainMoney;
+                addendumResponse.ProductItems = new List<addendumProductItemResponseModel>();
+                var addendumItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == item.Id).ToListAsync();
+                foreach (var i in addendumItem)
+                {
+                    var addProItem = new addendumProductItemResponseModel()
+                    {
+                        ProductItemID = i.ProductItemId,
+                        ProductItemPrice = i.ProductItemPrice,
+                        Quantity = i.Quantity,
+                    };
+                    addendumResponse.ProductItems.Add(addProItem);
+                }
+                result.Add(addendumResponse);
+            }
+            return result;
+        }
+
+        public async Task<TblOrder> GetOrder(Guid OrderId)
+        {
+            return await _context.TblOrders.Where(x=>x.Id== OrderId).FirstOrDefaultAsync();
         }
 
         public async Task<TblProductItem> getProductToCompare(Guid productId)

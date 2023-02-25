@@ -17,6 +17,10 @@ public partial class TblPayment
 
     public string? Type { get; set; }
 
+    public string? Status { get; set; }
+
+    public double? RemainMoney { get; set; }
+
     public virtual TblAddendum? Addendum { get; set; }
 
     public virtual TblOrder? Order { get; set; }
