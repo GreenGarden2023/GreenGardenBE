@@ -7,11 +7,13 @@ public partial class TblTransaction
 {
     public Guid Id { get; set; }
 
-    public string? Type { get; set; }
+    public double? Amount { get; set; }
 
-    public Guid? AddendumId { get; set; }
+    public Guid? PaymentId { get; set; }
 
-    public virtual TblAddendum? Addendum { get; set; }
+    public DateTime? DatetimePay { get; set; }
 
-    public virtual ICollection<TblPayment> TblPayments { get; } = new List<TblPayment>();
+    public string? Status { get; set; }
+
+    public virtual TblPayment? Payment { get; set; }
 }

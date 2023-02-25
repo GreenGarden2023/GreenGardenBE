@@ -1,9 +1,11 @@
 ﻿using GreeenGarden.Business.Service.OrderService;
+using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("order/")]
+    [Route("api/[controller]")]
     //[Authorize]
     [ApiController]
     public class OrderController : Controller
@@ -15,21 +17,49 @@ namespace GreeenGarden.API.Controllers
         }
 
 
-        [HttpGet("check-wholesale-product")]
-        public async Task<IActionResult> checkWholesaleProduct(Guid subProductId, int quantity)
+        [HttpPost("create-Order")]
+        public async Task<IActionResult> createOrder([FromBody] OrderModel model)
         {
-            var result = await _service.checkWholesaleProduct(subProductId, quantity);
-            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.createOrder(token, model);
+            if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
 
 
-
-        [HttpGet("check-retail-product")]
-        public async Task<IActionResult> checkRetailProduct(Guid productItemId)
+        [HttpPost("add-Addendum-By-Order")]
+        public async Task<IActionResult> addAddendumByOrder([FromBody] addendumToAddByOrderModel model)
         {
-            var result = await _service.checkRetailProduct(productItemId);
-            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.addAddendumByOrder(token, model);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpGet("get-Detail-Addendum")]
+        public async Task<IActionResult> getDetailAddendum(Guid addendumId)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.getDetailAddendum(addendumId);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpGet("get-List-Addendum")]
+        public async Task<IActionResult> getListAddendum(Guid orderId)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.getListAddendum(token, orderId);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpGet("get-List-Order")]
+        public async Task<IActionResult> getListOrder()
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.getListOrder(token);
+            if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
     }

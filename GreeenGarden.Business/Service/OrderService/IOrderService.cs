@@ -1,11 +1,22 @@
-﻿using GreeenGarden.Data.Models.ResultModel;
+﻿using GreeenGarden.Data.Models.AddendumModel;
+using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.TransactionModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
     public interface IOrderService
     {
-        Task<ResultModel> checkWholesaleProduct(Guid subProductId, int quantity);
-        Task<ResultModel> checkRetailProduct(Guid productItemId);
-        Task<ResultModel> createOrder(string token, Guid productItem, Guid productSize, int quantity, DateTime startDate, DateTime endDate);
+        Task<ResultModel> createOrder(string token, OrderModel model);
+        Task<ResultModel> getDetailAddendum(Guid addendumId);
+        Task<ResultModel> getListAddendum(string token, Guid orderId);
+        Task<ResultModel> addAddendumByOrder(string token, addendumToAddByOrderModel model);
+        Task<ResultModel> getListOrder(string token);
+
     }
 }

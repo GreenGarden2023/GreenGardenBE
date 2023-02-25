@@ -186,16 +186,16 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
-            entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
+
+            entity.HasOne(d => d.Addendum).WithMany(p => p.TblPayments)
+                .HasForeignKey(d => d.AddendumId)
+                .HasConstraintName("FK_tblPayments_tblAddendums");
 
             entity.HasOne(d => d.Order).WithMany(p => p.TblPayments)
                 .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("FK_tblPayments_tblOrders");
-
-            entity.HasOne(d => d.Transaction).WithMany(p => p.TblPayments)
-                .HasForeignKey(d => d.TransactionId)
-                .HasConstraintName("FK_tblPayments_tblTransactions");
         });
 
         modelBuilder.Entity<TblProduct>(entity =>
@@ -290,11 +290,12 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
+            entity.Property(e => e.DatetimePay).HasColumnType("datetime");
+            entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
 
-            entity.HasOne(d => d.Addendum).WithMany(p => p.TblTransactions)
-                .HasForeignKey(d => d.AddendumId)
-                .HasConstraintName("FK_tblTransactions_tblAddendums");
+            entity.HasOne(d => d.Payment).WithMany(p => p.TblTransactions)
+                .HasForeignKey(d => d.PaymentId)
+                .HasConstraintName("FK_tblTransactions_tblPayments");
         });
 
         modelBuilder.Entity<TblUser>(entity =>
