@@ -11,7 +11,6 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
     {
         public Task<TblTransaction> insert(TblTransaction transaction);
         public Task<TblPayment> insertPayment(TblPayment payment);
-        public Task<TblPayment> miniusPaymentAmount(Guid paymentId, double? miniusMoney);
         public Task<TblAddendum> miniusAddendumtAmount(Guid addendumId, double? miniusMoney);
     }
 }
