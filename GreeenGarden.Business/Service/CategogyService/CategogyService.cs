@@ -174,7 +174,7 @@ namespace GreeenGarden.Business.Service.CategogyService
             var result = new ResultModel();
             try
             {
-                var listCategories = _cateRepo.GetCategoryByStatus(pagingModel, status);
+                var listCategories = await _cateRepo.GetCategoryByStatus(pagingModel, status);
                 if (listCategories == null)
                 {
                     result.IsSuccess = true;

@@ -37,7 +37,7 @@ namespace GreeenGarden.Business.Service.OrderService
             var result = new ResultModel();
             try
             {
-                bool check = _orderRepo.checkWholesaleProduct(subProductId, quantity);
+                bool check =  _orderRepo.checkWholesaleProduct(subProductId, quantity);
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = check;

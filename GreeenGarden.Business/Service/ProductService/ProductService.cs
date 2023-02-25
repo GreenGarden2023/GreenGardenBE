@@ -188,7 +188,7 @@ namespace GreeenGarden.Business.Service.ProductService
             try
             {
 
-                var listProdct = _productRepo.queryAllProduct(pagingModel);
+                var listProdct = await _productRepo.queryAllProduct(pagingModel);
 
                 if (listProdct == null)
                 {

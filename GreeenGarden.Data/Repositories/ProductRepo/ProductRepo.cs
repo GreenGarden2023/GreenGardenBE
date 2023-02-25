@@ -69,9 +69,9 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         }
 
 
-        public Page<TblProduct> queryAllProduct(PaginationRequestModel pagingModel)
+        public async Task<Page<TblProduct>> queryAllProduct(PaginationRequestModel pagingModel)
         {
-            return _context.TblProducts.Paginate(pagingModel.curPage, pagingModel.pageSize);
+            return await _context.TblProducts.PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
         }
 
 
