@@ -27,6 +27,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 PasswordHash = x.u.PasswordHash,
                 PasswordSalt = x.u.PasswordSalt,
                 RoleName = x.ur.RoleName,
+                Email = x.u.Mail
             }).FirstOrDefaultAsync();
             return userModel;
         }
@@ -91,6 +92,34 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             await _context.SaveChangesAsync();
             return user;
 
+        }
+
+        public async Task<bool> CheckUserEmail(string email)
+        {
+            if (!String.IsNullOrEmpty(email))
+            {
+                var check = await _context.TblUsers.Where(x => x.Mail.Equals(email)).FirstOrDefaultAsync();
+                if(check != null) { return true; } else { return false; }
+            }
+            else { return false; }
+        }
+
+        public async Task<TblUser> ResetPassword(string email, byte[] passHash, byte[] passSalt)
+        {
+            var query = from u in context.TblUsers
+                        where u.Mail.Equals(email)
+                        select new { u };
+
+            var user = await query.Select(x => x.u).FirstOrDefaultAsync();
+            if(user != null)
+            {
+                user.PasswordHash = passHash;
+                user.PasswordSalt = passSalt;
+                _context.Update(user);
+                await _context.SaveChangesAsync();
+                return user;
+            }
+            return null;
         }
     }
 }

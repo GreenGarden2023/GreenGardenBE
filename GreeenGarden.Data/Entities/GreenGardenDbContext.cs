@@ -17,6 +17,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblCategory> TblCategories { get; set; }
 
+    public virtual DbSet<TblEmailOtpcode> TblEmailOtpcodes { get; set; }
+
     public virtual DbSet<TblFeedBack> TblFeedBacks { get; set; }
 
     public virtual DbSet<TblFile> TblFiles { get; set; }
@@ -93,6 +95,27 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Status).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<TblEmailOtpcode>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_EmailOTPCode");
+
+            entity.ToTable("tblEmailOTPCode");
+
+            entity.HasIndex(e => e.Optcode, "Index_EmailOTPCode_1").IsUnique();
+
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.Email).HasMaxLength(200);
+            entity.Property(e => e.Optcode)
+                .HasMaxLength(50)
+                .HasColumnName("OPTCode");
+
+            entity.HasOne(d => d.EmailNavigation).WithMany(p => p.TblEmailOtpcodes)
+                .HasPrincipalKey(p => p.Mail)
+                .HasForeignKey(d => d.Email)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_EmailOTPCode_tblUsers");
         });
 
         modelBuilder.Entity<TblFeedBack>(entity =>
@@ -306,12 +329,22 @@ public partial class GreenGardenDbContext : DbContext
         {
             entity.ToTable("tblUsers");
 
+            entity.HasIndex(e => e.UserName, "Index_tblUsers_1").IsUnique();
+
+            entity.HasIndex(e => e.Mail, "Index_tblUsers_2").IsUnique();
+
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.Favorite).HasMaxLength(500);
+            entity.Property(e => e.FullName).HasMaxLength(200);
+            entity.Property(e => e.Mail).HasMaxLength(200);
+            entity.Property(e => e.Phone).HasMaxLength(50);
             entity.Property(e => e.RoleId)
                 .HasDefaultValueSql("('c98b8768-5827-4e5d-bf3c-3ba67b913d70')")
                 .HasColumnName("RoleID");
+            entity.Property(e => e.UserName).HasMaxLength(200);
 
             entity.HasOne(d => d.Role).WithMany(p => p.TblUsers)
                 .HasForeignKey(d => d.RoleId)

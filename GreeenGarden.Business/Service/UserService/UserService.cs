@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Business.Utilities.TokenService;
+﻿using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
@@ -17,11 +18,12 @@ namespace GreeenGarden.Business.Service.UserService
     {
         private readonly IUserRepo _userRepo;
         private readonly DecodeToken _decodeToken;
-
-        public UserService(IUserRepo userRepo)
+        private readonly IEMailService _eMailService;
+        public UserService(IUserRepo userRepo, IEMailService eMailService)
         {
             _userRepo = userRepo;
             _decodeToken = new DecodeToken();
+            _eMailService = eMailService;
         }
 
         public async Task<ResultModel> Login(UserLoginReqModel userLoginReqModel)
@@ -140,7 +142,7 @@ namespace GreeenGarden.Business.Service.UserService
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.RoleName),
                 new Claim("rolename", user.RoleName),
                 new Claim("username", user.UserName),
-
+                new Claim("email", user.Email),
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
@@ -243,6 +245,49 @@ namespace GreeenGarden.Business.Service.UserService
 
 
             
+        }
+
+        public async Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel)
+        {
+            ResultModel result = new ResultModel();
+            try
+            {
+                var verifyCode = await _eMailService.VerifyEmailVerificationOTP(passwordResetModel.OTPCode);
+                if(verifyCode.Code == 200)
+                {
+                    CreatePasswordHash(passwordResetModel.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
+                    var update = await _userRepo.ResetPassword(verifyCode.Data.ToString(), passwordHash, passwordSalt);
+                    if (update != null)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Password reset successfully.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Password reset failed.";
+                        return result;
+                    }
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Password reset failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = e.ToString();
+                return result;
+
+            }
         }
     }
 }
