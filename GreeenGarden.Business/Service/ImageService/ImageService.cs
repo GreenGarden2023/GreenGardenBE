@@ -102,6 +102,7 @@ namespace GreeenGarden.Business.Service.ImageService
                 foreach (string file in fileURLs)
                 {
                     await blobContainerClient.DeleteBlobAsync(file.Replace(defaultURL, ""));
+                    await _imageRepo.DeleteImage(file);
                 }
                 resultsModel.IsSuccess = true;
                 resultsModel.Message = "Delete Files Successful";

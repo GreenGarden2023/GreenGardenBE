@@ -11,6 +11,23 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         {
             _context = context;
         }
+
+        public async Task<bool> DeleteImage(string imgURL)
+        {
+            if (!String.IsNullOrEmpty(imgURL))
+            {
+                var img = _context.TblImages.Where(x => x.ImageUrl == imgURL).FirstOrDefault();
+                if(img != null)
+                {
+                    _context.TblImages.Remove(img);
+                    await Update();
+                    return true;
+                }
+                else { return false; }
+            }
+            else { return false; }
+        }
+
         public async Task<TblImage> GetImgUrlCategory(Guid categoryId)
         {
             var query = from c in context.TblImages
