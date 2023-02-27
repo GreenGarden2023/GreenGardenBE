@@ -7,6 +7,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
     public interface IUserRepo : IRepository<TblUser>
     {
         public Task<UserLoginResModel> GetUser(string userName);
+        public Task<TblUser> UpdateUser(string username, UserUpdateModel userUpdateModel);
         public Task<UserCurrResModel> GetCurrentUser(string userName);
     }
 }

@@ -60,6 +60,22 @@ namespace GreeenGarden.API.Controllers
                 return BadRequest(e.ToString());
             }
         }
+        [HttpPost("update-user")]
+        public async Task<ActionResult<ResultModel>> Update(UserUpdateModel userUpdateModel)
+        {
+            try
+            {
+                string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+                var result = await _userService.UpdateUser(token, userUpdateModel);
+                return result;
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+
+        }
 
     }
 }

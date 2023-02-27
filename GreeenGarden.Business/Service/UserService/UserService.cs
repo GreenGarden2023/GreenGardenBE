@@ -5,6 +5,7 @@ using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -94,10 +95,13 @@ namespace GreeenGarden.Business.Service.UserService
                     Mail = userInsertModel.Mail,
                 };
                 await _userRepo.Insert(userModel);
+                userModel.PasswordHash = null;
+                userModel.PasswordSalt = null;
                 return new ResultModel()
                 {
                     IsSuccess = true,
-                    Message = "Username Registered"
+                    Data = userModel,
+                    Message = "User Registered"
                 };
 
             }
@@ -119,6 +123,7 @@ namespace GreeenGarden.Business.Service.UserService
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
+
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
             using (var hmac = new HMACSHA512(passwordSalt))
@@ -127,6 +132,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return computedHash.SequenceEqual(passwordHash);
             }
         }
+
         private string CreateToken(UserLoginResModel user)
         {
             List<Claim> claims = new List<Claim>
@@ -186,6 +192,57 @@ namespace GreeenGarden.Business.Service.UserService
                     ResponseFailed = ex.ToString()
                 };
             }
+        }
+
+        public async Task<ResultModel> UpdateUser(string token, UserUpdateModel userUpdateModel)
+        {
+            ResultModel result = new ResultModel();
+            string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+            string userName = _decodeToken.Decode(token, "username");
+            if (!userRole.Equals(Commons.ADMIN)
+                && !userRole.Equals(Commons.CUSTOMER)
+                && !userRole.Equals(Commons.MANAGER)
+                && !userRole.Equals(Commons.STAFF)
+                && !userRole.Equals(Commons.DELIVERER))
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed."
+                };
+            }
+            try
+            {
+                var updateUser = await _userRepo.UpdateUser(userName, userUpdateModel);
+                if (updateUser == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "User not found.";
+                    return result;
+                }
+                else {
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = userUpdateModel;
+                    result.Message = "Update user successful.";
+                    return result;
+                }
+
+                
+
+            }
+            catch (Exception e) {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = e.ToString();
+                return result;
+                    
+            }
+
+
+            
         }
     }
 }
