@@ -126,23 +126,31 @@ namespace GreeenGarden.Business.Service.ProductService
                 if (listProdct == null)
                 {
                     result.Message = "List null";
-                    result.IsSuccess = true;
-                    result.Code = 200;
-                    result.Data = listProdct;
+                    result.IsSuccess = false;
+                    result.Code = 400;
                     return result;
                 }
 
                 List<ProductModel> dataList = new List<ProductModel>();
                 foreach (var p in listProdct.Results)
                 {
-                    var productToShow = new ProductModel
+                    var img = await _imageRepo.GetImgUrlProduct(p.Id);
+                    string imgURL = "";
+                    if (img != null)
+                    {
+                        imgURL = img.ImageUrl;
+                    }
+                    else {
+                        imgURL = "";
+                    }
+                    var productToShow = new ProductModel()
                     {
                         Id = p.Id,
                         Name = p.Name,
                         Description = p.Description,
                         Status = p.Status,
                         CategoryId = p.CategoryId,
-                        ImgUrl =  _imageRepo.GetImgUrlProduct(p.Id).Result.ImageUrl,
+                        ImgUrl = imgURL,
                         IsForSale = p.IsForSale,
                         IsForRent = p.IsForRent
                     };
