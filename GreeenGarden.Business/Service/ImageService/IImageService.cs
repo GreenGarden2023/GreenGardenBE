@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Data.Models.ResultModel;
+﻿using GreeenGarden.Data.Models.FileModel;
+using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Http;
 
 namespace GreeenGarden.Business.Service.ImageService
@@ -11,6 +12,7 @@ namespace GreeenGarden.Business.Service.ImageService
         public Task<ResultModel> UpdateImageCategory(Guid CategoryId, IFormFile file);
         public Task<ResultModel> UpdateImageProduct(Guid ProductID, IFormFile file);
         public Task<ResultModel> UpdateImageProductItem(Guid ProductItemID, List<IFormFile> files);
+        public Task<FileData> DownloadAnImage(string imgURL);
     }
 }
 
