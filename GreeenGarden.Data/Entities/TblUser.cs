@@ -19,13 +19,17 @@ public partial class TblUser
 
     public string? Phone { get; set; }
 
-    public string? Favorite { get; set; }
+    public string Favorite { get; set; } = null!;
 
-    public string? Mail { get; set; }
+    public string Mail { get; set; } = null!;
 
     public Guid RoleId { get; set; }
 
     public virtual TblRole Role { get; set; } = null!;
+
+    public virtual ICollection<TblCart> TblCarts { get; } = new List<TblCart>();
+
+    public virtual ICollection<TblEmailOtpcode> TblEmailOtpcodes { get; } = new List<TblEmailOtpcode>();
 
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
 
