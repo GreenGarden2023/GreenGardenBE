@@ -263,6 +263,13 @@ namespace GreeenGarden.Business.Service.OrderService
             {
                 var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
                 var order = await _orderRepo.GetListOrder(user.Id);
+                if (order == null)
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = "Order null";
+                    return result;
+                }
 
                 result.Code = 200;
                 result.IsSuccess = true;

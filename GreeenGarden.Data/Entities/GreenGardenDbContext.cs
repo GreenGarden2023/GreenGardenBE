@@ -15,6 +15,10 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblAddendumProductItem> TblAddendumProductItems { get; set; }
 
+    public virtual DbSet<TblCart> TblCarts { get; set; }
+
+    public virtual DbSet<TblCartDetail> TblCartDetails { get; set; }
+
     public virtual DbSet<TblCategory> TblCategories { get; set; }
 
     public virtual DbSet<TblEmailOtpcode> TblEmailOtpcodes { get; set; }
@@ -85,6 +89,35 @@ public partial class GreenGardenDbContext : DbContext
                 .HasConstraintName("FK_tblAddendumProductItems_tblProductItems");
         });
 
+        modelBuilder.Entity<TblCart>(entity =>
+        {
+            entity.ToTable("tblCarts");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.TblCarts)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_tblCarts_tblUsers");
+        });
+
+        modelBuilder.Entity<TblCartDetail>(entity =>
+        {
+            entity.ToTable("tblCartDetails");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
+            entity.Property(e => e.CartId).HasColumnName("CartID");
+            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+
+            entity.HasOne(d => d.Cart).WithMany(p => p.TblCartDetails)
+                .HasForeignKey(d => d.CartId)
+                .HasConstraintName("FK_tblCartDetails_tblCarts");
+        });
+
         modelBuilder.Entity<TblCategory>(entity =>
         {
             entity.ToTable("tblCategories");
@@ -117,7 +150,6 @@ public partial class GreenGardenDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EmailOTPCode_tblUsers");
         });
-
         modelBuilder.Entity<TblFeedBack>(entity =>
         {
             entity.ToTable("tblFeedBacks");

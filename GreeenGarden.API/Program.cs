@@ -1,3 +1,4 @@
+using GreeenGarden.Business.Service.CartService;
 using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Business.Service.ImageService;
@@ -11,6 +12,7 @@ using GreeenGarden.Business.Service.SubProductService;
 using GreeenGarden.Business.Service.TransactionService;
 using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
@@ -42,6 +44,7 @@ builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<ISubProductService, SubProductService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
@@ -61,6 +64,7 @@ builder.Services.AddTransient<ISizeRepo, SizeRepo>();
 builder.Services.AddTransient<ISubProductRepo, SubProductRepo>();
 builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
+builder.Services.AddTransient<ICartRepo, CartRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
