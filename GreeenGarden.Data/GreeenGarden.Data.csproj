@@ -13,6 +13,9 @@
     <Folder Include="Repositories\GenericRepository\" />
     <Folder Include="Models\UserModels\" />
     <Folder Include="Models\SizeModel\" />
+    <Folder Include="Models\FileModel\" />
+    <Folder Include="Repositories\EmailOTPCodeRepo\" />
+    <Folder Include="Models\EmailCodeVerifyModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,5 +46,8 @@
     <None Remove="Models\UserModels\" />
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Models\SizeModel\" />
+    <None Remove="Models\FileModel\" />
+    <None Remove="Repositories\EmailOTPCodeRepo\" />
+    <None Remove="Models\EmailCodeVerifyModel\" />
   </ItemGroup>
 </Project>

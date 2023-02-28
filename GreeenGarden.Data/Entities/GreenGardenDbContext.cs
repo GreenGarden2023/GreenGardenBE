@@ -150,7 +150,6 @@ public partial class GreenGardenDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EmailOTPCode_tblUsers");
         });
-
         modelBuilder.Entity<TblFeedBack>(entity =>
         {
             entity.ToTable("tblFeedBacks");

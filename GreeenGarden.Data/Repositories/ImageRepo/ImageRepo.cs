@@ -11,6 +11,23 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         {
             _context = context;
         }
+
+        public async Task<bool> DeleteImage(string imgURL)
+        {
+            if (!String.IsNullOrEmpty(imgURL))
+            {
+                var img = _context.TblImages.Where(x => x.ImageUrl == imgURL).FirstOrDefault();
+                if(img != null)
+                {
+                    _context.TblImages.Remove(img);
+                    await Update();
+                    return true;
+                }
+                else { return false; }
+            }
+            else { return false; }
+        }
+
         public async Task<TblImage> GetImgUrlCategory(Guid categoryId)
         {
             var query = from c in context.TblImages
@@ -66,14 +83,26 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl)
         {
-            var imgProduct = _context.TblImages.Where(x => x.ProductId == ProductID).FirstOrDefault();
+            var imgProduct = await _context.TblImages.Where(x => x.ProductId == ProductID).FirstOrDefaultAsync();
             if (imgProduct != null)
             {
                 imgProduct.ImageUrl = ImgUrl;
+                _context.Update(imgProduct);
+                await _context.SaveChangesAsync();
+                return imgProduct;
             }
-            _context.Update(imgProduct);
-            await _context.SaveChangesAsync();
-            return imgProduct;
+            else
+            {
+                var newProdIMG = new TblImage
+                {
+                    ImageUrl = ImgUrl,
+                    ProductId = ProductID
+                };
+                await _context.TblImages.AddAsync(newProdIMG);
+                await _context.SaveChangesAsync();
+                return newProdIMG;
+            }
+            
         }
 
         public async Task<bool> UpdateImgForProductItem(Guid ProductItemID, List<string> ImgUrls)

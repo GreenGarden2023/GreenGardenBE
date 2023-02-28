@@ -1,8 +1,12 @@
-﻿using Azure.Storage.Blobs;
+﻿using System.IO.Compression;
+using System.Reflection.Metadata;
+using Azure.Storage.Blobs;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.Business.Service.ImageService
 {
@@ -73,6 +77,7 @@ namespace GreeenGarden.Business.Service.ImageService
                 }
 
                 resultsModel.IsSuccess = true;
+                resultsModel.Code = 200;
                 resultsModel.Data = url;
                 resultsModel.Message = "Upload Success";
 
@@ -83,6 +88,7 @@ namespace GreeenGarden.Business.Service.ImageService
             {
 
                 resultsModel.IsSuccess = false;
+                resultsModel.Code = 400;
                 resultsModel.Data = ex.ToString();
                 resultsModel.Message = "Upload Failed";
                 return resultsModel;
@@ -98,6 +104,7 @@ namespace GreeenGarden.Business.Service.ImageService
                 foreach (string file in fileURLs)
                 {
                     await blobContainerClient.DeleteBlobAsync(file.Replace(defaultURL, ""));
+                    await _imageRepo.DeleteImage(file);
                 }
                 resultsModel.IsSuccess = true;
                 resultsModel.Message = "Delete Files Successful";
@@ -111,7 +118,6 @@ namespace GreeenGarden.Business.Service.ImageService
                 return resultsModel;
             }
         }
-
         public async Task<ResultModel> UpdateImageCategory(Guid CategoryId, IFormFile file)
         {
             var result = new ResultModel();
@@ -159,13 +165,21 @@ namespace GreeenGarden.Business.Service.ImageService
                 }
 
                 var uploadImg = await UploadAnImage(file);
-                if (uploadImg.IsSuccess)
+                if (uploadImg.Code == 200)
                 {
 
-                    await _imageRepo.UpdateImgForProduct(productID, uploadImg.Data.ToString());
-                    result.IsSuccess = true;
-                    result.Data = uploadImg.Data.ToString();
-                    return result;
+                    var updateImg = await _imageRepo.UpdateImgForProduct(productID, uploadImg.Data.ToString());
+                    if (updateImg != null)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = uploadImg.Data.ToString();
+                    }
+                    else {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Data = "Update product image failed.";
+                    }
                 }
                 return result;
 
@@ -178,7 +192,6 @@ namespace GreeenGarden.Business.Service.ImageService
                 return result;
             }
         }
-
         public async Task<ResultModel> UpdateImageProductItem(Guid ProductItemID, List<IFormFile> files)
         {
             var result = new ResultModel();
@@ -214,6 +227,32 @@ namespace GreeenGarden.Business.Service.ImageService
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
+            }
+        }
+
+        public async Task<FileData> DownloadAnImage(string imgURL)
+        {
+            try
+            {
+                string fileName = imgURL.Replace(defaultURL, "");
+                BlobClient blobClient = new BlobClient(SecretService.SecretService.GetIMGConn(), "greengardensimages", fileName);
+
+                using (var stream = new MemoryStream())
+                {
+                    await blobClient.DownloadToAsync(stream);
+                    stream.Position = 0;
+                    var contenType = (blobClient.GetProperties()).Value.ContentType;
+                    //return new FileData(stream.ToArray(), contenType, blobClient.Name);
+                    //return file;
+                    return new FileData(stream.ToArray(), contenType, blobClient.Name);
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+                ex.ToString();
+                return null; 
             }
         }
     }

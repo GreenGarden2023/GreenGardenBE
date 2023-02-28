@@ -186,6 +186,9 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                 var product = await _proRepo.queryAProductByProId(productID);
                 var productIMG =  await _imageRepo.GetImgUrlProduct(product.Id);
+                string prodIMG;
+                if(productIMG != null) { prodIMG = productIMG.ImageUrl; ; } else { prodIMG = ""; }
+                
                 var productRes = new ProductModel()
                 {
                     Id = product.Id,
@@ -193,7 +196,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Description = product.Description,
                     Status = product.Status,
                     CategoryId = product.CategoryId,
-                    ImgUrl = productIMG.ImageUrl,
+                    ImgUrl = prodIMG,
                     IsForRent = product.IsForRent,
                     IsForSale = product.IsForSale
 

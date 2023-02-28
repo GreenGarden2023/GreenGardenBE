@@ -1,9 +1,12 @@
-﻿namespace GreeenGarden.Data.Models.UserModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GreeenGarden.Data.Models.UserModels
 {
     public class UserInsertModel
     {
+        [Required]
         public string UserName { get; set; } = null!;
-
+        [Required]
         public string Password { get; set; } = null!;
 
         public string? FullName { get; set; }
@@ -13,7 +16,7 @@
         public string? Phone { get; set; }
 
         public string? Favorite { get; set; }
-
+        [Required]
         public string? Mail { get; set; }
 
     }

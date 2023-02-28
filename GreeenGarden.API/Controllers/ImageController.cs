@@ -1,5 +1,8 @@
-﻿using GreeenGarden.Business.Service.ImageService;
+﻿using System.Data;
+using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -80,6 +83,20 @@ namespace GreeenGarden.API.Controllers
                 });
             }
 
+        }
+        [HttpGet("get-an-image")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetFile(string fileUrl)
+        {
+            try
+            {
+                FileData fileData = await _imageService.DownloadAnImage(fileUrl);
+                return File(fileData.bytes, fileData.contenType, fileData.name);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
