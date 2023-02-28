@@ -27,6 +27,8 @@ public partial class TblUser
 
     public virtual TblRole Role { get; set; } = null!;
 
+    public virtual ICollection<TblCart> TblCarts { get; } = new List<TblCart>();
+
     public virtual ICollection<TblEmailOtpcode> TblEmailOtpcodes { get; } = new List<TblEmailOtpcode>();
 
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
