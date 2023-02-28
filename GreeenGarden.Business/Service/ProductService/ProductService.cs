@@ -316,11 +316,17 @@ namespace GreeenGarden.Business.Service.ProductService
                 if (productUpdate != false && productUpdateModel.Image != null)
                 {
                     var productImgUpdate = await _imgService.UpdateImageProduct(productUpdateModel.ID, productUpdateModel.Image);
-                    if (productImgUpdate != null)
+                    if (productImgUpdate.Code == 200)
                     {
                         result.IsSuccess = true;
                         result.Code = 200;
                         result.Message = "Product updated with image change";
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Product updated failed";
                     }
                 }
                 return result;

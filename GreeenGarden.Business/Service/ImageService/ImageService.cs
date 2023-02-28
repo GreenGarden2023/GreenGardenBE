@@ -77,6 +77,7 @@ namespace GreeenGarden.Business.Service.ImageService
                 }
 
                 resultsModel.IsSuccess = true;
+                resultsModel.Code = 200;
                 resultsModel.Data = url;
                 resultsModel.Message = "Upload Success";
 
@@ -87,6 +88,7 @@ namespace GreeenGarden.Business.Service.ImageService
             {
 
                 resultsModel.IsSuccess = false;
+                resultsModel.Code = 400;
                 resultsModel.Data = ex.ToString();
                 resultsModel.Message = "Upload Failed";
                 return resultsModel;
@@ -163,13 +165,21 @@ namespace GreeenGarden.Business.Service.ImageService
                 }
 
                 var uploadImg = await UploadAnImage(file);
-                if (uploadImg.IsSuccess)
+                if (uploadImg.Code == 200)
                 {
 
-                    await _imageRepo.UpdateImgForProduct(productID, uploadImg.Data.ToString());
-                    result.IsSuccess = true;
-                    result.Data = uploadImg.Data.ToString();
-                    return result;
+                    var updateImg = await _imageRepo.UpdateImgForProduct(productID, uploadImg.Data.ToString());
+                    if (updateImg != null)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = uploadImg.Data.ToString();
+                    }
+                    else {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Data = "Update product image failed.";
+                    }
                 }
                 return result;
 

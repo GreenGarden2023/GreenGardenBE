@@ -83,14 +83,26 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl)
         {
-            var imgProduct = _context.TblImages.Where(x => x.ProductId == ProductID).FirstOrDefault();
+            var imgProduct = await _context.TblImages.Where(x => x.ProductId == ProductID).FirstOrDefaultAsync();
             if (imgProduct != null)
             {
                 imgProduct.ImageUrl = ImgUrl;
+                _context.Update(imgProduct);
+                await _context.SaveChangesAsync();
+                return imgProduct;
             }
-            _context.Update(imgProduct);
-            await _context.SaveChangesAsync();
-            return imgProduct;
+            else
+            {
+                var newProdIMG = new TblImage
+                {
+                    ImageUrl = ImgUrl,
+                    ProductId = ProductID
+                };
+                await _context.TblImages.AddAsync(newProdIMG);
+                await _context.SaveChangesAsync();
+                return newProdIMG;
+            }
+            
         }
 
         public async Task<bool> UpdateImgForProductItem(Guid ProductItemID, List<string> ImgUrls)
