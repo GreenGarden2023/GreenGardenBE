@@ -28,5 +28,6 @@ namespace GreeenGarden.Data.Models.CartModel
     {
         public Guid? ProductItemId { get; set; }
         public int? Quantity { get; set; }
+        public bool? IsForRent { get; set; }
     }
 }

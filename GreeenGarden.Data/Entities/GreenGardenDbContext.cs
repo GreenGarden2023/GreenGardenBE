@@ -45,6 +45,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblSize> TblSizes { get; set; }
 
+    public virtual DbSet<TblSizeProductItem> TblSizeProductItems { get; set; }
+
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
@@ -94,7 +96,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblCarts");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
@@ -108,7 +110,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.ToTable("tblCartDetails");
 
             entity.Property(e => e.Id)
-                .ValueGeneratedNever()
+                .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CartId).HasColumnName("CartID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
@@ -150,6 +152,7 @@ public partial class GreenGardenDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EmailOTPCode_tblUsers");
         });
+
         modelBuilder.Entity<TblFeedBack>(entity =>
         {
             entity.ToTable("tblFeedBacks");
@@ -280,11 +283,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_tblProductItems_tblProducts");
-
-            entity.HasOne(d => d.Size).WithMany(p => p.TblProductItems)
-                .HasForeignKey(d => d.SizeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblProductItems_tblSizes");
         });
 
         modelBuilder.Entity<TblReport>(entity =>
@@ -331,8 +329,28 @@ public partial class GreenGardenDbContext : DbContext
         {
             entity.ToTable("tblSizes");
 
-            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
-            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+        });
+
+        modelBuilder.Entity<TblSizeProductItem>(entity =>
+        {
+            entity.ToTable("tblSIzeProductItems");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            entity.Property(e => e.SizeId).HasColumnName("SizeID");
+
+            entity.HasOne(d => d.ProductItem).WithMany(p => p.TblSizeProductItems)
+                .HasForeignKey(d => d.ProductItemId)
+                .HasConstraintName("FK_tblSIzeProductItems_tblProductItems");
+
+            entity.HasOne(d => d.Size).WithMany(p => p.TblSizeProductItems)
+                .HasForeignKey(d => d.SizeId)
+                .HasConstraintName("FK_tblSIzeProductItems_tblSizes");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>
