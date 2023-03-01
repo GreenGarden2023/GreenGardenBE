@@ -95,7 +95,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 }
                 else
                 {
-                    foreach(SizeProductItemInsertModel sizeModel in productItemInsertModel.sizeModelList)
+                    foreach (SizeProductItemInsertModel sizeModel in productItemInsertModel.sizeModelList)
                     {
                         TblSizeProductItem sizeProductItem = new TblSizeProductItem
                         {
@@ -110,12 +110,12 @@ namespace GreeenGarden.Business.Service.ProductItemService
                             Status = sizeModel.Status
                         };
                         var insertSizeProdItem = await _sizeProductItemRepo.Insert(sizeProductItem);
-                        if(insertSizeProdItem == Guid.Empty)
+                        if (insertSizeProdItem == Guid.Empty)
                         {
                             var sizeProductItemURL = await _imgService.UploadImages(sizeModel.Images);
-                            if(sizeProductItemURL.Code == 200)
+                            if (sizeProductItemURL.Code == 200)
                             {
-                                foreach(string url in (List<string>)sizeProductItemURL.Data)
+                                foreach (string url in (List<string>)sizeProductItemURL.Data)
                                 {
                                     TblImage tblImage = new TblImage()
                                     {
@@ -130,12 +130,13 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                             result.IsSuccess = false;
                             result.Code = 400;
-                            result.Message = "Add product item size: "+ sizeModel.Name +" failed.";
+                            result.Message = "Add product item size: " + sizeModel.Name + " failed.";
                             return result;
                         }
                         else
                         {
-                            SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel() {
+                            SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
+                            {
                                 Id = sizeProductItem.Id,
                                 Name = sizeProductItem.Name,
                                 SizeId = sizeProductItem.SizeId,
@@ -150,7 +151,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         }
                     }
                 }
-                if(productItemModel!= null && !listSizeProductItemModel.Any())
+                if (productItemModel != null && !listSizeProductItemModel.Any())
                 {
                     ProductItemResModel responseProdItem = new ProductItemResModel()
                     {
@@ -239,10 +240,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
             try
             {
                 var prodItemList = await _proItemRepo.GetProductItemByType(pagingModel, type);
-                if(prodItemList != null)
+                if (prodItemList != null)
                 {
                     List<ProductItemResModel> dataList = new List<ProductItemResModel>();
-                    foreach(var pi in prodItemList.Results)
+                    foreach (var pi in prodItemList.Results)
                     {
                         var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(pi.Id, status);
                         if (sizeGet.Any())
@@ -259,7 +260,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                             dataList.Add(pItem);
                         }
-                        
+
                     }
                     ///
                     var paging = new PaginationResponseModel()
@@ -328,10 +329,96 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 }
                 else
                 {
-                        result.Message = "List empty.";
-                        result.IsSuccess = true;
-                        result.Code = 200;
-                        return result;
+                    result.Message = "List empty.";
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> UpdateProductItem(string token, ProductItemUpdateModel productItemModel)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+                var updateProItem = await _proItemRepo.UpdateProductItem(productItemModel);
+                if (updateProItem == true)
+                {
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = productItemModel;
+                    result.Message = "Product item updated.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Product item update failed.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+
+        }
+
+        public async Task<ResultModel> UpdateSizeProductItem(string token, SizeProductItemUpdateModel sizeProductItemResModel)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+                var updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(sizeProductItemResModel);
+                if (updateProItem == true)
+                {
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = sizeProductItemResModel;
+                    result.Message = "Product item updated.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Product item update failed.";
+                    return result;
                 }
             }
             catch (Exception e)

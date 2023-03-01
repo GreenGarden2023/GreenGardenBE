@@ -31,6 +31,46 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                 return await _context.TblProductItems.Where(x=> x.Type.Trim().ToLower().Equals(type.Trim().ToLower())).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             }
         }
+
+        public async Task<bool> UpdateProductItem(ProductItemUpdateModel productItemModel)
+        {
+            if (productItemModel.ProductId == null)
+            {
+                productItemModel.ProductId = Guid.Empty;
+            }
+            if(productItemModel != null)
+            {
+                var query = from prodItem in context.TblProductItems
+                           where prodItem.Id.Equals(productItemModel.Id)
+                           select new { prodItem };
+
+                var productItem = await query.Select(x => x.prodItem).FirstOrDefaultAsync();
+                if (productItem == null)
+                {
+                    return false;
+                }
+                if (!String.IsNullOrEmpty(productItemModel.Name) && !productItemModel.Name.Equals(productItem.Name))
+                {
+                    productItem.Name = productItemModel.Name;
+                }
+                if (!String.IsNullOrEmpty(productItemModel.Description) && !productItemModel.Description.Equals(productItem.Description))
+                {
+                    productItem.Description = productItemModel.Description;
+                }
+                if (!String.IsNullOrEmpty(productItemModel.Type) && !productItemModel.Type.Equals(productItem.Type))
+                {
+                    productItem.Type = productItemModel.Type;
+                }
+                if ((productItemModel.ProductId != Guid.Empty) && !productItemModel.ProductId.Equals(productItem.ProductId))
+                {
+                    productItem.ProductId = (Guid)productItemModel.ProductId;
+                }
+                context.Update(productItem);
+                    await _context.SaveChangesAsync();
+                    return true;
+            }
+            else { return false; }
+        }
     }
     
 }
