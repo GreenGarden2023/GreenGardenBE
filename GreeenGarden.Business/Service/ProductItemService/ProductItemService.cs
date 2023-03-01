@@ -1,8 +1,10 @@
-﻿using System.Security.Claims;
+﻿using System.Net.NetworkInformation;
+using System.Security.Claims;
 using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
@@ -101,7 +103,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         TblSizeProductItem sizeProductItem = new TblSizeProductItem
                         {
                             Id = Guid.NewGuid(),
-                            //Name = sizeModel.Name,
                             SizeId = sizeModel.SizeId,
                             ProductItemId = productItemModel.ProductId,
                             RentPrice = sizeModel.RentPrice,
@@ -131,7 +132,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                             result.IsSuccess = false;
                             result.Code = 400;
-                            result.Message = "Add product item size: " + sizeModel.Name + " failed.";
+                            result.Message = "Add product item size failed.";
                             return result;
                         }
                         else
@@ -147,7 +148,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                 SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
                                 {
                                     Id = sizeProductItem.Id,
-                                    //Name = sizeProductItem.Name,
                                     Size = size,
                                     RentPrice = sizeProductItem.RentPrice,
                                     SalePrice = sizeProductItem.SalePrice,
@@ -240,6 +240,97 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
+        public async Task<ResultModel> GetDetailProductItem(Guid productItemID, string? sizeProductItemStatus)
+        {
+            var result = new ResultModel();
+            if (productItemID != null && productItemID != Guid.Empty)
+            {
+                var prodItem = await _proItemRepo.Get(productItemID);
+                if (prodItem != null)
+                {
+                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemID, sizeProductItemStatus);
+                    ProductItemResModel productItemResModel = new ProductItemResModel()
+                    {
+                        Id = prodItem.Id,
+                        Name = prodItem.Name,
+                        Description = prodItem.Description,
+                        ProductId = prodItem.ProductId,
+                        Type = prodItem.Type,
+                        sizeModelList = sizeGet
+                    };
+                    var productGet = await _proRepo.Get(productItemResModel.ProductId);
+                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
+                    string prodImgURL = "";
+                    if (getProdImgURL != null)
+                    {
+                        prodImgURL = getProdImgURL.ImageUrl;
+                    }
+                    else
+                    {
+                        prodImgURL = "";
+                    }
+                    ProductModel productModel = new ProductModel()
+                    {
+                        Id = productGet.Id,
+                        Name = productGet.Name,
+                        Description = productGet.Description,
+                        Status = productGet.Status,
+                        CategoryId = productGet.CategoryId,
+                        ImgUrl = prodImgURL,
+                        IsForRent = productGet.IsForRent,
+                        IsForSale = productGet.IsForSale
+                    };
+                    ///
+                    var cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                    var getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                    string cateImgURL = "";
+                    if (getCateImgURL != null)
+                    {
+                        cateImgURL = getProdImgURL.ImageUrl;
+                    }
+                    else
+                    {
+                        cateImgURL = "";
+                    }
+                    CategoryModel categoryModel = new CategoryModel()
+                    {
+                        Id = cateGet.Id,
+                        Name = cateGet.Name,
+                        Description = cateGet.Description,
+                        Status = cateGet.Status,
+                        ImgUrl = cateImgURL,
+
+                    };
+                    ProductItemDetailResponseResult productItemDetailResponseResult = new ProductItemDetailResponseResult
+                    {
+                        Category = categoryModel,
+                        Product = productModel,
+                        ProductItem = productItemResModel
+                    };
+                    result.Message = "Get Detail successful.";
+                    result.IsSuccess = true;
+                    result.Data = productItemDetailResponseResult;
+                    result.Code = 200;
+                    return result;
+                }
+                else
+                {
+                    result.Message = "Get Detail failed.";
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    return result;
+                }
+            }
+            else
+            {
+                result.Message = "Get Detail failed.";
+                result.IsSuccess = false;
+                result.Code = 400;
                 return result;
             }
         }
@@ -373,9 +464,21 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 var updateProItem = await _proItemRepo.UpdateProductItem(productItemModel);
                 if (updateProItem == true)
                 {
+                    var updateResult = await _proItemRepo.Get(productItemModel.Id);
+                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(updateResult.Id, null);
+                    ProductItemResModel upResult = new ProductItemResModel
+                    {
+                        Id = updateResult.Id,
+                        Name = updateResult.Name,
+                        Description = updateResult.Description,
+                        ProductId = updateResult.ProductId,
+                        Type = updateResult.Type,
+                        sizeModelList = sizeGet
+                    };
+
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = productItemModel;
+                    result.Data = upResult;
                     result.Message = "Product item updated.";
                     return result;
                 }
@@ -417,10 +520,35 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 var updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(sizeProductItemResModel);
                 if (updateProItem == true)
                 {
+                    result.Message = "Size product item updated with out image change.";
+                    if (sizeProductItemResModel.Images != null && sizeProductItemResModel.Images.Any())
+                    {
+                        var updateImages = await _imgService.UpdateImageSizeProductItem(sizeProductItemResModel.Id, sizeProductItemResModel.Images);
+                        result.Message = "Size product item updated with image change.";
+                    }
+                    var updateResult = await _sizeProductItemRepo.Get(sizeProductItemResModel.Id);
+                    var sizeGet = await _sizeRepo.Get(updateResult.SizeId);
+                    var imgGet = await _imageRepo.GetImgUrlSizeProduct(updateResult.Id);
+                    var size = new SizeResModel()
+                    {
+                        Id = sizeGet.Id,
+                        SizeName = sizeGet.Name
+                    };
+                    SizeProductItemResModel upResult = new SizeProductItemResModel()
+                    {
+                        Id = updateResult.Id,
+                        Size = size,
+                        RentPrice = updateResult.RentPrice,
+                        SalePrice = updateResult.SalePrice,
+                        Quantity = updateResult.Quantity,
+                        Content = updateResult.Content,
+                        Status = updateResult.Status,
+                        ImagesURL = imgGet
+                    };
+
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = sizeProductItemResModel;
-                    result.Message = "Product item updated.";
+                    result.Data = upResult;
                     return result;
                 }
                 else

@@ -7,8 +7,6 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
 	{
         public Guid Id { get; set; }
 
-        public string Name { get; set; } = null!;
-
         public SizeResModel Size { get; set; } = null!;
 
         public double? RentPrice { get; set; }

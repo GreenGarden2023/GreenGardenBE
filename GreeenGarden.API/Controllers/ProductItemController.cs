@@ -54,5 +54,13 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
+        [HttpGet("get-product-item-detail")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProductItemDetail([Required]Guid productItemId, string? sizeProductItemStatus)
+        {
+            var result = await _service.GetDetailProductItem(productItemId, sizeProductItemStatus);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }
