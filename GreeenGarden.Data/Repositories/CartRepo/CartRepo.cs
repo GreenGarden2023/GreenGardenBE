@@ -20,6 +20,20 @@ namespace GreeenGarden.Data.Repositories.CartRepo
             //_mapper = mapper;
             _context = context;
         }
+        public async Task<TblUser> GetByUserName(string username)
+        {
+            return await _context.TblUsers.Where(x => x.UserName.Equals(username)).FirstOrDefaultAsync();
+        }
+        
+        public async Task<TblCart> GetCart(Guid UserID, bool? isForRent)
+        {
+            return await _context.TblCarts.Where(x => x.UserId.Equals(UserID) && x.IsForRent == isForRent).FirstOrDefaultAsync();
+        }
+        
+        public async Task<TblSizeProductItem> GetSizeProductItem(Guid? SizeProductItemID)
+        {
+            return await _context.TblSizeProductItems.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
+        }
 
         public async Task<TblCartDetail> AddProductItemToCart(TblCartDetail model)
         {
@@ -28,54 +42,16 @@ namespace GreeenGarden.Data.Repositories.CartRepo
             return model;
         }
 
-        public async Task<TblUser> GetByUserName(string username)
+        public async Task<List<TblCartDetail>> GetListCartDetail(Guid cartID)
         {
-            return await _context.TblUsers.Where(x=>x.UserName.Equals(username)).FirstOrDefaultAsync();
+            return await _context.TblCartDetails.Where(x=>x.CartId.Equals(cartID)).ToListAsync();
         }
 
-        public async Task<TblCart> GetCart(Guid UserID)
+        public async Task<bool> RemoveCartDetail(TblCartDetail model)
         {
-            return await _context.TblCarts.Where(x => x.UserId.Equals(UserID)).FirstOrDefaultAsync();
-        }
-
-        public async Task<List<TblCartDetail>> GetCartDetail(Guid CartID)
-        {
-            return await _context.TblCartDetails.Where(x => x.CartId.Equals(CartID)).ToListAsync();
-        }
-
-        public async Task<CartShowModel> GetCartShow(Guid UserID)
-        {
-            var cart = await _context.TblCarts.Where(x=>x.UserId.Equals(UserID)).FirstOrDefaultAsync();
-            if (cart == null) return null;
-            var cartDetail = await _context.TblCartDetails.Where(x=>x.CartId.Equals(cart.Id)).ToListAsync();
-            var result = new CartShowModel();
-            result.Status = cart.Status;
-            //result.TotalPrice = cart.TotalPrice;
-            //result.Quantity= cart.Quantity;
-            result.IsForRent = cart.IsForRent;
-            result.Items = new List<Items>();
-
-            foreach (var item in cartDetail)
-            {
-                var listItems = new Items();
-                //listItems.ProductItemId = item.ProductItemId;
-                //listItems.Quantity = item.Quantity;
-                //listItems.Price = item.Price;
-                result.Items.Add(listItems);
-            }
-            return result;
-        }
-
-        public async Task<TblProductItem> GetProductItem(Guid? ProductItemID)
-        {
-            return await _context.TblProductItems.Where(x => x.Id.Equals(ProductItemID)).FirstOrDefaultAsync();
-        }
-
-        public async Task<TblCart> UpdateCart(TblCart model)
-        {
-             _context.Update(model);
+            _context.TblCartDetails.Remove(model);
             await _context.SaveChangesAsync();
-            return model;
+            return true;
         }
     }
 }

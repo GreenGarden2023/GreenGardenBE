@@ -11,14 +11,13 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 {
     public interface ICartRepo : IRepository<TblCart>
     {
-        Task<TblUser> GetByUserName(string username);
-        Task<CartShowModel> GetCartShow(Guid UserID);
-        Task<TblCart> GetCart(Guid UserID);
-        Task<List<TblCartDetail>> GetCartDetail(Guid CartID);
-        Task<TblProductItem> GetProductItem(Guid? ProductItemID);
-        Task<TblCartDetail> AddProductItemToCart(TblCartDetail model);
-        Task<TblCart> UpdateCart(TblCart model);
 
-        
+        Task<TblUser> GetByUserName(string username);
+        Task<TblCart> GetCart(Guid UserID, bool? isForRent);
+        Task<TblSizeProductItem> GetSizeProductItem(Guid? SizeProductItemID);
+        Task<TblCartDetail> AddProductItemToCart(TblCartDetail model);
+        Task<List<TblCartDetail>> GetListCartDetail(Guid cartID);
+        Task<bool> RemoveCartDetail(TblCartDetail model);
+
     }
 }

@@ -6,7 +6,6 @@ namespace GreeenGarden.Data.Entities;
 public partial class TblSizeProductItem
 {
     public Guid Id { get; set; }
-
     public Guid SizeId { get; set; }
 
     public Guid ProductItemId { get; set; }
@@ -26,6 +25,5 @@ public partial class TblSizeProductItem
     public virtual TblSize Size { get; set; } = null!;
 
     public virtual ICollection<TblCartDetail> TblCartDetails { get; } = new List<TblCartDetail>();
-
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 }
