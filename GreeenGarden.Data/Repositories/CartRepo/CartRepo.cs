@@ -50,17 +50,17 @@ namespace GreeenGarden.Data.Repositories.CartRepo
             var cartDetail = await _context.TblCartDetails.Where(x=>x.CartId.Equals(cart.Id)).ToListAsync();
             var result = new CartShowModel();
             result.Status = cart.Status;
-            result.TotalPrice = cart.TotalPrice;
-            result.Quantity= cart.Quantity;
+            //result.TotalPrice = cart.TotalPrice;
+            //result.Quantity= cart.Quantity;
             result.IsForRent = cart.IsForRent;
             result.Items = new List<Items>();
 
             foreach (var item in cartDetail)
             {
                 var listItems = new Items();
-                listItems.ProductItemId = item.ProductItemId;
-                listItems.Quantity = item.Quantity;
-                listItems.Price = item.Price;
+                //listItems.ProductItemId = item.ProductItemId;
+                //listItems.Quantity = item.Quantity;
+                //listItems.Price = item.Price;
                 result.Items.Add(listItems);
             }
             return result;

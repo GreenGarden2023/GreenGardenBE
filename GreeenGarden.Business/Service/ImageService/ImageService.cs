@@ -41,6 +41,7 @@ namespace GreeenGarden.Business.Service.ImageService
                     }
                 }
                 resultsModel.IsSuccess = true;
+                resultsModel.Code = 200;
                 resultsModel.Data = urls;
                 resultsModel.Message = "Upload Success";
 
@@ -51,6 +52,7 @@ namespace GreeenGarden.Business.Service.ImageService
             {
 
                 resultsModel.IsSuccess = false;
+                resultsModel.Code = 400;
                 resultsModel.Data = ex.ToString();
                 resultsModel.Message = "Upload Failed";
                 return resultsModel;
@@ -192,7 +194,6 @@ namespace GreeenGarden.Business.Service.ImageService
                 return result;
             }
         }
-
         public async Task<FileData> DownloadAnImage(string imgURL)
         {
             try
@@ -216,6 +217,48 @@ namespace GreeenGarden.Business.Service.ImageService
             {
                 ex.ToString();
                 return null; 
+            }
+        }
+
+        public async Task<ResultModel> UpdateImageSizeProductItem(Guid SizeProductItemID, List<IFormFile> files)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var imgsBefore = await _imageRepo.GetImgUrlSizeProduct(SizeProductItemID);
+                if (imgsBefore != null)
+                {
+                    await DeleteImages(imgsBefore);
+
+                }
+
+                var uploadImg = await UploadImages(files);
+                if (uploadImg.Code == 200)
+                {
+
+                    var updateImg = await _imageRepo.UpdateImgForSizeProductItem(SizeProductItemID, (List<string>)uploadImg.Data);
+                    if (updateImg == true)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = uploadImg.Data.ToString();
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Data = "Update product image failed.";
+                    }
+                }
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
             }
         }
     }

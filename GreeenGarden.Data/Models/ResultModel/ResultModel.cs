@@ -38,4 +38,11 @@
         public object? Product { get; set; }
         public object? ProductItems { get; set; }
     }
+    public class ProductItemDetailResponseResult
+    {
+
+        public object? Category { get; set; }
+        public object? Product { get; set; }
+        public object? ProductItem { get; set; }
+    }
 }

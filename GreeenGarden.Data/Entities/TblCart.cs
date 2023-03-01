@@ -11,10 +11,6 @@ public partial class TblCart
 
     public string? Status { get; set; }
 
-    public double? TotalPrice { get; set; }
-
-    public int? Quantity { get; set; }
-
     public bool? IsForRent { get; set; }
 
     public virtual ICollection<TblCartDetail> TblCartDetails { get; } = new List<TblCartDetail>();

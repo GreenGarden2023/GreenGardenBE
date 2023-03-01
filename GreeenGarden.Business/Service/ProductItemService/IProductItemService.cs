@@ -11,6 +11,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
     {
         Task<ResultModel> CreateProductItem(string token, ProductItemInsertModel productItemInsertModel);
         Task<ResultModel> GetProductItem(PaginationRequestModel pagingModel, Guid productID, string? status, string? type);
+        Task<ResultModel> GetDetailProductItem(Guid productItemID, string sizeProductItemStatus);
         Task<ResultModel> UpdateProductItem(string token, ProductItemUpdateModel productItemModel);
         Task<ResultModel> UpdateSizeProductItem(string token, SizeProductItemUpdateModel sizeProductItemResModel);
     }

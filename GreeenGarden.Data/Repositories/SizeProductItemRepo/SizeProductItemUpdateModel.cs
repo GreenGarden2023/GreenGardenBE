@@ -1,12 +1,13 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
 	public class SizeProductItemUpdateModel
 	{
         [Required]
-        public Guid? Id { get; set; }
+        public Guid Id { get; set; }
 
         public string? Name { get; set; } = null!;
 
@@ -23,6 +24,8 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
         public string? Content { get; set; }
 
         public string? Status { get; set; } = null!;
+
+        public List<IFormFile>? Images { get; set; }
     }
 }
 

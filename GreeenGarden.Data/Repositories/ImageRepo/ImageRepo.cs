@@ -93,7 +93,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl)
         {
-            var imgProduct = await _context.TblImages.Where(x => x.ProductId == ProductID).FirstOrDefaultAsync();
+            var imgProduct = await _context.TblImages.Where(x => x.ProductId.Equals(ProductID)).FirstOrDefaultAsync();
             if (imgProduct != null)
             {
                 imgProduct.ImageUrl = ImgUrl;
@@ -115,6 +115,43 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             
         }
 
-
+        public async Task<bool> UpdateImgForSizeProductItem(Guid SizeProductItemId, List<string> ImgUrls)
+        {
+            bool success = false;
+            var oldImgList = await _context.TblImages.Where(x => x.SizeProductItemId.Equals(SizeProductItemId)).ToListAsync();
+            foreach(TblImage tblImage in oldImgList)
+            {
+                try
+                {
+                    _context.Remove(tblImage);
+                    await _context.SaveChangesAsync();
+                    success = true;
+                }catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            foreach(string url in ImgUrls)
+            {
+                try
+                {
+                    var newProdIMG = new TblImage
+                    {
+                        ImageUrl = url,
+                        SizeProductItemId = SizeProductItemId
+                    };
+                    _context.Add(newProdIMG);
+                    await _context.SaveChangesAsync();
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            return success;
+        }
     }
 }

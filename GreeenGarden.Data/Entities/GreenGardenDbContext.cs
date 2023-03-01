@@ -113,11 +113,16 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CartId).HasColumnName("CartID");
-            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            entity.Property(e => e.SizeProductItemId).HasColumnName("SizeProductItemID");
 
             entity.HasOne(d => d.Cart).WithMany(p => p.TblCartDetails)
                 .HasForeignKey(d => d.CartId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblCartDetails_tblCarts");
+
+            entity.HasOne(d => d.SizeProductItem).WithMany(p => p.TblCartDetails)
+                .HasForeignKey(d => d.SizeProductItemId)
+                .HasConstraintName("FK_tblCartDetails_tblSIzeProductItems");
         });
 
         modelBuilder.Entity<TblCategory>(entity =>
@@ -343,7 +348,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.SizeId).HasColumnName("SizeID");
             entity.Property(e => e.Status).HasMaxLength(50);

@@ -9,8 +9,9 @@ namespace GreeenGarden.Business.Service.ImageService
         public Task<ResultModel> UploadImages(IList<IFormFile> files);
         public Task<ResultModel> DeleteImages(List<string> fileURLs);
         public Task<ResultModel> UploadAnImage(IFormFile file);
-        public Task<ResultModel> UpdateImageCategory(Guid CategoryId, IFormFile file);
-        public Task<ResultModel> UpdateImageProduct(Guid ProductID, IFormFile file);
+        public Task<ResultModel> UpdateImageCategory(Guid categoryId, IFormFile file);
+        public Task<ResultModel> UpdateImageProduct(Guid productID, IFormFile file);
+        public Task<ResultModel> UpdateImageSizeProductItem(Guid SizeProductItem, List<IFormFile> files);
         public Task<FileData> DownloadAnImage(string imgURL);
     }
 }

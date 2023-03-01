@@ -43,7 +43,6 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                         var sizeProd = new SizeProductItemResModel
                         {
                             Id = item.Id,
-                            Name = item.Name,
                             Size = size,
                             RentPrice = item.RentPrice,
                             SalePrice = item.SalePrice,
@@ -76,7 +75,6 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                         var sizeProd = new SizeProductItemResModel
                         {
                             Id = item.Id,
-                            Name = item.Name,
                             Size = size,
                             RentPrice = item.RentPrice,
                             SalePrice = item.SalePrice,
@@ -121,10 +119,6 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 if ((sizeProductItemUpdateModel.ProductItemId != Guid.Empty) && !sizeProductItemUpdateModel.ProductItemId.Equals(sizeProductItem.ProductItemId))
                 {
                     sizeProductItem.ProductItemId = (Guid)sizeProductItemUpdateModel.ProductItemId;
-                }
-                if (!String.IsNullOrEmpty(sizeProductItemUpdateModel.Name) && !sizeProductItemUpdateModel.Name.Equals(sizeProductItem.Name))
-                {
-                    sizeProductItem.Name = sizeProductItemUpdateModel.Name;
                 }
                 if (!String.IsNullOrEmpty(sizeProductItemUpdateModel.Content) && !sizeProductItemUpdateModel.Content.Equals(sizeProductItem.Content))
                 {
