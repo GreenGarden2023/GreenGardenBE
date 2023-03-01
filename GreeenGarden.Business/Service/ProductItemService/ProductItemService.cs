@@ -4,6 +4,7 @@ using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CategoryModel;
+using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Models.ProductModel;
@@ -135,19 +136,28 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         }
                         else
                         {
-                            SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
+                            var sizeGet = await _sizeRepo.Get(sizeProductItem.SizeId);
+                            if(sizeGet != null)
                             {
-                                Id = sizeProductItem.Id,
-                                Name = sizeProductItem.Name,
-                                SizeId = sizeProductItem.SizeId,
-                                ProductItemId = sizeProductItem.ProductItemId,
-                                RentPrice = sizeProductItem.RentPrice,
-                                SalePrice = sizeProductItem.SalePrice,
-                                Quantity = sizeProductItem.Quantity,
-                                Content = sizeProductItem.Content,
-                                Status = sizeProductItem.Status
-                            };
-                            listSizeProductItemModel.Add(sizeProductItemModel);
+                                var size = new SizeResModel()
+                                {
+                                    Id = sizeGet.Id,
+                                    SizeName = sizeGet.Name
+                                };
+                                SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
+                                {
+                                    Id = sizeProductItem.Id,
+                                    Name = sizeProductItem.Name,
+                                    Size = size,
+                                    RentPrice = sizeProductItem.RentPrice,
+                                    SalePrice = sizeProductItem.SalePrice,
+                                    Quantity = sizeProductItem.Quantity,
+                                    Content = sizeProductItem.Content,
+                                    Status = sizeProductItem.Status
+                                };
+                                listSizeProductItemModel.Add(sizeProductItemModel);
+                            }
+                            
                         }
                     }
                 }

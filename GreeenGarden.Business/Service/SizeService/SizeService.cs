@@ -47,7 +47,7 @@ namespace GreeenGarden.Business.Service.SizeService
                     Name = sizeCreateModel.SizeName
                 };
                 await _sizeRepo.Insert(newSize);
-                var newSizeRes = new SizeModel()
+                var newSizeRes = new SizeResModel()
                 {
                     Id = newSize.Id,
                     SizeName = newSize.Name
@@ -72,10 +72,10 @@ namespace GreeenGarden.Business.Service.SizeService
         public async Task<ResultModel> GetSizes()
         {
             var sizes = await _sizeRepo.GetProductItemSizes();
-            List<SizeModel> sizeModels = new();
+            List<SizeResModel> sizeModels = new();
             foreach(TblSize size in sizes)
             {
-                var viewSize = new SizeModel()
+                var viewSize = new SizeResModel()
                 {
                     Id = size.Id,
                     SizeName = size.Name

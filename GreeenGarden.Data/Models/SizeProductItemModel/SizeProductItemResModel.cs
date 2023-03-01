@@ -1,4 +1,6 @@
 ﻿using System;
+using GreeenGarden.Data.Models.SizeModel;
+
 namespace GreeenGarden.Data.Models.SizeProductItemModel
 {
 	public class SizeProductItemResModel
@@ -7,9 +9,7 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
 
         public string Name { get; set; } = null!;
 
-        public Guid SizeId { get; set; }
-
-        public Guid ProductItemId { get; set; }
+        public SizeResModel Size { get; set; } = null!;
 
         public double? RentPrice { get; set; }
 
@@ -20,6 +20,9 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
         public string? Content { get; set; }
 
         public string Status { get; set; } = null!;
+
+        public List<string>? ImagesURL { get; set; }
+
     }
 }
 

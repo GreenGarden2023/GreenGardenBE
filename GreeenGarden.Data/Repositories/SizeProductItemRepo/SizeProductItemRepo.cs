@@ -1,18 +1,26 @@
 ﻿using System;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ProductItemModel;
+using GreeenGarden.Data.Models.SizeModel;
 using GreeenGarden.Data.Models.SizeProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.SizeRepo;
 using Microsoft.EntityFrameworkCore;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
 	public class SizeProductItemRepo : Repository<TblSizeProductItem>, ISizeProductItemRepo
 	{
         private readonly GreenGardenDbContext _context;
-        public SizeProductItemRepo(GreenGardenDbContext context) : base(context)
+        private readonly ISizeRepo _sizeRepo;
+        private readonly IImageRepo _imageRepo;
+        public SizeProductItemRepo(GreenGardenDbContext context, ISizeRepo sizeRepo, IImageRepo imageRepo) : base(context)
         {
 			_context = context;
+            _sizeRepo = sizeRepo;
+            _imageRepo = imageRepo;
 		}
 
         public async Task<List<SizeProductItemResModel>> GetSizeProductItems(Guid productItemId, string? status)
@@ -23,19 +31,30 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 List<SizeProductItemResModel> listSizeProd = new List<SizeProductItemResModel>();
                 foreach (TblSizeProductItem item in result)
                 {
-                    var sizeProd = new SizeProductItemResModel
+                    var sizeGet = await _sizeRepo.Get(item.SizeId);
+                    var imgGet = await _imageRepo.GetImgUrlSizeProduct(item.Id);
+                    if (sizeGet != null)
                     {
-                        Id = item.Id,
-                        Name = item.Name,
-                        SizeId = item.SizeId,
-                        ProductItemId = item.ProductItemId,
-                        RentPrice = item.RentPrice,
-                        SalePrice = item.SalePrice,
-                        Quantity = item.Quantity,
-                        Content = item.Content,
-                        Status = item.Status
-                    };
-                    listSizeProd.Add(sizeProd);
+                        var size = new SizeResModel()
+                        {
+                            Id = sizeGet.Id,
+                            SizeName = sizeGet.Name
+                        };
+                        var sizeProd = new SizeProductItemResModel
+                        {
+                            Id = item.Id,
+                            Name = item.Name,
+                            Size = size,
+                            RentPrice = item.RentPrice,
+                            SalePrice = item.SalePrice,
+                            Quantity = item.Quantity,
+                            Content = item.Content,
+                            Status = item.Status,
+                            ImagesURL = imgGet
+                        };
+                        listSizeProd.Add(sizeProd);
+                    }
+                    
                 }
                 return listSizeProd;
             }
@@ -45,19 +64,30 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 List<SizeProductItemResModel> listSizeProd = new List<SizeProductItemResModel>();
                 foreach (TblSizeProductItem item in result)
                 {
-                    var sizeProd = new SizeProductItemResModel
+                    var sizeGet = await _sizeRepo.Get(item.SizeId);
+                    var imgGet = await _imageRepo.GetImgUrlSizeProduct(item.Id);
+                    if (sizeGet != null && imgGet != null)
                     {
-                        Id = item.Id,
-                        Name = item.Name,
-                        SizeId = item.SizeId,
-                        ProductItemId = item.ProductItemId,
-                        RentPrice = item.RentPrice,
-                        SalePrice = item.SalePrice,
-                        Quantity = item.Quantity,
-                        Content = item.Content,
-                        Status = item.Status
-                    };
-                    listSizeProd.Add(sizeProd);
+                        var size = new SizeResModel()
+                        {
+                            Id = sizeGet.Id,
+                            SizeName = sizeGet.Name
+                        };
+                        var sizeProd = new SizeProductItemResModel
+                        {
+                            Id = item.Id,
+                            Name = item.Name,
+                            Size = size,
+                            RentPrice = item.RentPrice,
+                            SalePrice = item.SalePrice,
+                            Quantity = item.Quantity,
+                            Content = item.Content,
+                            Status = item.Status,
+                            ImagesURL = imgGet,
+                        };
+                        listSizeProd.Add(sizeProd);
+                    }
+
                 }
                 return listSizeProd;
             }
