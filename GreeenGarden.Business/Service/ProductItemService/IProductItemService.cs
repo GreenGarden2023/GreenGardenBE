@@ -7,9 +7,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 {
     public interface IProductItemService
     {
-
-        Task<ResultModel> GetProductItems(PaginationRequestModel pagingModel, Guid productID, Guid? sizeID, string? type, string? status);
-        Task<ResultModel> CreateProductItems(ProductItemCreateModel productItemCreateModel, string token);
-        Task<ResultModel> UpdateProductItem(ProductItemUpdateModel productItemUpdateModel, string token);
+        Task<ResultModel> CreateProductItem(string token, ProductItemInsertModel productItemInsertModel);
+        Task<ResultModel> GetProductItem(PaginationRequestModel pagingModel, Guid productID, string? status, string? type);
     }
 }

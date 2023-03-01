@@ -23,10 +23,17 @@
         public object? Category { get; set; }
         public object? Result { get; set; }
     }
-    public class ProductItemResponseResult
+    public class ProductItemGetResponseResult
     {
 
         public object? Paging { get; set; }
+        public object? Category { get; set; }
+        public object? Product { get; set; }
+        public object? ProductItems { get; set; }
+    }
+    public class ProductItemCreateResponseResult
+    {
+
         public object? Category { get; set; }
         public object? Product { get; set; }
         public object? ProductItems { get; set; }

@@ -23,90 +23,89 @@ namespace GreeenGarden.Business.Service.CartService
             _decodeToken = new DecodeToken();
         }
 
-        public async Task<ResultModel> AddToCart(string token, AddToCartModel model)
-        {
-            var result = new ResultModel();
-            try
-            {
-                var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-                if (await _cartRepo.GetCart(user.Id) == null)
-                {
-                    var cartTemp = new TblCart()
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = user.Id,
-                        Status = Status.ACTIVE,
-                        TotalPrice = 0,
-                        Quantity= 0,
-                    };
-                    await _cartRepo.Insert(cartTemp);
-                }
+        //public async Task<ResultModel> AddToCart(string token, AddToCartModel model)
+        //{
+        //    var result = new ResultModel();
+        //    try
+        //    {
+        //        var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+        //        if (await _cartRepo.GetCart(user.Id) == null)
+        //        {
+        //            var cartTemp = new TblCart()
+        //            {
+        //                Id = Guid.NewGuid(),
+        //                UserId = user.Id,
+        //                Status = Status.ACTIVE,
+        //                TotalPrice = 0,
+        //                Quantity= 0,
+        //            };
+        //            await _cartRepo.Insert(cartTemp);
+        //        }
 
-                var productItem = await _cartRepo.GetProductItem(model.ProductItemId);
-                var cart = await _cartRepo.GetCart(user.Id);
+        //        var productItem = await _cartRepo.GetProductItem(model.ProductItemId);
+        //        var cart = await _cartRepo.GetCart(user.Id);
 
-                if (productItem.Quantity < model.Quantity)
-                {
-                    result.Code = 200;
-                    result.IsSuccess = false;
-                    result.Message = "Sản phẩm hiện đã hết trong kho!";
-                    return result;
-                }
+        //        if (productItem.Quantity < model.Quantity)
+        //        {
+        //            result.Code = 200;
+        //            result.IsSuccess = false;
+        //            result.Message = "Sản phẩm hiện đã hết trong kho!";
+        //            return result;
+        //        }
 
-                var cartDetail = new TblCartDetail()
-                {
-                    Id = Guid.NewGuid(),
-                    ProductItemId = model.ProductItemId,
-                    Quantity= model.Quantity,
-                    Price = productItem.RentPrice*model.Quantity,
-                    CartId= cart.Id,
-                };
-                await _cartRepo.AddProductItemToCart(cartDetail);
-                cart.TotalPrice += (productItem.RentPrice * model.Quantity);
-                cart.Quantity += model.Quantity;
-                await _cartRepo.UpdateCart(cart);
+        //        var cartDetail = new TblCartDetail()
+        //        {
+        //            Id = Guid.NewGuid(),
+        //            ProductItemId = model.ProductItemId,
+        //            Quantity= model.Quantity,
+        //            CartId= cart.Id,
+        //        };
+        //        await _cartRepo.AddProductItemToCart(cartDetail);
+        //        cart.TotalPrice += (productItem.RentPrice * model.Quantity);
+        //        cart.Quantity += model.Quantity;
+        //        await _cartRepo.UpdateCart(cart);
 
 
-                result.Code = 200;
-                result.IsSuccess = true;
-                result.Data = await _cartRepo.GetCartShow(user.Id);
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
-                result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
-            return result;
+        //        result.Code = 200;
+        //        result.IsSuccess = true;
+        //        result.Data = await _cartRepo.GetCartShow(user.Id);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.IsSuccess = false;
+        //        result.Code = 400;
+        //        result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+        //    }
+        //    return result;
 
-        }
+        //}
 
-        public async Task<ResultModel> GetCartShowModel(string token)
-        {
-            var result = new ResultModel();
-            try
-            {
-                var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-                var cart = await _cartRepo.GetCartShow(user.Id);
-                if (cart == null)
-                {
-                    result.Code = 200;
-                    result.IsSuccess = true;
-                    result.Data = "Cart's null";
-                }
+        //public async Task<ResultModel> GetCartShowModel(string token)
+        //{
+        //    var result = new ResultModel();
+        //    try
+        //    {
+        //        var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+        //        var cart = await _cartRepo.GetCartShow(user.Id);
+        //        if (cart == null)
+        //        {
+        //            result.Code = 200;
+        //            result.IsSuccess = true;
+        //            result.Data = "Cart's null";
+        //        }
 
-                result.Code = 200;
-                result.IsSuccess = true;
-                result.Data = cart;
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
-                result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
-            return result;
+        //        result.Code = 200;
+        //        result.IsSuccess = true;
+        //        result.Data = cart;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        result.IsSuccess = false;
+        //        result.Code = 400;
+        //        result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+        //    }
+        //    return result;
 
-        }
+        //}
     }
 }

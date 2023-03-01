@@ -8,7 +8,6 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 {
     public interface IProductItemRepo : IRepository<TblProductItem>
     {
-        Task<Page<TblProductItem>> GetProductItems(PaginationRequestModel pagingModel, Guid productID, Guid? SizeID, string? type, string? status);
-        Task<bool> UpdateProductItem(ProductItemUpdateModel productItemUpdateModel);
+        Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel,string? type);
     }
 }

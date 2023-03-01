@@ -139,13 +139,5 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return entities;
         }
 
-        public async Task<TblProductItem> minusQuantityProductItem(Guid productItemId, int quantity)
-        {
-            var productItem = await _context.TblProductItems.Where(x => x.Id == productItemId).FirstAsync();
-            productItem.Quantity = productItem.Quantity - quantity;
-            _context.Update(productItem);
-            await _context.SaveChangesAsync();
-            return productItem;
-        }
     }
 }

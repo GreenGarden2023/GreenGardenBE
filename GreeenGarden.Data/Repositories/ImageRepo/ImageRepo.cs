@@ -55,19 +55,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             return result;
         }
 
-        public async Task<List<TblImage>> GetImgUrlProductItem(Guid productItemId)
-        {
-            var query = from c in context.TblImages
-                        where c.ProductItemId.Equals(productItemId)
-                        select new { c };
-            var result = await query.Select(x => new TblImage()
-            {
-                Id = x.c.Id,
-                ProductId = x.c.ProductId,
-                ImageUrl = x.c.ImageUrl
-            }).ToListAsync();
-            return result;
-        }
+
 
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
         {
@@ -105,21 +93,6 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             
         }
 
-        public async Task<bool> UpdateImgForProductItem(Guid ProductItemID, List<string> ImgUrls)
-        {
-            bool result = false;
-            foreach (string imgUrl in ImgUrls) {
-                var imgProduct = _context.TblImages.Where(x => x.ProductItemId == ProductItemID).FirstOrDefault();
-                if (imgProduct != null)
-                {
-                    imgProduct.ImageUrl = imgUrl;
-                }
-                 _context.Update(imgProduct);
-                await _context.SaveChangesAsync();
-                result = true;
-                if(result == false){ return result; }
-            }
-            return result;
-        }
+
     }
 }

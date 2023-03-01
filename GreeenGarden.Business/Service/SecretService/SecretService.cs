@@ -37,7 +37,7 @@ namespace GreeenGarden.Business.Service.SecretService
         }
         public static string GetTokenSecret()
         {
-            string tokenSecret = null;
+            string tokenSecret = "";
             try
             {
                 SecretClientOptions options = new SecretClientOptions()
@@ -55,13 +55,14 @@ namespace GreeenGarden.Business.Service.SecretService
                 KeyVaultSecret secret = client.GetSecret("TokenSecret");
 
                 tokenSecret = secret.Value;
+                return tokenSecret;
             }
             catch (Exception ex)
             {
                 ex.ToString();
             }
-
             return tokenSecret;
+           
         }
         public static string GetIMGConn()
         {

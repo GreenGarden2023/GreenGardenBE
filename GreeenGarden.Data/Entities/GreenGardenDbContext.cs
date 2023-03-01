@@ -198,7 +198,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.FeedbackId).HasColumnName("FeedbackID");
             entity.Property(e => e.ImageUrl).HasColumnName("ImageURL");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.CategoryId)
@@ -212,9 +211,9 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_tblImages_tblProducts");
 
-            entity.HasOne(d => d.ProductItem).WithMany(p => p.TblImages)
-                .HasForeignKey(d => d.ProductItemId)
-                .HasConstraintName("FK_tblImages_tblProductItems");
+            entity.HasOne(d => d.SizeProductItem).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.SizeProductItemId)
+                .HasConstraintName("FK_tblImages_tblSizeProductItems");
         });
 
         modelBuilder.Entity<TblOrder>(entity =>
@@ -277,11 +276,11 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Name).HasMaxLength(200);
-            entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.Type).HasMaxLength(50);
 
             entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
                 .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblProductItems_tblProducts");
         });
 
@@ -332,24 +331,31 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.Name).HasMaxLength(200);
         });
 
         modelBuilder.Entity<TblSizeProductItem>(entity =>
         {
-            entity.ToTable("tblSIzeProductItems");
+            entity.HasKey(e => e.Id).HasName("PK_tblSIzeProductItems");
+
+            entity.ToTable("tblSizeProductItems");
 
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.SizeId).HasColumnName("SizeID");
+            entity.Property(e => e.Status).HasMaxLength(50);
 
             entity.HasOne(d => d.ProductItem).WithMany(p => p.TblSizeProductItems)
                 .HasForeignKey(d => d.ProductItemId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSIzeProductItems_tblProductItems");
 
             entity.HasOne(d => d.Size).WithMany(p => p.TblSizeProductItems)
                 .HasForeignKey(d => d.SizeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSIzeProductItems_tblSizes");
         });
 

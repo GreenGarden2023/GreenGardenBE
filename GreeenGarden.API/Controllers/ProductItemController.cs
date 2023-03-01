@@ -18,28 +18,20 @@ namespace GreeenGarden.API.Controllers
         {
             _service = service;
         }
-        [HttpGet("get-products-items")]
-        public async Task<IActionResult> GetProductItems([FromQuery] PaginationRequestModel pagingModel, [Required] Guid productID,Guid? sizeID ,string? type, string? status)
-        {
-            var result = await _service.GetProductItems(pagingModel, productID, sizeID, type, status);
-            if (result.IsSuccess && result.Code == 200) return Ok(result);
-            return BadRequest(result);
-        }
         [HttpPost("create-product-item")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> CreateProduct([FromForm] ProductItemCreateModel model)
+        public async Task<IActionResult> CreateProductItem([FromForm] ProductItemInsertModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.CreateProductItems(model, token);
+            var result = await _service.CreateProductItem(token, model);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
-        [HttpPost("update-product-item")]
-        [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> UpdateProduct([FromForm] ProductItemUpdateModel model)
+        [HttpGet("get-product-item")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProductItem([FromQuery] PaginationRequestModel pagingModel, [Required]Guid productID, string? status, string? type)
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.UpdateProductItem(model, token);
+            var result = await _service.GetProductItem( pagingModel, productID, status, type);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

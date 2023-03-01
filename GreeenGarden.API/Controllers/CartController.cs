@@ -17,22 +17,22 @@ namespace GreeenGarden.API.Controllers
             _service = service;
         }
 
-        [HttpGet("get-cart")]
-        public async Task<IActionResult> GetCartShowModel()
-        {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.GetCartShowModel(token);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
-        }
+        //[HttpGet("get-cart")]
+        //public async Task<IActionResult> GetCartShowModel()
+        //{
+        //    string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+        //    var result = await _service.GetCartShowModel(token);
+        //    if (result.IsSuccess) return Ok(result);
+        //    return BadRequest(result);
+        //}
 
-        [HttpPost("add-to-cart")]
-        public async Task<IActionResult> AddToCart([FromBody]AddToCartModel model)
-        {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.AddToCart(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
-        }
+        //[HttpPost("add-to-cart")]
+        //public async Task<IActionResult> AddToCart([FromBody]AddToCartModel model)
+        //{
+        //    string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+        //    var result = await _service.AddToCart(token, model);
+        //    if (result.IsSuccess) return Ok(result);
+        //    return BadRequest(result);
+        //}
     }
 }

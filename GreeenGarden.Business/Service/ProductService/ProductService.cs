@@ -15,15 +15,13 @@ namespace GreeenGarden.Business.Service.ProductService
 {
     public class ProductService : IProductService
     {
-        //private readonly IMapper _mapper;
         private readonly IProductRepo _productRepo;
         private readonly DecodeToken _decodeToken;
         private readonly IImageService _imgService;
         private readonly IImageRepo _imageRepo;
         private readonly ICategoryRepo _categoryRepo;
-        public ProductService(/*IMapper mapper,*/ IProductRepo productRepo, IImageService imgService, IImageRepo imageRepo, ICategoryRepo categoryRepo)
+        public ProductService(IProductRepo productRepo, IImageService imgService, IImageRepo imageRepo, ICategoryRepo categoryRepo)
         {
-            //_mapper = mapper;
             _productRepo = productRepo;
             _decodeToken = new DecodeToken();
             _imgService = imgService;
@@ -210,6 +208,16 @@ namespace GreeenGarden.Business.Service.ProductService
                 List<ProductModel> dataList = new List<ProductModel>();
                 foreach (var p in listProdct.Results)
                 {
+                    var img = await _imageRepo.GetImgUrlProduct(p.Id);
+                    string imgURL = "";
+                    if (img != null)
+                    {
+                        imgURL = img.ImageUrl;
+                    }
+                    else
+                    {
+                        imgURL = "";
+                    }
                     var productToShow = new ProductModel
                     {
                         Id = p.Id,
@@ -217,7 +225,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         Description = p.Description,
                         Status = p.Status,
                         CategoryId = p.CategoryId,
-                        ImgUrl = _imageRepo.GetImgUrlProduct(p.Id).Result.ImageUrl,
+                        ImgUrl = imgURL,
                         IsForRent = p.IsForRent,
                         IsForSale = p.IsForSale
                     };
