@@ -10,24 +10,25 @@ namespace GreeenGarden.Data.Models.CartModel
     {
 
     }
-    public class Items
+    public class ItemRequest
     {
-        public Guid? ProductItemId { get; set; }
-        public int? Quantity { get; set; }
-        public double? Price{ get; set; }
+        public Guid? sizeProductItemID { get; set; }
+        public int? quantity { get; set; }
+        public double? unitPrice{ get; set; }
     }
     public class CartShowModel
     {
-        public string? Status { get; set; }
-        public double? TotalPrice { get; set; }
-        public int? Quantity { get; set; }
-        public bool? IsForRent { get; set; }
-        public List<Items> Items { get; set; }
+        public double? totalPrice { get; set; }
+        public bool? isForRent { get; set; }
+        public List<ItemRequest> items { get; set; }
     }
     public class AddToCartModel
     {
-        public Guid? ProductItemId { get; set; }
-        public int? Quantity { get; set; }
-        public bool? IsForRent { get; set; }
+        public bool? isForRent { get; set; }
+        public List<ItemResponse> items { get; set; }
+    }
+    public class ItemResponse
+    {   public Guid? sizeProductItemID { get; set; }
+        public int? quantity { get; set; }
     }
 }

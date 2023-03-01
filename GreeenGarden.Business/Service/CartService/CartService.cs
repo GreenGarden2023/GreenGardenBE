@@ -17,95 +17,136 @@ namespace GreeenGarden.Business.Service.CartService
     {
         private readonly DecodeToken _decodeToken;
         private readonly ICartRepo _cartRepo;
-        public CartService( ICartRepo cartRepo)
+
+        public CartService(ICartRepo cartRepo)
         {
             _cartRepo = cartRepo;
             _decodeToken = new DecodeToken();
         }
 
-        //public async Task<ResultModel> AddToCart(string token, AddToCartModel model)
-        //{
-        //    var result = new ResultModel();
-        //    try
-        //    {
-        //        var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-        //        if (await _cartRepo.GetCart(user.Id) == null)
-        //        {
-        //            var cartTemp = new TblCart()
-        //            {
-        //                Id = Guid.NewGuid(),
-        //                UserId = user.Id,
-        //                Status = Status.ACTIVE,
-        //                TotalPrice = 0,
-        //                Quantity= 0,
-        //            };
-        //            await _cartRepo.Insert(cartTemp);
-        //        }
+        public async Task<ResultModel> AddToCart(string token, AddToCartModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                double? totalPriceCart = 0;
+                var modelResponse = new CartShowModel();
+                var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                if (await _cartRepo.GetCart(user.Id, model.isForRent) == null)
+                {
+                    var cartTemp = new TblCart()
+                    {
+                        Id = Guid.NewGuid(),
+                        UserId = user.Id,
+                        Status = Status.ACTIVE,
+                        IsForRent = model.isForRent,
+                    };
+                    await _cartRepo.Insert(cartTemp);
+                }
 
-        //        var productItem = await _cartRepo.GetProductItem(model.ProductItemId);
-        //        var cart = await _cartRepo.GetCart(user.Id);
+                var cart = await _cartRepo.GetCart(user.Id, model.isForRent);
+                var cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
+                    foreach (var item in cartDetail)
+                    {
+                        await _cartRepo.RemoveCartDetail(item);
+                    }
+                modelResponse.isForRent = model.isForRent;
+                modelResponse.items = new List<ItemRequest>();
+                foreach (var item in model.items)
+                {
+                    var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
+                    if (sizeProductItem.Quantity < item.quantity || sizeProductItem.Status.ToLower() != Status.ACTIVE)
+                    {
+                        result.Code = 400;
+                        result.IsSuccess = false;
+                        result.Message = "Sản phẩm "+ item.sizeProductItemID + " đã hết trong kho!";
+                        return result;
+                    }
 
-        //        if (productItem.Quantity < model.Quantity)
-        //        {
-        //            result.Code = 200;
-        //            result.IsSuccess = false;
-        //            result.Message = "Sản phẩm hiện đã hết trong kho!";
-        //            return result;
-        //        }
+                    var newCartDetail = new TblCartDetail()
+                    {
+                        Id= Guid.NewGuid(),
+                        SizeProductItemId= item.sizeProductItemID,
+                        Quantity= item.quantity,
+                        CartId = cart.Id
+                    };
+                    await _cartRepo.AddProductItemToCart(newCartDetail);
+                    if (model.isForRent== true) totalPriceCart += sizeProductItem.RentPrice * item.quantity;
+                    if (model.isForRent== false) totalPriceCart += sizeProductItem.SalePrice * item.quantity;
+                    var ItemRequest = new ItemRequest();
+                    ItemRequest.sizeProductItemID= item.sizeProductItemID;
+                    ItemRequest.quantity = item.quantity;
+                    if (model.isForRent == true) ItemRequest.unitPrice = sizeProductItem.RentPrice;
+                    if (model.isForRent == false) ItemRequest.unitPrice = sizeProductItem.SalePrice;
+                    modelResponse.items.Add(ItemRequest);
+                }
+                modelResponse.totalPrice = totalPriceCart;
 
-        //        var cartDetail = new TblCartDetail()
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            ProductItemId = model.ProductItemId,
-        //            Quantity= model.Quantity,
-        //            CartId= cart.Id,
-        //        };
-        //        await _cartRepo.AddProductItemToCart(cartDetail);
-        //        cart.TotalPrice += (productItem.RentPrice * model.Quantity);
-        //        cart.Quantity += model.Quantity;
-        //        await _cartRepo.UpdateCart(cart);
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = modelResponse;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
 
+        public async Task<ResultModel> GetCart(string token, bool isForRent)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var modelResponse = new CartShowModel();
+                double? totalPrice = 0;
+                var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                var cart = await _cartRepo.GetCart(user.Id, isForRent);
+                if (cart ==null)
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = null;
+                    return result;
+                }
+                var listCartDetail = await _cartRepo.GetListCartDetail(cart.Id);
+                if (listCartDetail.Count == 0)
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = null;
+                    return result;
+                }
+                modelResponse.isForRent = cart.IsForRent;
+                modelResponse.items = new List<ItemRequest>();
+                foreach (var item in listCartDetail)
+                {
+                    var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
+                    var ItemRequest = new ItemRequest();
+                    ItemRequest.quantity = item.Quantity;
+                    ItemRequest.sizeProductItemID = sizeProductItem.Id;
+                    if (isForRent == true) ItemRequest.unitPrice = sizeProductItem.RentPrice;
+                    if (isForRent == false) ItemRequest.unitPrice = sizeProductItem.SalePrice;
+                    modelResponse.items.Add(ItemRequest);
+                    if (isForRent == true) totalPrice += sizeProductItem.RentPrice*item.Quantity;
+                    if (isForRent == false) totalPrice += sizeProductItem.SalePrice*item.Quantity;
+                }
+                modelResponse.totalPrice = totalPrice;
 
-        //        result.Code = 200;
-        //        result.IsSuccess = true;
-        //        result.Data = await _cartRepo.GetCartShow(user.Id);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        result.IsSuccess = false;
-        //        result.Code = 400;
-        //        result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-        //    }
-        //    return result;
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = modelResponse;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
 
-        //}
-
-        //public async Task<ResultModel> GetCartShowModel(string token)
-        //{
-        //    var result = new ResultModel();
-        //    try
-        //    {
-        //        var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-        //        var cart = await _cartRepo.GetCartShow(user.Id);
-        //        if (cart == null)
-        //        {
-        //            result.Code = 200;
-        //            result.IsSuccess = true;
-        //            result.Data = "Cart's null";
-        //        }
-
-        //        result.Code = 200;
-        //        result.IsSuccess = true;
-        //        result.Data = cart;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        result.IsSuccess = false;
-        //        result.Code = 400;
-        //        result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-        //    }
-        //    return result;
-
-        //}
+        }
     }
 }

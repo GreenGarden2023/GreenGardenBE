@@ -101,7 +101,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         TblSizeProductItem sizeProductItem = new TblSizeProductItem
                         {
                             Id = Guid.NewGuid(),
-                            Name = sizeModel.Name,
+                            //Name = sizeModel.Name,
                             SizeId = sizeModel.SizeId,
                             ProductItemId = productItemModel.ProductId,
                             RentPrice = sizeModel.RentPrice,
@@ -147,7 +147,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                 SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
                                 {
                                     Id = sizeProductItem.Id,
-                                    Name = sizeProductItem.Name,
+                                    //Name = sizeProductItem.Name,
                                     Size = size,
                                     RentPrice = sizeProductItem.RentPrice,
                                     SalePrice = sizeProductItem.SalePrice,

@@ -7,13 +7,13 @@ public partial class TblCartDetail
 {
     public Guid Id { get; set; }
 
-    public Guid? ProductItemId { get; set; }
+    public Guid? SizeProductItemId { get; set; }
 
     public int? Quantity { get; set; }
 
-    public double? Price { get; set; }
+    public Guid CartId { get; set; }
 
-    public Guid? CartId { get; set; }
+    public virtual TblCart Cart { get; set; } = null!;
 
-    public virtual TblCart? Cart { get; set; }
+    public virtual TblSizeProductItem? SizeProductItem { get; set; }
 }

@@ -4,9 +4,9 @@ namespace GreeenGarden.Data.Enums
 {
     public class Status
     {
-        public static readonly string ACTIVE = "Active";
-        public static readonly string DISABLE = "Disable";
-        public static readonly string UNPAID = "Unpaid"; //Order
-        public static readonly string SUCCESSED = "Successed"; //Order
+        public static readonly string ACTIVE = "active";
+        public static readonly string DISABLE = "disable";
+        public static readonly string UNPAID = "unpaid"; //Order
+        public static readonly string SUCCESSED = "successed"; //Order
     }
 }
