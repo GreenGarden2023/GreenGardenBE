@@ -38,8 +38,8 @@ namespace GreeenGarden.Business.Service.PaymentService
             string accessKey = secrets[1];
             string serectkey = secrets[2];
             string orderInfo = "GreenGarden Payment";
-            string redirectUrl = "https://greengarden2023.azurewebsites.net/swagger/index.html";
-            string ipnUrl = "https://greengarden2023.azurewebsites.net/swagger/index.html";
+            string redirectUrl = "https://ggarden.shop";
+            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-order-payment-reponse";
             string requestType = "captureWallet";
             string orderId = Guid.NewGuid().ToString();
             string requestId = Guid.NewGuid().ToString();
