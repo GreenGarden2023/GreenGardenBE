@@ -23,13 +23,21 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             ResultModel resultModel = new ResultModel();
             TblAddendum tblAddendum = await _addendumRepo.Get(addendumId);
-            if(tblAddendum == null)
+            if (amount <= 1000)
+            {
+                resultModel.Code = 400;
+                resultModel.IsSuccess = false;
+                resultModel.Message = "Amount must be greater than 1000";
+                return resultModel;
+            }
+            if (tblAddendum == null)
             {
                 resultModel.Code = 400;
                 resultModel.IsSuccess = false;
                 resultModel.Message = "Addendum Id invalid.";
                 return resultModel;
             }
+
             if (tblAddendum.RemainMoney < amount)
             {
                 resultModel.Code = 400;
@@ -188,6 +196,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             JObject resJSON = JObject.Parse(responseFromMomo);
             resultModel.Code = 200;
             resultModel.IsSuccess = true;
+            resultModel.Data = resJSON;
             resultModel.Message = "Create payment success.";
             return resultModel;
 
