@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.AddendumModel;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
@@ -136,6 +137,26 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             _context.TblSizeProductItems.Update(result);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> UpdateOrderPayment(Guid orderID)
+        {
+            try
+            {
+                var order = await _context.TblOrders.Where(x => x.Id.Equals(orderID)).FirstOrDefaultAsync();
+                if(order != null)
+                {
+                    order.Status = Status.COMPLETED;
+                    _context.TblOrders.Update(order);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else { return false; }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

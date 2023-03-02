@@ -14,7 +14,7 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
         public async Task<TblAddendum?> changeStatusAddendum(Guid addendumId, string status)
         {
             var addendum = await _context.TblAddendums.Where(x => x.Id.Equals(addendumId)).FirstOrDefaultAsync();
-            addendum.Status = Enums.Status.SUCCESSED;
+            addendum.Status = Enums.Status.COMPLETED;
             _context.Update(addendum);
             await _context.SaveChangesAsync();
             return addendum;

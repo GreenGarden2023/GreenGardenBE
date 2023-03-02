@@ -18,6 +18,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public Task<TblSizeProductItem> GetSizeProductItem(Guid sizeProductItemID);
         public Task<bool> minusQuantitySizeProductItem(Guid sizeProductItemID, int quantity);
         public Task<List<listOrderResponseModel>> GetListOrder(Guid userID);
+        public Task<bool> UpdateOrderPayment(Guid orderID);
 
     }
 }

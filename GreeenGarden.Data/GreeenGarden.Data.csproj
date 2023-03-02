@@ -19,6 +19,7 @@
     <Folder Include="Models\ProductItemModel\" />
     <Folder Include="Models\SizeProductItemModel\" />
     <Folder Include="Repositories\SizeProductItemRepo\" />
+    <Folder Include="Models\MoMoModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,5 +56,6 @@
     <None Remove="Models\ProductItemModel\" />
     <None Remove="Models\SizeProductItemModel\" />
     <None Remove="Repositories\SizeProductItemRepo\" />
+    <None Remove="Models\MoMoModel\" />
   </ItemGroup>
 </Project>
