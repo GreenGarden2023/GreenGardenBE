@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Business.Service.OrderService
+﻿using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.ResultModel;
+
+namespace GreeenGarden.Business.Service.OrderService
 {
     public interface IOrderService
     {
