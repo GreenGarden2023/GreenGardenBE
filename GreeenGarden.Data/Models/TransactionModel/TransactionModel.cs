@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.TransactionModel
+﻿namespace GreeenGarden.Data.Models.TransactionModel
 {
     public class TransactionModel
     {
@@ -16,9 +10,9 @@ namespace GreeenGarden.Data.Models.TransactionModel
         public string? Type { get; set; }
         public double? NumberMoney { get; set; }
     }
-    public class TransactionRequestModel 
-    { 
-        public Guid PaymentId { get; set; } 
+    public class TransactionRequestModel
+    {
+        public Guid PaymentId { get; set; }
         public double? NumberMoney { get; set; }
     }
 }

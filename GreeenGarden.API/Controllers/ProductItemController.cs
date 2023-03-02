@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using GreeenGarden.Business.Service.ProductItemService;
+﻿using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
-using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace GreeenGarden.API.Controllers
 {
@@ -30,9 +29,9 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-product-item")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetProductItem([FromQuery] PaginationRequestModel pagingModel, [Required]Guid productID, string? status, string? type)
+        public async Task<IActionResult> GetProductItem([FromQuery] PaginationRequestModel pagingModel, [Required] Guid productID, string? status, string? type)
         {
-            var result = await _service.GetProductItem( pagingModel, productID, status, type);
+            var result = await _service.GetProductItem(pagingModel, productID, status, type);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
@@ -56,7 +55,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-product-item-detail")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetProductItemDetail([Required]Guid productItemId, string? sizeProductItemStatus)
+        public async Task<IActionResult> GetProductItemDetail([Required] Guid productItemId, string? sizeProductItemStatus)
         {
             var result = await _service.GetDetailProductItem(productItemId, sizeProductItemStatus);
             if (result.IsSuccess) return Ok(result);

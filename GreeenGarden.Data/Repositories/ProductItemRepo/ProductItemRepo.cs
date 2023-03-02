@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using EntityFrameworkPaginateCore;
+﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
-using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +10,7 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
     public class ProductItemRepo : Repository<TblProductItem>, IProductItemRepo
     {
         private readonly GreenGardenDbContext _context;
-        public ProductItemRepo( GreenGardenDbContext context) : base(context)
+        public ProductItemRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;
         }
@@ -28,7 +24,7 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             }
             else
             {
-                return await _context.TblProductItems.Where(x=> x.Type.Trim().ToLower().Equals(type.Trim().ToLower())).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return await _context.TblProductItems.Where(x => x.Type.Trim().ToLower().Equals(type.Trim().ToLower())).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             }
         }
 
@@ -38,11 +34,11 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             {
                 productItemModel.ProductId = Guid.Empty;
             }
-            if(productItemModel != null)
+            if (productItemModel != null)
             {
                 var query = from prodItem in context.TblProductItems
-                           where prodItem.Id.Equals(productItemModel.Id)
-                           select new { prodItem };
+                            where prodItem.Id.Equals(productItemModel.Id)
+                            select new { prodItem };
 
                 var productItem = await query.Select(x => x.prodItem).FirstOrDefaultAsync();
                 if (productItem == null)
@@ -66,11 +62,11 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                     productItem.ProductId = (Guid)productItemModel.ProductId;
                 }
                 context.Update(productItem);
-                    await _context.SaveChangesAsync();
-                    return true;
+                await _context.SaveChangesAsync();
+                return true;
             }
             else { return false; }
         }
     }
-    
+
 }

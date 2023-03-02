@@ -1,12 +1,8 @@
-﻿using System.IO.Compression;
-using System.Reflection.Metadata;
-using Azure.Storage.Blobs;
-using GreeenGarden.Data.Entities;
+﻿using Azure.Storage.Blobs;
 using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.Business.Service.ImageService
 {
@@ -177,7 +173,8 @@ namespace GreeenGarden.Business.Service.ImageService
                         result.Code = 200;
                         result.Data = uploadImg.Data.ToString();
                     }
-                    else {
+                    else
+                    {
                         result.IsSuccess = false;
                         result.Code = 400;
                         result.Data = "Update product image failed.";
@@ -216,7 +213,7 @@ namespace GreeenGarden.Business.Service.ImageService
             catch (Exception ex)
             {
                 ex.ToString();
-                return null; 
+                return null;
             }
         }
 

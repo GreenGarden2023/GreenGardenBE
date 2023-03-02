@@ -73,7 +73,7 @@ namespace GreeenGarden.Business.Service.SizeService
         {
             var sizes = await _sizeRepo.GetProductItemSizes();
             List<SizeResModel> sizeModels = new();
-            foreach(TblSize size in sizes)
+            foreach (TblSize size in sizes)
             {
                 var viewSize = new SizeResModel()
                 {

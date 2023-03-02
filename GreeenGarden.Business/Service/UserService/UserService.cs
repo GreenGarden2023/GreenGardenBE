@@ -6,7 +6,6 @@ using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -224,7 +223,8 @@ namespace GreeenGarden.Business.Service.UserService
                     result.Message = "User not found.";
                     return result;
                 }
-                else {
+                else
+                {
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = userUpdateModel;
@@ -232,19 +232,20 @@ namespace GreeenGarden.Business.Service.UserService
                     return result;
                 }
 
-                
+
 
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.Message = e.ToString();
                 return result;
-                    
+
             }
 
 
-            
+
         }
 
         public async Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel)
@@ -253,7 +254,7 @@ namespace GreeenGarden.Business.Service.UserService
             try
             {
                 var verifyCode = await _eMailService.VerifyEmailVerificationOTP(passwordResetModel.OTPCode);
-                if(verifyCode.Code == 200)
+                if (verifyCode.Code == 200)
                 {
                     CreatePasswordHash(passwordResetModel.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
                     var update = await _userRepo.ResetPassword(verifyCode.Data.ToString(), passwordHash, passwordSalt);

@@ -1,6 +1,4 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Models.EmailCodeVerifyModel;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
@@ -10,8 +8,8 @@ using MimeKit;
 
 namespace GreeenGarden.Business.Service.EMailService
 {
-	public class EMailService: IEMailService
-	{
+    public class EMailService : IEMailService
+    {
         private readonly IEmailOTPCodeRepo _emailOTPCodeRepo;
         private readonly IUserRepo _userRepo;
         public EMailService(IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo)
@@ -24,7 +22,7 @@ namespace GreeenGarden.Business.Service.EMailService
             ResultModel result = new ResultModel();
             Random rnd = new();
 
-            string OTP =  (rnd.Next(000000, 999999)).ToString();
+            string OTP = (rnd.Next(000000, 999999)).ToString();
 
             var checkEmail = await _userRepo.CheckUserEmail(email);
             if (checkEmail == false)
@@ -50,7 +48,7 @@ namespace GreeenGarden.Business.Service.EMailService
                 "<h1>GreenGarden<h1>" +
                 "<h3>You requested a password reset. </h3>" +
                 "<p>Please use the code below to reset your password.</p>" +
-                "<p>Your code is: "+ OTP +"</p>" +
+                "<p>Your code is: " + OTP + "</p>" +
                 "</body>" +
                 "</html>"
             };
@@ -78,7 +76,8 @@ namespace GreeenGarden.Business.Service.EMailService
         {
             ResultModel result = new ResultModel();
             var verify = await _emailOTPCodeRepo.DeleteCode(code);
-            if (!String.IsNullOrEmpty(verify)) {
+            if (!String.IsNullOrEmpty(verify))
+            {
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = verify;

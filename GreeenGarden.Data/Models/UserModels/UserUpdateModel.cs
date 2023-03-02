@@ -1,10 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace GreeenGarden.Data.Models.UserModels
+﻿namespace GreeenGarden.Data.Models.UserModels
 {
-	public class UserUpdateModel
-	{
+    public class UserUpdateModel
+    {
         public string? FullName { get; set; }
 
         public string? Address { get; set; }

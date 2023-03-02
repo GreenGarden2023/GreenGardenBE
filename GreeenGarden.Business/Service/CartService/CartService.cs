@@ -4,12 +4,6 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CartRepo;
-using GreeenGarden.Data.Repositories.OrderRepo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Business.Service.CartService
 {
@@ -46,10 +40,10 @@ namespace GreeenGarden.Business.Service.CartService
 
                 var cart = await _cartRepo.GetCart(user.Id, model.isForRent);
                 var cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
-                    foreach (var item in cartDetail)
-                    {
-                        await _cartRepo.RemoveCartDetail(item);
-                    }
+                foreach (var item in cartDetail)
+                {
+                    await _cartRepo.RemoveCartDetail(item);
+                }
                 modelResponse.isForRent = model.isForRent;
                 modelResponse.items = new List<ItemRequest>();
                 foreach (var item in model.items)
@@ -59,22 +53,22 @@ namespace GreeenGarden.Business.Service.CartService
                     {
                         result.Code = 400;
                         result.IsSuccess = false;
-                        result.Message = "Sản phẩm "+ item.sizeProductItemID + " đã hết trong kho!";
+                        result.Message = "Sản phẩm " + item.sizeProductItemID + " đã hết trong kho!";
                         return result;
                     }
 
                     var newCartDetail = new TblCartDetail()
                     {
-                        Id= Guid.NewGuid(),
-                        SizeProductItemId= item.sizeProductItemID,
-                        Quantity= item.quantity,
+                        Id = Guid.NewGuid(),
+                        SizeProductItemId = item.sizeProductItemID,
+                        Quantity = item.quantity,
                         CartId = cart.Id
                     };
                     await _cartRepo.AddProductItemToCart(newCartDetail);
-                    if (model.isForRent== true) totalPriceCart += sizeProductItem.RentPrice * item.quantity;
-                    if (model.isForRent== false) totalPriceCart += sizeProductItem.SalePrice * item.quantity;
+                    if (model.isForRent == true) totalPriceCart += sizeProductItem.RentPrice * item.quantity;
+                    if (model.isForRent == false) totalPriceCart += sizeProductItem.SalePrice * item.quantity;
                     var ItemRequest = new ItemRequest();
-                    ItemRequest.sizeProductItemID= item.sizeProductItemID;
+                    ItemRequest.sizeProductItemID = item.sizeProductItemID;
                     ItemRequest.quantity = item.quantity;
                     if (model.isForRent == true) ItemRequest.unitPrice = sizeProductItem.RentPrice;
                     if (model.isForRent == false) ItemRequest.unitPrice = sizeProductItem.SalePrice;
@@ -104,7 +98,7 @@ namespace GreeenGarden.Business.Service.CartService
                 double? totalPrice = 0;
                 var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
                 var cart = await _cartRepo.GetCart(user.Id, isForRent);
-                if (cart ==null)
+                if (cart == null)
                 {
                     result.Code = 200;
                     result.IsSuccess = true;
@@ -130,8 +124,8 @@ namespace GreeenGarden.Business.Service.CartService
                     if (isForRent == true) ItemRequest.unitPrice = sizeProductItem.RentPrice;
                     if (isForRent == false) ItemRequest.unitPrice = sizeProductItem.SalePrice;
                     modelResponse.items.Add(ItemRequest);
-                    if (isForRent == true) totalPrice += sizeProductItem.RentPrice*item.Quantity;
-                    if (isForRent == false) totalPrice += sizeProductItem.SalePrice*item.Quantity;
+                    if (isForRent == true) totalPrice += sizeProductItem.RentPrice * item.Quantity;
+                    if (isForRent == false) totalPrice += sizeProductItem.SalePrice * item.Quantity;
                 }
                 modelResponse.totalPrice = totalPrice;
 

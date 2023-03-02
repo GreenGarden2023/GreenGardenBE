@@ -5,11 +5,6 @@ using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.TransactionModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Business.Service.TransactionService
 {
@@ -40,7 +35,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                     Amount = model.NumberMoney,
                     Type = TransactionType.RECEIVED,
                     Status = Status.SUCCESSED,
-                    DatetimePaid= DateTime.Now,
+                    DatetimePaid = DateTime.Now,
                 };
                 await _transactionRepo.insert(transaction);
                 var payment = new TblPayment()
@@ -72,6 +67,6 @@ namespace GreeenGarden.Business.Service.TransactionService
 
         }*/
 
-        
+
     }
 }

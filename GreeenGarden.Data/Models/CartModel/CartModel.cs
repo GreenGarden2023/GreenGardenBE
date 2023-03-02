@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.CartModel
+﻿namespace GreeenGarden.Data.Models.CartModel
 {
     public class CartModel
     {
@@ -14,7 +8,7 @@ namespace GreeenGarden.Data.Models.CartModel
     {
         public Guid? sizeProductItemID { get; set; }
         public int? quantity { get; set; }
-        public double? unitPrice{ get; set; }
+        public double? unitPrice { get; set; }
     }
     public class CartShowModel
     {
@@ -28,7 +22,8 @@ namespace GreeenGarden.Data.Models.CartModel
         public List<ItemResponse> items { get; set; }
     }
     public class ItemResponse
-    {   public Guid? sizeProductItemID { get; set; }
+    {
+        public Guid? sizeProductItemID { get; set; }
         public int? quantity { get; set; }
     }
 }

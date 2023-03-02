@@ -1,24 +1,19 @@
 ﻿using GreeenGarden.Data.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.TransactionRepo
 {
     public class TransactionRepo : ITransactionRepo
     {
         private readonly GreenGardenDbContext _context;
-        public TransactionRepo(GreenGardenDbContext context) 
+        public TransactionRepo(GreenGardenDbContext context)
         {
             _context = context;
         }
 
         public async Task<TblAddendum?> changeStatusAddendum(Guid addendumId, string status)
         {
-            var addendum = await _context.TblAddendums.Where(x=>x.Id.Equals(addendumId)).FirstOrDefaultAsync();
+            var addendum = await _context.TblAddendums.Where(x => x.Id.Equals(addendumId)).FirstOrDefaultAsync();
             addendum.Status = Enums.Status.SUCCESSED;
             _context.Update(addendum);
             await _context.SaveChangesAsync();
@@ -27,7 +22,7 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
 
         public async Task<double?> checkRemainMoney(Guid addendumId)
         {
-            var addendum = await _context.TblAddendums.Where(x=>x.Id.Equals(addendumId)).FirstOrDefaultAsync();
+            var addendum = await _context.TblAddendums.Where(x => x.Id.Equals(addendumId)).FirstOrDefaultAsync();
             return addendum.ReducedMoney;
         }
 
@@ -47,7 +42,7 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
 
         public async Task<TblAddendum> miniusAddendumtAmount(Guid addendumId, double? miniusMoney)
         {
-            var addendum = await _context.TblAddendums.Where(x=>x.Id== addendumId).FirstOrDefaultAsync();
+            var addendum = await _context.TblAddendums.Where(x => x.Id == addendumId).FirstOrDefaultAsync();
             addendum.RemainMoney -= miniusMoney;
             _context.TblAddendums.Update(addendum);
             await _context.SaveChangesAsync();

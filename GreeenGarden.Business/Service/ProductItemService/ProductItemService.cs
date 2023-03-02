@@ -1,12 +1,8 @@
-﻿using System.Net.NetworkInformation;
-using System.Security.Claims;
-using GreeenGarden.Business.Service.ImageService;
+﻿using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
-using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.CategoryModel;
-using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Models.ProductModel;
@@ -19,7 +15,7 @@ using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
-using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.ProductItemService
 {
@@ -138,7 +134,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         else
                         {
                             var sizeGet = await _sizeRepo.Get(sizeProductItem.SizeId);
-                            if(sizeGet != null)
+                            if (sizeGet != null)
                             {
                                 var size = new SizeResModel()
                                 {
@@ -157,7 +153,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                 };
                                 listSizeProductItemModel.Add(sizeProductItemModel);
                             }
-                            
+
                         }
                     }
                 }

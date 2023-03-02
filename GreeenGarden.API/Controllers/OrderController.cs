@@ -1,6 +1,4 @@
 ﻿using GreeenGarden.Business.Service.OrderService;
-using GreeenGarden.Data.Models.OrderModel;
-using GreeenGarden.Data.Models.PaginationModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
