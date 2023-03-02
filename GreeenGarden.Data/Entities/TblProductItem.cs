@@ -17,9 +17,5 @@ public partial class TblProductItem
 
     public virtual TblProduct Product { get; set; } = null!;
 
-    public virtual ICollection<TblAddendumProductItem> TblAddendumProductItems { get; } = new List<TblAddendumProductItem>();
-
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
-
-    public virtual ICollection<TblSizeProductItem> TblSizeProductItems { get; } = new List<TblSizeProductItem>();
 }

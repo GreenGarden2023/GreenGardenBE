@@ -26,7 +26,7 @@ namespace GreeenGarden.Business.Service.TransactionService
             _decodeToken = new DecodeToken();
             _orderRepo = orderRepo;
         }
-        public async Task<ResultModel> payByCashForAddendum(string token, TransactionRequestFirstModel model)
+        /*public async Task<ResultModel> payByCashForAddendum(string token, TransactionRequestFirstModel model)
         {
             var result = new ResultModel();
             try
@@ -70,7 +70,7 @@ namespace GreeenGarden.Business.Service.TransactionService
             }
             return result;
 
-        }
+        }*/
 
         
     }

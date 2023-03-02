@@ -14,6 +14,6 @@ public partial class TblCartDetail
     public Guid CartId { get; set; }
 
     public virtual TblCart Cart { get; set; } = null!;
-    
+
     public virtual TblSizeProductItem? SizeProductItem { get; set; }
 }

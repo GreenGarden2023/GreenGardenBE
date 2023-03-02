@@ -78,17 +78,17 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
-            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            entity.Property(e => e.SizeProductItemId).HasColumnName("SizeProductItemID");
 
             entity.HasOne(d => d.Addendum).WithMany(p => p.TblAddendumProductItems)
                 .HasForeignKey(d => d.AddendumId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblAddendumProductItems_tblAddendums");
 
-            entity.HasOne(d => d.ProductItem).WithMany(p => p.TblAddendumProductItems)
-                .HasForeignKey(d => d.ProductItemId)
+            entity.HasOne(d => d.SizeProductItem).WithMany(p => p.TblAddendumProductItems)
+                .HasForeignKey(d => d.SizeProductItemId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblAddendumProductItems_tblProductItems");
+                .HasConstraintName("FK_tblAddendumProductItems_tblSIzeProductItems");
         });
 
         modelBuilder.Entity<TblCart>(entity =>
@@ -351,16 +351,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.SizeId).HasColumnName("SizeID");
             entity.Property(e => e.Status).HasMaxLength(50);
-
-            entity.HasOne(d => d.ProductItem).WithMany(p => p.TblSizeProductItems)
-                .HasForeignKey(d => d.ProductItemId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblSIzeProductItems_tblProductItems");
-
-            entity.HasOne(d => d.Size).WithMany(p => p.TblSizeProductItems)
-                .HasForeignKey(d => d.SizeId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblSIzeProductItems_tblSizes");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>
