@@ -5,35 +5,35 @@
     }
     public class AdddendumResponseModel
     {
-        public Guid Id { get; set; }
-        public double? TransportFee { get; set; }
-        public DateTime? StartDateRent { get; set; }
-        public DateTime? EndDateRent { get; set; }
-        public double? Deposit { get; set; }
-        public double? ReducedMoney { get; set; }
-        public double? TotalPrice { get; set; }
-        public string? Status { get; set; }
-        public Guid OrderID { get; set; }
-        public double? RemainMoney { get; set; }
-        public List<addendumProductItemResponseModel>? ProductItems { get; set; }
+        public Guid id { get; set; }
+        public double? transportFee { get; set; }
+        public DateTime? startDateRent { get; set; }
+        public DateTime? endDateRent { get; set; }
+        public double? deposit { get; set; }
+        public double? reducedMoney { get; set; }
+        public double? totalPrice { get; set; }
+        public string? status { get; set; }
+        public Guid orderID { get; set; }
+        public double? remainMoney { get; set; }
+        public List<addendumProductItemResponseModel>? sizeProductItems { get; set; }
     }
     public class addendumProductItemResponseModel
     {
-        public double? ProductItemPrice { get; set; }
-        public int? Quantity { set; get; }
-        public Guid? ProductItemID { get; set; }
+        public double? sizeProductItemPrice { get; set; }
+        public int? quantity { set; get; }
+        public Guid? sizeProductItemID { get; set; }
     }
 
     public class listAddendumResponse
     {
-        public Guid Id { set; get; }
-        public Guid OrderID { set; get; }
-        public DateTime? StartDateRent { set; get; }
-        public DateTime? EndDateRent { set; get; }
-        public string? Status { set; get; }
-        public double? Deposit { set; get; }
-        public double? TotalPrice { set; get; }
-        public double? RemainMoney { set; get; }
-        public List<addendumProductItemResponseModel>? ProductItems { get; set; }
+        public Guid id { set; get; }
+        public Guid orderID { set; get; }
+        public DateTime? startDateRent { set; get; }
+        public DateTime? endDateRent { set; get; }
+        public string? status { set; get; }
+        public double? deposit { set; get; }
+        public double? totalPrice { set; get; }
+        public double? remainMoney { set; get; }
+        public List<addendumProductItemResponseModel>? productItems { get; set; }
     }
 }

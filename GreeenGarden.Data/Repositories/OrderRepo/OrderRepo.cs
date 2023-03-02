@@ -14,36 +14,41 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             _context = context;
         }
 
-        public async Task<TblAddendum> GetAddendum(Guid AddendumId)
+        public async Task<TblSizeProductItem> GetSizeProductItem(Guid sizeProductItemID)
         {
-            return await _context.TblAddendums.Where(x => x.Id == AddendumId).FirstAsync();
+           return await _context.TblSizeProductItems.Where(x=>x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
         }
+
+        /*public async Task<TblAddendum> GetAddendum(Guid AddendumId)
+        {
+            return await _context.TblAddendums.Where(x=>x.Id == AddendumId).FirstAsync();
+        }*/
 
         public async Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId)
         {
             var result = new AdddendumResponseModel();
             var addendum = await _context.TblAddendums.Where(x => x.Id == AddendumId).FirstAsync();
             var addendumProductItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == AddendumId).ToListAsync();
-            result.Id = addendum.Id;
-            result.TransportFee = addendum.TransportFee;
-            result.StartDateRent = addendum.StartDateRent;
-            result.EndDateRent = addendum.EndDateRent;
-            result.Deposit = addendum.Deposit;
-            result.ReducedMoney = addendum.ReducedMoney;
-            result.TotalPrice = addendum.TotalPrice;
-            result.Status = addendum.Status;
-            result.OrderID = addendum.OrderId;
-            result.RemainMoney = addendum.RemainMoney;
-            result.ProductItems = new List<addendumProductItemResponseModel>();
+            result.id = addendum.Id;
+            result.transportFee = addendum.TransportFee;
+            result.startDateRent = addendum.StartDateRent;
+            result.endDateRent = addendum.EndDateRent;
+            result.deposit = addendum.Deposit;
+            result.reducedMoney = addendum.ReducedMoney;
+            result.totalPrice = addendum.TotalPrice;
+            result.status = addendum.Status;
+            result.orderID = addendum.OrderId;
+            result.remainMoney = addendum.RemainMoney;
+            result.sizeProductItems = new List<addendumProductItemResponseModel>();
             foreach (var item in addendumProductItem)
             {
                 var Items = new addendumProductItemResponseModel()
                 {
-                    ProductItemID = item.ProductItemId,
-                    ProductItemPrice = item.ProductItemPrice,
-                    Quantity = item.Quantity
+                    sizeProductItemID = item.SizeProductItemId,
+                    sizeProductItemPrice = item.SizeProductItemPrice,
+                    quantity = item.Quantity
                 };
-                result.ProductItems.Add(Items);
+                result.sizeProductItems.Add(Items);
             }
             return result;
         }
@@ -55,30 +60,30 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             var addendum = await _context.TblAddendums.Where(x => x.OrderId == OrderId).ToListAsync();
             foreach (var item in addendum)
             {
-                addendumResponse.Id = item.Id;
-                addendumResponse.OrderID = item.OrderId;
-                addendumResponse.StartDateRent = item.StartDateRent;
-                addendumResponse.EndDateRent = item.EndDateRent;
-                addendumResponse.Status = item.Status;
-                addendumResponse.Deposit = item.Deposit;
-                addendumResponse.TotalPrice = item.TotalPrice;
-                addendumResponse.RemainMoney = item.RemainMoney;
-                addendumResponse.ProductItems = new List<addendumProductItemResponseModel>();
+                addendumResponse.id = item.Id;
+                addendumResponse.orderID = item.OrderId;
+                addendumResponse.startDateRent = item.StartDateRent;
+                addendumResponse.endDateRent = item.EndDateRent;
+                addendumResponse.status = item.Status;
+                addendumResponse.deposit = item.Deposit;
+                addendumResponse.totalPrice = item.TotalPrice;
+                addendumResponse.remainMoney = item.RemainMoney;
+                addendumResponse.productItems = new List<addendumProductItemResponseModel>();
                 var addendumItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == item.Id).ToListAsync();
                 foreach (var i in addendumItem)
                 {
                     var addProItem = new addendumProductItemResponseModel()
                     {
-                        ProductItemID = i.ProductItemId,
-                        ProductItemPrice = i.ProductItemPrice,
-                        Quantity = i.Quantity,
+                        sizeProductItemID = i.SizeProductItemId,
+                        sizeProductItemPrice = i.SizeProductItemPrice,
+                        quantity = i.Quantity,
                     };
-                    addendumResponse.ProductItems.Add(addProItem);
+                    addendumResponse.productItems.Add(addProItem);
                 }
                 result.Add(addendumResponse);
             }
             return result;
-        }
+        } //cmt
 
         public async Task<List<listOrderResponseModel>> GetListOrder(Guid userID)
         {
@@ -88,35 +93,25 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             {
                 var orderResponseModel = new listOrderResponseModel()
                 {
-                    CreateDate = order.CreateDate,
-                    OrderId = order.Id,
-                    Status = order.Status,
-                    TotalPrice = order.TotalPrice,
-                    VoucherID = order.VoucherId
+                    createDate = order.CreateDate,
+                    orderId = order.Id,
+                    status = order.Status,
+                    totalPrice = order.TotalPrice,
+                    voucherID = order.VoucherId
                 };
                 result.Add(orderResponseModel);
             }
             return result;
         }
 
-        public async Task<TblOrder> GetOrder(Guid OrderId)
+        /*public async Task<TblOrder> GetOrder(Guid OrderId)
         {
             return await _context.TblOrders.Where(x => x.Id == OrderId).FirstOrDefaultAsync();
-        }
-
-        public async Task<TblProductItem> getProductToCompare(Guid productId)
-        {
-            return await _context.TblProductItems.Where(x => x.Id == productId).FirstAsync();
-        }
+        }*/
 
         public async Task<TblUser> GetUser(string username)
         {
             return await _context.TblUsers.Where(x => x.UserName == username).FirstOrDefaultAsync();
-        }
-
-        public async Task<TblUser> getUserByUsername(string username)
-        {
-            return await _context.TblUsers.Where(x => x.UserName == username).FirstAsync();
         }
 
         public async Task<TblAddendum> insertAddendum(TblAddendum entities)
@@ -133,5 +128,14 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return entities;
         }
 
+        public async Task<bool> minusQuantitySizeProductItem(Guid sizeProductItemID, int quantity)
+        {
+            var result = await _context.TblSizeProductItems.Where(x => x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
+            if (result.Quantity < quantity) return false;
+            result.Quantity -= quantity;
+            _context.TblSizeProductItems.Update(result);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

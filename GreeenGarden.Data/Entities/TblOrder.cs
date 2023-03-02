@@ -14,6 +14,8 @@ public partial class TblOrder
 
     public Guid? VoucherId { get; set; }
 
+    public bool? IsForRent { get; set; }
+
     public virtual ICollection<TblAddendum> TblAddenda { get; } = new List<TblAddendum>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
