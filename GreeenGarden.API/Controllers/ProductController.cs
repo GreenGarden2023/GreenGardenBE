@@ -21,7 +21,7 @@ namespace GreeenGarden.API.Controllers
 
 
         [HttpGet("get-products-by-category-status")]
-        public async Task<IActionResult> getAllProductByStatus([FromQuery] PaginationRequestModel pagingModel, [Required]Guid categoryID, string? status, string? rentSale)
+        public async Task<IActionResult> getAllProductByStatus([FromQuery] PaginationRequestModel pagingModel, [Required] Guid categoryID, string? status, string? rentSale)
         {
             var result = await _service.getAllProductByCategoryStatus(pagingModel, categoryID, status, rentSale);
             if (result.IsSuccess && result.Code == 200) return Ok(result);

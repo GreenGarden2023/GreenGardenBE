@@ -1,13 +1,10 @@
-﻿using System;
+﻿using GreeenGarden.Data.Models.SizeProductItemModel;
 using System.ComponentModel.DataAnnotations;
-using GreeenGarden.Data.Models.SizeProductItemModel;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.Data.Models.ProductItemModel
 {
-	public class ProductItemInsertModel
-    { 
+    public class ProductItemInsertModel
+    {
         [Required]
         public string Name { get; set; } = null!;
 

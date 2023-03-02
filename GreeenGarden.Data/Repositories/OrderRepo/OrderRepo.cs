@@ -1,22 +1,15 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.AddendumModel;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Azure;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.OrderRepo
 {
     public class OrderRepo : Repository<TblOrder>, IOrderRepo
     {
         private readonly GreenGardenDbContext _context;
-        public OrderRepo( GreenGardenDbContext context) : base(context)
+        public OrderRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;
         }

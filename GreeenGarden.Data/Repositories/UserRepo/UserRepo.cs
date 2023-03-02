@@ -1,5 +1,4 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -66,7 +65,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             }
             if (!String.IsNullOrEmpty(userName) && !userName.Equals(user.UserName))
             {
-                user.UserName = userName; 
+                user.UserName = userName;
             }
             if (!String.IsNullOrEmpty(userUpdateModel.FullName) && !userUpdateModel.FullName.Equals(user.FullName))
             {
@@ -99,7 +98,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             if (!String.IsNullOrEmpty(email))
             {
                 var check = await _context.TblUsers.Where(x => x.Mail.Equals(email)).FirstOrDefaultAsync();
-                if(check != null) { return true; } else { return false; }
+                if (check != null) { return true; } else { return false; }
             }
             else { return false; }
         }
@@ -111,7 +110,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         select new { u };
 
             var user = await query.Select(x => x.u).FirstOrDefaultAsync();
-            if(user != null)
+            if (user != null)
             {
                 user.PasswordHash = passHash;
                 user.PasswordSalt = passSalt;

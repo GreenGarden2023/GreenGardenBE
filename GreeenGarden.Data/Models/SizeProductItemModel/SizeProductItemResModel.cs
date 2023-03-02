@@ -1,10 +1,9 @@
-﻿using System;
-using GreeenGarden.Data.Models.SizeModel;
+﻿using GreeenGarden.Data.Models.SizeModel;
 
 namespace GreeenGarden.Data.Models.SizeProductItemModel
 {
-	public class SizeProductItemResModel
-	{
+    public class SizeProductItemResModel
+    {
         public Guid Id { get; set; }
 
         public SizeResModel Size { get; set; } = null!;

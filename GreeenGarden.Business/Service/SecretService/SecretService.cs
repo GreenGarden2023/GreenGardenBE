@@ -62,7 +62,7 @@ namespace GreeenGarden.Business.Service.SecretService
                 ex.ToString();
             }
             return tokenSecret;
-           
+
         }
         public static string GetIMGConn()
         {

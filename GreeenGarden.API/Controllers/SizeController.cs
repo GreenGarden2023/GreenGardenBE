@@ -18,7 +18,7 @@ namespace GreeenGarden.API.Controllers
 
         [HttpPost("create-size")]
         [Authorize(Roles = "Staff, Manager")]
-        public async Task<IActionResult> createSize([FromForm]SizeCreateModel sizeCreateModel)
+        public async Task<IActionResult> createSize([FromForm] SizeCreateModel sizeCreateModel)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.CreateSize(sizeCreateModel, token);
@@ -27,7 +27,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-sizes")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetSizes( )
+        public async Task<IActionResult> GetSizes()
         {
             var result = await _service.GetSizes();
             if (result.IsSuccess) return Ok(result);

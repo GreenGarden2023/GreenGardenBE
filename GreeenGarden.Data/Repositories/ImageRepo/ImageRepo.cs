@@ -17,7 +17,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             if (!String.IsNullOrEmpty(imgURL))
             {
                 var img = _context.TblImages.Where(x => x.ImageUrl == imgURL).FirstOrDefault();
-                if(img != null)
+                if (img != null)
                 {
                     _context.TblImages.Remove(img);
                     await Update();
@@ -59,13 +59,13 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         public async Task<List<string>> GetImgUrlSizeProduct(Guid sizeproductItemId)
         {
             List<string> urls = new List<string>();
-            if (sizeproductItemId != Guid.Empty )
+            if (sizeproductItemId != Guid.Empty)
             {
-                
+
                 var result = await _context.TblImages.Where(x => x.SizeProductItemId.Equals(sizeproductItemId)).ToListAsync();
                 if (result != null)
                 {
-                    
+
                     foreach (TblImage image in result)
                     {
                         if (!String.IsNullOrEmpty(image.ImageUrl))
@@ -112,27 +112,28 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
                 await _context.SaveChangesAsync();
                 return newProdIMG;
             }
-            
+
         }
 
         public async Task<bool> UpdateImgForSizeProductItem(Guid SizeProductItemId, List<string> ImgUrls)
         {
             bool success = false;
             var oldImgList = await _context.TblImages.Where(x => x.SizeProductItemId.Equals(SizeProductItemId)).ToListAsync();
-            foreach(TblImage tblImage in oldImgList)
+            foreach (TblImage tblImage in oldImgList)
             {
                 try
                 {
                     _context.Remove(tblImage);
                     await _context.SaveChangesAsync();
                     success = true;
-                }catch
+                }
+                catch
                 {
                     success = false;
                     return success;
                 }
             }
-            foreach(string url in ImgUrls)
+            foreach (string url in ImgUrls)
             {
                 try
                 {

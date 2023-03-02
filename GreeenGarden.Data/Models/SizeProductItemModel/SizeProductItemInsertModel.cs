@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.Data.Models.SizeProductItemModel
 {
     public class SizeProductItemInsertModel
-	{
+    {
 
         [Required]
         public Guid SizeId { get; set; }

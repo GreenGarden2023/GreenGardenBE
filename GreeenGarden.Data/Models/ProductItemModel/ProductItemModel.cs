@@ -1,10 +1,7 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace GreeenGarden.Data.Models.ProductItemModel
+﻿namespace GreeenGarden.Data.Models.ProductItemModel
 {
-	public class ProductItemModel
-	{
+    public class ProductItemModel
+    {
         public Guid Id { get; set; }
 
         public string Name { get; set; } = null!;

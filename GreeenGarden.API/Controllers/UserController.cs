@@ -1,12 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using GreeenGarden.Business.Service.EMailService;
+﻿using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Business.Service.UserService;
-using GreeenGarden.Data.Models.EmailCodeVerifyModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace GreeenGarden.API.Controllers
 {
@@ -89,7 +86,7 @@ namespace GreeenGarden.API.Controllers
             try
             {
 
-                var result =  await _eMailService.SendEmailVerificationOTP(email);
+                var result = await _eMailService.SendEmailVerificationOTP(email);
 
                 return result;
             }

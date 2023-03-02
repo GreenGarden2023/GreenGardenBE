@@ -1,27 +1,24 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Models.ProductItemModel;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.SizeModel;
 using GreeenGarden.Data.Models.SizeProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
-	public class SizeProductItemRepo : Repository<TblSizeProductItem>, ISizeProductItemRepo
-	{
+    public class SizeProductItemRepo : Repository<TblSizeProductItem>, ISizeProductItemRepo
+    {
         private readonly GreenGardenDbContext _context;
         private readonly ISizeRepo _sizeRepo;
         private readonly IImageRepo _imageRepo;
         public SizeProductItemRepo(GreenGardenDbContext context, ISizeRepo sizeRepo, IImageRepo imageRepo) : base(context)
         {
-			_context = context;
+            _context = context;
             _sizeRepo = sizeRepo;
             _imageRepo = imageRepo;
-		}
+        }
 
         public async Task<List<SizeProductItemResModel>> GetSizeProductItems(Guid productItemId, string? status)
         {
@@ -53,7 +50,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                         };
                         listSizeProd.Add(sizeProd);
                     }
-                    
+
                 }
                 return listSizeProd;
             }
@@ -93,7 +90,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 
         public async Task<bool> UpdateSizeProductItem(SizeProductItemUpdateModel sizeProductItemUpdateModel)
         {
-            if(sizeProductItemUpdateModel.SizeId == null)
+            if (sizeProductItemUpdateModel.SizeId == null)
             {
                 sizeProductItemUpdateModel.SizeId = Guid.Empty;
             }
