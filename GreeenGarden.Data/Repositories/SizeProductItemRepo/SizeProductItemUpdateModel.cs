@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
 
 namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
-	public class SizeProductItemUpdateModel
-	{
+    public class SizeProductItemUpdateModel
+    {
         [Required]
         public Guid Id { get; set; }
 

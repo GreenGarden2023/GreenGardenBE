@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GreeenGarden.Data.Entities;
+﻿namespace GreeenGarden.Data.Entities;
 
 public partial class TblProductItem
 {

@@ -1,6 +1,4 @@
-﻿using GreeenGarden.Business.Service.OrderService;
-using GreeenGarden.Business.Service.TransactionService;
-using GreeenGarden.Data.Models.OrderModel;
+﻿using GreeenGarden.Business.Service.TransactionService;
 using GreeenGarden.Data.Models.TransactionModel;
 using Microsoft.AspNetCore.Mvc;
 

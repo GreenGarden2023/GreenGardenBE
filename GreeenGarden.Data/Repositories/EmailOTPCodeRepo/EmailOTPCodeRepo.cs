@@ -1,12 +1,10 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Models.EmailCodeVerifyModel;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.EmailOTPCodeRepo
 {
-	public class EmailOTPCodeRepo : Repository<TblEmailOtpcode>, IEmailOTPCodeRepo
+    public class EmailOTPCodeRepo : Repository<TblEmailOtpcode>, IEmailOTPCodeRepo
     {
         private readonly GreenGardenDbContext _context;
         public EmailOTPCodeRepo(GreenGardenDbContext context) : base(context)
@@ -16,7 +14,7 @@ namespace GreeenGarden.Data.Repositories.EmailOTPCodeRepo
 
         public async Task<string> DeleteCode(string code)
         {
-            if(!String.IsNullOrEmpty(code))
+            if (!String.IsNullOrEmpty(code))
             {
                 var emailCode = await _context.TblEmailOtpcodes.Where(x => x.Optcode.Equals(code)).FirstOrDefaultAsync();
                 if (emailCode != null)

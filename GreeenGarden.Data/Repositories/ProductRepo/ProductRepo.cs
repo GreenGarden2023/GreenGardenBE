@@ -1,7 +1,5 @@
-﻿using System.Threading.Tasks;
-using EntityFrameworkPaginateCore;
+﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
@@ -19,7 +17,7 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             _context = context;
         }
 
-       
+
 
         public async void increaseQuantity(Guid subId, int plus)
         {
@@ -108,11 +106,11 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             {
                 product.CategoryId = productUpdateModel.CategoryId;
             }
-            if ( !productUpdateModel.IsForRent.Equals(product.IsForRent))
+            if (!productUpdateModel.IsForRent.Equals(product.IsForRent))
             {
                 product.IsForRent = productUpdateModel.IsForRent;
             }
-            if ( !productUpdateModel.IsForSale.Equals(product.IsForSale))
+            if (!productUpdateModel.IsForSale.Equals(product.IsForSale))
             {
                 product.IsForSale = productUpdateModel.IsForSale;
             }

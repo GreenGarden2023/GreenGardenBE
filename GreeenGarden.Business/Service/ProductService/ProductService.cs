@@ -70,7 +70,8 @@ namespace GreeenGarden.Business.Service.ProductService
                     IsForSale = model.IsForSale
                 };
                 var insertResult = await _productRepo.Insert(newProduct);
-                ProductModel productResModel = new ProductModel(){
+                ProductModel productResModel = new ProductModel()
+                {
                     Id = newProduct.Id,
                     Name = newProduct.Name,
                     Description = newProduct.Description,
@@ -80,7 +81,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     IsForSale = newProduct.IsForSale
 
                 };
-            
+
                 // create, update tbl img()
 
                 var imgUploadUrl = await _imgService.UploadAnImage(model.ImgFile);
@@ -94,7 +95,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         ProductId = newProduct.Id,
                     };
                     await _imageRepo.Insert(newimgCategory);
-                    
+
                 }
 
                 result.IsSuccess = true;
@@ -111,7 +112,7 @@ namespace GreeenGarden.Business.Service.ProductService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
             }
-            
+
         }
 
         public async Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
@@ -119,7 +120,7 @@ namespace GreeenGarden.Business.Service.ProductService
             var result = new ResultModel();
             try
             {
-                var listProdct = await  _productRepo.queryAllProductByCategoryAndStatus(pagingModel, categoryID, status, rentSale );
+                var listProdct = await _productRepo.queryAllProductByCategoryAndStatus(pagingModel, categoryID, status, rentSale);
 
                 if (listProdct == null)
                 {
@@ -138,7 +139,8 @@ namespace GreeenGarden.Business.Service.ProductService
                     {
                         imgURL = img.ImageUrl;
                     }
-                    else {
+                    else
+                    {
                         imgURL = "";
                     }
                     var productToShow = new ProductModel()

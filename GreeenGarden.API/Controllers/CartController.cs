@@ -1,5 +1,4 @@
 ﻿using GreeenGarden.Business.Service.CartService;
-using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Data.Models.CartModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +26,7 @@ namespace GreeenGarden.API.Controllers
         }
 
         [HttpPost("add-to-cart")]
-        public async Task<IActionResult> AddToCart([FromBody]AddToCartModel model)
+        public async Task<IActionResult> AddToCart([FromBody] AddToCartModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.AddToCart(token, model);

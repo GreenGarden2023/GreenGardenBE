@@ -1,5 +1,4 @@
-﻿using System.Data;
-using GreeenGarden.Business.Service.ImageService;
+﻿using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
