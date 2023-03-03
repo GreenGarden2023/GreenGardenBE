@@ -17,10 +17,10 @@ namespace GreeenGarden.API.Controllers
         }
 
         [HttpGet("get-cart")]
-        public async Task<IActionResult> GetCart(bool isForRent)
+        public async Task<IActionResult> GetCart()
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.GetCart(token, isForRent);
+            var result = await _service.GetCart(token);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

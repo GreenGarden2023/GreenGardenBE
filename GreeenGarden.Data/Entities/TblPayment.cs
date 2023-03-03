@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace GreeenGarden.Data.Entities;
 
 public partial class TblPayment
@@ -10,6 +9,5 @@ public partial class TblPayment
     public string Status { get; set; } = null!;
 
     public string PaymentMethod { get; set; } = null!;
-
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }
