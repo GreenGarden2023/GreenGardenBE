@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Entities;
 
@@ -111,6 +113,9 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CartId).HasColumnName("CartID");
+            entity.Property(e => e.IsForRent)
+                .HasMaxLength(10)
+                .IsFixedLength();
             entity.Property(e => e.SizeProductItemId).HasColumnName("SizeProductItemID");
 
             entity.HasOne(d => d.Cart).WithMany(p => p.TblCartDetails)
@@ -248,11 +253,8 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.TransactionId).HasColumnName("TransactionID");
-
-            entity.HasOne(d => d.Transaction).WithMany(p => p.TblPayments)
-                .HasForeignKey(d => d.TransactionId)
-                .HasConstraintName("FK_tblPayments_tblTransactions");
+            entity.Property(e => e.PaymentMethod).HasMaxLength(200);
+            entity.Property(e => e.Status).HasMaxLength(50);
         });
 
         modelBuilder.Entity<TblProduct>(entity =>
@@ -363,6 +365,9 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.AddendumId).HasColumnName("AddendumID");
             entity.Property(e => e.DatetimePaid).HasColumnType("datetime");
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
+            entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.Type).HasMaxLength(50);
 
             entity.HasOne(d => d.Addendum).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.AddendumId)
@@ -371,6 +376,11 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.Order).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.OrderId)
                 .HasConstraintName("FK_tblPayments_tblOrders");
+
+            entity.HasOne(d => d.Payment).WithMany(p => p.TblTransactions)
+                .HasForeignKey(d => d.PaymentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblTransactions_tblPayments");
         });
 
         modelBuilder.Entity<TblUser>(entity =>

@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CartRepo;
+using System.Collections.Generic;
 
 namespace GreeenGarden.Business.Service.CartService
 {
@@ -23,58 +24,100 @@ namespace GreeenGarden.Business.Service.CartService
             var result = new ResultModel();
             try
             {
-                double? totalPriceCart = 0;
+                double? totalRentPriceCart = 0;
+                double? totalSalePriceCart = 0;
                 var modelResponse = new CartShowModel();
                 var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-                if (await _cartRepo.GetCart(user.Id, model.isForRent) == null)
+                if (await _cartRepo.GetCart(user.Id) == null)
                 {
                     var cartTemp = new TblCart()
                     {
                         Id = Guid.NewGuid(),
                         UserId = user.Id,
                         Status = Status.ACTIVE,
-                        IsForRent = model.isForRent,
                     };
                     await _cartRepo.Insert(cartTemp);
                 }
 
-                var cart = await _cartRepo.GetCart(user.Id, model.isForRent);
+                var cart = await _cartRepo.GetCart(user.Id);
                 var cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
                 foreach (var item in cartDetail)
                 {
                     await _cartRepo.RemoveCartDetail(item);
                 }
-                modelResponse.isForRent = model.isForRent;
-                modelResponse.items = new List<ItemRequest>();
-                foreach (var item in model.items)
-                {
-                    var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
-                    if (sizeProductItem.Quantity < item.quantity || sizeProductItem.Status.ToLower() != Status.ACTIVE)
-                    {
-                        result.Code = 400;
-                        result.IsSuccess = false;
-                        result.Message = "Sản phẩm " + item.sizeProductItemID + " đã hết trong kho!";
-                        return result;
-                    }
 
-                    var newCartDetail = new TblCartDetail()
+                modelResponse.rentItems = new List<ItemRequest>();
+                modelResponse.saleItems = new List<ItemRequest>();
+
+                if (model.rentItems != null)
+                {
+                    foreach (var item in model.rentItems)
                     {
-                        Id = Guid.NewGuid(),
-                        SizeProductItemId = item.sizeProductItemID,
-                        Quantity = item.quantity,
-                        CartId = cart.Id
-                    };
-                    await _cartRepo.AddProductItemToCart(newCartDetail);
-                    if (model.isForRent == true) totalPriceCart += sizeProductItem.RentPrice * item.quantity;
-                    if (model.isForRent == false) totalPriceCart += sizeProductItem.SalePrice * item.quantity;
-                    var ItemRequest = new ItemRequest();
-                    ItemRequest.sizeProductItemID = item.sizeProductItemID;
-                    ItemRequest.quantity = item.quantity;
-                    if (model.isForRent == true) ItemRequest.unitPrice = sizeProductItem.RentPrice;
-                    if (model.isForRent == false) ItemRequest.unitPrice = sizeProductItem.SalePrice;
-                    modelResponse.items.Add(ItemRequest);
+                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
+                        if (sizeProductItem.Quantity < item.quantity || sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.RentPrice == 0)
+                        {
+                            result.Code = 400;
+                            result.IsSuccess = false;
+                            result.Message = "Sản phẩm " + item.sizeProductItemID + " không còn đủ số lượng!";
+                            return result;
+                        }
+                        var newCartDetail = new TblCartDetail()
+                        {
+                            Id = Guid.NewGuid(),
+                            SizeProductItemId = item.sizeProductItemID,
+                            Quantity = item.quantity,
+                            CartId = cart.Id,
+                            IsForRent = true
+                        };
+                        await _cartRepo.AddProductItemToCart(newCartDetail);
+                        //show
+                        var ItemRequest = new ItemRequest()
+                        {
+                            sizeProductItemID = item.sizeProductItemID,
+                            quantity = item.quantity,
+                            unitPrice = sizeProductItem.RentPrice
+                        };
+                        modelResponse.rentItems.Add(ItemRequest);
+                        totalRentPriceCart += sizeProductItem.RentPrice * item.quantity;
+                    }
                 }
-                modelResponse.totalPrice = totalPriceCart;
+
+                if (model.saleItems != null)
+                {
+                    foreach (var item in model.saleItems)
+                    {
+                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
+                        if (sizeProductItem.Quantity < item.quantity || sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.SalePrice == 0)
+                        {
+                            result.Code = 400;
+                            result.IsSuccess = false;
+                            result.Message = "Sản phẩm " + item.sizeProductItemID + " không còn đủ số lượng!";
+                            return result;
+                        }
+                        var newCartDetail = new TblCartDetail()
+                        {
+                            Id = Guid.NewGuid(),
+                            SizeProductItemId = item.sizeProductItemID,
+                            Quantity = item.quantity,
+                            CartId = cart.Id,
+                            IsForRent = false
+                        };
+                        await _cartRepo.AddProductItemToCart(newCartDetail);
+                        //show
+                        var ItemRequest = new ItemRequest()
+                        {
+                            sizeProductItemID = item.sizeProductItemID,
+                            quantity = item.quantity,
+                            unitPrice = sizeProductItem.SalePrice
+                        };
+                        modelResponse.saleItems.Add(ItemRequest);
+                        totalSalePriceCart += sizeProductItem.SalePrice * item.quantity;
+                    }
+                }
+
+                modelResponse.totalRentPrice = totalRentPriceCart;
+                modelResponse.totalSalePrice = totalSalePriceCart;
+                modelResponse.totalPrice = totalSalePriceCart+totalRentPriceCart;
 
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -89,15 +132,19 @@ namespace GreeenGarden.Business.Service.CartService
             return result;
         }
 
-        public async Task<ResultModel> GetCart(string token, bool isForRent)
+        public async Task<ResultModel> GetCart(string token)
         {
             var result = new ResultModel();
             try
             {
                 var modelResponse = new CartShowModel();
+                modelResponse.rentItems = new List<ItemRequest>();
+                modelResponse.saleItems = new List<ItemRequest>();
                 double? totalPrice = 0;
+                double? totalRentPriceCart = 0;
+                double? totalSalePriceCart = 0;
                 var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-                var cart = await _cartRepo.GetCart(user.Id, isForRent);
+                var cart = await _cartRepo.GetCart(user.Id);
                 if (cart == null)
                 {
                     result.Code = 200;
@@ -113,21 +160,37 @@ namespace GreeenGarden.Business.Service.CartService
                     result.Data = null;
                     return result;
                 }
-                modelResponse.isForRent = cart.IsForRent;
-                modelResponse.items = new List<ItemRequest>();
+
                 foreach (var item in listCartDetail)
                 {
-                    var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
-                    var ItemRequest = new ItemRequest();
-                    ItemRequest.quantity = item.Quantity;
-                    ItemRequest.sizeProductItemID = sizeProductItem.Id;
-                    if (isForRent == true) ItemRequest.unitPrice = sizeProductItem.RentPrice;
-                    if (isForRent == false) ItemRequest.unitPrice = sizeProductItem.SalePrice;
-                    modelResponse.items.Add(ItemRequest);
-                    if (isForRent == true) totalPrice += sizeProductItem.RentPrice * item.Quantity;
-                    if (isForRent == false) totalPrice += sizeProductItem.SalePrice * item.Quantity;
+                    if (item.IsForRent == true)
+                    {
+                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
+                        var ItemRequest = new ItemRequest()
+                        {
+                            sizeProductItemID = item.SizeProductItemId,
+                            quantity = item.Quantity,
+                            unitPrice = sizeProductItem.RentPrice
+                        };
+                        modelResponse.rentItems.Add(ItemRequest);
+                        totalRentPriceCart += sizeProductItem.RentPrice * item.Quantity;
+                    }
+                    if (item.IsForRent == false)
+                    {
+                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
+                        var ItemRequest = new ItemRequest()
+                        {
+                            sizeProductItemID = item.SizeProductItemId,
+                            quantity = item.Quantity,
+                            unitPrice = sizeProductItem.SalePrice
+                        };
+                        modelResponse.saleItems.Add(ItemRequest);
+                        totalSalePriceCart += sizeProductItem.SalePrice * item.Quantity;
+                    }
                 }
-                modelResponse.totalPrice = totalPrice;
+                modelResponse.totalRentPrice = totalRentPriceCart;
+                modelResponse.totalSalePrice = totalSalePriceCart;
+                modelResponse.totalPrice = totalSalePriceCart + totalRentPriceCart;
 
                 result.Code = 200;
                 result.IsSuccess = true;

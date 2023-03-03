@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblCart
 {
@@ -7,8 +10,6 @@ public partial class TblCart
     public Guid? UserId { get; set; }
 
     public string? Status { get; set; }
-
-    public bool? IsForRent { get; set; }
 
     public virtual ICollection<TblCartDetail> TblCartDetails { get; } = new List<TblCartDetail>();
 

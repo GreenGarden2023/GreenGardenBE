@@ -12,14 +12,16 @@
     }
     public class CartShowModel
     {
+        public List<ItemRequest> rentItems { get; set; }
+        public double? totalRentPrice { get; set; }
+        public List<ItemRequest> saleItems { get; set; }
+        public double? totalSalePrice { get; set; }
         public double? totalPrice { get; set; }
-        public bool? isForRent { get; set; }
-        public List<ItemRequest> items { get; set; }
     }
     public class AddToCartModel
     {
-        public bool? isForRent { get; set; }
-        public List<ItemResponse> items { get; set; }
+        public List<ItemResponse> rentItems { get; set; }
+        public List<ItemResponse> saleItems { get; set; } 
     }
     public class ItemResponse
     {

@@ -7,6 +7,6 @@ namespace GreeenGarden.Business.Service.CartService
     {
         //Task<ResultModel> GetCartShowModel(string token);
         Task<ResultModel> AddToCart(string token, AddToCartModel model);
-        Task<ResultModel> GetCart(string token, bool isForRent);
+        Task<ResultModel> GetCart(string token);
     }
 }
