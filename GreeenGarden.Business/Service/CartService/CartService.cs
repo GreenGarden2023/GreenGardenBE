@@ -33,7 +33,6 @@ namespace GreeenGarden.Business.Service.CartService
                         Id = Guid.NewGuid(),
                         UserId = user.Id,
                         Status = Status.ACTIVE,
-                        IsForRent = model.isForRent,
                     };
                     await _cartRepo.Insert(cartTemp);
                 }
@@ -113,7 +112,6 @@ namespace GreeenGarden.Business.Service.CartService
                     result.Data = null;
                     return result;
                 }
-                modelResponse.isForRent = cart.IsForRent;
                 modelResponse.items = new List<ItemRequest>();
                 foreach (var item in listCartDetail)
                 {

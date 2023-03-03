@@ -1,8 +1,10 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.MoMoModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.AddendumRepo;
 using GreeenGarden.Data.Repositories.OrderRepo;
+using GreeenGarden.Data.Repositories.TransactionRepo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,10 +15,12 @@ namespace GreeenGarden.Business.Service.PaymentService
     {
         private readonly IOrderRepo _orderRepo;
         private readonly IAddendumRepo _addendumRepo;
-        public MoMoServices(IOrderRepo orderRepo, IAddendumRepo addendumRepo)
+        private readonly ITransactionRepo _transactionRepo;
+        public MoMoServices(IOrderRepo orderRepo, IAddendumRepo addendumRepo, ITransactionRepo transactionRepo )
         {
             _orderRepo = orderRepo;
             _addendumRepo = addendumRepo;
+            _transactionRepo = transactionRepo;
         }
 
         public async Task<ResultModel> CreateAddendumPayment(Guid addendumId, double amount)
@@ -212,6 +216,19 @@ namespace GreeenGarden.Business.Service.PaymentService
                 var updateAddendum = await _addendumRepo.UpdateAddendumPayment(orderModel.OrderId, orderModel.PayAmount);
                 if(updateAddendum.IsSuccess == true)
                 {
+                    TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        AddendumId = orderModel.OrderId,
+                        Amount = orderModel.PayAmount,
+                        Type = "Addendum payment",
+                        Status = TransactionType.RECEIVED,
+                        DatetimePaid = hoChiMinhTime,
+                        PaymentId = PaymentMethod.MOMO
+
+                    };
+                    await _transactionRepo.Insert(tblTransaction);
                     return true;
                 }
                 else
@@ -235,6 +252,19 @@ namespace GreeenGarden.Business.Service.PaymentService
                 var updateOrder = await _orderRepo.UpdateOrderPayment(orderModel.OrderId);
                 if(updateOrder == true)
                 {
+                    TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        OrderId = orderModel.OrderId,
+                        Amount = orderModel.PayAmount,
+                        Type = "Order payment",
+                        Status = TransactionType.RECEIVED,
+                        DatetimePaid = hoChiMinhTime,
+                        PaymentId = PaymentMethod.MOMO
+
+                    };
+                    await _transactionRepo.Insert(tblTransaction);
                     return true;
                 }else
                 {

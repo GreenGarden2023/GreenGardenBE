@@ -20,7 +20,7 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         public async Task<TblCart> GetCart(Guid UserID, bool? isForRent)
         {
-            return await _context.TblCarts.Where(x => x.UserId.Equals(UserID) && x.IsForRent == isForRent).FirstOrDefaultAsync();
+            return await _context.TblCarts.Where(x => x.UserId.Equals(UserID)).FirstOrDefaultAsync();
         }
 
         public async Task<TblSizeProductItem> GetSizeProductItem(Guid? SizeProductItemID)

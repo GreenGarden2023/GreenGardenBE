@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblTransaction
 {
@@ -16,9 +19,11 @@ public partial class TblTransaction
 
     public DateTime? DatetimePaid { get; set; }
 
+    public Guid PaymentId { get; set; }
+
     public virtual TblAddendum? Addendum { get; set; }
 
     public virtual TblOrder? Order { get; set; }
 
-    public virtual ICollection<TblPayment> TblPayments { get; } = new List<TblPayment>();
+    public virtual TblPayment Payment { get; set; } = null!;
 }

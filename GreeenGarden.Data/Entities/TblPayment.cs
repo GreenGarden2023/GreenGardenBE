@@ -1,14 +1,15 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblPayment
 {
     public Guid Id { get; set; }
 
-    public Guid? TransactionId { get; set; }
+    public string Status { get; set; } = null!;
 
-    public string? Status { get; set; }
+    public string PaymentMethod { get; set; } = null!;
 
-    public string? PaymentMethod { get; set; }
-
-    public virtual TblTransaction? Transaction { get; set; }
+    public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }
