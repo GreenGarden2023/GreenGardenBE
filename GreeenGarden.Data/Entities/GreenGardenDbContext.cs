@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-
 namespace GreeenGarden.Data.Entities;
 
 public partial class GreenGardenDbContext : DbContext

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace GreeenGarden.Data.Entities;
 
 public partial class TblVoucher
