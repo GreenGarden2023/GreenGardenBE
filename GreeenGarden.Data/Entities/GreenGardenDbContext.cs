@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+
 namespace GreeenGarden.Data.Entities;
 
 public partial class GreenGardenDbContext : DbContext
@@ -112,9 +113,6 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CartId).HasColumnName("CartID");
-            entity.Property(e => e.IsForRent)
-                .HasMaxLength(10)
-                .IsFixedLength();
             entity.Property(e => e.SizeProductItemId).HasColumnName("SizeProductItemID");
 
             entity.HasOne(d => d.Cart).WithMany(p => p.TblCartDetails)
