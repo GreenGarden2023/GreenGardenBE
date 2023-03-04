@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
+using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -19,7 +20,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _decodeToken = new DecodeToken();
         }
 
-        /*public async Task<ResultModel> addAddendumByOrder(string token, addendumToAddByOrderModel model)
+        public async Task<ResultModel> addAddendumByOrder(string token, addendumToAddByOrderModel model)
         {
             var result = new ResultModel();
             try
@@ -27,8 +28,10 @@ namespace GreeenGarden.Business.Service.OrderService
                 var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
                 double? totalPrice = 0;
                 double? deposit = 0;
-                var order = await _orderRepo.GetOrder(model.OrderId);
-                if (order == null) {
+                var order = await _orderRepo.GetOrder(model.orderId);
+                /********Check*******/
+                if (order == null)
+                {
                     result.IsSuccess = false;
                     result.Data = "This order dont't exist, please check again!";
                     return result;
@@ -39,34 +42,36 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Data = "This order isn't belong user: " + user.Id;
                     return result;
                 }
-                if (order.Status == Status.UNPAID) {
+                if (order.Status != Status.COMPLETED)
+                {
                     result.IsSuccess = false;
                     result.Data = "Please pay in full before making a new transaction!";
                     return result;
                 }
-                foreach (var item in model.ProductItems)
+                foreach (var item in model.sizeProductItems)
                 {
-                    var product = await _orderRepo.getProductToCompare(item.ProductItemID);
-                    if (item.Quantity > product.Quantity)
+                    var sizeProduct = await _orderRepo.GetSizeProductItem(item.sizeProductItemID);
+                    if (item.quantity > sizeProduct.Quantity)
                     {
                         result.IsSuccess = false;
-                        result.Data = "Product " + product.Name + " don't enough quantity!";
+                        result.Data = "Product " + sizeProduct.Id + " don't enough quantity!";
                         return result;
                     }
-                    if (!product.Status.Equals(Status.ACTIVE))
+                    if (!sizeProduct.Status.Equals(Status.ACTIVE))
                     {
                         result.IsSuccess = false;
-                        result.Data = "Product " + product.Name + " don't exist!";
+                        result.Data = "Product " + sizeProduct.Id + " don't exist!";
                         return result;
                     }
-                    if (model.StartDateRent > model.EndDateRent || model.StartDateRent < DateTime.Now)
+                    if (model.startDateRent > model.endDateRent || model.startDateRent < DateTime.Now)
                     {
                         result.IsSuccess = false;
                         result.Data = "Datetime not valid!";
                         return result;
                     }
-                    totalPrice = totalPrice + (item.Quantity * product.RentPrice);
+                    totalPrice = totalPrice + (item.quantity * sizeProduct.RentPrice);
                 }
+
 
                 deposit = totalPrice / 100 * 20;
 
@@ -74,33 +79,32 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     Id = Guid.NewGuid(),
                     TransportFee = 0,
-                    StartDateRent = model.StartDateRent,
-                    EndDateRent = model.EndDateRent,
+                    StartDateRent = model.startDateRent,
+                    EndDateRent = model.endDateRent,
                     Status = Status.UNPAID,
                     TotalPrice = totalPrice + deposit,
                     Deposit = deposit,
                     ReducedMoney = 0,
                     OrderId = order.Id,
                     RemainMoney = totalPrice + deposit,
-                    Address = model.Address
+                    Address = model.address
                 };
                 await _orderRepo.insertAddendum(addendum);
 
-                foreach (var item in model.ProductItems)
+                foreach (var item in model.sizeProductItems)
                 {
-                    var product = await _orderRepo.getProductToCompare(item.ProductItemID);
+                    var product = await _orderRepo.GetSizeProductItem(item.sizeProductItemID);
                     var addendumProductItems = new TblAddendumProductItem()
                     {
                         Id = Guid.NewGuid(),
-                        ProductItemPrice = product.RentPrice,
-                        ProductItemId = product.Id,
+                        SizeProductItemPrice = product.RentPrice,
+                        SizeProductItemId = product.Id,
                         AddendumId = addendum.Id,
-                        Quantity = item.Quantity
+                        Quantity = item.quantity
                     };
                     await _orderRepo.insertAddendumProductItem(addendumProductItems);
-                    await _orderRepo.minusQuantityProductItem(product.Id, item.Quantity);
+                    await _orderRepo.minusQuantitySizeProductItem(product.Id, item.quantity);
                 }
-
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Data = await _orderRepo.getDetailAddendum(addendum.Id);
@@ -113,7 +117,47 @@ namespace GreeenGarden.Business.Service.OrderService
             }
             return result;
 
-        }*/
+        }
+
+        public async Task<ResultModel> completeAddendum(string token, Guid addendumID)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
+                var tblRole = await _orderRepo.GetRole(user.RoleId);
+                if (!tblRole.RoleName.Equals(Commons.MANAGER)){
+                    result.IsSuccess = false;
+                    result.Message = "User role invalid";
+                    return result;
+                }
+
+                var tblAddendum = await _orderRepo.getDetailAddendum(addendumID);
+
+
+
+                if (tblAddendum.status != Status.PAID)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Addendum has not been paid yet";
+                    return result;
+                }
+                await _orderRepo.updateStatusAddendum(tblAddendum.id, Status.COMPLETED);
+                await _orderRepo.updateStatusOrder(tblAddendum.orderID, Status.COMPLETED);
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = await _orderRepo.getDetailAddendum(tblAddendum.id);
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
 
         public async Task<ResultModel> createOrder(string token, OrderModel model)
         {
@@ -237,6 +281,24 @@ namespace GreeenGarden.Business.Service.OrderService
             var result = new ResultModel();
             try
             {
+                var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
+                var roleID = await _orderRepo.GetRole(user.RoleId);
+                if (roleID.RoleName.Equals(Commons.MANAGER))
+                {
+                    var listAddendumTemp = await _orderRepo.getListAddendum(orderId);
+                    result.IsSuccess = true;
+                    result.Data = listAddendumTemp;
+                    return result;
+                }
+
+                var oderToValid = await _orderRepo.GetOrder(orderId);
+                if (!oderToValid.UserId.Equals(user.Id))
+                {
+                    result.IsSuccess = false;
+                    result.Message = "User role invalid";
+                    return result;
+                }
+
                 var listAddendum = await _orderRepo.getListAddendum(orderId);
 
                 result.Code = 200;
@@ -252,12 +314,28 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> getListOrder(string token)
+        public async Task<ResultModel> getListOrder(string token, string username)
         {
             var result = new ResultModel();
             try
             {
                 var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
+                var roleID = await _orderRepo.GetRole(user.RoleId);
+                if (roleID.RoleName.Equals(Commons.MANAGER))
+                {
+                    if (username == null)
+                    {
+                        result.IsSuccess = true;
+                        result.Message = "Username invalid";
+                        return result;
+                    }
+                    var userTemp = await _orderRepo.GetUser(username);
+                    var orderTemp = await _orderRepo.GetListOrder(userTemp.Id);
+                    result.IsSuccess = true;
+                    result.Data = orderTemp;
+                    return result;
+
+                }
                 var order = await _orderRepo.GetListOrder(user.Id);
 
                 result.Code = 200;

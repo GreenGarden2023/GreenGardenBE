@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 namespace GreeenGarden.Data.Entities;
 
 public partial class TblTransaction
@@ -23,5 +24,6 @@ public partial class TblTransaction
     public virtual TblAddendum? Addendum { get; set; }
 
     public virtual TblOrder? Order { get; set; }
+
     public virtual TblPayment Payment { get; set; } = null!;
 }

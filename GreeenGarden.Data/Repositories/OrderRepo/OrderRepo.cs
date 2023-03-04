@@ -20,11 +20,6 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
            return await _context.TblSizeProductItems.Where(x=>x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
         }
 
-        /*public async Task<TblAddendum> GetAddendum(Guid AddendumId)
-        {
-            return await _context.TblAddendums.Where(x=>x.Id == AddendumId).FirstAsync();
-        }*/
-
         public async Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId)
         {
             var result = new AdddendumResponseModel();
@@ -105,14 +100,19 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         }
 
-        /*public async Task<TblOrder> GetOrder(Guid OrderId)
+        public async Task<TblOrder> GetOrder(Guid OrderId)
         {
             return await _context.TblOrders.Where(x => x.Id == OrderId).FirstOrDefaultAsync();
-        }*/
+        }
 
         public async Task<TblUser> GetUser(string username)
         {
             return await _context.TblUsers.Where(x => x.UserName == username).FirstOrDefaultAsync();
+        }
+
+        public async Task<TblRole> GetRole(Guid roleID)
+        {
+            return await _context.TblRoles.Where(x => x.Id == roleID).FirstOrDefaultAsync();
         }
 
         public async Task<TblAddendum> insertAddendum(TblAddendum entities)
@@ -157,6 +157,24 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             {
                 return false;
             }
+        }
+
+        public async Task<bool> updateStatusAddendum(Guid addendumID, string status)
+        {
+            var addendum = await _context.TblAddendums.Where(x=>x.Id.Equals(addendumID)).FirstOrDefaultAsync();
+            addendum.Status = status;
+            _context.TblAddendums.Update(addendum);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> updateStatusOrder(Guid orderID, string status)
+        {
+            var order = await _context.TblOrders.Where(x=>x.Id== orderID).FirstOrDefaultAsync();
+            order.Status = status;
+            _context.TblOrders.Update(order);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
