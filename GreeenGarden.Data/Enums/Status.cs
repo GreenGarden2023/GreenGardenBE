@@ -6,5 +6,6 @@
         public static readonly string DISABLE = "disable";
         public static readonly string UNPAID = "unpaid"; //Order
         public static readonly string COMPLETED = "completed"; //Order
+        public static readonly string PAID = "paid"; //Order
     }
 }

@@ -14,19 +14,19 @@
         public int quantity { get; set; }
     }
 
-    public class addendumProductItemRequestModel
+    public class addendumSizeProductItemRequestModel
     {
-        public int Quantity { set; get; }
-        public Guid ProductItemID { get; set; }
+        public int quantity { set; get; }
+        public Guid sizeProductItemID { get; set; }
     }
 
     public class addendumToAddByOrderModel
     {
-        public Guid OrderId { set; get; }
-        public DateTime? StartDateRent { set; get; }
-        public DateTime? EndDateRent { set; get; }
-        public string? Address { set; get; }
-        public List<addendumProductItemRequestModel>? ProductItems { get; set; }
+        public Guid orderId { set; get; }
+        public DateTime? startDateRent { set; get; }
+        public DateTime? endDateRent { set; get; }
+        public string? address { set; get; }
+        public List<addendumSizeProductItemRequestModel> sizeProductItems { get; set; }
 
     }
     public class listOrderResponseModel
