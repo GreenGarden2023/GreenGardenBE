@@ -169,7 +169,6 @@ namespace GreeenGarden.Business.Service.CartService
                     result.Data = null;
                     return result;
                 }
-
                 foreach (var item in listCartDetail)
                 {
                     if (item.IsForRent == true)

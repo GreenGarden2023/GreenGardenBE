@@ -1,12 +1,13 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.TransactionRepo
 {
-    public class TransactionRepo : ITransactionRepo
+    public class TransactionRepo : Repository<TblTransaction>, ITransactionRepo
     {
         private readonly GreenGardenDbContext _context;
-        public TransactionRepo(GreenGardenDbContext context)
+        public TransactionRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;
         }
@@ -14,7 +15,7 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
         public async Task<TblAddendum?> changeStatusAddendum(Guid addendumId, string status)
         {
             var addendum = await _context.TblAddendums.Where(x => x.Id.Equals(addendumId)).FirstOrDefaultAsync();
-            addendum.Status = Enums.Status.SUCCESSED;
+            addendum.Status = Enums.Status.COMPLETED;
             _context.Update(addendum);
             await _context.SaveChangesAsync();
             return addendum;
