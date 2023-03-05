@@ -29,6 +29,7 @@
         public List<addendumSizeProductItemRequestModel> sizeProductItems { get; set; }
 
     }
+
     public class listOrderResponseModel
     {
         public Guid orderId { set; get; }
@@ -37,5 +38,21 @@
         public string? status { set; get; }
         public Guid? voucherID { set; get; }
         public bool? isForRent { set; get; }
+    }
+
+    public class listOrderManagerModel
+    {
+        public Guid orderId { set; get; }
+        public double totalPrice { set; get; }
+        public DateTime? createDate { set; get; }
+        public string? status { set; get; }
+        public user user { set; get; }
+        public bool isForRent { set; get; }
+
+
+    }
+
+    public class user { 
+        public Guid userID { set; get; }
     }
 }

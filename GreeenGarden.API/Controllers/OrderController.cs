@@ -59,7 +59,7 @@ namespace GreeenGarden.API.Controllers
         public async Task<IActionResult> getListOrder()
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.getListOrder(token);
+            var result = await _service.getListOrderByCustomer(token);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
