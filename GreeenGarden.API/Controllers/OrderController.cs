@@ -16,15 +16,7 @@ namespace GreeenGarden.API.Controllers
             _service = service;
         }
 
-/*
-        [HttpPost("create-order")]
-        public async Task<IActionResult> createOrder([FromBody] AddToOrderModel model)
-        {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.createOrder(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
-        }*/
+
 
 
 
@@ -78,6 +70,15 @@ namespace GreeenGarden.API.Controllers
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.getListOrderByManager(token);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpPost("create-order")]
+        public async Task<IActionResult> createOrder(addToOrderModel model)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.createOrder(token, model);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
