@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
+using GreeenGarden.Business.Utilities.Convert;
 using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.OrderService
@@ -167,6 +168,7 @@ namespace GreeenGarden.Business.Service.OrderService
             {
                 var tblUser = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
 
+
                 /*******************Kiểm tra trùng**************************/
                 if (model.rentItems.Count > 1)
                 {
@@ -216,6 +218,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 #region OrderForRent
                 if (model.rentItems != null)
                 {
+                    DateTime startRentDate = ConvertUtil.convertStringToDateTime(model.startRentDate);
+                    DateTime endRentDate = ConvertUtil.convertStringToDateTime(model.endRentDate);
+                    double rangeDate = (endRentDate- startRentDate).TotalDays;
                     double? totalPrice = 0;
                     double? deposit = 0;
                     double? transportFee = 0;
@@ -238,7 +243,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                 result.Message = "Product " + sizeProItem.Id + " don't exist!";
                                 return result;
                             }
-                            if (model.startRentDate > model.endRentDate || model.startRentDate < DateTime.Now)
+                            if (startRentDate > endRentDate || startRentDate < DateTime.Now)
                             {
                                 result.IsSuccess = false;
                                 result.Message = "Datetime not valid!";
@@ -248,6 +253,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                         
                     }
+                    totalPrice = totalPrice * rangeDate;
                     /*******************Tính các khoản liên quan*********************/
                     deposit = totalPrice / 100 * 20;
                     if (totalPrice < 1000000) transportFee = totalPrice / 100 * 5;
@@ -270,8 +276,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         Id = Guid.NewGuid(),
                         TransportFee = transportFee,
-                        StartDateRent = model.startRentDate,
-                        EndDateRent = model.endRentDate,
+                        StartDateRent = startRentDate,
+                        EndDateRent = endRentDate,
                         Status = Status.UNPAID,
                         TotalPrice = totalPrice + deposit + transportFee,
                         Deposit = deposit,
