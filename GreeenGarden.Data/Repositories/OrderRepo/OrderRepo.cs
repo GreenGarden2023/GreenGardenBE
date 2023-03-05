@@ -81,11 +81,11 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         } //cmt
 
-        public async Task<listOrderShowModel> GetListOrder(Guid userID)
+        public async Task<listOrder> GetListOrder(Guid userID)
         {
             var user = await _context.TblUsers.Where(x=>x.Id== userID).FirstOrDefaultAsync();
             var listOrder = await _context.TblOrders.Where(x => x.UserId == userID).ToListAsync();
-            var result = new listOrderShowModel();
+            var result = new listOrder();
 
             result.user = new user()
             {
@@ -97,7 +97,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                 mail = user.Mail,
 
             };
-            result.orderShowModels = new List<orderShowModel>();
+            result.orders = new List<orderShowModel>();
             foreach (var order in listOrder) {
                 var listAddendum = await _context.TblAddendums.Where(x=>x.OrderId == order.Id).ToListAsync();
 
@@ -107,7 +107,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                 orderShow.createDate= order.CreateDate;
                 orderShow.status= order.Status;
                 orderShow.isForRent = (bool)order.IsForRent;
-                orderShow.addendumShowModels = new List<addendumShowModel>();
+                orderShow.addendums = new List<addendumShowModel>();
 
                 foreach (var addendum in listAddendum)
                 {
@@ -124,7 +124,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                     addendumShow.status= addendum.Status;
                     addendumShow.remainMoney= addendum.RemainMoney;
                     addendumShow.address= addendum.Address;
-                    addendumShow.addendumProductItemShowModels = new List<addendumProductItemShowModel>();
+                    addendumShow.addendumProductItems = new List<addendumProductItemShowModel>();
                     foreach (var addendumProductItems in listAddendumProductItems)
                     {
                         var sizeProductItem = await _context.TblSizeProductItems.Where(x => x.Id == addendumProductItems.SizeProductItemId).FirstOrDefaultAsync();
@@ -142,11 +142,11 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                             sizeName = size.Name,
                             sizeProductItemID =addendumProductItems.SizeProductItemId,
                         };
-                        addendumShow.addendumProductItemShowModels.Add(addendumProductItemShow);
+                        addendumShow.addendumProductItems.Add(addendumProductItemShow);
                     }
-                    orderShow.addendumShowModels.Add(addendumShow);
+                    orderShow.addendums.Add(addendumShow);
                 }
-                result.orderShowModels.Add(orderShow);
+                result.orders.Add(orderShow);
             }
             return result;
         }

@@ -79,10 +79,10 @@ namespace GreeenGarden.Data.Models.OrderModel
     }
 
 
-    public class listOrderShowModel
+    public class listOrder
     {
         public user user { get; set; }
-        public List<orderShowModel> orderShowModels { get; set; }
+        public List<orderShowModel> orders { get; set; }
 
     }
 
@@ -93,7 +93,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public DateTime? createDate { get; set; }
         public string? status { get; set; }
         public bool isForRent { get; set; }
-        public List<addendumShowModel> addendumShowModels { get; set; }
+        public List<addendumShowModel> addendums { get; set; }
 
 
 
@@ -110,7 +110,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public string? status { set; get; }
         public double? remainMoney { set; get; }
         public string? address { set; get; }
-        public List<addendumProductItemShowModel> addendumProductItemShowModels { get; set; }
+        public List<addendumProductItemShowModel> addendumProductItems { get; set; }
     }
     public class addendumProductItemShowModel
     {
