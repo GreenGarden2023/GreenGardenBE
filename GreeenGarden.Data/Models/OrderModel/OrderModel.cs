@@ -63,4 +63,17 @@ namespace GreeenGarden.Data.Models.OrderModel
         public string? favorite { set; get; }
         public string?    mail { set; get; }
     }
+
+    public class AddToOrderModel
+    {
+        public DateTime? startRentDate { get; set; }
+        public DateTime? endRentDate { get; set; }
+        public List<ItemResponse> rentItems { get; set; }
+        public List<ItemResponse> saleItems { get; set; }
+    }
+    public class ItemResponse
+    {
+        public Guid? sizeProductItemID { get; set; }
+        public int? quantity { get; set; }
+    }
 }

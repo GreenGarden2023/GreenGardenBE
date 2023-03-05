@@ -45,7 +45,7 @@ namespace GreeenGarden.Business.Service.CartService
                     {
                         for (int j = 1; j < model.saleItems.Count; j++)
                         {
-                            if (model.saleItems[i].sizeProductItemID.Equals(model.saleItems[j].sizeProductItemID))
+                            if (model.saleItems[i].sizeProductItemID.Equals(model.saleItems[j].sizeProductItemID) && i != j)
                             {
                                 model.saleItems[i].quantity += model.saleItems[j].quantity;
                                 model.saleItems[j].sizeProductItemID = null;

@@ -16,15 +16,15 @@ namespace GreeenGarden.API.Controllers
             _service = service;
         }
 
-
+/*
         [HttpPost("create-order")]
-        public async Task<IActionResult> createOrder([FromBody] OrderModel model)
+        public async Task<IActionResult> createOrder([FromBody] AddToOrderModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.createOrder(token, model);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
-        }
+        }*/
 
 
 
