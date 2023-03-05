@@ -159,7 +159,7 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> createOrder(string token, AddToOrderModel model)
+        public async Task<ResultModel> createOrder(string token, addToOrderModel model)
         {
             var result = new ResultModel();
 
@@ -174,7 +174,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         for (int j = 1; j < model.rentItems.Count; j++)
                         {
-                            if (model.rentItems[i].sizeProductItemID.Equals(model.rentItems[j].sizeProductItemID))
+                            if (model.rentItems[i].sizeProductItemID.Equals(model.rentItems[j].sizeProductItemID)&&i!=j)
                             {
                                 model.rentItems[i].quantity += model.rentItems[j].quantity;
                                 model.rentItems[j].sizeProductItemID = null;
@@ -188,7 +188,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         for (int j = 1; j < model.saleItems.Count; j++)
                         {
-                            if (model.saleItems[i].sizeProductItemID.Equals(model.saleItems[j].sizeProductItemID))
+                            if (model.saleItems[i].sizeProductItemID.Equals(model.saleItems[j].sizeProductItemID) && i != j)
                             {
                                 model.saleItems[i].quantity += model.saleItems[j].quantity;
                                 model.saleItems[j].sizeProductItemID = null;
@@ -196,6 +196,22 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                     }
                 }
+                foreach (var i in model.saleItems)
+                {
+                    foreach (var j in model.rentItems)
+                    {
+                        if (i.sizeProductItemID == j.sizeProductItemID)
+                        {
+                            var sizeProItem = await _orderRepo.GetSizeProductItem((Guid)i.sizeProductItemID);
+                            if ((i.quantity+j.quantity) > sizeProItem.Quantity)
+                            {
+                                result.IsSuccess = false;
+                                result.Message = "Số lượng của sản phẩm: "+i.sizeProductItemID+" trong kho chỉ còn: "+ sizeProItem.Quantity+", đơn hàng của bạn tổng: "+ (i.quantity + j.quantity);
+                                return result;
+                            }
+                        }
+                    }
+                } // kiểm tra 2 quantity
 
                 #region OrderForRent
                 if (model.rentItems != null)
@@ -292,23 +308,83 @@ namespace GreeenGarden.Business.Service.OrderService
                     double? totalPrice = 0;
                     double? transportFee = 0;
 
+                    foreach (var item in model.saleItems)
+                    {
+                        if (item.sizeProductItemID != null)
+                        {
+                            var sizeProItem = await _orderRepo.GetSizeProductItem((Guid)item.sizeProductItemID);
+                            if (item.quantity > sizeProItem.Quantity)
+                            {
+                                result.IsSuccess = false;
+                                result.Message = "Product " + sizeProItem.Id + " don't enough quantity!";
+                                return result;
+                            }
+                            if (sizeProItem.Status.ToLower() != Status.ACTIVE)
+                            {
+                                result.IsSuccess = false;
+                                result.Message = "Product " + sizeProItem.Id + " don't exist!";
+                                return result;
+                            }
+                            totalPrice = totalPrice + (item.quantity * sizeProItem.RentPrice);
+                        }
+                    }
+
+                    /*******************Tính các khoản liên quan*********************/
+                    if (totalPrice < 1000000) transportFee = totalPrice / 100 * 5;
+                    if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = totalPrice / 100 * 3;
+                    if (totalPrice >= 1000000) transportFee = 0;
+
+                    var newOrder = new TblOrder()
+                    {
+                        Id = Guid.NewGuid(),
+                        TotalPrice= totalPrice,
+                        CreateDate= DateTime.Now,
+                        Status = Status.UNPAID,
+                        UserId = tblUser.Id,
+                        IsForRent= false,
+                    };
+                    await _orderRepo.Insert(newOrder);
+
+                    var newAddendum = new TblAddendum()
+                    {
+                        Id = Guid.NewGuid(),
+                        TransportFee = transportFee,
+                        StartDateRent = null,
+                        EndDateRent = null,
+                        Deposit = 0,
+                        ReducedMoney = 0,
+                        TotalPrice = totalPrice,
+                        Status = Status.UNPAID,
+                        OrderId = newOrder.Id,
+                        RemainMoney = 0,
+                        Address = tblUser.Address,
+                    };
+                    await _orderRepo.insertAddendum(newAddendum);
+
+                    foreach (var item in model.saleItems)
+                    {
+                        if (item.sizeProductItemID != null)
+                        {
+                            var sizeProItem = await _orderRepo.GetSizeProductItem((Guid)item.sizeProductItemID);
+                            var addendumProductItems = new TblAddendumProductItem()
+                            {
+                                Id = Guid.NewGuid(),
+                                SizeProductItemPrice = sizeProItem.SalePrice,
+                                SizeProductItemId = sizeProItem.Id,
+                                AddendumId = newAddendum.Id,
+                                Quantity = item.quantity
+                            };
+                            await _orderRepo.insertAddendumProductItem(addendumProductItems);
+                            await _orderRepo.minusQuantitySizeProductItem((Guid)item.sizeProductItemID, (int)item.quantity);
+                        }
+                    }
                 }
                 #endregion
 
 
 
-
-
-
-
-
-
-
-
                 result.IsSuccess = true;
-                result.Code = 200;
-                result.Data = "";
-                    //await _orderRepo.getDetailAddendum(addendum.Id);
+                result.Code = 201;
             }
             catch (Exception e)
             {

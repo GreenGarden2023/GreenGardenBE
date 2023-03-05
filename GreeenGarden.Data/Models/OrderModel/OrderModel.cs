@@ -42,6 +42,8 @@ namespace GreeenGarden.Data.Models.OrderModel
         public bool? isForRent { set; get; }
     }
 
+    // 23.03.05
+
     public class managerOrderModel
     {
         public Guid orderId { set; get; }
@@ -64,16 +66,48 @@ namespace GreeenGarden.Data.Models.OrderModel
         public string?    mail { set; get; }
     }
 
-    public class AddToOrderModel
+    public class addToOrderModel
     {
         public DateTime? startRentDate { get; set; }
         public DateTime? endRentDate { get; set; }
-        public List<ItemResponse> rentItems { get; set; }
-        public List<ItemResponse> saleItems { get; set; }
+        public List<itemResponse> rentItems { get; set; }
+        public List<itemResponse> saleItems { get; set; }
     }
-    public class ItemResponse
+    public class itemResponse
     {
         public Guid? sizeProductItemID { get; set; }
         public int? quantity { get; set; }
+    }
+    public class orderShowModel
+    {
+        public Guid orderID { set; get; }
+        public double? totalPrice { get; set; }
+        public DateTime? createDate { get; set; }
+        public string? status { get; set; }
+        public bool isForRent { get; set; }
+        public List<addendumShowModel> addendumShowModels { get; set; }
+
+
+
+    }
+    public class addendumShowModel
+    {
+        public Guid addendumID { set; get; }
+        public double? transportFee { set; get; }
+        public DateTime? startDateRent { set; get; }
+        public DateTime? endDateRent { set; get; }
+        public double? deposit { set; get; }
+        public double? reducedMoney { set; get; }
+        public double? totalPrice { set; get; }
+        public string? status { set; get; }
+        public double? remainMoney { set; get; }
+        public string? address { set; get; }
+        public List<addendumProductItemShowModel> addendumProductItemShowModels { get; set; }
+    }
+    public class addendumProductItemShowModel
+    {
+        public Guid addendumProductItemID { set; get; } 
+        public double? sizeProductItemPrice { set; get;}
+        public int? Quantity { set; get;}
     }
 }
