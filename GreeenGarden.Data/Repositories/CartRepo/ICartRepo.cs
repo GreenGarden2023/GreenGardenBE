@@ -14,6 +14,7 @@ namespace GreeenGarden.Data.Repositories.CartRepo
         Task<List<TblCartDetail>> GetListCartDetail(Guid cartID);
         Task<bool> RemoveCartDetail(TblCartDetail model);
         Task<TblProductItem> GetProductItem(Guid productItemID);
-        public Task<TblSize> GetSize(Guid sizeID);
+        Task<TblSize> GetSize(Guid sizeID);
+        Task<List<string>> GetListImgBySizeProItem(Guid sizeProItemID);
     }
 }

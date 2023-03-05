@@ -17,6 +17,7 @@ namespace GreeenGarden.Data.Models.CartModel
         public string? Content { get; set; }
         public string Status { get; set; }
         public TblSize size { get; set; }
+        public List<string> imgUrl { get; set; } = new List<string>();
 
     }
     public class ItemRequest

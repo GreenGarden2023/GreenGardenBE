@@ -314,7 +314,7 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> getListOrder(string token)
+        public async Task<ResultModel> getListOrderByCustomer(string token)
         {
             var result = new ResultModel();
             try
@@ -336,7 +336,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         }
 
-        public async Task<ResultModel> getListOrderByManager(string token, string fullName)
+        public async Task<ResultModel> getListOrderByManager(string token)
         {
             var result = new ResultModel();
             try
@@ -349,10 +349,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.IsSuccess = true;
                     result.Message = "User role invalid";
                 }
-                if (fullName == null)
-                {
 
-                }
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Data = "";
