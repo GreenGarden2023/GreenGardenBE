@@ -55,11 +55,11 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("get-list-order")]
-        public async Task<IActionResult> getListOrder(string? username)
+        [HttpGet("get-list-order-by-customer")]
+        public async Task<IActionResult> getListOrder()
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.getListOrder(token, username);
+            var result = await _service.getListOrder(token);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

@@ -231,9 +231,6 @@ namespace GreeenGarden.Business.Service.UserService
                     result.Message = "Update user successful.";
                     return result;
                 }
-
-
-
             }
             catch (Exception e)
             {
@@ -243,9 +240,6 @@ namespace GreeenGarden.Business.Service.UserService
                 return result;
 
             }
-
-
-
         }
 
         public async Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel)
@@ -289,6 +283,33 @@ namespace GreeenGarden.Business.Service.UserService
                 return result;
 
             }
+        }
+
+        public async Task<ResultModel> GetListUserByFullName(string token, string fullName)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var tblUser = await _userRepo.GetUser(_decodeToken.Decode(token, "username"));
+                if (!tblUser.UserName.Equals(Commons.MANAGER))
+                {
+                    result.IsSuccess = false;
+                    result.Message = "user role invalid!";
+                    return result;
+                }
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }
