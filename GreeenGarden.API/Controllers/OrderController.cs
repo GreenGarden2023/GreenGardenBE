@@ -56,10 +56,19 @@ namespace GreeenGarden.API.Controllers
         }
 
         [HttpGet("get-list-order")]
-        public async Task<IActionResult> getListOrder()
+        public async Task<IActionResult> getListOrder(string? username)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.getListOrder(token);
+            var result = await _service.getListOrder(token, username);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpPost("complete-addendum")]
+        public async Task<IActionResult> completeAddendum(Guid addendumID)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.completeAddendum(token, addendumID);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
