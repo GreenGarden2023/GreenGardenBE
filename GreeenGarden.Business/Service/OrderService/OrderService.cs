@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
+using GreeenGarden.Business.Utilities.Convert;
 using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.OrderService
@@ -167,6 +168,7 @@ namespace GreeenGarden.Business.Service.OrderService
             {
                 var tblUser = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
 
+
                 /*******************Kiểm tra trùng**************************/
                 if (model.rentItems.Count > 1)
                 {
@@ -216,6 +218,8 @@ namespace GreeenGarden.Business.Service.OrderService
                 #region OrderForRent
                 if (model.rentItems != null)
                 {
+                    DateTime startRentDate = ConvertUtil.convertStringToDateTime(model.startRentDate);
+                    DateTime endRentDate = ConvertUtil.convertStringToDateTime(model.endRentDate);
                     double? totalPrice = 0;
                     double? deposit = 0;
                     double? transportFee = 0;

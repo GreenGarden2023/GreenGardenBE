@@ -81,22 +81,16 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         } //cmt
 
-        public async Task<List<listOrderResponseModel>> GetListOrder(Guid userID)
+        public async Task<List<orderShowModel>> GetListOrder(Guid userID)
         {
-            var result = new List<listOrderResponseModel>();
+            var result = new List<orderShowModel>();
             var listOrder = await _context.TblOrders.Where(x => x.UserId == userID).ToListAsync();
-            foreach (var order in listOrder)
-            {
-                var orderResponseModel = new listOrderResponseModel()
+            foreach (var order in listOrder) {
+                var listAddendum = await _context.TblAddendums.Where(x=>x.OrderId == order.Id).ToListAsync();
+                foreach (var addendum in listAddendum)
                 {
-                    createDate = order.CreateDate,
-                    orderId = order.Id,
-                    status = order.Status,
-                    totalPrice = order.TotalPrice,
-                    voucherID = order.VoucherId,
-                    isForRent = order.IsForRent
-                };
-                result.Add(orderResponseModel);
+
+                }
             }
             return result;
         }

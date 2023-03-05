@@ -68,8 +68,8 @@ namespace GreeenGarden.Data.Models.OrderModel
 
     public class addToOrderModel
     {
-        public DateTime? startRentDate { get; set; }
-        public DateTime? endRentDate { get; set; }
+        public string? startRentDate { get; set; }
+        public string? endRentDate { get; set; }
         public List<itemResponse> rentItems { get; set; }
         public List<itemResponse> saleItems { get; set; }
     }
