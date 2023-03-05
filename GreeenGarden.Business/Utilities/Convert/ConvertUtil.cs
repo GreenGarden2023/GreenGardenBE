@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreeenGarden.Business.Utilities.Convert
 {
-    public class ConvertUtil
+    public  class ConvertUtil
     {
         public static DateTime convertStringToDateTime(string data)
         {
