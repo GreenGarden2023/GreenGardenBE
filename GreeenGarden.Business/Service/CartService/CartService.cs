@@ -82,8 +82,7 @@ namespace GreeenGarden.Business.Service.CartService
                                 sizeProductItem = sizeProductItem,
                                 quantity = item.quantity,
                                 unitPrice = sizeProductItem.RentPrice,
-                                productItem = productItem,
-                                size = await _cartRepo.GetSize(sizeProductItem.SizeId),
+                                productItem = productItem
                             };
                             modelResponse.rentItems.Add(ItemRequest);
                             totalRentPriceCart += sizeProductItem.RentPrice * item.quantity;
@@ -121,8 +120,7 @@ namespace GreeenGarden.Business.Service.CartService
                                 sizeProductItem = sizeProductItem,
                                 quantity = item.quantity,
                                 unitPrice = sizeProductItem.SalePrice,
-                                productItem = productItem,
-                                size = await _cartRepo.GetSize(sizeProductItem.SizeId),
+                                productItem = productItem
                             };
                             modelResponse.saleItems.Add(ItemRequest);
                             totalSalePriceCart += sizeProductItem.SalePrice * item.quantity;
@@ -187,8 +185,7 @@ namespace GreeenGarden.Business.Service.CartService
                             sizeProductItem = sizeProductItem,
                             quantity = item.Quantity,
                             unitPrice = sizeProductItem.RentPrice,
-                            productItem = productItem,
-                            size = await _cartRepo.GetSize(sizeProductItem.SizeId),
+                            productItem = productItem
                         };
                         modelResponse.rentItems.Add(ItemRequest);
                         totalRentPriceCart += sizeProductItem.RentPrice * item.Quantity;
@@ -202,8 +199,7 @@ namespace GreeenGarden.Business.Service.CartService
                             sizeProductItem = sizeProductItem,
                             quantity = item.Quantity,
                             unitPrice = sizeProductItem.SalePrice,
-                            productItem = productItem,
-                            size = await _cartRepo.GetSize(sizeProductItem.SizeId),
+                            productItem = productItem
                         };
                         modelResponse.saleItems.Add(ItemRequest);
                         totalSalePriceCart += sizeProductItem.SalePrice * item.Quantity;
