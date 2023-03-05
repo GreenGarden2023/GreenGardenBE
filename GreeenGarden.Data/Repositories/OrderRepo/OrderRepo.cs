@@ -257,5 +257,17 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             }
             return result;
         }
+
+        public async Task<bool> removeCart(Guid userID)
+        {
+            var cart = await _context.TblCarts.Where(x=>x.UserId==userID).FirstOrDefaultAsync();
+            var cartDetail = await _context.TblCartDetails.Where(x => x.CartId == cart.Id).ToListAsync();
+            foreach (var item in cartDetail)
+            {
+                _context.TblCartDetails.Remove(item);
+                await _context.SaveChangesAsync();
+            }
+            return true;
+        }
     }
 }

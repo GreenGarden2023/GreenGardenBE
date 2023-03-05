@@ -21,6 +21,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public Task<bool> UpdateOrderPayment(Guid orderID);
         public Task<bool> updateStatusAddendum(Guid addendumID, string status);
         public Task<bool> updateStatusOrder(Guid orderID, string status);
+        public Task<bool> removeCart(Guid userID);
 
         //*********************Manager********************//
         public Task<List<managerOrderModel>> getListOrderByManager();
