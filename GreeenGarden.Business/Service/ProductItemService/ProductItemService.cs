@@ -334,26 +334,16 @@ namespace GreeenGarden.Business.Service.ProductItemService
         public async Task<ResultModel> GetProductItem(PaginationRequestModel pagingModel, Guid productID, string? status, string? type)
         {
             var result = new ResultModel();
-
-
             try
             {
-                var productGet = await _proRepo.Get(productID);
-                if (productGet == null)
-                {
-                    result.Message = "Can not find product.";
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    return result;
-                }
-                var prodItemList = await _proItemRepo.GetProductItemByType(pagingModel, productID, type);
+                var prodItemList = await _proItemRepo.GetProductItemByType(pagingModel, type);
                 if (prodItemList != null)
                 {
                     List<ProductItemResModel> dataList = new List<ProductItemResModel>();
                     foreach (var pi in prodItemList.Results)
                     {
                         var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(pi.Id, status);
-                        if (sizeGet !=null && sizeGet.Any())
+                        if (sizeGet.Any())
                         {
                             ProductItemResModel pItem = new ProductItemResModel()
                             {
@@ -376,7 +366,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     .RecordCount(prodItemList.RecordCount)
                     .PageCount(prodItemList.PageCount);
                     ///
-                    
+                    var productGet = await _proRepo.Get(productID);
                     var getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
                     string prodImgURL = "";
                     if (getProdImgURL != null)
