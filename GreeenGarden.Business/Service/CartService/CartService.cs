@@ -24,29 +24,34 @@ namespace GreeenGarden.Business.Service.CartService
             var result = new ResultModel();
             try
             {
-                for (int i = 0; i < model.rentItems.Count; i++)
+                if (model.rentItems.Count>1)
                 {
-                    for (int j = 1; j < model.rentItems.Count; j++)
+                    for (int i = 0; i < model.rentItems.Count; i++)
                     {
-                        if (model.rentItems[i].sizeProductItemID.Equals(model.rentItems[j].sizeProductItemID))
+                        for (int j = 1; j < model.rentItems.Count; j++)
                         {
-                            model.rentItems[i].quantity += model.rentItems[j].quantity;
-                            model.rentItems[j].sizeProductItemID = null;
+                            if (model.rentItems[i].sizeProductItemID.Equals(model.rentItems[j].sizeProductItemID))
+                            {
+                                model.rentItems[i].quantity += model.rentItems[j].quantity;
+                                model.rentItems[j].sizeProductItemID = null;
+                            }
                         }
-                    }
 
+                    }
                 }
-                for (int i = 0; i < model.saleItems.Count; i++)
+                if (model.saleItems.Count > 1)
                 {
-                    for (int j = 1; j < model.saleItems.Count; j++)
+                    for (int i = 0; i < model.saleItems.Count; i++)
                     {
-                        if (model.rentItems[i].sizeProductItemID.Equals(model.rentItems[j].sizeProductItemID))
+                        for (int j = 1; j < model.saleItems.Count; j++)
                         {
-                            model.rentItems[i].quantity += model.rentItems[j].quantity;
-                            model.rentItems[j].sizeProductItemID = null;
+                            if (model.saleItems[i].sizeProductItemID.Equals(model.saleItems[j].sizeProductItemID))
+                            {
+                                model.saleItems[i].quantity += model.saleItems[j].quantity;
+                                model.saleItems[j].sizeProductItemID = null;
+                            }
                         }
                     }
-
                 }
                 
 
