@@ -178,5 +178,35 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return true;
         }
 
+        public async Task<List<managerOrderModel>> getListOrderByManager()
+        {
+            var listOrder = await _context.TblOrders.ToListAsync();
+            var result = new List<managerOrderModel>();
+            foreach (var order in listOrder)
+            {
+                var user = await _context.TblUsers.Where(x=>x.Id== order.UserId).FirstOrDefaultAsync();
+                var userTemp = new user()
+                {
+                    userID = user.Id,
+                    address = user.Address,
+                    favorite = user.Favorite,
+                    fullName = user.FullName,
+                    mail = user.Mail,
+                    phone = user.Phone,
+                    userName = user.UserName
+                };
+                var orderTemp = new managerOrderModel()
+                {
+                    orderId = order.Id,
+                    totalPrice = order.TotalPrice,
+                    createDate = order.CreateDate,
+                    status = order.Status,
+                    isForRent = order.IsForRent,
+                    user = userTemp
+                };
+                result.Add(orderTemp);
+            }
+            return result;
+        }
     }
 }

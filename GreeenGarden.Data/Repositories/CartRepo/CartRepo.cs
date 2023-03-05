@@ -28,6 +28,11 @@ namespace GreeenGarden.Data.Repositories.CartRepo
         {
             var sizeProItem = await _context.TblSizeProductItems.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
             var size = await _context.TblSizes.Where(x=>x.Id.Equals(sizeProItem.SizeId)).FirstOrDefaultAsync();
+            var sizeTemp = new size()
+            {
+                id = size.Id,
+                sizeName = size.Name,
+            };
             return new sizeProductItem()
             {
                 Id = sizeProItem.Id,
@@ -38,7 +43,7 @@ namespace GreeenGarden.Data.Repositories.CartRepo
                 SalePrice = sizeProItem.SalePrice,
                 Quantity = sizeProItem.Quantity,
                 Status = sizeProItem.Status,
-                size = size,
+                size = sizeTemp,
                 imgUrl = await GetListImgBySizeProItem(sizeProItem.Id)
             };
         }

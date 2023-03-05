@@ -72,5 +72,14 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpGet("get-list-order-by-manager")]
+        public async Task<IActionResult> getListOrderByManager()
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.getListOrderByManager(token);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

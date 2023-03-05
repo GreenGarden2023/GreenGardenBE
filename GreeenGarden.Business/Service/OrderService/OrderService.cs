@@ -345,14 +345,15 @@ namespace GreeenGarden.Business.Service.OrderService
                 var tblRole = await _orderRepo.GetRole(tblUser.RoleId);
                 if (tblRole.RoleName!=Commons.MANAGER)
                 {
-                    result.Code = 200;
-                    result.IsSuccess = true;
+                    result.IsSuccess = false;
                     result.Message = "User role invalid";
+                    return result;
                 }
+                var listOrder = await _orderRepo.getListOrderByManager();
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Data = listOrder;
             }
             catch (Exception e)
             {
