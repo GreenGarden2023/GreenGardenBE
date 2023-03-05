@@ -93,7 +93,8 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                     orderId = order.Id,
                     status = order.Status,
                     totalPrice = order.TotalPrice,
-                    voucherID = order.VoucherId
+                    voucherID = order.VoucherId,
+                    isForRent = order.IsForRent
                 };
                 result.Add(orderResponseModel);
             }
@@ -176,5 +177,6 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             await _context.SaveChangesAsync();
             return true;
         }
+
     }
 }

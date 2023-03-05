@@ -36,5 +36,6 @@
         public DateTime? createDate { set; get; }
         public string? status { set; get; }
         public Guid? voucherID { set; get; }
+        public bool? isForRent { set; get; }
     }
 }

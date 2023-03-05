@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,9 +24,20 @@ namespace GreeenGarden.Data.Repositories.CartRepo
             return await _context.TblCarts.Where(x => x.UserId.Equals(UserID)).FirstOrDefaultAsync();
         }
 
-        public async Task<TblSizeProductItem> GetSizeProductItem(Guid? SizeProductItemID)
+        public async Task<sizeProductItem> GetSizeProductItem(Guid? SizeProductItemID)
         {
-            return await _context.TblSizeProductItems.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
+            var sizeProItem = await _context.TblSizeProductItems.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
+            return new sizeProductItem()
+            {
+                Id = sizeProItem.Id,
+                Content= sizeProItem.Content,
+                SizeId= sizeProItem.SizeId,
+                ProductItemId= sizeProItem.ProductItemId,
+                RentPrice= sizeProItem.RentPrice,
+                SalePrice= sizeProItem.SalePrice,
+                Quantity= sizeProItem.Quantity,
+                Status= sizeProItem.Status,
+            };
         }
 
         public async Task<TblCartDetail> AddProductItemToCart(TblCartDetail model)
@@ -45,6 +57,16 @@ namespace GreeenGarden.Data.Repositories.CartRepo
             _context.TblCartDetails.Remove(model);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<TblProductItem> GetProductItem(Guid productItemID)
+        {
+            return await _context.TblProductItems.Where(x => x.Id.Equals(productItemID)).FirstOrDefaultAsync();
+        }
+
+        public async Task<TblSize> GetSize(Guid sizeID)
+        {
+            return await _context.TblSizes.Where(x => x.Id.Equals(sizeID)).FirstOrDefaultAsync();
         }
     }
 }

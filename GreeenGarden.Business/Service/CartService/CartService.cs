@@ -58,11 +58,11 @@ namespace GreeenGarden.Business.Service.CartService
                         if (item.sizeProductItemID != null)
                         {
                             var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
-                            if (sizeProductItem.Quantity < item.quantity || sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.RentPrice == 0)
+                            if ( sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.RentPrice == 0)
                             {
                                 result.Code = 400;
                                 result.IsSuccess = false;
-                                result.Message = "Sản phẩm " + item.sizeProductItemID + " không còn đủ số lượng!";
+                                result.Message = "Sản phẩm " + item.sizeProductItemID + " đang bị vô hiệu!";
                                 return result;
                             }
                             var newCartDetail = new TblCartDetail()
@@ -75,11 +75,15 @@ namespace GreeenGarden.Business.Service.CartService
                             };
                             await _cartRepo.AddProductItemToCart(newCartDetail);
                             //show
+                            var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
+                            
                             var ItemRequest = new ItemRequest()
                             {
-                                sizeProductItemID = item.sizeProductItemID,
+                                sizeProductItem = sizeProductItem,
                                 quantity = item.quantity,
-                                unitPrice = sizeProductItem.RentPrice
+                                unitPrice = sizeProductItem.RentPrice,
+                                productItem = productItem,
+                                size = await _cartRepo.GetSize(sizeProductItem.SizeId),
                             };
                             modelResponse.rentItems.Add(ItemRequest);
                             totalRentPriceCart += sizeProductItem.RentPrice * item.quantity;
@@ -94,11 +98,11 @@ namespace GreeenGarden.Business.Service.CartService
                         if (item.sizeProductItemID != null)
                         {
                             var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
-                            if (sizeProductItem.Quantity < item.quantity || sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.SalePrice == 0)
+                            if (sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.SalePrice == 0)
                             {
                                 result.Code = 400;
                                 result.IsSuccess = false;
-                                result.Message = "Sản phẩm " + item.sizeProductItemID + " không còn đủ số lượng!";
+                                result.Message = "Sản phẩm " + item.sizeProductItemID + " đang bị vô hiệu!";
                                 return result;
                             }
                             var newCartDetail = new TblCartDetail()
@@ -111,11 +115,14 @@ namespace GreeenGarden.Business.Service.CartService
                             };
                             await _cartRepo.AddProductItemToCart(newCartDetail);
                             //show
+                            var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
                             var ItemRequest = new ItemRequest()
                             {
-                                sizeProductItemID = item.sizeProductItemID,
+                                sizeProductItem = sizeProductItem,
                                 quantity = item.quantity,
-                                unitPrice = sizeProductItem.SalePrice
+                                unitPrice = sizeProductItem.SalePrice,
+                                productItem = productItem,
+                                size = await _cartRepo.GetSize(sizeProductItem.SizeId),
                             };
                             modelResponse.saleItems.Add(ItemRequest);
                             totalSalePriceCart += sizeProductItem.SalePrice * item.quantity;
@@ -174,11 +181,14 @@ namespace GreeenGarden.Business.Service.CartService
                     if (item.IsForRent == true)
                     {
                         var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
+                        var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
                         var ItemRequest = new ItemRequest()
                         {
-                            sizeProductItemID = item.SizeProductItemId,
+                            sizeProductItem = sizeProductItem,
                             quantity = item.Quantity,
-                            unitPrice = sizeProductItem.RentPrice
+                            unitPrice = sizeProductItem.RentPrice,
+                            productItem = productItem,
+                            size = await _cartRepo.GetSize(sizeProductItem.SizeId),
                         };
                         modelResponse.rentItems.Add(ItemRequest);
                         totalRentPriceCart += sizeProductItem.RentPrice * item.Quantity;
@@ -186,11 +196,14 @@ namespace GreeenGarden.Business.Service.CartService
                     if (item.IsForRent == false)
                     {
                         var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
+                        var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
                         var ItemRequest = new ItemRequest()
                         {
-                            sizeProductItemID = item.SizeProductItemId,
+                            sizeProductItem = sizeProductItem,
                             quantity = item.Quantity,
-                            unitPrice = sizeProductItem.SalePrice
+                            unitPrice = sizeProductItem.SalePrice,
+                            productItem = productItem,
+                            size = await _cartRepo.GetSize(sizeProductItem.SizeId),
                         };
                         modelResponse.saleItems.Add(ItemRequest);
                         totalSalePriceCart += sizeProductItem.SalePrice * item.Quantity;

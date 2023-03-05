@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.CartRepo
@@ -8,10 +9,11 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         Task<TblUser> GetByUserName(string username);
         Task<TblCart> GetCart(Guid UserID);
-        Task<TblSizeProductItem> GetSizeProductItem(Guid? SizeProductItemID);
+        Task<sizeProductItem> GetSizeProductItem(Guid? SizeProductItemID);
         Task<TblCartDetail> AddProductItemToCart(TblCartDetail model);
         Task<List<TblCartDetail>> GetListCartDetail(Guid cartID);
         Task<bool> RemoveCartDetail(TblCartDetail model);
-
+        Task<TblProductItem> GetProductItem(Guid productItemID);
+        public Task<TblSize> GetSize(Guid sizeID);
     }
 }

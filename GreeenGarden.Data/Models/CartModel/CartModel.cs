@@ -1,12 +1,26 @@
-﻿namespace GreeenGarden.Data.Models.CartModel
+﻿using GreeenGarden.Data.Entities;
+
+namespace GreeenGarden.Data.Models.CartModel
 {
     public class CartModel
     {
 
     }
+    public class sizeProductItem
+    {
+        public Guid Id { get; set; }
+        public Guid SizeId { get; set; }
+        public Guid ProductItemId { get; set; }
+        public double? RentPrice { get; set; }
+        public double? SalePrice { get; set; }
+        public int? Quantity { get; set; }
+        public string? Content { get; set; }
+        public string Status { get; set; }     }
     public class ItemRequest
     {
-        public Guid? sizeProductItemID { get; set; }
+        public sizeProductItem sizeProductItem { get; set; } = new sizeProductItem();
+        public TblProductItem productItem { get; set; }
+        public TblSize size { get; set; }
         public int? quantity { get; set; }
         public double? unitPrice { get; set; }
     }

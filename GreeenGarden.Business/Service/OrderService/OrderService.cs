@@ -314,28 +314,12 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> getListOrder(string token, string username)
+        public async Task<ResultModel> getListOrder(string token)
         {
             var result = new ResultModel();
             try
             {
                 var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
-                var roleID = await _orderRepo.GetRole(user.RoleId);
-                if (roleID.RoleName.Equals(Commons.MANAGER))
-                {
-                    if (username == null)
-                    {
-                        result.IsSuccess = true;
-                        result.Message = "Username invalid";
-                        return result;
-                    }
-                    var userTemp = await _orderRepo.GetUser(username);
-                    var orderTemp = await _orderRepo.GetListOrder(userTemp.Id);
-                    result.IsSuccess = true;
-                    result.Data = orderTemp;
-                    return result;
-
-                }
                 var order = await _orderRepo.GetListOrder(user.Id);
 
                 result.Code = 200;
@@ -350,6 +334,36 @@ namespace GreeenGarden.Business.Service.OrderService
             }
             return result;
 
+        }
+
+        public async Task<ResultModel> getListOrderByManager(string token, string fullName)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var tblUser = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
+                var tblRole = await _orderRepo.GetRole(tblUser.RoleId);
+                if (tblRole.RoleName!=Commons.MANAGER)
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Message = "User role invalid";
+                }
+                if (fullName == null)
+                {
+
+                }
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }
