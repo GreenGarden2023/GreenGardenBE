@@ -24,6 +24,32 @@ namespace GreeenGarden.Business.Service.CartService
             var result = new ResultModel();
             try
             {
+                for (int i = 0; i < model.rentItems.Count; i++)
+                {
+                    for (int j = 1; j < model.rentItems.Count; j++)
+                    {
+                        if (model.rentItems[i].sizeProductItemID.Equals(model.rentItems[j].sizeProductItemID))
+                        {
+                            model.rentItems[i].quantity += model.rentItems[j].quantity;
+                            model.rentItems[j].sizeProductItemID = null;
+                        }
+                    }
+
+                }
+                for (int i = 0; i < model.saleItems.Count; i++)
+                {
+                    for (int j = 1; j < model.saleItems.Count; j++)
+                    {
+                        if (model.rentItems[i].sizeProductItemID.Equals(model.rentItems[j].sizeProductItemID))
+                        {
+                            model.rentItems[i].quantity += model.rentItems[j].quantity;
+                            model.rentItems[j].sizeProductItemID = null;
+                        }
+                    }
+
+                }
+                
+
                 double? totalRentPriceCart = 0;
                 double? totalSalePriceCart = 0;
                 var modelResponse = new CartShowModel();

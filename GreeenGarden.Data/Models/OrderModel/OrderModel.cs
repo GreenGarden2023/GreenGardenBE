@@ -1,4 +1,6 @@
-﻿namespace GreeenGarden.Data.Models.OrderModel
+﻿using GreeenGarden.Data.Entities;
+
+namespace GreeenGarden.Data.Models.OrderModel
 {
     public class OrderModel
     {
@@ -40,19 +42,25 @@
         public bool? isForRent { set; get; }
     }
 
-    public class listOrderManagerModel
+    public class managerOrderModel
     {
         public Guid orderId { set; get; }
-        public double totalPrice { set; get; }
+        public double? totalPrice { set; get; }
         public DateTime? createDate { set; get; }
         public string? status { set; get; }
-        public user user { set; get; }
-        public bool isForRent { set; get; }
+        public user user { set; get; } = new user();
+        public bool? isForRent { set; get; }
 
 
     }
 
     public class user { 
         public Guid userID { set; get; }
+        public string? userName { set; get; }
+        public string? fullName { set; get; }
+        public string? address { set; get; }
+        public string? phone { set; get; }
+        public string? favorite { set; get; }
+        public string?    mail { set; get; }
     }
 }
