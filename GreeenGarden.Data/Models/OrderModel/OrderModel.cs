@@ -62,8 +62,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public string? fullName { set; get; }
         public string? address { set; get; }
         public string? phone { set; get; }
-        public string? favorite { set; get; }
-        public string?    mail { set; get; }
+        public string? mail { set; get; }
     }
 
     public class addToOrderModel
@@ -78,6 +77,15 @@ namespace GreeenGarden.Data.Models.OrderModel
         public Guid? sizeProductItemID { get; set; }
         public int? quantity { get; set; }
     }
+
+
+    public class listOrderShowModel
+    {
+        public user user { get; set; }
+        public List<orderShowModel> orderShowModels { get; set; }
+
+    }
+
     public class orderShowModel
     {
         public Guid orderID { set; get; }
@@ -109,5 +117,12 @@ namespace GreeenGarden.Data.Models.OrderModel
         public Guid addendumProductItemID { set; get; } 
         public double? sizeProductItemPrice { set; get;}
         public int? Quantity { set; get;}
+        public sizeProductItemShowModel? sizeProductItems { set; get; }    
+    }
+    public class sizeProductItemShowModel
+    {
+        public Guid sizeProductItemID { set; get; }
+        public string? sizeName { set; get; }
+        public string? productName { set; get; }
     }
 }

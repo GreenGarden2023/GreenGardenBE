@@ -81,16 +81,72 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         } //cmt
 
-        public async Task<List<orderShowModel>> GetListOrder(Guid userID)
+        public async Task<listOrderShowModel> GetListOrder(Guid userID)
         {
-            var result = new List<orderShowModel>();
+            var user = await _context.TblUsers.Where(x=>x.Id== userID).FirstOrDefaultAsync();
             var listOrder = await _context.TblOrders.Where(x => x.UserId == userID).ToListAsync();
+            var result = new listOrderShowModel();
+
+            result.user = new user()
+            {
+                userID = userID,
+                userName = user.UserName,
+                fullName = user.FullName,
+                address = user.Address,
+                phone = user.Phone,
+                mail = user.Mail,
+
+            };
+            result.orderShowModels = new List<orderShowModel>();
             foreach (var order in listOrder) {
                 var listAddendum = await _context.TblAddendums.Where(x=>x.OrderId == order.Id).ToListAsync();
+
+                var orderShow = new orderShowModel();
+                orderShow.orderID = order.Id;
+                orderShow.totalPrice= order.TotalPrice;
+                orderShow.createDate= order.CreateDate;
+                orderShow.status= order.Status;
+                orderShow.isForRent = (bool)order.IsForRent;
+                orderShow.addendumShowModels = new List<addendumShowModel>();
+
                 foreach (var addendum in listAddendum)
                 {
+                    var listAddendumProductItems = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addendum.Id).ToListAsync();
 
+                    var addendumShow = new addendumShowModel();
+                    addendumShow.addendumID= addendum.Id;
+                    addendumShow.endDateRent= addendum.EndDateRent;
+                    addendumShow.startDateRent= addendum.StartDateRent;
+                    addendumShow.deposit= addendum.Deposit;
+                    addendumShow.transportFee= addendum.TransportFee;
+                    addendumShow.reducedMoney= addendum.ReducedMoney;
+                    addendumShow.totalPrice= addendum.TotalPrice;
+                    addendumShow.status= addendum.Status;
+                    addendumShow.remainMoney= addendum.RemainMoney;
+                    addendumShow.address= addendum.Address;
+                    addendumShow.addendumProductItemShowModels = new List<addendumProductItemShowModel>();
+                    foreach (var addendumProductItems in listAddendumProductItems)
+                    {
+                        var sizeProductItem = await _context.TblSizeProductItems.Where(x => x.Id == addendumProductItems.SizeProductItemId).FirstOrDefaultAsync();
+                        var productItem = await _context.TblProductItems.Where(x => x.Id == sizeProductItem.ProductItemId).FirstOrDefaultAsync();
+                        var size = await _context.TblSizes.Where(x => x.Id == sizeProductItem.SizeId).FirstOrDefaultAsync();
+
+
+                        var addendumProductItemShow = new addendumProductItemShowModel();
+                        addendumProductItemShow.addendumProductItemID = addendumProductItems.Id;
+                        addendumProductItemShow.sizeProductItemPrice = addendumProductItems.SizeProductItemPrice;
+                        addendumProductItemShow.Quantity = addendumProductItems.Quantity;
+                        addendumProductItemShow.sizeProductItems = new sizeProductItemShowModel()
+                        {
+                            productName = productItem.Name,
+                            sizeName = size.Name,
+                            sizeProductItemID =addendumProductItems.SizeProductItemId,
+                        };
+                        addendumShow.addendumProductItemShowModels.Add(addendumProductItemShow);
+                    }
+                    orderShow.addendumShowModels.Add(addendumShow);
                 }
+                result.orderShowModels.Add(orderShow);
             }
             return result;
         }
@@ -183,7 +239,6 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                 {
                     userID = user.Id,
                     address = user.Address,
-                    favorite = user.Favorite,
                     fullName = user.FullName,
                     mail = user.Mail,
                     phone = user.Phone,
