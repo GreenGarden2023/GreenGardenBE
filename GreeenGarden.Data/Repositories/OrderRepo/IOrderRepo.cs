@@ -16,11 +16,11 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         //public Task<TblAddendum> GetAddendum(Guid AddendumId);
         public Task<TblOrder> GetOrder(Guid? OrderId, Guid? AddendumID);
         public Task<TblUser> GetUser(string username);
-        public Task<Page<TblUser>> GetListUser(PaginationRequestModel paginationRequestModel);
+        public Task<TblUser> GetUserByID(Guid userID);
         public Task<TblRole> GetRole(Guid roleID);
         public Task<TblSizeProductItem> GetSizeProductItem(Guid sizeProductItemID);
         public Task<bool> minusQuantitySizeProductItem(Guid sizeProductItemID, int quantity);
-        public Task<listOrder> GetListOrder(Guid userID);
+        public Task<listOrder> GetListOrderByUserID(Guid userID);
         public Task<bool> UpdateOrderPayment(Guid orderID);
         public Task<bool> updateStatusAddendum(Guid addendumID, string status);
         public Task<bool> updateStatusOrder(Guid orderID, string status);
@@ -30,6 +30,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         //*********************Manager********************//
         public Task<bool> removeOrder(Guid userID);
 
+        public Task<Page<TblOrder>> GetListOrder(PaginationRequestModel paginationRequestModel);
 
     }
 }
