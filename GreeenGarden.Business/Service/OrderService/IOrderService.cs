@@ -8,12 +8,13 @@ namespace GreeenGarden.Business.Service.OrderService
     {
         Task<ResultModel> createOrder(string token, addToOrderModel model);
         Task<ResultModel> getDetailAddendum(Guid addendumId);
-        Task<ResultModel> getListAddendum(string token, Guid orderId);
+        Task<ResultModel> getDetailOrder(string token, Guid orderId);
         Task<ResultModel> addAddendumByOrder(string token, addendumToAddByOrderModel model);
         Task<ResultModel> getListOrderByCustomer(string token); 
         Task<ResultModel> completeAddendum(string token, Guid addendumID);
 
         /******************Manager************/
         Task<ResultModel> getListOrderByManager(string token);
+        Task<ResultModel> deleteListOrder(string token);
     }
 }

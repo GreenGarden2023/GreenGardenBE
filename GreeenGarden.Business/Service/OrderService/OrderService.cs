@@ -278,62 +278,64 @@ namespace GreeenGarden.Business.Service.OrderService
                             {
                                 result.IsSuccess = false;
                                 result.Message = "Datetime not valid!";
-                                totalPrice = totalPrice + (item.quantity * sizeProItem.RentPrice);
+                                return result;
                             }
+                            totalPrice = totalPrice + (item.quantity * sizeProItem.RentPrice);
 
                         }
-                        totalPrice = totalPrice * rangeDate;
-                        /*******************Tính các khoản liên quan*********************/
-                        deposit = totalPrice / 100 * 20;
-                        if (totalPrice < 1000000) transportFee = totalPrice / 100 * 5;
-                        if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = totalPrice / 100 * 3;
-                        if (totalPrice >= 1000000) transportFee = 0;
+                    }
+                    totalPrice = totalPrice * rangeDate;
+                    /*******************Tính các khoản liên quan*********************/
+                    deposit = totalPrice / 100 * 20;
+                    if (totalPrice < 1000000) transportFee = totalPrice / 100 * 5;
+                    if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = totalPrice / 100 * 3;
+                    if (totalPrice >= 1000000) transportFee = 0;
 
-                        /*******************Add record**********************************/
-                        var order = new TblOrder()
-                        {
-                            Id = Guid.NewGuid(),
-                            Status = Status.UNPAID,
-                            CreateDate = DateTime.Now,
-                            UserId = tblUser.Id,
-                            TotalPrice = totalPrice,
-                            IsForRent = true,
-                        };
-                        await _orderRepo.Insert(order);
+                    /*******************Add record**********************************/
+                    var order = new TblOrder()
+                    {
+                        Id = Guid.NewGuid(),
+                        Status = Status.UNPAID,
+                        CreateDate = DateTime.Now,
+                        UserId = tblUser.Id,
+                        TotalPrice = totalPrice,
+                        IsForRent = true,
+                    };
+                    await _orderRepo.Insert(order);
 
-                        var newAddendum = new TblAddendum()
-                        {
-                            Id = Guid.NewGuid(),
-                            TransportFee = transportFee,
-                            StartDateRent = startRentDate,
-                            EndDateRent = endRentDate,
-                            Status = Status.UNPAID,
-                            TotalPrice = totalPrice + deposit + transportFee,
-                            Deposit = deposit,
-                            ReducedMoney = 0,
-                            OrderId = order.Id,
-                            RemainMoney = totalPrice + deposit + transportFee,
-                            Address = tblUser.Address,
-                        };
-                        await _orderRepo.insertAddendum(newAddendum);
+                    var newAddendum = new TblAddendum()
+                    {
+                        Id = Guid.NewGuid(),
+                        TransportFee = transportFee,
+                        StartDateRent = startRentDate,
+                        EndDateRent = endRentDate,
+                        Status = Status.UNPAID,
+                        TotalPrice = totalPrice + deposit + transportFee,
+                        Deposit = deposit,
+                        ReducedMoney = 0,
+                        OrderId = order.Id,
+                        RemainMoney = totalPrice + deposit + transportFee,
+                        Address = tblUser.Address,
+                    };
+                    await _orderRepo.insertAddendum(newAddendum);
 
-                        foreach (var item1 in model.rentItems)
+                    foreach (var item1 in model.rentItems)
+                    {
+                        if (item1.sizeProductItemID != null)
                         {
-                            if (item1.sizeProductItemID != null)
+                            var sizeProItem = await _orderRepo.GetSizeProductItem((Guid)item1.sizeProductItemID);
+                            var addendumProductItems = new TblAddendumProductItem()
                             {
-                                var sizeProItem = await _orderRepo.GetSizeProductItem((Guid)item1.sizeProductItemID);
-                                var addendumProductItems = new TblAddendumProductItem()
-                                {
-                                    Id = Guid.NewGuid(),
-                                    SizeProductItemPrice = sizeProItem.RentPrice,
-                                    SizeProductItemId = sizeProItem.Id,
-                                    AddendumId = newAddendum.Id,
-                                    Quantity = item1.quantity
-                                };
-                                await _orderRepo.insertAddendumProductItem(addendumProductItems);
-                                await _orderRepo.minusQuantitySizeProductItem((Guid)item1.sizeProductItemID, (int)item1.quantity);
-                            }
+                                Id = Guid.NewGuid(),
+                                SizeProductItemPrice = sizeProItem.RentPrice,
+                                SizeProductItemId = sizeProItem.Id,
+                                AddendumId = newAddendum.Id,
+                                Quantity = item1.quantity
+                            };
+                            await _orderRepo.insertAddendumProductItem(addendumProductItems);
+                            await _orderRepo.minusQuantitySizeProductItem((Guid)item1.sizeProductItemID, (int)item1.quantity);
                         }
+
                     }
                 }
                 #endregion
@@ -433,6 +435,27 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
+        public async Task<ResultModel> deleteListOrder(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var tblUser = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
+                await _orderRepo.removeOrder(tblUser.Id);
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "success";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> getDetailAddendum(Guid addendumId)
         {
             var result = new ResultModel();
@@ -453,30 +476,20 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> getListAddendum(string token, Guid orderId)
+        public async Task<ResultModel> getDetailOrder(string token, Guid orderId)
         {
             var result = new ResultModel();
             try
             {
                 var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
-                var roleID = await _orderRepo.GetRole(user.RoleId);
-                if (roleID.RoleName.Equals(Commons.MANAGER))
-                {
-                    var listAddendumTemp = await _orderRepo.getListAddendum(orderId);
-                    result.IsSuccess = true;
-                    result.Data = listAddendumTemp;
-                    return result;
-                }
 
-                var oderToValid = await _orderRepo.GetOrder(orderId);
-                if (!oderToValid.UserId.Equals(user.Id))
+                var listAddendum = await _orderRepo.getOrderDetail(orderId);
+                if (!listAddendum.user.userID.Equals(user.Id))
                 {
                     result.IsSuccess = false;
-                    result.Message = "User role invalid";
+                    result.Message = "order: " + orderId + " don't belong you";
                     return result;
                 }
-
-                var listAddendum = await _orderRepo.getListAddendum(orderId);
 
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -526,7 +539,13 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "User role invalid";
                     return result;
                 }
-                var listOrder = await _orderRepo.getListOrderByManager();
+                var listUser = await _orderRepo.GetListUser();
+                var listOrder = new List<listOrder>();
+                foreach (var user in listUser)
+                {
+                    var listOrderTemp = await _orderRepo.GetListOrder(user.Id);
+                    listOrder.Add(listOrderTemp);
+                }
 
                 result.Code = 200;
                 result.IsSuccess = true;

@@ -124,5 +124,15 @@ namespace GreeenGarden.Data.Models.OrderModel
         public Guid sizeProductItemID { set; get; }
         public string? sizeName { set; get; }
         public string? productName { set; get; }
+        public List<string>? imgUrl { set; get; } = new List<string>();
     }
+
+    // 23.03.06
+
+    public class orderDetail
+    {
+        public user user { get; set; }
+        public orderShowModel order { get; set; }
+    }
+
 }
