@@ -6,6 +6,7 @@ using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace GreeenGarden.Data.Repositories.OrderRepo
 {
@@ -19,7 +20,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public async Task<TblSizeProductItem> GetSizeProductItem(Guid sizeProductItemID)
         {
-           return await _context.TblSizeProductItems.Where(x=>x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
+            return await _context.TblSizeProductItems.Where(x => x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
         }
 
         public async Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId)
@@ -54,7 +55,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public async Task<orderDetail> getDetailOrder(Guid OrderId, int flag, Guid? addendumID)//flag = 1: default, 2:getAddendumByID
         {
             var result = new orderDetail();
-            var order = await _context.TblOrders.Where(x=>x.Id.Equals(OrderId)).FirstOrDefaultAsync();
+            var order = await _context.TblOrders.Where(x => x.Id.Equals(OrderId)).FirstOrDefaultAsync();
             var user = await _context.TblUsers.Where(x => x.Id == order.UserId).FirstOrDefaultAsync();
             result.user = new user()
             {
@@ -83,7 +84,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             }
             foreach (var addendum in listAddendum)
             {
-                var listAddendumProductItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addendum.Id).ToListAsync(); 
+                var listAddendumProductItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addendum.Id).ToListAsync();
 
                 var addendumShow = new addendumShowModel();
                 addendumShow.addendumID = addendum.Id;
@@ -130,9 +131,9 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         } //cmt
 
-        public async Task<listOrder> GetListOrder(Guid userID)
+        public async Task<listOrder> GetListOrderByUserID(Guid userID)
         {
-            var user = await _context.TblUsers.Where(x=>x.Id== userID).FirstOrDefaultAsync();
+            var user = await _context.TblUsers.Where(x => x.Id == userID).FirstOrDefaultAsync();
             var listOrder = await _context.TblOrders.Where(x => x.UserId == userID).ToListAsync();
             var result = new listOrder();
 
@@ -147,14 +148,15 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
             };
             result.orders = new List<orderShowModel>();
-            foreach (var order in listOrder) {
-                var listAddendum = await _context.TblAddendums.Where(x=>x.OrderId == order.Id).ToListAsync();
+            foreach (var order in listOrder)
+            {
+                var listAddendum = await _context.TblAddendums.Where(x => x.OrderId == order.Id).ToListAsync();
 
                 var orderShow = new orderShowModel();
                 orderShow.orderID = order.Id;
-                orderShow.totalPrice= order.TotalPrice;
-                orderShow.createDate= order.CreateDate;
-                orderShow.status= order.Status;
+                orderShow.totalPrice = order.TotalPrice;
+                orderShow.createDate = order.CreateDate;
+                orderShow.status = order.Status;
                 orderShow.isForRent = (bool)order.IsForRent;
                 orderShow.addendums = new List<addendumShowModel>();
 
@@ -163,16 +165,16 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                     var listAddendumProductItems = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addendum.Id).ToListAsync();
 
                     var addendumShow = new addendumShowModel();
-                    addendumShow.addendumID= addendum.Id;
-                    addendumShow.endDateRent= addendum.EndDateRent;
-                    addendumShow.startDateRent= addendum.StartDateRent;
-                    addendumShow.deposit= addendum.Deposit;
-                    addendumShow.transportFee= addendum.TransportFee;
-                    addendumShow.reducedMoney= addendum.ReducedMoney;
-                    addendumShow.totalPrice= addendum.TotalPrice;
-                    addendumShow.status= addendum.Status;
-                    addendumShow.remainMoney= addendum.RemainMoney;
-                    addendumShow.address= addendum.Address;
+                    addendumShow.addendumID = addendum.Id;
+                    addendumShow.endDateRent = addendum.EndDateRent;
+                    addendumShow.startDateRent = addendum.StartDateRent;
+                    addendumShow.deposit = addendum.Deposit;
+                    addendumShow.transportFee = addendum.TransportFee;
+                    addendumShow.reducedMoney = addendum.ReducedMoney;
+                    addendumShow.totalPrice = addendum.TotalPrice;
+                    addendumShow.status = addendum.Status;
+                    addendumShow.remainMoney = addendum.RemainMoney;
+                    addendumShow.address = addendum.Address;
                     addendumShow.addendumProductItems = new List<addendumProductItemShowModel>();
                     foreach (var addendumProductItems in listAddendumProductItems)
                     {
@@ -181,7 +183,8 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                         var size = await _context.TblSizes.Where(x => x.Id == sizeProductItem.SizeId).FirstOrDefaultAsync();
                         var img = await _context.TblImages.Where(x => x.SizeProductItemId == sizeProductItem.Id).ToListAsync();
                         var listImgUrl = new List<string>();
-                        foreach (var image in img) {
+                        foreach (var image in img)
+                        {
                             listImgUrl.Add(image.ImageUrl);
                         }
 
@@ -194,7 +197,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                         {
                             productName = productItem.Name,
                             sizeName = size.Name,
-                            sizeProductItemID =addendumProductItems.SizeProductItemId,
+                            sizeProductItemID = addendumProductItems.SizeProductItemId,
                             imgUrl = listImgUrl
                         };
                         addendumShow.addendumProductItems.Add(addendumProductItemShow);
@@ -211,7 +214,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             if (OrderId != null) return await _context.TblOrders.Where(x => x.Id == OrderId).FirstOrDefaultAsync();
             if (AddendumID != null)
             {
-                var addendum =  await _context.TblAddendums.Where(x=>x.Id== AddendumID).FirstOrDefaultAsync();
+                var addendum = await _context.TblAddendums.Where(x => x.Id == AddendumID).FirstOrDefaultAsync();
                 return await _context.TblOrders.Where(x => x.Id == addendum.OrderId).FirstOrDefaultAsync();
             }
             return null;
@@ -256,7 +259,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             try
             {
                 var order = await _context.TblOrders.Where(x => x.Id.Equals(orderID)).FirstOrDefaultAsync();
-                if(order != null)
+                if (order != null)
                 {
                     order.Status = Status.COMPLETED;
                     _context.TblOrders.Update(order);
@@ -273,7 +276,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public async Task<bool> updateStatusAddendum(Guid addendumID, string status)
         {
-            var addendum = await _context.TblAddendums.Where(x=>x.Id.Equals(addendumID)).FirstOrDefaultAsync();
+            var addendum = await _context.TblAddendums.Where(x => x.Id.Equals(addendumID)).FirstOrDefaultAsync();
             addendum.Status = status;
             _context.TblAddendums.Update(addendum);
             await _context.SaveChangesAsync();
@@ -282,7 +285,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public async Task<bool> updateStatusOrder(Guid orderID, string status)
         {
-            var order = await _context.TblOrders.Where(x=>x.Id== orderID).FirstOrDefaultAsync();
+            var order = await _context.TblOrders.Where(x => x.Id == orderID).FirstOrDefaultAsync();
             order.Status = status;
             _context.TblOrders.Update(order);
             await _context.SaveChangesAsync();
@@ -291,7 +294,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public async Task<bool> removeCart(Guid userID)
         {
-            var cart = await _context.TblCarts.Where(x=>x.UserId==userID).FirstOrDefaultAsync();
+            var cart = await _context.TblCarts.Where(x => x.UserId == userID).FirstOrDefaultAsync();
             if (cart == null) return true;
             var cartDetail = await _context.TblCartDetails.Where(x => x.CartId == cart.Id).ToListAsync();
             if (cartDetail == null) return true;
@@ -303,9 +306,9 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return true;
         }
 
-        public async Task<Page<TblUser>> GetListUser(PaginationRequestModel paginationRequestModel)
+        public async Task<TblUser> GetUserByID(Guid userID)
         {
-            return await _context.TblUsers.PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            return await _context.TblUsers.Where(x => x.Id.Equals(userID)).FirstOrDefaultAsync();
         }
 
         public async Task<bool> removeOrder(Guid userID)
@@ -313,7 +316,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             var listOrder = await _context.TblOrders.Where(x => x.UserId == userID).ToListAsync();
             foreach (var order in listOrder)
             {
-                var listAddendum = await _context.TblAddendums.Where(x=>x.OrderId==order.Id).ToListAsync();
+                var listAddendum = await _context.TblAddendums.Where(x => x.OrderId == order.Id).ToListAsync();
                 foreach (var addedum in listAddendum)
                 {
                     var listAddendumProductItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addedum.Id).ToListAsync();
@@ -335,5 +338,11 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         {
             return await _context.TblAddendums.Where(x => x.OrderId == orderId).LastOrDefaultAsync();
         }
+
+        public async Task<Page<TblOrder>> GetListOrder(PaginationRequestModel paginationRequestModel)
+        {
+            return await _context.TblOrders.PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+        }
+
     }
 }

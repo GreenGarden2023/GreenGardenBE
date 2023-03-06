@@ -548,7 +548,7 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 var user = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
-                var order = await _orderRepo.GetListOrder(user.Id);
+                var order = await _orderRepo.GetListOrderByUserID(user.Id);
 
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -577,17 +577,17 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "User role invalid";
                     return result;
                 }
-                var listUser = await _orderRepo.GetListUser(paginationRequestModel);
-                var listOrder = new List<listOrder>();
-                foreach (var user in listUser.Results)
+                var listOrder = await _orderRepo.GetListOrder(paginationRequestModel);
+                var response = new List<orderDetail>();
+                foreach (var item in listOrder.Results)
                 {
-                    var listOrderTemp = await _orderRepo.GetListOrder(user.Id);
-                    listOrder.Add(listOrderTemp);
+                    var orderDetail = await _orderRepo.getDetailOrder(item.Id, 1, null);
+                    response.Add(orderDetail);  
                 }
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = listOrder;
+                result.Data = response;
             }
             catch (Exception e)
             {
