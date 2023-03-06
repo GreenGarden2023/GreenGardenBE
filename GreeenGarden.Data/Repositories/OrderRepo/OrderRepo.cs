@@ -49,36 +49,77 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         }
 
-        public async Task<List<listAddendumResponse>> getListAddendum(Guid OrderId)
+        public async Task<orderDetail> getOrderDetail(Guid OrderId)
         {
-            var result = new List<listAddendumResponse>();
-            var addendumResponse = new listAddendumResponse();
-            var addendum = await _context.TblAddendums.Where(x => x.OrderId == OrderId).ToListAsync();
-            foreach (var item in addendum)
+            var result = new orderDetail();
+            var order = await _context.TblOrders.Where(x=>x.Id.Equals(OrderId)).FirstOrDefaultAsync();
+            var user = await _context.TblUsers.Where(x => x.Id == order.UserId).FirstOrDefaultAsync();
+            result.user = new user()
             {
-                addendumResponse.id = item.Id;
-                addendumResponse.orderID = item.OrderId;
-                addendumResponse.startDateRent = item.StartDateRent;
-                addendumResponse.endDateRent = item.EndDateRent;
-                addendumResponse.status = item.Status;
-                addendumResponse.deposit = item.Deposit;
-                addendumResponse.totalPrice = item.TotalPrice;
-                addendumResponse.remainMoney = item.RemainMoney;
-                addendumResponse.productItems = new List<addendumProductItemResponseModel>();
-                var addendumItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == item.Id).ToListAsync();
-                foreach (var i in addendumItem)
+                userID = user.Id,
+                userName = user.UserName,
+                fullName = user.FullName,
+                address = user.Address,
+                phone = user.Phone,
+                mail = user.Mail,
+            };
+            result.order = new orderShowModel()
+            {
+                orderID = order.Id,
+                totalPrice = order.TotalPrice,
+                createDate = order.CreateDate,
+                status = order.Status,
+                isForRent = (bool)order.IsForRent,
+                addendums = new List<addendumShowModel>(),
+            };
+            var listAddendum = await _context.TblAddendums.Where(x => x.OrderId == order.Id).ToListAsync();
+            foreach (var addendum in listAddendum)
+            {
+                var listAddendumProductItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addendum.Id).ToListAsync(); 
+
+                var addendumShow = new addendumShowModel();
+                addendumShow.addendumID = addendum.Id;
+                addendumShow.endDateRent = addendum.EndDateRent;
+                addendumShow.startDateRent = addendum.StartDateRent;
+                addendumShow.deposit = addendum.Deposit;
+                addendumShow.transportFee = addendum.TransportFee;
+                addendumShow.reducedMoney = addendum.ReducedMoney;
+                addendumShow.totalPrice = addendum.TotalPrice;
+                addendumShow.status = addendum.Status;
+                addendumShow.remainMoney = addendum.RemainMoney;
+                addendumShow.address = addendum.Address;
+                addendumShow.addendumProductItems = new List<addendumProductItemShowModel>();
+                foreach (var addendumProductItem in listAddendumProductItem)
                 {
-                    var addProItem = new addendumProductItemResponseModel()
+                    var sizeProductItem = await _context.TblSizeProductItems.Where(x => x.Id == addendumProductItem.SizeProductItemId).FirstOrDefaultAsync();
+                    var productItem = await _context.TblProductItems.Where(x => x.Id == sizeProductItem.ProductItemId).FirstOrDefaultAsync();
+                    var size = await _context.TblSizes.Where(x => x.Id == sizeProductItem.SizeId).FirstOrDefaultAsync();
+                    var listImg = await _context.TblImages.Where(x => x.SizeProductItemId == sizeProductItem.Id).ToListAsync();
+                    List<string> listImgUrl = new List<string>();
+                    foreach (var img in listImg)
                     {
-                        sizeProductItemID = i.SizeProductItemId,
-                        sizeProductItemPrice = i.SizeProductItemPrice,
-                        quantity = i.Quantity,
+                        listImgUrl.Add(img.ImageUrl);
+                    }
+
+                    var addendumProductItemShow = new addendumProductItemShowModel();
+                    addendumProductItemShow.addendumProductItemID = addendumProductItem.Id;
+                    addendumProductItemShow.sizeProductItemPrice = addendumProductItem.SizeProductItemPrice;
+                    addendumProductItemShow.Quantity = addendumProductItem.Quantity;
+
+                    addendumProductItemShow.sizeProductItems = new sizeProductItemShowModel()
+                    {
+                        productName = productItem.Name,
+                        sizeName = size.Name,
+                        sizeProductItemID = addendumProductItem.SizeProductItemId,
+                        imgUrl = listImgUrl
                     };
-                    addendumResponse.productItems.Add(addProItem);
+                    addendumShow.addendumProductItems.Add(addendumProductItemShow);
                 }
-                result.Add(addendumResponse);
+                result.order.addendums.Add(addendumShow);
             }
             return result;
+
+
         } //cmt
 
         public async Task<listOrder> GetListOrder(Guid userID)
@@ -130,17 +171,23 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                         var sizeProductItem = await _context.TblSizeProductItems.Where(x => x.Id == addendumProductItems.SizeProductItemId).FirstOrDefaultAsync();
                         var productItem = await _context.TblProductItems.Where(x => x.Id == sizeProductItem.ProductItemId).FirstOrDefaultAsync();
                         var size = await _context.TblSizes.Where(x => x.Id == sizeProductItem.SizeId).FirstOrDefaultAsync();
-
+                        var img = await _context.TblImages.Where(x => x.SizeProductItemId == sizeProductItem.Id).ToListAsync();
+                        var listImgUrl = new List<string>();
+                        foreach (var image in img) {
+                            listImgUrl.Add(image.ImageUrl);
+                        }
 
                         var addendumProductItemShow = new addendumProductItemShowModel();
                         addendumProductItemShow.addendumProductItemID = addendumProductItems.Id;
                         addendumProductItemShow.sizeProductItemPrice = addendumProductItems.SizeProductItemPrice;
                         addendumProductItemShow.Quantity = addendumProductItems.Quantity;
+
                         addendumProductItemShow.sizeProductItems = new sizeProductItemShowModel()
                         {
                             productName = productItem.Name,
                             sizeName = size.Name,
                             sizeProductItemID =addendumProductItems.SizeProductItemId,
+                            imgUrl = listImgUrl
                         };
                         addendumShow.addendumProductItems.Add(addendumProductItemShow);
                     }
@@ -228,43 +275,43 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return true;
         }
 
-        public async Task<List<managerOrderModel>> getListOrderByManager()
-        {
-            var listOrder = await _context.TblOrders.ToListAsync();
-            var result = new List<managerOrderModel>();
-            foreach (var order in listOrder)
-            {
-                var user = await _context.TblUsers.Where(x=>x.Id== order.UserId).FirstOrDefaultAsync();
-                var userTemp = new user()
-                {
-                    userID = user.Id,
-                    address = user.Address,
-                    fullName = user.FullName,
-                    mail = user.Mail,
-                    phone = user.Phone,
-                    userName = user.UserName
-                };
-                var orderTemp = new managerOrderModel()
-                {
-                    orderId = order.Id,
-                    totalPrice = order.TotalPrice,
-                    createDate = order.CreateDate,
-                    status = order.Status,
-                    isForRent = order.IsForRent,
-                    user = userTemp
-                };
-                result.Add(orderTemp);
-            }
-            return result;
-        }
-
         public async Task<bool> removeCart(Guid userID)
         {
             var cart = await _context.TblCarts.Where(x=>x.UserId==userID).FirstOrDefaultAsync();
+            if (cart == null) return true;
             var cartDetail = await _context.TblCartDetails.Where(x => x.CartId == cart.Id).ToListAsync();
+            if (cartDetail == null) return true;
             foreach (var item in cartDetail)
             {
                 _context.TblCartDetails.Remove(item);
+                await _context.SaveChangesAsync();
+            }
+            return true;
+        }
+
+        public async Task<List<TblUser>> GetListUser()
+        {
+            return await _context.TblUsers.ToListAsync();
+        }
+
+        public async Task<bool> removeOrder(Guid userID)
+        {
+            var listOrder = await _context.TblOrders.Where(x => x.UserId == userID).ToListAsync();
+            foreach (var order in listOrder)
+            {
+                var listAddendum = await _context.TblAddendums.Where(x=>x.OrderId==order.Id).ToListAsync();
+                foreach (var addedum in listAddendum)
+                {
+                    var listAddendumProductItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addedum.Id).ToListAsync();
+                    foreach (var addendumProductItem in listAddendumProductItem)
+                    {
+                        _context.TblAddendumProductItems.Remove(addendumProductItem);
+                        await _context.SaveChangesAsync();
+                    }
+                    _context.TblAddendums.Remove(addedum);
+                    await _context.SaveChangesAsync();
+                }
+                _context.TblOrders.Remove(order);
                 await _context.SaveChangesAsync();
             }
             return true;

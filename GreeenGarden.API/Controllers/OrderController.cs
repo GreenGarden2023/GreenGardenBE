@@ -38,11 +38,11 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("get-list-addendum")]
-        public async Task<IActionResult> getListAddendum(Guid orderId)
+        [HttpGet("get-detail-order")]
+        public async Task<IActionResult> getDetailOrder(Guid orderId)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.getListAddendum(token, orderId);
+            var result = await _service.getDetailOrder(token, orderId);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
@@ -79,6 +79,15 @@ namespace GreeenGarden.API.Controllers
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.createOrder(token, model);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpDelete("delete-all-order")]
+        public async Task<IActionResult> deleteListOrder()
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.deleteListOrder(token);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
