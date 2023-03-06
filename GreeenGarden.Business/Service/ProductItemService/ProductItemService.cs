@@ -336,7 +336,15 @@ namespace GreeenGarden.Business.Service.ProductItemService
             var result = new ResultModel();
             try
             {
-                var prodItemList = await _proItemRepo.GetProductItemByType(pagingModel, type);
+                var productGet = await _proRepo.Get(productID);
+                if (productID == Guid.Empty || productID == null) {
+
+                    result.Message = "Can not find product.";
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    return result;
+                }
+                var prodItemList = await _proItemRepo.GetProductItemByType(pagingModel, productID, type);
                 if (prodItemList != null)
                 {
                     List<ProductItemResModel> dataList = new List<ProductItemResModel>();
@@ -366,7 +374,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     .RecordCount(prodItemList.RecordCount)
                     .PageCount(prodItemList.PageCount);
                     ///
-                    var productGet = await _proRepo.Get(productID);
+                    
                     var getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
                     string prodImgURL = "";
                     if (getProdImgURL != null)
