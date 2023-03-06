@@ -18,38 +18,38 @@ namespace GreeenGarden.API.Controllers
         {
             _imageService = imageService;
         }
-        [HttpPost("upload")]
-        public async Task<ActionResult<ResultModel>> Upload(IList<IFormFile> files)
-        {
-            if (!files.Any())
-            {
-                return BadRequest(new ResultModel()
-                {
-                    IsSuccess = false,
-                    Message = "Files Empty"
+        //[HttpPost("upload")]
+        //public async Task<ActionResult<ResultModel>> Upload(IList<IFormFile> files)
+        //{
+        //    if (!files.Any())
+        //    {
+        //        return BadRequest(new ResultModel()
+        //        {
+        //            IsSuccess = false,
+        //            Message = "Files Empty"
 
-                });
-            };
-            try
-            {
-                var result = await _imageService.UploadImages(files);
-                if (result.IsSuccess == false)
-                {
-                    return BadRequest(result);
-                }
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ResultModel()
-                {
-                    IsSuccess = false,
-                    Data = ex.ToString(),
-                    Message = "Upload Failed"
+        //        });
+        //    };
+        //    try
+        //    {
+        //        var result = await _imageService.UploadImages(files);
+        //        if (result.IsSuccess == false)
+        //        {
+        //            return BadRequest(result);
+        //        }
+        //        return Ok(result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ResultModel()
+        //        {
+        //            IsSuccess = false,
+        //            Data = ex.ToString(),
+        //            Message = "Upload Failed"
 
-                });
-            }
-        }
+        //        });
+        //    }
+        //}
         [HttpDelete("delete")]
         public async Task<ActionResult<ResultModel>> Delete(List<string> fileURLs)
         {
@@ -83,20 +83,20 @@ namespace GreeenGarden.API.Controllers
             }
 
         }
-        [HttpGet("get-an-image")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GetFile(string fileUrl)
-        {
-            try
-            {
-                FileData fileData = await _imageService.DownloadAnImage(fileUrl);
-                return File(fileData.bytes, fileData.contenType, fileData.name);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpGet("get-an-image")]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> GetFile(string fileUrl)
+        //{
+        //    try
+        //    {
+        //        FileData fileData = await _imageService.DownloadAnImage(fileUrl);
+        //        return File(fileData.bytes, fileData.contenType, fileData.name);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
     }
 }
 
