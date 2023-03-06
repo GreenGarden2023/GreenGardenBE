@@ -1,6 +1,8 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.AddendumModel;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.OrderRepo
@@ -14,7 +16,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         //public Task<TblAddendum> GetAddendum(Guid AddendumId);
         public Task<TblOrder> GetOrder(Guid? OrderId, Guid? AddendumID);
         public Task<TblUser> GetUser(string username);
-        public Task<List<TblUser>> GetListUser();
+        public Task<Page<TblUser>> GetListUser(PaginationRequestModel paginationRequestModel);
         public Task<TblRole> GetRole(Guid roleID);
         public Task<TblSizeProductItem> GetSizeProductItem(Guid sizeProductItemID);
         public Task<bool> minusQuantitySizeProductItem(Guid sizeProductItemID, int quantity);

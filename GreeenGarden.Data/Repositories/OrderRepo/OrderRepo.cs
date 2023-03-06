@@ -1,7 +1,9 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.AddendumModel;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -301,9 +303,9 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return true;
         }
 
-        public async Task<List<TblUser>> GetListUser()
+        public async Task<Page<TblUser>> GetListUser(PaginationRequestModel paginationRequestModel)
         {
-            return await _context.TblUsers.ToListAsync();
+            return await _context.TblUsers.PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
         }
 
         public async Task<bool> removeOrder(Guid userID)

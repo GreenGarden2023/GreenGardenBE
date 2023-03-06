@@ -1,5 +1,6 @@
 ﻿using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,10 +67,10 @@ namespace GreeenGarden.API.Controllers
         }*/
 
         [HttpGet("get-list-order-by-manager")]
-        public async Task<IActionResult> getListOrderByManager()
+        public async Task<IActionResult> getListOrderByManager([FromQuery] PaginationRequestModel paginationRequestModel)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.getListOrderByManager(token);
+            var result = await _service.getListOrderByManager(token, paginationRequestModel);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

@@ -6,6 +6,7 @@ using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
 using GreeenGarden.Business.Utilities.Convert;
 using System.Security.Claims;
+using GreeenGarden.Data.Models.PaginationModel;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -563,7 +564,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         }
 
-        public async Task<ResultModel> getListOrderByManager(string token)
+        public async Task<ResultModel> getListOrderByManager(string token, PaginationRequestModel paginationRequestModel)
         {
             var result = new ResultModel();
             try
@@ -576,9 +577,9 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "User role invalid";
                     return result;
                 }
-                var listUser = await _orderRepo.GetListUser();
+                var listUser = await _orderRepo.GetListUser(paginationRequestModel);
                 var listOrder = new List<listOrder>();
-                foreach (var user in listUser)
+                foreach (var user in listUser.Results)
                 {
                     var listOrderTemp = await _orderRepo.GetListOrder(user.Id);
                     listOrder.Add(listOrderTemp);
