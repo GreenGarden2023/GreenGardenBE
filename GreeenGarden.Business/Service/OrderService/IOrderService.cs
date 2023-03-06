@@ -1,5 +1,6 @@
 ﻿using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 
 namespace GreeenGarden.Business.Service.OrderService
@@ -13,7 +14,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> getListOrderByCustomer(string token); 
 
         /******************Manager************/
-        Task<ResultModel> getListOrderByManager(string token);
+        Task<ResultModel> getListOrderByManager(string token, PaginationRequestModel paginationRequestModel);
         Task<ResultModel> deleteListOrder(string token);
         Task<ResultModel> changeStatusOrder(string token, Guid orderID, string status);
     }
