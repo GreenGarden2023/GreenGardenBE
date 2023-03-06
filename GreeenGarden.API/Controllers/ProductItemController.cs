@@ -20,7 +20,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("create-product-item")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> CreateProductItem([FromForm] ProductItemInsertModel model)
+        public async Task<IActionResult> CreateProductItem([FromBody] ProductItemInsertModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.CreateProductItem(token, model);

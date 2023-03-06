@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Business.Service.ImageService;
+﻿using System.ComponentModel.DataAnnotations;
+using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
@@ -18,38 +19,38 @@ namespace GreeenGarden.API.Controllers
         {
             _imageService = imageService;
         }
-        //[HttpPost("upload")]
-        //public async Task<ActionResult<ResultModel>> Upload(IList<IFormFile> files)
-        //{
-        //    if (!files.Any())
-        //    {
-        //        return BadRequest(new ResultModel()
-        //        {
-        //            IsSuccess = false,
-        //            Message = "Files Empty"
+        [HttpPost("upload-images-folder")]
+        public async Task<ActionResult<ResultModel>> Upload([Required][FromForm]IList<IFormFile> files, [Required]string folderName)
+        {
+            if (!files.Any())
+            {
+                return BadRequest(new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "Files Empty"
 
-        //        });
-        //    };
-        //    try
-        //    {
-        //        var result = await _imageService.UploadImages(files);
-        //        if (result.IsSuccess == false)
-        //        {
-        //            return BadRequest(result);
-        //        }
-        //        return Ok(result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new ResultModel()
-        //        {
-        //            IsSuccess = false,
-        //            Data = ex.ToString(),
-        //            Message = "Upload Failed"
+                });
+            };
+            try
+            {
+                var result = await _imageService.UploadImagesFolder(files, folderName);
+                if (result.IsSuccess == false)
+                {
+                    return BadRequest(result);
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResultModel()
+                {
+                    IsSuccess = false,
+                    Data = ex.ToString(),
+                    Message = "Upload Failed"
 
-        //        });
-        //    }
-        //}
+                });
+            }
+        }
         [HttpDelete("delete")]
         public async Task<ActionResult<ResultModel>> Delete(List<string> fileURLs)
         {
@@ -78,25 +79,41 @@ namespace GreeenGarden.API.Controllers
                     IsSuccess = false,
                     Data = ex.ToString(),
                     Message = "Upload Failed"
-
                 });
             }
-
         }
-        //[HttpGet("get-an-image")]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> GetFile(string fileUrl)
-        //{
-        //    try
-        //    {
-        //        FileData fileData = await _imageService.DownloadAnImage(fileUrl);
-        //        return File(fileData.bytes, fileData.contenType, fileData.name);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(ex.Message);
-        //    }
-        //}
+        [HttpDelete("delete-by-urls")]
+        public async Task<ActionResult<ResultModel>> DeleteByURLs(List<string> fileURLs)
+        {
+            if (!fileURLs.Any())
+            {
+                return BadRequest(new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "Url Empty"
+
+                });
+            };
+            try
+            {
+                var result = await _imageService.DeleteImagesByURLs(fileURLs);
+                if (result.IsSuccess == false)
+                {
+                    return BadRequest(result);
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResultModel()
+                {
+                    IsSuccess = false,
+                    Data = ex.ToString(),
+                    Message = "Upload Failed"
+                });
+            }
+        }
+
     }
 }
 
