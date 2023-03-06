@@ -33,10 +33,10 @@ namespace GreeenGarden.API.Controllers
         public async Task<IActionResult> getDetailAddendum(Guid addendumId)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.getDetailAddendum(addendumId);
+            var result = await _service.getDetailAddendum(token, addendumId);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
-        }
+        }//check
 
         [HttpGet("get-detail-order")]
         public async Task<IActionResult> getDetailOrder(Guid orderId)
@@ -56,14 +56,14 @@ namespace GreeenGarden.API.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("complete-addendum")]
+        /*[HttpPost("complete-addendum")]
         public async Task<IActionResult> completeAddendum(Guid addendumID)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.completeAddendum(token, addendumID);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
-        }
+        }*/
 
         [HttpGet("get-list-order-by-manager")]
         public async Task<IActionResult> getListOrderByManager()
@@ -88,6 +88,15 @@ namespace GreeenGarden.API.Controllers
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.deleteListOrder(token);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
+
+        [HttpPost("update-status-order")]
+        public async Task<IActionResult> changeStatusOrder(Guid orderID, string status)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.changeStatusOrder(token, orderID, status);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
