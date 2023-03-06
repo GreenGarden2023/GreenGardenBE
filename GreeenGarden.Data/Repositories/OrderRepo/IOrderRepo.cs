@@ -9,10 +9,10 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
     {
         public Task<TblAddendum> insertAddendum(TblAddendum entities);
         public Task<TblAddendumProductItem> insertAddendumProductItem(TblAddendumProductItem entities);
-        public Task<orderDetail> getOrderDetail(Guid OrderId);
+        public Task<orderDetail> getDetailOrder(Guid OrderId, int flag, Guid? addendumID);
         public Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId);
         //public Task<TblAddendum> GetAddendum(Guid AddendumId);
-        public Task<TblOrder> GetOrder(Guid OrderId);
+        public Task<TblOrder> GetOrder(Guid? OrderId, Guid? AddendumID);
         public Task<TblUser> GetUser(string username);
         public Task<List<TblUser>> GetListUser();
         public Task<TblRole> GetRole(Guid roleID);
@@ -23,9 +23,10 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public Task<bool> updateStatusAddendum(Guid addendumID, string status);
         public Task<bool> updateStatusOrder(Guid orderID, string status);
         public Task<bool> removeCart(Guid userID);
-        public Task<bool> removeOrder(Guid userID);
+        public Task<TblAddendum> getLastAddendum(Guid orderId);
 
         //*********************Manager********************//
+        public Task<bool> removeOrder(Guid userID);
 
 
     }

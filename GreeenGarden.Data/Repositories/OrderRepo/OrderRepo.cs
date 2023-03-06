@@ -49,7 +49,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         }
 
-        public async Task<orderDetail> getOrderDetail(Guid OrderId)
+        public async Task<orderDetail> getDetailOrder(Guid OrderId, int flag, Guid? addendumID)//flag = 1: default, 2:getAddendumByID
         {
             var result = new orderDetail();
             var order = await _context.TblOrders.Where(x=>x.Id.Equals(OrderId)).FirstOrDefaultAsync();
@@ -72,7 +72,13 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                 isForRent = (bool)order.IsForRent,
                 addendums = new List<addendumShowModel>(),
             };
-            var listAddendum = await _context.TblAddendums.Where(x => x.OrderId == order.Id).ToListAsync();
+            var listAddendum = new List<TblAddendum>();
+            if (flag == 1) listAddendum = await _context.TblAddendums.Where(x => x.OrderId == order.Id).ToListAsync();
+            if (flag == 2)
+            {
+                var addendum = await _context.TblAddendums.Where(x => x.Id == addendumID && x.OrderId == order.Id).FirstOrDefaultAsync();
+                listAddendum.Add(addendum);
+            }
             foreach (var addendum in listAddendum)
             {
                 var listAddendumProductItem = await _context.TblAddendumProductItems.Where(x => x.AddendumId == addendum.Id).ToListAsync(); 
@@ -198,9 +204,15 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             return result;
         }
 
-        public async Task<TblOrder> GetOrder(Guid OrderId)
+        public async Task<TblOrder> GetOrder(Guid? OrderId, Guid? AddendumID)
         {
-            return await _context.TblOrders.Where(x => x.Id == OrderId).FirstOrDefaultAsync();
+            if (OrderId != null) return await _context.TblOrders.Where(x => x.Id == OrderId).FirstOrDefaultAsync();
+            if (AddendumID != null)
+            {
+                var addendum =  await _context.TblAddendums.Where(x=>x.Id== AddendumID).FirstOrDefaultAsync();
+                return await _context.TblOrders.Where(x => x.Id == addendum.OrderId).FirstOrDefaultAsync();
+            }
+            return null;
         }
 
         public async Task<TblUser> GetUser(string username)
@@ -315,6 +327,11 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                 await _context.SaveChangesAsync();
             }
             return true;
+        }
+
+        public async Task<TblAddendum> getLastAddendum(Guid orderId)
+        {
+            return await _context.TblAddendums.Where(x => x.OrderId == orderId).LastOrDefaultAsync();
         }
     }
 }
