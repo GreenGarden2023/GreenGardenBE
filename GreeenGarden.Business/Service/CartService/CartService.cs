@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CartRepo;
+using GreeenGarden.Data.Repositories.OrderRepo;
 using System.Collections.Generic;
 
 namespace GreeenGarden.Business.Service.CartService
@@ -12,11 +13,13 @@ namespace GreeenGarden.Business.Service.CartService
     {
         private readonly DecodeToken _decodeToken;
         private readonly ICartRepo _cartRepo;
+        private readonly IOrderRepo _orderRepo;
 
-        public CartService(ICartRepo cartRepo)
+        public CartService(ICartRepo cartRepo, IOrderRepo orderRepo)
         {
             _cartRepo = cartRepo;
             _decodeToken = new DecodeToken();
+            _orderRepo = orderRepo;
         }
 
         public async Task<ResultModel> AddToCart(string token, AddToCartModel model)
@@ -53,7 +56,31 @@ namespace GreeenGarden.Business.Service.CartService
                         }
                     }
                 }
-                
+                // check sale + rent
+                foreach (var i in model.saleItems)
+                {
+                    foreach (var j in model.rentItems)
+                    {
+                        if (i.sizeProductItemID == j.sizeProductItemID)
+                        {
+                            var sizeProItem = await _orderRepo.GetSizeProductItem((Guid)i.sizeProductItemID);
+                            if (sizeProItem == null)
+                            {
+                                result.IsSuccess = false;
+                                result.Message = "Don't product: " + i.sizeProductItemID;
+                                return result;
+
+                            }
+                            if ((i.quantity + j.quantity) > sizeProItem.Quantity)
+                            {
+                                result.IsSuccess = false;
+                                result.Message = "Số lượng của sản phẩm: " + i.sizeProductItemID + " trong kho chỉ còn: " + sizeProItem.Quantity + ", đơn hàng của bạn tổng: " + (i.quantity + j.quantity);
+                                return result;
+                            }
+                        }
+                    }
+                }
+
 
                 double? totalRentPriceCart = 0;
                 double? totalSalePriceCart = 0;
@@ -89,6 +116,12 @@ namespace GreeenGarden.Business.Service.CartService
                         if (item.sizeProductItemID != null)
                         {
                             var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
+                            if (item.quantity > sizeProductItem.Quantity)
+                            {
+                                result.IsSuccess = false;
+                                result.Message = "Product " + sizeProductItem.Id + " don't enough quantity!";
+                                return result;
+                            }
                             if ( sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.RentPrice == 0)
                             {
                                 result.Code = 400;
@@ -128,6 +161,13 @@ namespace GreeenGarden.Business.Service.CartService
                         if (item.sizeProductItemID != null)
                         {
                             var sizeProductItem = await _cartRepo.GetSizeProductItem(item.sizeProductItemID);
+
+                            if (item.quantity > sizeProductItem.Quantity)
+                            {
+                                result.IsSuccess = false;
+                                result.Message = "Product " + sizeProductItem.Id + " don't enough quantity!";
+                                return result;
+                            }
                             if (sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.SalePrice == 0)
                             {
                                 result.Code = 400;

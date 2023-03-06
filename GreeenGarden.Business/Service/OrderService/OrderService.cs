@@ -232,6 +232,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         result.Message = "Product " + item.sizeProductItemID + " has no quantity yet";
                     }
                 }
+                // kiểm tra 2 quantity cộng lại
                 foreach (var i in model.saleItems)
                 {
                     foreach (var j in model.rentItems)
@@ -254,7 +255,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             }
                         }
                     }
-                } // kiểm tra 2 quantity
+                } 
                 #endregion
 
                 #region OrderForRent
