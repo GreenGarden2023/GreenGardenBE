@@ -107,8 +107,8 @@ namespace GreeenGarden.Business.Service.OrderService
                 totalPrice = totalPrice * rangeDate;
                 /******************Tính các khoản liên quan********************/
                 deposit = totalPrice / 100 * 20;
-                if (totalPrice < 1000000) transportFee = totalPrice / 100 * 5;
-                if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = totalPrice / 100 * 3;
+                if (totalPrice < 1000000) transportFee = (totalPrice / rangeDate) / 100 * 5;
+                if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = (totalPrice / rangeDate) / 100 * 3;
                 if (totalPrice >= 1000000) transportFee = 0;
 
                 /******************Add record*********************************/
