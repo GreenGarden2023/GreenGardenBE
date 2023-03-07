@@ -16,28 +16,35 @@ namespace GreeenGarden.API.Controllers
             _moMoService = moMoService;
         }
 
-        [HttpPost("create-rent-payment")]
+        [HttpPost("create-payment")]
         [AllowAnonymous]
-        public async Task<IActionResult> CreateAddendumPayment([Required] Guid addendumId, [Required] double amount)
+        public async Task<IActionResult> CreateAddendumPayment([Required] Guid addendumId, double? amount, [Required] bool isRent)
         {
             try
             {
-                var result = await _moMoService.CreateRentPayment(addendumId, amount);
-
-                return Ok(result);
+                if(isRent == true)
+                {
+                    var result = await _moMoService.CreateRentPayment(addendumId, amount);
+                    return Ok(result);
+                }
+                else
+                {
+                    var result = await _moMoService.CreateSalePayment(addendumId);
+                    return Ok(result);
+                }
             }
             catch (Exception ex)
             {
                 return BadRequest(ex);
             }
         }
-        [HttpPost("create-rent-deposit-payment")]
+        [HttpPost("create-deposit-payment")]
         [AllowAnonymous]
         public async Task<IActionResult> CreateAddendumDepositPayment([Required] Guid addendumId)
         {
             try
             {
-                var result = await _moMoService.CreateRentDepositPayment(addendumId);
+                var result = await _moMoService.CreateDepositPayment(addendumId);
 
                 return Ok(result);
             }
@@ -50,7 +57,7 @@ namespace GreeenGarden.API.Controllers
 
         [HttpPost("receive-rent-payment-reponse")]
         [AllowAnonymous]
-        public async Task<IActionResult> ReceiveAddendumPaymentResponse(MoMoResponseModel moMoResponseModel)
+        public async Task<IActionResult> ReceiveRenyAddendumPaymentResponse(MoMoResponseModel moMoResponseModel)
         {
             try
             {
@@ -63,13 +70,28 @@ namespace GreeenGarden.API.Controllers
                 return NoContent();
             }
         }
-        [HttpPost("receive-rent-deposit-payment-reponse")]
+        [HttpPost("receive-sale-payment-reponse")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ReceiveSaleAddendumPaymentResponse(MoMoResponseModel moMoResponseModel)
+        {
+            try
+            {
+                var result = await _moMoService.ProcessSalePayment(moMoResponseModel);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return NoContent();
+            }
+        }
+        [HttpPost("receive-deposit-payment-reponse")]
         [AllowAnonymous]
         public async Task<IActionResult> ReceiveAddendumDepositPaymentResponse(MoMoResponseModel moMoResponseModel)
         {
             try
             {
-                var result = await _moMoService.ProcessRentDepositPayment(moMoResponseModel);
+                var result = await _moMoService.ProcessDepositPayment(moMoResponseModel);
 
                 return NoContent();
             }
