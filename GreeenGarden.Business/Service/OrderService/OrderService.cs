@@ -28,10 +28,10 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 var tblUser = await _orderRepo.GetUser(_decodeToken.Decode(token, "username"));
-                var tblLastAddendum = await _orderRepo.getLastAddendum(model.orderId);
                 var orderDetail = await _orderRepo.getDetailOrder(model.orderId, 1, null);
                 DateTime startRentDate = ConvertUtil.convertStringToDateTime(model.startDateRent);
                 DateTime endRentDate = ConvertUtil.convertStringToDateTime(model.endDateRent);
+                var tblLastAddendum = await _orderRepo.getLastAddendum(model.orderId);
                 double rangeDate = (endRentDate - startRentDate).TotalDays;
                 double? totalPrice = 0;
                 double? deposit = 0;
@@ -42,7 +42,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     if (tblLastAddendum.Status != Status.PAID)
                     {
-                        if (tblLastAddendum.Status != Status.PAID)
+                        if (tblLastAddendum.Status != Status.CANCEL)
                         {
                             result.IsSuccess = false;
                             result.Message = "Status order must be: Completed, Paid or Cancel";
@@ -50,6 +50,31 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                     }
                 }
+                var lastAddendumDetail =  await _orderRepo.getDetailOrder(tblLastAddendum.OrderId, 2, tblLastAddendum.Id);
+                foreach (var item in model.sizeProductItems)
+                {
+                    foreach (var addendumItem in lastAddendumDetail.order.addendums.LastOrDefault().addendumProductItems)
+                    {
+                        if (item.sizeProductItemID != addendumItem.sizeProductItems.sizeProductItemID)
+                        {
+                            result.IsSuccess = true;
+                            result.Message = "Item: " + item.sizeProductItemID + " đang không được thuê";
+                            return result;
+                        }
+                        if (item.sizeProductItemID == addendumItem.sizeProductItems.sizeProductItemID)
+                        {
+                            if (item.quantity > addendumItem.Quantity)
+                            {
+                                result.IsSuccess = true;
+                                result.Message = "Item: " + item.sizeProductItemID + " số lượng gia hạn phải ít hơn số lượng dăng được thuê";
+                                return result;
+                            }
+
+                        }
+                    }
+                }
+
+
 
                 #endregion
 
@@ -59,18 +84,6 @@ namespace GreeenGarden.Business.Service.OrderService
                     if (item.sizeProductItemID != null)
                     {
                         var sizeProItem = await _orderRepo.GetSizeProductItem((Guid)item.sizeProductItemID);
-                        if (item.quantity > sizeProItem.Quantity)
-                        {
-                            result.IsSuccess = false;
-                            result.Message = "Product " + sizeProItem.Id + " don't enough quantity!";
-                            return result;
-                        }
-                        if (sizeProItem.Status.ToLower() != Status.ACTIVE)
-                        {
-                            result.IsSuccess = false;
-                            result.Message = "Product " + sizeProItem.Id + " don't exist!";
-                            return result;
-                        }
 
                         if (startRentDate < DateTime.Now || startRentDate > DateTime.Now.AddDays(14))
                         {
@@ -308,8 +321,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         totalPrice = totalPrice * rangeDate;
                         /*******************Tính các khoản liên quan*********************/
                         deposit = totalPrice / 100 * 20;
-                        if (totalPrice < 1000000) transportFee = totalPrice / 100 * 5;
-                        if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = totalPrice / 100 * 3;
+                        if (totalPrice < 1000000) transportFee = (totalPrice/rangeDate) / 100 * 20;
+                        if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = (totalPrice / rangeDate) / 100 * 10;
                         if (totalPrice >= 1000000) transportFee = 0;
 
                         /*******************Add record**********************************/
@@ -513,7 +526,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
-        }//notyet
+        }
 
         public async Task<ResultModel> getDetailOrder(string token, Guid orderId)
         {

@@ -21,14 +21,14 @@ namespace GreeenGarden.API.Controllers
 
 
 
-        //[HttpPost("add-addendum-by-order")]
-        //public async Task<IActionResult> addAddendumByOrder([FromBody] addendumToAddByOrderModel model)
-        //{
-        //    string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-        //    var result = await _service.addAddendumByOrder(token, model);
-        //    if (result.IsSuccess) return Ok(result);
-        //    return BadRequest(result);
-        //}
+        [HttpPost("add-addendum-by-order")]
+        public async Task<IActionResult> addAddendumByOrder([FromBody] addendumToAddByOrderModel model)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.addAddendumByOrder(token, model);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
 
         [HttpGet("get-detail-addendum")]
         public async Task<IActionResult> getDetailAddendum(Guid addendumId)
@@ -56,15 +56,6 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
-
-        /*[HttpPost("complete-addendum")]
-        public async Task<IActionResult> completeAddendum(Guid addendumID)
-        {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.completeAddendum(token, addendumID);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
-        }*/
 
         [HttpGet("get-list-order-by-manager")]
         public async Task<IActionResult> getListOrderByManager([FromQuery] PaginationRequestModel paginationRequestModel)
