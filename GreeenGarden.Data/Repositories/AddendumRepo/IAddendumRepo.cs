@@ -8,6 +8,7 @@ namespace GreeenGarden.Data.Repositories.AddendumRepo
 	public interface IAddendumRepo : IRepository<TblAddendum>
     {
 		public Task<ResultModel> UpdateAddendumPayment(Guid addendumId, double payAmount);
-	}
+        public Task<ResultModel> UpdateDepositAddendumPayment(Guid addendumId, double payAmount);
+    }
 }
 

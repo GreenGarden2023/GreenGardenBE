@@ -23,17 +23,11 @@ namespace GreeenGarden.Business.Service.PaymentService
             _transactionRepo = transactionRepo;
         }
 
-        public async Task<ResultModel> CreateAddendumPayment(Guid addendumId, double amount)
+        public async Task<ResultModel> CreateRentDepositPayment(Guid addendumId)
         {
             ResultModel resultModel = new ResultModel();
             TblAddendum tblAddendum = await _addendumRepo.Get(addendumId);
-            if (amount <= 1000)
-            {
-                resultModel.Code = 400;
-                resultModel.IsSuccess = false;
-                resultModel.Message = "Amount must be greater than 1000";
-                return resultModel;
-            }
+            double amount = 0;
             if (tblAddendum == null)
             {
                 resultModel.Code = 400;
@@ -41,15 +35,12 @@ namespace GreeenGarden.Business.Service.PaymentService
                 resultModel.Message = "Addendum Id invalid.";
                 return resultModel;
             }
-
-            if (tblAddendum.RemainMoney < amount)
+            else
             {
-                resultModel.Code = 400;
-                resultModel.IsSuccess = false;
-                resultModel.Message = "The pay amount exceed the remain amount";
-                return resultModel;
+                amount = (double)tblAddendum.Deposit;
             }
-            
+
+
             JsonSerializerSettings jsonSerializerSettings = new()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -71,7 +62,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             string serectkey = secrets[2];
             string orderInfo = "GreenGarden Payment";
             string redirectUrl = "https://ggarden.shop";
-            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-addendum-payment-reponse";
+            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-rent-deposit-payment-reponse";
             string requestType = "captureWallet";
             string orderId = Guid.NewGuid().ToString();
             string requestId = Guid.NewGuid().ToString();
@@ -122,25 +113,41 @@ namespace GreeenGarden.Business.Service.PaymentService
             return resultModel;
         }
 
-        public async Task<ResultModel> CreateOrderPayment(Guid payOrderID)
+        public async Task<ResultModel> CreateRentPayment(Guid addendumId, double amount)
         {
             ResultModel resultModel = new ResultModel();
-            var order = await _orderRepo.Get(payOrderID);
-            if(order == null)
+            TblAddendum tblAddendum = await _addendumRepo.Get(addendumId);
+            if (amount <= 1000)
             {
                 resultModel.Code = 400;
                 resultModel.IsSuccess = false;
-                resultModel.Message = "Order Id invalid.";
+                resultModel.Message = "Amount must be greater than 1000";
                 return resultModel;
             }
+            if (tblAddendum == null)
+            {
+                resultModel.Code = 400;
+                resultModel.IsSuccess = false;
+                resultModel.Message = "Addendum Id invalid.";
+                return resultModel;
+            }
+
+            if (tblAddendum.RemainMoney < amount)
+            {
+                resultModel.Code = 400;
+                resultModel.IsSuccess = false;
+                resultModel.Message = "The pay amount exceed the remain amount";
+                return resultModel;
+            }
+            
             JsonSerializerSettings jsonSerializerSettings = new()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             };
             MoMoOrderModel moMoOrderModel = new MoMoOrderModel
             {
-                OrderId = payOrderID,
-                PayAmount = (double)order.TotalPrice
+                OrderId = addendumId,
+                PayAmount = amount
             };
             var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                 jsonSerializerSettings);
@@ -154,14 +161,14 @@ namespace GreeenGarden.Business.Service.PaymentService
             string serectkey = secrets[2];
             string orderInfo = "GreenGarden Payment";
             string redirectUrl = "https://ggarden.shop";
-            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-order-payment-reponse";
+            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-rent-payment-reponse";
             string requestType = "captureWallet";
             string orderId = Guid.NewGuid().ToString();
             string requestId = Guid.NewGuid().ToString();
             string extraData = base64OrderString;
 
             string rawHash = "accessKey=" + accessKey +
-                "&amount=" + order.TotalPrice +
+                "&amount=" + amount +
                 "&extraData=" + extraData +
                 "&ipnUrl=" + ipnUrl +
                 "&orderId=" + orderId +
@@ -184,7 +191,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 { "partnerName", "Test" },
                 { "storeId", "MomoTestStore" },
                 { "requestId", requestId },
-                { "amount", order.TotalPrice },
+                { "amount", amount },
                 { "orderId", orderId },
                 { "orderInfo", orderInfo },
                 { "redirectUrl", redirectUrl },
@@ -200,13 +207,48 @@ namespace GreeenGarden.Business.Service.PaymentService
             JObject resJSON = JObject.Parse(responseFromMomo);
             resultModel.Code = 200;
             resultModel.IsSuccess = true;
-            resultModel.Data = resJSON;
             resultModel.Message = "Create payment success.";
+            resultModel.Data = resJSON;
             return resultModel;
-
         }
 
-        public async Task<bool> ProcessAddendumPayment(MoMoResponseModel moMoResponseModel)
+        public async Task<bool> ProcessRentDepositPayment(MoMoResponseModel moMoResponseModel)
+        {
+            var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
+            var orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
+            var orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
+            if (orderModel != null && moMoResponseModel.resultCode == 0)
+            {
+                var updateAddendum = await _addendumRepo.UpdateDepositAddendumPayment(orderModel.OrderId, orderModel.PayAmount);
+                if (updateAddendum.IsSuccess == true)
+                {
+                    TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        AddendumId = orderModel.OrderId,
+                        Amount = orderModel.PayAmount,
+                        Type = "Rent deposit payment",
+                        Status = TransactionType.RECEIVED,
+                        DatetimePaid = hoChiMinhTime,
+                        PaymentId = PaymentMethod.MOMO
+
+                    };
+                    await _transactionRepo.Insert(tblTransaction);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            };
+        }
+
+        public async Task<bool> ProcessRentPayment(MoMoResponseModel moMoResponseModel)
         {
             var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
             var orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
@@ -222,7 +264,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     {
                         AddendumId = orderModel.OrderId,
                         Amount = orderModel.PayAmount,
-                        Type = "Addendum payment",
+                        Type = "Rent payment",
                         Status = TransactionType.RECEIVED,
                         DatetimePaid = hoChiMinhTime,
                         PaymentId = PaymentMethod.MOMO
@@ -242,40 +284,5 @@ namespace GreeenGarden.Business.Service.PaymentService
             }
         }
 
-        public async Task<bool> ProcessOrderPayment(MoMoResponseModel moMoResponseModel)
-        {
-            var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
-            var orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
-            var orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
-            if (orderModel != null && moMoResponseModel.resultCode == 0)
-            {
-                var updateOrder = await _orderRepo.UpdateOrderPayment(orderModel.OrderId);
-                if(updateOrder == true)
-                {
-                    TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-                    DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
-                    TblTransaction tblTransaction = new TblTransaction
-                    {
-                        OrderId = orderModel.OrderId,
-                        Amount = orderModel.PayAmount,
-                        Type = "Order payment",
-                        Status = TransactionType.RECEIVED,
-                        DatetimePaid = hoChiMinhTime,
-                        PaymentId = PaymentMethod.MOMO
-
-                    };
-                    await _transactionRepo.Insert(tblTransaction);
-                    return true;
-                }else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                return false;
-            }
-
-        }
     }
 }

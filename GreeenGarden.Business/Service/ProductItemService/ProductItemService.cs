@@ -169,7 +169,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                         }
                     }
-                }
+                }                  
                 if (productItemModel != null && listSizeProductItemModel.Any())
                 {
                     ProductItemResModel responseProdItem = new ProductItemResModel()

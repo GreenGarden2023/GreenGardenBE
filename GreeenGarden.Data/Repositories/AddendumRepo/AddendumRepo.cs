@@ -54,7 +54,7 @@ namespace GreeenGarden.Data.Repositories.AddendumRepo
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
-                    result.Message = "Update addendum payment failed.";
+                    result.Message = "Addendum not found.";
                     return result;
                 }
 
@@ -62,7 +62,43 @@ namespace GreeenGarden.Data.Repositories.AddendumRepo
             {
                 result.Code = 400;
                 result.IsSuccess = false;
+                result.Data = e.ToString();
                 result.Message = "Update addendum payment failed.";
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> UpdateDepositAddendumPayment(Guid addendumId, double payAmount)
+        {
+            ResultModel result = new ResultModel();
+            try
+            {
+                var addendum = await _context.TblAddendums.Where(x => x.Id.Equals(addendumId)).FirstOrDefaultAsync();
+                if (addendum != null)
+                {
+                    addendum.RemainMoney = addendum.RemainMoney - payAmount;
+                    addendum.Status = Status.READY;
+                    _context.TblAddendums.Update(addendum);
+                    await _context.SaveChangesAsync();
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Message = "Addendum complete.";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Addendum not found.";
+                    return result;
+                }
+                }
+            catch (Exception e)
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Update addendum deposit payment failed.";
+                result.Data = e.ToString();
                 return result;
             }
         }
