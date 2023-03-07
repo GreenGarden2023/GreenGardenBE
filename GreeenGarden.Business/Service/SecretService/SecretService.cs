@@ -92,6 +92,34 @@ namespace GreeenGarden.Business.Service.SecretService
 
             return tokenSecret;
         }
+        public static string GetStorageKey()
+        {
+            string tokenSecret = null;
+            try
+            {
+                SecretClientOptions options = new SecretClientOptions()
+                {
+                    Retry =
+                    {
+                        Delay= TimeSpan.FromSeconds(2),
+                        MaxDelay = TimeSpan.FromSeconds(16),
+                        MaxRetries = 5,
+                        Mode = RetryMode.Exponential
+                    }
+                };
+                var client = new SecretClient(new Uri(URI), new DefaultAzureCredential(), options);
+
+                KeyVaultSecret secret = client.GetSecret("StorageKey");
+
+                tokenSecret = secret.Value;
+            }
+            catch (Exception ex)
+            {
+                ex.ToString();
+            }
+
+            return tokenSecret;
+        }
         public static List<string> GetPaymentSecrets()
         {
             List<string> secrets = new List<string>();

@@ -100,7 +100,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         {
                             Id = Guid.NewGuid(),
                             SizeId = sizeModel.SizeId,
-                            ProductItemId = productItemModel.ProductId,
+                            ProductItemId = productItemModel.Id,
                             RentPrice = sizeModel.RentPrice,
                             SalePrice = sizeModel.SalePrice,
                             Quantity = sizeModel.Quantity,
@@ -110,29 +110,22 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         var insertSizeProdItem = await _sizeProductItemRepo.Insert(sizeProductItem);
                         if (insertSizeProdItem == Guid.Empty)
                         {
-                            var sizeProductItemURL = await _imgService.UploadImages(sizeModel.Images);
-                            if (sizeProductItemURL.Code == 200)
-                            {
-                                foreach (string url in (List<string>)sizeProductItemURL.Data)
-                                {
-                                    TblImage tblImage = new TblImage()
-                                    {
-                                        ImageUrl = url,
-                                        SizeProductItemId = sizeProductItem.Id
-                                    };
-                                    await _imageRepo.Insert(tblImage);
-                                }
-                            }
-
-
-
                             result.IsSuccess = false;
                             result.Code = 400;
-                            result.Message = "Add product item size failed.";
+                            result.Message = "Add size product item size failed.";
                             return result;
                         }
                         else
                         {
+                            foreach (string url in sizeModel.ImagesUrls)
+                            {
+                                TblImage tblImage = new TblImage()
+                                {
+                                    ImageUrl = url,
+                                    SizeProductItemId = sizeProductItem.Id
+                                };
+                                await _imageRepo.Insert(tblImage);
+                            }
                             var sizeGet = await _sizeRepo.Get(sizeProductItem.SizeId);
                             if (sizeGet != null)
                             {
@@ -141,23 +134,43 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                     Id = sizeGet.Id,
                                     SizeName = sizeGet.Name
                                 };
-                                SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
+                                var sizeProductIMGs = await _imageRepo.GetImgUrlSizeProduct(sizeProductItem.Id);
+                                if (sizeProductIMGs.Any())
                                 {
-                                    Id = sizeProductItem.Id,
-                                    Size = size,
-                                    RentPrice = sizeProductItem.RentPrice,
-                                    SalePrice = sizeProductItem.SalePrice,
-                                    Quantity = sizeProductItem.Quantity,
-                                    Content = sizeProductItem.Content,
-                                    Status = sizeProductItem.Status
-                                };
-                                listSizeProductItemModel.Add(sizeProductItemModel);
+                                    SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
+                                    {
+                                        Id = sizeProductItem.Id,
+                                        Size = size,
+                                        RentPrice = sizeProductItem.RentPrice,
+                                        SalePrice = sizeProductItem.SalePrice,
+                                        Quantity = sizeProductItem.Quantity,
+                                        Content = sizeProductItem.Content,
+                                        Status = sizeProductItem.Status,
+                                        ImagesURL = sizeProductIMGs
+                                    };
+                                    listSizeProductItemModel.Add(sizeProductItemModel);
+                                }
+                                else
+                                {
+                                    SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
+                                    {
+                                        Id = sizeProductItem.Id,
+                                        Size = size,
+                                        RentPrice = sizeProductItem.RentPrice,
+                                        SalePrice = sizeProductItem.SalePrice,
+                                        Quantity = sizeProductItem.Quantity,
+                                        Content = sizeProductItem.Content,
+                                        Status = sizeProductItem.Status,
+                                    };
+                                    listSizeProductItemModel.Add(sizeProductItemModel);
+
+                                }
                             }
 
                         }
                     }
-                }
-                if (productItemModel != null && !listSizeProductItemModel.Any())
+                }                  
+                if (productItemModel != null && listSizeProductItemModel.Any())
                 {
                     ProductItemResModel responseProdItem = new ProductItemResModel()
                     {
@@ -191,7 +204,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         IsForSale = productTbl.IsForSale
                     };
                     TblCategory categoryTBL = await _categoryRepo.Get(productModel.CategoryId);
-                    var getCateImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.Id);
+                    var getCateImgURL = await _imageRepo.GetImgUrlCategory(categoryTBL.Id);
                     string cateImgURL = "";
                     if (getCateImgURL != null)
                     {
@@ -203,11 +216,11 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     }
                     CategoryModel categoryModel = new CategoryModel()
                     {
-                        Id = productTbl.Id,
-                        Name = productTbl.Name,
-                        Description = productTbl.Description,
-                        Status = productTbl.Status,
-                        ImgUrl = prodImgURL,
+                        Id = categoryTBL.Id,
+                        Name = categoryTBL.Name,
+                        Description = categoryTBL.Description,
+                        Status = categoryTBL.Status,
+                        ImgUrl = cateImgURL,
 
                     };
                     ProductItemCreateResponseResult productItemCreateResponseResult = new ProductItemCreateResponseResult()

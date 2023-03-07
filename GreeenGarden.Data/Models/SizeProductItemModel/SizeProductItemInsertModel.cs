@@ -21,7 +21,7 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
         public string Status { get; set; } = null!;
 
         [Required]
-        public List<IFormFile> Images { get; set; } = null!;
+        public List<string> ImagesUrls { get; set; } = null!;
     }
 }
 
