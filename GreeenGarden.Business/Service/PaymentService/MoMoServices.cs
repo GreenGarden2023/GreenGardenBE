@@ -123,12 +123,11 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             ResultModel resultModel = new ResultModel();
             TblAddendum tblAddendum = await _addendumRepo.Get(addendumId);
-
-            if(tblAddendum.StartDateRent == null && tblAddendum.EndDateRent == null)
+            if (tblAddendum.Status.Equals(Status.UNPAID))
             {
                 resultModel.Code = 400;
                 resultModel.IsSuccess = false;
-                resultModel.Message = "This addendum is for sale, please set isRent to false.";
+                resultModel.Message = "Please complete deposit first.";
                 return resultModel;
             }
             if (tblAddendum.RemainMoney == 0)
@@ -237,12 +236,18 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             ResultModel resultModel = new ResultModel();
             TblAddendum tblAddendum = await _addendumRepo.Get(addendumId);
-            double amount = (double)tblAddendum.RemainMoney;
             if (tblAddendum == null)
             {
                 resultModel.Code = 400;
                 resultModel.IsSuccess = false;
                 resultModel.Message = "Addendum Id invalid.";
+                return resultModel;
+            }
+            if (tblAddendum.Status.Equals(Status.UNPAID))
+            {
+                resultModel.Code = 400;
+                resultModel.IsSuccess = false;
+                resultModel.Message = "Please complete deposit first.";
                 return resultModel;
             }
             if (tblAddendum.RemainMoney == 0)
@@ -252,7 +257,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 resultModel.Message = "Addendum is fully paid.";
                 return resultModel;
             }
-
+            double amount = (double)tblAddendum.RemainMoney;
             JsonSerializerSettings jsonSerializerSettings = new()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
