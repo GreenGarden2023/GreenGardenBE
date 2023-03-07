@@ -32,12 +32,12 @@ namespace GreeenGarden.Data.Repositories.AddendumRepo
                         return result;
                     }else if (addendum.RemainMoney == 0)
                     {
-                        addendum.Status = Status.COMPLETED;
+                        addendum.Status = Status.PAID;
                         _context.TblAddendums.Update(addendum);
                         await _context.SaveChangesAsync();
                         result.Code = 200;
                         result.IsSuccess = true;
-                        result.Message = "Addendum complete.";
+                        result.Message = "Addendum is paid.";
                         return result;
                     }
                     else
