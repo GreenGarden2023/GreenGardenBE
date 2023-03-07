@@ -336,7 +336,16 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public async Task<TblAddendum> getLastAddendum(Guid orderId)
         {
-            return await _context.TblAddendums.Where(x => x.OrderId == orderId).LastOrDefaultAsync();
+            var addendum = await _context.TblAddendums.Where(x => x.OrderId == orderId).ToListAsync();
+            var result = new TblAddendum();
+            foreach (var item in addendum)
+            {
+                if (item.Id.Equals(addendum[addendum.Count-1].Id))
+                {
+                    return item;
+                }
+            }
+            return result;
         }
 
         public async Task<Page<TblOrder>> GetListOrder(PaginationRequestModel paginationRequestModel)
