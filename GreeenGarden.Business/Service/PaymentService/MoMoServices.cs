@@ -430,7 +430,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     {
                         AddendumId = orderModel.OrderId,
                         Amount = orderModel.PayAmount,
-                        Type = "Rent payment",
+                        Type = "Rent MoMo payment",
                         Status = TransactionType.RECEIVED,
                         DatetimePaid = hoChiMinhTime,
                         PaymentId = PaymentMethod.MOMO
@@ -531,7 +531,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     {
                         AddendumId = orderModel.OrderId,
                         Amount = orderModel.PayAmount,
-                        Type = "Rent payment",
+                        Type = "Sale MoMo payment",
                         Status = TransactionType.RECEIVED,
                         DatetimePaid = hoChiMinhTime,
                         PaymentId = PaymentMethod.MOMO
