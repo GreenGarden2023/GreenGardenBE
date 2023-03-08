@@ -13,12 +13,10 @@ namespace GreeenGarden.Business.Service.PaymentService
 {
     public class MoMoServices : IMoMoService
     {
-        private readonly IOrderRepo _orderRepo;
         private readonly IAddendumRepo _addendumRepo;
         private readonly ITransactionRepo _transactionRepo;
         public MoMoServices(IOrderRepo orderRepo, IAddendumRepo addendumRepo, ITransactionRepo transactionRepo )
         {
-            _orderRepo = orderRepo;
             _addendumRepo = addendumRepo;
             _transactionRepo = transactionRepo;
         }
@@ -346,7 +344,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     {
                         AddendumId = orderModel.OrderId,
                         Amount = orderModel.PayAmount,
-                        Type = "Rent deposit payment",
+                        Type = "MoMo deposit payment",
                         Status = TransactionType.RECEIVED,
                         DatetimePaid = hoChiMinhTime,
                         PaymentId = PaymentMethod.MOMO
@@ -363,6 +361,56 @@ namespace GreeenGarden.Business.Service.PaymentService
             else
             {
                 return false;
+            };
+        }
+
+        public async Task<ResultModel> ProcessDepositPaymentCash(Guid addendumId)
+        {
+            ResultModel result = new ResultModel();
+            var orderModel = await _addendumRepo.Get(addendumId);
+            if (orderModel != null )
+            {
+                if (!orderModel.Status.Equals(Status.UNPAID)) {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Addendum already paid deposit.";
+                    return result;
+                }
+                var updateAddendum = await _addendumRepo.UpdateDepositAddendumPayment(orderModel.Id, (double)orderModel.Deposit);
+                if (updateAddendum.IsSuccess == true)
+                {
+                    TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        AddendumId = orderModel.Id,
+                        Amount = orderModel.Deposit,
+                        Type = "Cash deposit payment",
+                        Status = TransactionType.RECEIVED,
+                        DatetimePaid = hoChiMinhTime,
+                        PaymentId = PaymentMethod.CASH
+
+                    };
+                    await _transactionRepo.Insert(tblTransaction);
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Message = "Deposit payment success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Deposit payment failed.";
+                    return result;
+                }
+            }
+            else
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "Addendum not found.";
+                return result;
             };
         }
 
@@ -402,6 +450,71 @@ namespace GreeenGarden.Business.Service.PaymentService
             }
         }
 
+        public async Task<ResultModel> ProcessRentPaymentCash(Guid addendumId, double? amount)
+        {
+            ResultModel result = new ResultModel();
+            if (amount < 1000 ||  amount == null)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "Amount must be greater than 1000.";
+                return result;
+            }
+            var orderModel = await _addendumRepo.Get(addendumId);
+            if (amount > orderModel.RemainMoney)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "Amount exceed remain amount.";
+                return result;
+            }
+            if (!orderModel.Status.Equals(Status.READY))
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "Please complete deposit payment first.";
+                return result;
+            }
+            if (orderModel != null)
+            {
+                var updateAddendum = await _addendumRepo.UpdateRentAddendumPayment(orderModel.Id, (double)amount);
+                if (updateAddendum.IsSuccess == true)
+                {
+                    TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        AddendumId = orderModel.Id,
+                        Amount = amount,
+                        Type = "Rent cash payment",
+                        Status = TransactionType.RECEIVED,
+                        DatetimePaid = hoChiMinhTime,
+                        PaymentId = PaymentMethod.MOMO
+
+                    };
+                    await _transactionRepo.Insert(tblTransaction);
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Message = "Rent payment success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Rent payment failed.";
+                    return result;
+                }
+            }
+            else
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "Addendum not found.";
+                return result;
+            }
+        }
+
         public async Task<bool> ProcessSalePayment(MoMoResponseModel moMoResponseModel)
         {
             var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
@@ -435,6 +548,59 @@ namespace GreeenGarden.Business.Service.PaymentService
             else
             {
                 return false;
+            }
+        }
+
+        public async Task<ResultModel> ProcessSalePaymentCash(Guid addendumId)
+        {
+            ResultModel result = new ResultModel();
+            var orderModel = await _addendumRepo.Get(addendumId);
+            
+            if (orderModel != null)
+            {
+                if (!orderModel.Status.Equals(Status.READY))
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Please complete deposit payment first.";
+                    return result;
+                }
+                double amount = (double)orderModel.RemainMoney;
+                var updateAddendum = await _addendumRepo.UpdateSaleAddendumPayment(orderModel.Id, amount);
+                if (updateAddendum.IsSuccess == true)
+                {
+                    TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        AddendumId = orderModel.Id,
+                        Amount = amount,
+                        Type = "Sale cash payment",
+                        Status = TransactionType.RECEIVED,
+                        DatetimePaid = hoChiMinhTime,
+                        PaymentId = PaymentMethod.MOMO
+
+                    };
+                    await _transactionRepo.Insert(tblTransaction);
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Message = "Sale payment success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Sale payment failed.";
+                    return result;
+                }
+            }
+            else
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "Addendum not found.";
+                return result;
             }
         }
     }

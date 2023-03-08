@@ -10,7 +10,10 @@ namespace GreeenGarden.Business.Service.PaymentService
         public Task<ResultModel> CreateSalePayment(Guid addendumId);
         public Task<bool> ProcessRentPayment(MoMoResponseModel moMoResponseModel);
         public Task<bool> ProcessSalePayment(MoMoResponseModel moMoResponseModel);
+        public Task<ResultModel> ProcessRentPaymentCash(Guid addendumId, double? amount);
+        public Task<ResultModel> ProcessSalePaymentCash(Guid addendumId);
         public Task<ResultModel> CreateDepositPayment(Guid addendumId);
         public Task<bool> ProcessDepositPayment(MoMoResponseModel moMoResponseModel);
+        public Task<ResultModel> ProcessDepositPaymentCash(Guid addendumId);
     }
 }
