@@ -33,6 +33,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblProductItem> TblProductItems { get; set; }
 
+    public virtual DbSet<TblRequest> TblRequests { get; set; }
+
     public virtual DbSet<TblRole> TblRoles { get; set; }
 
     public virtual DbSet<TblSize> TblSizes { get; set; }
@@ -269,7 +271,22 @@ public partial class GreenGardenDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblProductItems_tblProducts");
         });
+<<<<<<< HEAD
 
+=======
+
+        modelBuilder.Entity<TblRequest>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("tblRequest");
+
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Name).HasMaxLength(250);
+        });
+
+>>>>>>> df73b02 (Update dbcontext)
         modelBuilder.Entity<TblRole>(entity =>
         {
             entity.ToTable("tblRoles");
