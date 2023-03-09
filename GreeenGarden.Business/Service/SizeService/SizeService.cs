@@ -44,12 +44,14 @@ namespace GreeenGarden.Business.Service.SizeService
                 var newSize = new TblSize()
                 {
                     Id = Guid.NewGuid(),
+                    Type = sizeCreateModel.SizeType,
                     Name = sizeCreateModel.SizeName
                 };
                 await _sizeRepo.Insert(newSize);
                 var newSizeRes = new SizeResModel()
                 {
                     Id = newSize.Id,
+                    SizeType = newSize.Type,
                     SizeName = newSize.Name
                 };
 
@@ -78,6 +80,7 @@ namespace GreeenGarden.Business.Service.SizeService
                 var viewSize = new SizeResModel()
                 {
                     Id = size.Id,
+                    SizeType= size.Type,
                     SizeName = size.Name
                 };
                 sizeModels.Add(viewSize);

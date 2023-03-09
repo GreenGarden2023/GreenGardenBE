@@ -17,11 +17,15 @@ public partial class TblImage
 
     public Guid? SizeProductItemId { get; set; }
 
+    public Guid? ProductItemId { get; set; }
+
     public virtual TblCategory? Category { get; set; }
 
     public virtual TblFeedBack? Feedback { get; set; }
 
     public virtual TblProduct? Product { get; set; }
+
+    public virtual TblProductItem? ProductItem { get; set; }
 
     public virtual TblSizeProductItem? SizeProductItem { get; set; }
 }

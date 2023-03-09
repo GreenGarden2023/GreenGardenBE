@@ -6,6 +6,7 @@ namespace GreeenGarden.Data.Models.SizeModel
     {
         [Required]
         public string SizeName { get; set; }
+        public bool? SizeType { get; set; }
     }
 }
 
