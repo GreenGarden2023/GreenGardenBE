@@ -17,7 +17,7 @@ namespace GreeenGarden.Data.Models.ProductItemModel
         public string Type { get; set; } = null!;
 
         [Required]
-        public string Image { get; set; } = null!;
+        public List<SizeProductItemInsertModel> sizeModelList { get; set; } = null!;
     }
 }
 

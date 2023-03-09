@@ -7,6 +7,7 @@ namespace GreeenGarden.Business.Service.ImageService
     public interface IImageService
     {
         public Task<ResultModel> UploadImages(IList<IFormFile> files);
+        public Task<ResultModel> UploadImagesFolder(IList<IFormFile> files, string folderName);
         public Task<ResultModel> DeleteImages(List<string> fileURLs);
         public Task<ResultModel> DeleteImagesByURLs(List<string> fileURLs);
         public Task<ResultModel> UploadAnImage(IFormFile file);

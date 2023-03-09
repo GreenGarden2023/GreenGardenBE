@@ -56,7 +56,6 @@ namespace GreeenGarden.Business.Service.ImageService
             }
 
         }
-
         public async Task<ResultModel> UploadAnImage(IFormFile file)
         {
             ResultModel resultsModel = new ResultModel();
@@ -95,7 +94,6 @@ namespace GreeenGarden.Business.Service.ImageService
             }
 
         }
-
         public async Task<ResultModel> DeleteImages(List<string> fileURLs)
         {
             ResultModel resultsModel = new ResultModel();
@@ -119,7 +117,6 @@ namespace GreeenGarden.Business.Service.ImageService
                 return resultsModel;
             }
         }
-
         public async Task<ResultModel> UpdateImageCategory(Guid CategoryId, IFormFile file)
         {
             var result = new ResultModel();
@@ -153,7 +150,6 @@ namespace GreeenGarden.Business.Service.ImageService
                 return result;
             }
         }
-
         public async Task<ResultModel> UpdateImageProduct(Guid productID, IFormFile file)
         {
             var result = new ResultModel();
@@ -196,7 +192,6 @@ namespace GreeenGarden.Business.Service.ImageService
                 return result;
             }
         }
-
         public async Task<FileData> DownloadAnImage(string imgURL)
         {
             try
@@ -262,6 +257,52 @@ namespace GreeenGarden.Business.Service.ImageService
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
+            }
+        }
+
+        public async Task<ResultModel> UploadImagesFolder(IList<IFormFile> files, string folderName)
+        {
+            ResultModel resultsModel = new ResultModel();
+            List<string> urls = new List<string>();
+            try
+            {
+                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
+                var blobs = blobContainerClient.GetBlobsAsync(prefix: folderName + "/");
+                await foreach (BlobItem blob in blobs)
+                {
+                    resultsModel.IsSuccess = false;
+                    resultsModel.Code = 400;
+                    resultsModel.Message = "Folder exists.";
+                    return resultsModel;
+                }
+                foreach (IFormFile file in files)
+                {
+                    using (var stream = new MemoryStream())
+                    {
+                        Guid id = Guid.NewGuid();
+                        string format = Path.GetExtension(file.FileName);
+                        await file.CopyToAsync(stream);
+                        stream.Position = 0;
+                        await blobContainerClient.UploadBlobAsync($"{folderName}/{id}{format}", stream);
+                        urls.Add(defaultURL + id + format);
+                    }
+                }
+                resultsModel.IsSuccess = true;
+                resultsModel.Code = 200;
+                resultsModel.Data = urls;
+                resultsModel.Message = "Upload Success";
+
+
+                return resultsModel;
+            }
+            catch (Exception ex)
+            {
+
+                resultsModel.IsSuccess = false;
+                resultsModel.Code = 400;
+                resultsModel.Data = ex.ToString();
+                resultsModel.Message = "Upload Failed";
+                return resultsModel;
             }
         }
 

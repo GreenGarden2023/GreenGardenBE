@@ -1,7 +1,6 @@
 ﻿using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
-using GreeenGarden.Data.Models.SizeProductItemModel;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,15 +24,6 @@ namespace GreeenGarden.API.Controllers
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.CreateProductItem(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
-        }
-        [HttpPost("create-product-item-size")]
-        [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> CreateProductItemSize([FromBody] SizeProductItemInsertModel model)
-        {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.CreateProductItemSize(token, model);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

@@ -56,20 +56,6 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             return result;
         }
 
-        public async Task<TblImage> GetImgUrlProductItem(Guid productItemID)
-        {
-            var query = from c in context.TblImages
-                        where c.ProductItemId.Equals(productItemID)
-                        select new { c };
-            var result = await query.Select(x => new TblImage()
-            {
-                Id = x.c.Id,
-                ProductId = x.c.ProductId,
-                ImageUrl = x.c.ImageUrl
-            }).FirstOrDefaultAsync();
-            return result;
-        }
-
         public async Task<List<string>> GetImgUrlSizeProduct(Guid sizeproductItemId)
         {
             List<string> urls = new List<string>();
@@ -127,29 +113,6 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
                 return newProdIMG;
             }
 
-        }
-
-        public async Task<TblImage> UpdateImgForProductItem(Guid ProductItemID, string ImgUrl)
-        {
-            var imgProduct = await _context.TblImages.Where(x => x.ProductItemId.Equals(ProductItemID)).FirstOrDefaultAsync();
-            if (imgProduct != null)
-            {
-                imgProduct.ImageUrl = ImgUrl;
-                _context.Update(imgProduct);
-                await _context.SaveChangesAsync();
-                return imgProduct;
-            }
-            else
-            {
-                var newProdIMG = new TblImage
-                {
-                    ImageUrl = ImgUrl,
-                    ProductItemId = ProductItemID
-                };
-                await _context.TblImages.AddAsync(newProdIMG);
-                await _context.SaveChangesAsync();
-                return newProdIMG;
-            }
         }
 
         public async Task<bool> UpdateImgForSizeProductItem(Guid SizeProductItemId, List<string> ImgUrls)
