@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GreeenGarden.API.Controllers
 {
     [Route("size/")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class SizeController : Controller
     {
