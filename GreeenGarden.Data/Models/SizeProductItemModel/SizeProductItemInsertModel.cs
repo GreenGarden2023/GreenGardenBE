@@ -8,6 +8,9 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
         [Required]
         public Guid SizeId { get; set; }
 
+        [Required]
+        public Guid ProductItemID { get; set; }
+
         public double? RentPrice { get; set; }
 
         public double? SalePrice { get; set; }
@@ -16,10 +19,8 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
 
         public string? Content { get; set; }
 
-        [Required]
         public string Status { get; set; } = null!;
 
-        [Required]
         public List<string> ImagesUrls { get; set; } = null!;
     }
 }
