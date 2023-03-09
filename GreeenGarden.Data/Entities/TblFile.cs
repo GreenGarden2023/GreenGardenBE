@@ -1,10 +1,13 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblFile
 {
     public Guid Id { get; set; }
 
-    public string? FileUrl { get; set; }
+    public string FileUrl { get; set; } = null!;
 
-    public Guid? ReportDetailId { get; set; }
+    public Guid ReportId { get; set; }
 }

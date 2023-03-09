@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Entities;
 
@@ -23,6 +25,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblFeedBack> TblFeedBacks { get; set; }
 
+    public virtual DbSet<TblFile> TblFiles { get; set; }
+
     public virtual DbSet<TblImage> TblImages { get; set; }
 
     public virtual DbSet<TblOrder> TblOrders { get; set; }
@@ -32,6 +36,12 @@ public partial class GreenGardenDbContext : DbContext
     public virtual DbSet<TblProduct> TblProducts { get; set; }
 
     public virtual DbSet<TblProductItem> TblProductItems { get; set; }
+
+    public virtual DbSet<TblReport> TblReports { get; set; }
+
+    public virtual DbSet<TblRequest> TblRequests { get; set; }
+
+    public virtual DbSet<TblReward> TblRewards { get; set; }
 
     public virtual DbSet<TblRole> TblRoles { get; set; }
 
@@ -171,6 +181,16 @@ public partial class GreenGardenDbContext : DbContext
                 .HasConstraintName("FK_tblFeedBacks_tblUsers");
         });
 
+        modelBuilder.Entity<TblFile>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("tblFile");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.ReportId).HasColumnName("ReportID");
+        });
+
         modelBuilder.Entity<TblImage>(entity =>
         {
             entity.ToTable("tblImages");
@@ -183,6 +203,8 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ImageUrl).HasColumnName("ImageURL");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            entity.Property(e => e.ReportId).HasColumnName("ReportID");
+            entity.Property(e => e.RequestId).HasColumnName("RequestID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.CategoryId)
@@ -212,8 +234,14 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.RequestId).HasColumnName("RequestID");
+            entity.Property(e => e.RewardId).HasColumnName("RewardID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.VoucherId).HasColumnName("VoucherID");
+
+            entity.HasOne(d => d.Reward).WithMany(p => p.TblOrders)
+                .HasForeignKey(d => d.RewardId)
+                .HasConstraintName("FK_tblOrders_tblReward");
 
             entity.HasOne(d => d.User).WithMany(p => p.TblOrders)
                 .HasForeignKey(d => d.UserId)
@@ -268,6 +296,38 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblProductItems_tblProducts");
+        });
+
+        modelBuilder.Entity<TblReport>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("tblReport");
+
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Name).HasMaxLength(250);
+        });
+
+        modelBuilder.Entity<TblRequest>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("tblRequest");
+
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Name).HasMaxLength(250);
+        });
+
+        modelBuilder.Entity<TblReward>(entity =>
+        {
+            entity.ToTable("tblReward");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
         });
 
         modelBuilder.Entity<TblRole>(entity =>

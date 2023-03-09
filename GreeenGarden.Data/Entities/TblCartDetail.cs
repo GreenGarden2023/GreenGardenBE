@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblCartDetail
 {

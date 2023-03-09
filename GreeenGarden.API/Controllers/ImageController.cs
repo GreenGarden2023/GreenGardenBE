@@ -17,8 +17,8 @@ namespace GreeenGarden.API.Controllers
         {
             _imageService = imageService;
         }
-        [HttpPost("upload-images-folder")]
-        public async Task<ActionResult<ResultModel>> Upload([Required][FromForm] IList<IFormFile> files, [Required] string folderName)
+        [HttpPost("upload-images")]
+        public async Task<ActionResult<ResultModel>> Upload([Required][FromForm] IList<IFormFile> files)
         {
             if (!files.Any())
             {
@@ -31,7 +31,7 @@ namespace GreeenGarden.API.Controllers
             };
             try
             {
-                var result = await _imageService.UploadImagesFolder(files, folderName);
+                var result = await _imageService.UploadImages(files);
                 if (result.IsSuccess == false)
                 {
                     return BadRequest(result);

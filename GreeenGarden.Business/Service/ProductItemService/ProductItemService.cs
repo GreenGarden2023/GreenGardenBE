@@ -68,110 +68,44 @@ namespace GreeenGarden.Business.Service.ProductItemService
             var result = new ResultModel();
             try
             {
-                if (!productItemInsertModel.sizeModelList.Any())
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Please enter atleast 1 product item size.";
-                    return result;
-                }
                 TblProductItem productItemModel = new TblProductItem
                 {
                     Id = Guid.NewGuid(),
                     Name = productItemInsertModel.Name,
                     Description = productItemInsertModel.Description,
                     ProductId = productItemInsertModel.ProductId,
-                    Type = productItemInsertModel.Type
+                    Type = productItemInsertModel.Type,
+                    
                 };
                 var insertProdItem = await _proItemRepo.Insert(productItemModel);
-                List<SizeProductItemResModel> listSizeProductItemModel = new List<SizeProductItemResModel>();
                 if (insertProdItem == Guid.Empty)
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Create product item failed.";
+                    result.Message = "Add product item failed.";
                     return result;
                 }
-                else
-                {
-                    foreach (SizeProductItemInsertModel sizeModel in productItemInsertModel.sizeModelList)
+                else {
+                    TblImage tblImage = new TblImage
                     {
-                        TblSizeProductItem sizeProductItem = new TblSizeProductItem
-                        {
-                            Id = Guid.NewGuid(),
-                            SizeId = sizeModel.SizeId,
-                            ProductItemId = productItemModel.Id,
-                            RentPrice = sizeModel.RentPrice,
-                            SalePrice = sizeModel.SalePrice,
-                            Quantity = sizeModel.Quantity,
-                            Content = sizeModel.Content,
-                            Status = sizeModel.Status
-                        };
-                        var insertSizeProdItem = await _sizeProductItemRepo.Insert(sizeProductItem);
-                        if (insertSizeProdItem == Guid.Empty)
-                        {
-                            result.IsSuccess = false;
-                            result.Code = 400;
-                            result.Message = "Add size product item size failed.";
-                            return result;
-                        }
-                        else
-                        {
-                            foreach (string url in sizeModel.ImagesUrls)
-                            {
-                                TblImage tblImage = new TblImage()
-                                {
-                                    ImageUrl = url,
-                                    SizeProductItemId = sizeProductItem.Id
-                                };
-                                await _imageRepo.Insert(tblImage);
-                            }
-                            var sizeGet = await _sizeRepo.Get(sizeProductItem.SizeId);
-                            if (sizeGet != null)
-                            {
-                                var size = new SizeResModel()
-                                {
-                                    Id = sizeGet.Id,
-                                    SizeName = sizeGet.Name
-                                };
-                                var sizeProductIMGs = await _imageRepo.GetImgUrlSizeProduct(sizeProductItem.Id);
-                                if (sizeProductIMGs.Any())
-                                {
-                                    SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
-                                    {
-                                        Id = sizeProductItem.Id,
-                                        Size = size,
-                                        RentPrice = sizeProductItem.RentPrice,
-                                        SalePrice = sizeProductItem.SalePrice,
-                                        Quantity = sizeProductItem.Quantity,
-                                        Content = sizeProductItem.Content,
-                                        Status = sizeProductItem.Status,
-                                        ImagesURL = sizeProductIMGs
-                                    };
-                                    listSizeProductItemModel.Add(sizeProductItemModel);
-                                }
-                                else
-                                {
-                                    SizeProductItemResModel sizeProductItemModel = new SizeProductItemResModel()
-                                    {
-                                        Id = sizeProductItem.Id,
-                                        Size = size,
-                                        RentPrice = sizeProductItem.RentPrice,
-                                        SalePrice = sizeProductItem.SalePrice,
-                                        Quantity = sizeProductItem.Quantity,
-                                        Content = sizeProductItem.Content,
-                                        Status = sizeProductItem.Status,
-                                    };
-                                    listSizeProductItemModel.Add(sizeProductItemModel);
-
-                                }
-                            }
-
-                        }
-                    }
+                        ImageUrl = productItemInsertModel.ImageURL,
+                        ProductItemId = productItemModel.Id
+                    };
+                    await _imageRepo.Insert(tblImage);
                 }
-                if (productItemModel != null && listSizeProductItemModel.Any())
+
+                if (productItemModel != null)
                 {
+                    var getProdItemImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.Id);
+                    string prodItemImgURL = "";
+                    if (getProdItemImgURL != null)
+                    {
+                        prodItemImgURL = getProdItemImgURL.ImageUrl;
+                    }
+                    else
+                    {
+                        prodItemImgURL = "";
+                    }
                     ProductItemResModel responseProdItem = new ProductItemResModel()
                     {
                         Id = productItemModel.Id,
@@ -179,10 +113,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Description = productItemModel.Description,
                         ProductId = productItemModel.ProductId,
                         Type = productItemModel.Type,
-                        sizeModelList = listSizeProductItemModel
+                        ImageURL = prodItemImgURL,
                     };
                     TblProduct productTbl = await _proRepo.Get(productItemModel.ProductId);
-                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.Id);
+                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.ProductId);
                     string prodImgURL = "";
                     if (getProdImgURL != null)
                     {
@@ -254,6 +188,178 @@ namespace GreeenGarden.Business.Service.ProductItemService
             }
         }
 
+        public async Task<ResultModel> CreateProductItemSize(string token, SizeProductItemInsertModel sizeProductItemInsertModel)
+        {
+            if (!String.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            var result = new ResultModel();
+            try
+            {
+                var size = await _sizeRepo.Get(sizeProductItemInsertModel.SizeId);
+                if (size == null )
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Size ID invalid.";
+                    return result;
+                }
+                var proItem = await _proItemRepo.Get(sizeProductItemInsertModel.ProductItemID);
+                if (proItem == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Product item ID invalid.";
+                    return result;
+                }
+                TblSizeProductItem tblSizeProductItem = new TblSizeProductItem
+                {
+                    Id = Guid.NewGuid(),
+                    SizeId = sizeProductItemInsertModel.SizeId,
+                    ProductItemId = sizeProductItemInsertModel.ProductItemID,
+                    RentPrice = sizeProductItemInsertModel.RentPrice,
+                    SalePrice = sizeProductItemInsertModel.SalePrice,
+                    Quantity = sizeProductItemInsertModel.Quantity,
+                    Content = sizeProductItemInsertModel.Content,
+                    Status = sizeProductItemInsertModel.Status,
+                };
+                var insertSizeProdItem = await _sizeProductItemRepo.Insert(tblSizeProductItem);
+                if (insertSizeProdItem == Guid.Empty)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Create product item size failed.";
+                    return result;
+                }
+                else
+                {
+                    foreach (string url in sizeProductItemInsertModel.ImagesUrls)
+                    {
+                        TblImage tblImage = new TblImage
+                        {
+                            ImageUrl = url,
+                            SizeProductItemId = tblSizeProductItem.Id,
+                        };
+                        await _imageRepo.Insert(tblImage);
+                    }
+                }
+                var prodItem = await _proItemRepo.Get(sizeProductItemInsertModel.ProductItemID);
+                if (prodItem != null)
+                {
+                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(sizeProductItemInsertModel.ProductItemID, null);
+                    var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(sizeProductItemInsertModel.ProductItemID);
+                    string prodItemImgURL = "";
+                    if (getProdItemImgURL != null)
+                    {
+                        prodItemImgURL = getProdItemImgURL.ImageUrl;
+                    }
+                    else
+                    {
+                        prodItemImgURL = "";
+                    }
+                    ProductItemResModel productItemResModel = new ProductItemResModel()
+                    {
+                        Id = prodItem.Id,
+                        Name = prodItem.Name,
+                        Description = prodItem.Description,
+                        ProductId = prodItem.ProductId,
+                        Type = prodItem.Type,
+                        ImageURL = prodItemImgURL,
+                        sizeModelList = sizeGet
+                    };
+                    var productGet = await _proRepo.Get(productItemResModel.ProductId);
+                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
+                    string prodImgURL = "";
+                    if (getProdImgURL != null)
+                    {
+                        prodImgURL = getProdImgURL.ImageUrl;
+                    }
+                    else
+                    {
+                        prodImgURL = "";
+                    }
+                    ProductModel productModel = new ProductModel()
+                    {
+                        Id = productGet.Id,
+                        Name = productGet.Name,
+                        Description = productGet.Description,
+                        Status = productGet.Status,
+                        CategoryId = productGet.CategoryId,
+                        ImgUrl = prodImgURL,
+                        IsForRent = productGet.IsForRent,
+                        IsForSale = productGet.IsForSale
+                    };
+                    ///
+                    var cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                    var getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                    string cateImgURL = "";
+                    if (getCateImgURL != null)
+                    {
+                        cateImgURL = getProdImgURL.ImageUrl;
+                    }
+                    else
+                    {
+                        cateImgURL = "";
+                    }
+                    CategoryModel categoryModel = new CategoryModel()
+                    {
+                        Id = cateGet.Id,
+                        Name = cateGet.Name,
+                        Description = cateGet.Description,
+                        Status = cateGet.Status,
+                        ImgUrl = cateImgURL,
+
+                    };
+                    ProductItemDetailResponseResult productItemDetailResponseResult = new ProductItemDetailResponseResult
+                    {
+                        Category = categoryModel,
+                        Product = productModel,
+                        ProductItem = productItemResModel
+                    };
+                    result.Message = "Get Detail successful.";
+                    result.IsSuccess = true;
+                    result.Data = productItemDetailResponseResult;
+                    result.Code = 200;
+                    return result;
+                }
+                else
+                {
+                    result.Message = "Get Detail failed.";
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
         public async Task<ResultModel> GetDetailProductItem(Guid productItemID, string? sizeProductItemStatus)
         {
             var result = new ResultModel();
@@ -263,6 +369,16 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 if (prodItem != null)
                 {
                     var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemID, sizeProductItemStatus);
+                    var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemID);
+                    string prodItemImgURL = "";
+                    if (getProdItemImgURL != null)
+                    {
+                        prodItemImgURL = getProdItemImgURL.ImageUrl;
+                    }
+                    else
+                    {
+                        prodItemImgURL = "";
+                    }
                     ProductItemResModel productItemResModel = new ProductItemResModel()
                     {
                         Id = prodItem.Id,
@@ -270,6 +386,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Description = prodItem.Description,
                         ProductId = prodItem.ProductId,
                         Type = prodItem.Type,
+                        ImageURL = prodItemImgURL,
                         sizeModelList = sizeGet
                     };
                     var productGet = await _proRepo.Get(productItemResModel.ProductId);
@@ -350,9 +467,8 @@ namespace GreeenGarden.Business.Service.ProductItemService
             try
             {
                 var productGet = await _proRepo.Get(productID);
-                if (productID == Guid.Empty || productID == null)
+                if (productID == Guid.Empty || productID == null || productGet == null)
                 {
-
                     result.Message = "Can not find product.";
                     result.IsSuccess = false;
                     result.Code = 400;
@@ -365,8 +481,17 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     foreach (var pi in prodItemList.Results)
                     {
                         var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(pi.Id, status);
-                        if (sizeGet.Any())
+                        var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
+                        string prodItemImgURL = "";
+                        if (getProdItemImgURL != null)
                         {
+                            prodItemImgURL = getProdItemImgURL.ImageUrl;
+                        }
+                        else
+                        {
+                            prodItemImgURL = "";
+                        }
+                        
                             ProductItemResModel pItem = new ProductItemResModel()
                             {
                                 Id = pi.Id,
@@ -374,11 +499,12 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                 Description = pi.Description,
                                 ProductId = pi.ProductId,
                                 Type = pi.Type,
+                                ImageURL = prodItemImgURL,
                                 sizeModelList = sizeGet
                             };
 
                             dataList.Add(pItem);
-                        }
+                       
 
                     }
                     ///
@@ -480,6 +606,13 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     };
                 }
                 var updateProItem = await _proItemRepo.UpdateProductItem(productItemModel);
+                var oldImage = await _imageRepo.GetImgUrlProductItem(productItemModel.Id);
+                if (oldImage != null)
+                {
+                    List<string> url = new List<string> { oldImage.ImageUrl};
+                    var delete = await _imgService.DeleteImagesByURLs(url);
+                }
+                var updateNewImage = await _imageRepo.UpdateImgForProductItem(productItemModel.Id, productItemModel.ImageURL);
                 if (updateProItem == true)
                 {
                     var updateResult = await _proItemRepo.Get(productItemModel.Id);

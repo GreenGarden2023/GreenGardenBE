@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblImage
 {
@@ -15,6 +18,10 @@ public partial class TblImage
     public Guid? SizeProductItemId { get; set; }
 
     public Guid? ProductItemId { get; set; }
+
+    public Guid? RequestId { get; set; }
+
+    public Guid? ReportId { get; set; }
 
     public virtual TblCategory? Category { get; set; }
 
