@@ -18,6 +18,10 @@ public partial class TblSizeProductItem
 
     public string Status { get; set; } = null!;
 
+    public virtual TblProductItem ProductItem { get; set; } = null!;
+
+    public virtual TblSize Size { get; set; } = null!;
+
     public virtual ICollection<TblAddendumProductItem> TblAddendumProductItems { get; } = new List<TblAddendumProductItem>();
 
     public virtual ICollection<TblCartDetail> TblCartDetails { get; } = new List<TblCartDetail>();
