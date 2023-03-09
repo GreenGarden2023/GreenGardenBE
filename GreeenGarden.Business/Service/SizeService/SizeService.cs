@@ -91,5 +91,43 @@ namespace GreeenGarden.Business.Service.SizeService
             result.Data = sizeModels;
             return result;
         }
+
+        public async Task<ResultModel> UpdateSizes(SizeUpdateModel model, string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+
+                var res = await _sizeRepo.UpdateSizes(model);
+                if (!res)
+                {
+                    result.IsSuccess = false;
+                    return result;
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = model;
+                result.Message = "Update successfully";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }

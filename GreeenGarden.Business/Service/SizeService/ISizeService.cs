@@ -7,5 +7,6 @@ namespace GreeenGarden.Business.Service.SizeService
     {
         public Task<ResultModel> CreateSize(SizeCreateModel sizeCreateModel, string token);
         public Task<ResultModel> GetSizes();
+        public Task<ResultModel> UpdateSizes(SizeUpdateModel model, string token);
     }
 }
