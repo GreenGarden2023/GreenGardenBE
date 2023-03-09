@@ -43,5 +43,14 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpDelete("delete-size")]
+        public async Task<IActionResult> DeleteSizes(Guid sizeID)
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.DeleteSizes(sizeID, token);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

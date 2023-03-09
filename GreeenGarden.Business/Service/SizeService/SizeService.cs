@@ -71,6 +71,43 @@ namespace GreeenGarden.Business.Service.SizeService
             return result;
         }
 
+        public async Task<ResultModel> DeleteSizes(Guid sizeID, string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+
+                var res = await _sizeRepo.DeleteSizes(sizeID);
+                if (!res)
+                {
+                    result.IsSuccess = false;
+                    return result;
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Delete successfully";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> GetSizes()
         {
             var sizes = await _sizeRepo.GetProductItemSizes();

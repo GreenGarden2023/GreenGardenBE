@@ -8,6 +8,7 @@ namespace GreeenGarden.Data.Repositories.SizeRepo
     {
         Task<List<TblSize>> GetProductItemSizes();
         Task<bool> UpdateSizes(SizeUpdateModel model);
+        Task<bool> DeleteSizes(Guid sizeID);
 
     }
 }
