@@ -6,7 +6,6 @@ using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace GreeenGarden.Data.Repositories.OrderRepo
 {
@@ -340,7 +339,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             var result = new TblAddendum();
             foreach (var item in addendum)
             {
-                if (item.Id.Equals(addendum[addendum.Count-1].Id))
+                if (item.Id.Equals(addendum[addendum.Count - 1].Id))
                 {
                     return item;
                 }

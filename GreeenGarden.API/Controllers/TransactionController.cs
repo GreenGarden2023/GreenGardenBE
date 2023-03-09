@@ -1,5 +1,4 @@
 ﻿using GreeenGarden.Business.Service.TransactionService;
-using GreeenGarden.Data.Models.TransactionModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers

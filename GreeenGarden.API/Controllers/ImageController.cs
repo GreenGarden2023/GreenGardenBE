@@ -1,9 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using GreeenGarden.Business.Service.ImageService;
-using GreeenGarden.Data.Models.FileModel;
+﻿using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Data.Models.ResultModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -20,7 +18,7 @@ namespace GreeenGarden.API.Controllers
             _imageService = imageService;
         }
         [HttpPost("upload-images-folder")]
-        public async Task<ActionResult<ResultModel>> Upload([Required][FromForm]IList<IFormFile> files, [Required]string folderName)
+        public async Task<ActionResult<ResultModel>> Upload([Required][FromForm] IList<IFormFile> files, [Required] string folderName)
         {
             if (!files.Any())
             {

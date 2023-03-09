@@ -169,7 +169,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
                         }
                     }
-                }                  
+                }
                 if (productItemModel != null && listSizeProductItemModel.Any())
                 {
                     ProductItemResModel responseProdItem = new ProductItemResModel()
@@ -350,7 +350,8 @@ namespace GreeenGarden.Business.Service.ProductItemService
             try
             {
                 var productGet = await _proRepo.Get(productID);
-                if (productID == Guid.Empty || productID == null) {
+                if (productID == Guid.Empty || productID == null)
+                {
 
                     result.Message = "Can not find product.";
                     result.IsSuccess = false;
@@ -387,7 +388,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     .RecordCount(prodItemList.RecordCount)
                     .PageCount(prodItemList.PageCount);
                     ///
-                    
+
                     var getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
                     string prodImgURL = "";
                     if (getProdImgURL != null)

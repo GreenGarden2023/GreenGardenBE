@@ -1,8 +1,7 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.MoMoModel
+﻿namespace GreeenGarden.Data.Models.MoMoModel
 {
-	public class MoMoResponseModel
-	{
+    public class MoMoResponseModel
+    {
         public string? partnerCode { get; set; }
         public string? orderId { get; set; }
         public string? requestId { get; set; }
@@ -16,6 +15,6 @@ namespace GreeenGarden.Data.Models.MoMoModel
         public long responseTime { get; set; }
         public string? extraData { get; set; }
         public string? signature { get; set; }
-	}
+    }
 }
 

@@ -1,5 +1,4 @@
-﻿using Azure;
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;

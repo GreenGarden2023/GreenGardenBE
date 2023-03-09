@@ -15,11 +15,11 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             _context = context;
         }
 
-        public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID , string? type)
+        public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID, string? type)
         {
             if (String.IsNullOrEmpty(type))
             {
-                return await _context.TblProductItems.Where(x=> x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
 
             }
             else

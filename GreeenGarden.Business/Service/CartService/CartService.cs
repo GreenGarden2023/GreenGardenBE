@@ -5,7 +5,6 @@ using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.OrderRepo;
-using System.Collections.Generic;
 
 namespace GreeenGarden.Business.Service.CartService
 {
@@ -27,7 +26,7 @@ namespace GreeenGarden.Business.Service.CartService
             var result = new ResultModel();
             try
             {
-                if (model.rentItems.Count>1)
+                if (model.rentItems.Count > 1)
                 {
                     for (int i = 0; i < model.rentItems.Count; i++)
                     {
@@ -122,7 +121,7 @@ namespace GreeenGarden.Business.Service.CartService
                                 result.Message = "Product " + sizeProductItem.Id + " don't enough quantity!";
                                 return result;
                             }
-                            if ( sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.RentPrice == 0)
+                            if (sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.RentPrice == 0)
                             {
                                 result.Code = 400;
                                 result.IsSuccess = false;
@@ -140,7 +139,7 @@ namespace GreeenGarden.Business.Service.CartService
                             await _cartRepo.AddProductItemToCart(newCartDetail);
                             //show
                             var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
-                            
+
                             var ItemRequest = new ItemRequest()
                             {
                                 sizeProductItem = sizeProductItem,

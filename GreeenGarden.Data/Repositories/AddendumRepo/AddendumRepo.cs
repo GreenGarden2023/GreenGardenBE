@@ -1,5 +1,4 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
@@ -7,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.AddendumRepo
 {
-	public class AddendumRepo : Repository<TblAddendum>, IAddendumRepo
+    public class AddendumRepo : Repository<TblAddendum>, IAddendumRepo
     {
         private readonly GreenGardenDbContext _context;
         public AddendumRepo(GreenGardenDbContext context) : base(context)
@@ -21,16 +20,17 @@ namespace GreeenGarden.Data.Repositories.AddendumRepo
             try
             {
                 var addendum = await _context.TblAddendums.Where(x => x.Id.Equals(addendumId)).FirstOrDefaultAsync();
-                if(addendum != null)
+                if (addendum != null)
                 {
                     addendum.RemainMoney = addendum.RemainMoney - payAmount;
-                    if(addendum.RemainMoney < 0)
+                    if (addendum.RemainMoney < 0)
                     {
                         result.Code = 400;
                         result.IsSuccess = false;
                         result.Message = "The pay amount exceed the remain amount.";
                         return result;
-                    }else if (addendum.RemainMoney == 0)
+                    }
+                    else if (addendum.RemainMoney == 0)
                     {
                         addendum.Status = Status.PAID;
                         _context.TblAddendums.Update(addendum);
@@ -58,7 +58,8 @@ namespace GreeenGarden.Data.Repositories.AddendumRepo
                     return result;
                 }
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
@@ -92,7 +93,7 @@ namespace GreeenGarden.Data.Repositories.AddendumRepo
                     result.Message = "Addendum not found.";
                     return result;
                 }
-                }
+            }
             catch (Exception e)
             {
                 result.Code = 400;

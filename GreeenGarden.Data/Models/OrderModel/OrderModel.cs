@@ -1,6 +1,4 @@
-﻿using GreeenGarden.Data.Entities;
-
-namespace GreeenGarden.Data.Models.OrderModel
+﻿namespace GreeenGarden.Data.Models.OrderModel
 {
 
 
@@ -22,7 +20,8 @@ namespace GreeenGarden.Data.Models.OrderModel
 
     // 23.03.05
 
-    public class user { 
+    public class user
+    {
         public Guid userID { set; get; }
         public string? userName { set; get; }
         public string? fullName { set; get; }
@@ -80,10 +79,10 @@ namespace GreeenGarden.Data.Models.OrderModel
     }
     public class addendumProductItemShowModel
     {
-        public Guid addendumProductItemID { set; get; } 
-        public double? sizeProductItemPrice { set; get;}
-        public int? Quantity { set; get;}
-        public sizeProductItemShowModel? sizeProductItems { set; get; }    
+        public Guid addendumProductItemID { set; get; }
+        public double? sizeProductItemPrice { set; get; }
+        public int? Quantity { set; get; }
+        public sizeProductItemShowModel? sizeProductItems { set; get; }
     }
     public class sizeProductItemShowModel
     {

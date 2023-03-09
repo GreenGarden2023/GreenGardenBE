@@ -1,12 +1,11 @@
-﻿using GreeenGarden.Business.Utilities.TokenService;
+﻿using GreeenGarden.Business.Utilities.Convert;
+using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
-using GreeenGarden.Business.Utilities.Convert;
-using System.Security.Claims;
-using GreeenGarden.Data.Models.PaginationModel;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -50,7 +49,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                     }
                 }
-                var lastAddendumDetail =  await _orderRepo.getDetailOrder(tblLastAddendum.OrderId, 2, tblLastAddendum.Id);
+                var lastAddendumDetail = await _orderRepo.getDetailOrder(tblLastAddendum.OrderId, 2, tblLastAddendum.Id);
                 foreach (var item in model.sizeProductItems)
                 {
                     foreach (var addendumItem in lastAddendumDetail.order.addendums.LastOrDefault().addendumProductItems)
@@ -158,7 +157,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
-        } 
+        }
 
         public async Task<ResultModel> changeStatusOrder(string token, Guid orderID, string status)
         {
@@ -268,13 +267,13 @@ namespace GreeenGarden.Business.Service.OrderService
                             }
                         }
                     }
-                } 
+                }
                 #endregion
 
                 #region OrderForRent
                 if (model.rentItems != null)
                 {
-                    if (model.rentItems.Count!=0)
+                    if (model.rentItems.Count != 0)
                     {
                         DateTime startRentDate = ConvertUtil.convertStringToDateTime(model.startRentDate);
                         DateTime endRentDate = ConvertUtil.convertStringToDateTime(model.endRentDate);
@@ -321,7 +320,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         totalPrice = totalPrice * rangeDate;
                         /*******************Tính các khoản liên quan*********************/
                         deposit = totalPrice / 100 * 20;
-                        if (totalPrice < 1000000) transportFee = (totalPrice/rangeDate) / 100 * 20;
+                        if (totalPrice < 1000000) transportFee = (totalPrice / rangeDate) / 100 * 20;
                         if (1000000 <= totalPrice && totalPrice < 10000000) transportFee = (totalPrice / rangeDate) / 100 * 10;
                         if (totalPrice >= 1000000) transportFee = 0;
 
@@ -374,7 +373,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
 
                     }
-                    
+
                 }
                 #endregion
 
@@ -459,7 +458,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
 
                     }
-                    
+
                 }
                 #endregion
 
@@ -596,7 +595,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 foreach (var item in listOrder.Results)
                 {
                     var orderDetail = await _orderRepo.getDetailOrder(item.Id, 1, null);
-                    response.Add(orderDetail);  
+                    response.Add(orderDetail);
                 }
 
                 result.Code = 200;

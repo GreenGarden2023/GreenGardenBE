@@ -15,7 +15,7 @@ namespace GreeenGarden.Business.Service.PaymentService
     {
         private readonly IAddendumRepo _addendumRepo;
         private readonly ITransactionRepo _transactionRepo;
-        public MoMoServices(IOrderRepo orderRepo, IAddendumRepo addendumRepo, ITransactionRepo transactionRepo )
+        public MoMoServices(IOrderRepo orderRepo, IAddendumRepo addendumRepo, ITransactionRepo transactionRepo)
         {
             _addendumRepo = addendumRepo;
             _transactionRepo = transactionRepo;
@@ -25,7 +25,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             ResultModel resultModel = new ResultModel();
             TblAddendum tblAddendum = await _addendumRepo.Get(addendumId);
-            
+
             double amount = 0;
             if (tblAddendum == null)
             {
@@ -157,7 +157,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 resultModel.Message = "The pay amount exceed the remain amount";
                 return resultModel;
             }
-            
+
             JsonSerializerSettings jsonSerializerSettings = new()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -368,9 +368,10 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             ResultModel result = new ResultModel();
             var orderModel = await _addendumRepo.Get(addendumId);
-            if (orderModel != null )
+            if (orderModel != null)
             {
-                if (!orderModel.Status.Equals(Status.UNPAID)) {
+                if (!orderModel.Status.Equals(Status.UNPAID))
+                {
                     result.IsSuccess = false;
                     result.Code = 400;
                     result.Message = "Addendum already paid deposit.";
@@ -422,7 +423,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             if (orderModel != null && moMoResponseModel.resultCode == 0)
             {
                 var updateAddendum = await _addendumRepo.UpdateRentAddendumPayment(orderModel.OrderId, orderModel.PayAmount);
-                if(updateAddendum.IsSuccess == true)
+                if (updateAddendum.IsSuccess == true)
                 {
                     TimeZoneInfo hoChiMinhTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                     DateTime hoChiMinhTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, hoChiMinhTimeZone);
@@ -453,7 +454,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         public async Task<ResultModel> ProcessRentPaymentCash(Guid addendumId, double? amount)
         {
             ResultModel result = new ResultModel();
-            if (amount < 1000 ||  amount == null)
+            if (amount < 1000 || amount == null)
             {
                 result.IsSuccess = false;
                 result.Code = 400;
@@ -555,7 +556,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             ResultModel result = new ResultModel();
             var orderModel = await _addendumRepo.Get(addendumId);
-            
+
             if (orderModel != null)
             {
                 if (!orderModel.Status.Equals(Status.READY))

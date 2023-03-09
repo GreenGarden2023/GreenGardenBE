@@ -43,7 +43,7 @@ namespace GreeenGarden.Data.Models.CartModel
     public class AddToCartModel
     {
         public List<ItemResponse> rentItems { get; set; }
-        public List<ItemResponse> saleItems { get; set; } 
+        public List<ItemResponse> saleItems { get; set; }
     }
     public class ItemResponse
     {

@@ -1,8 +1,4 @@
 ﻿using GreeenGarden.Business.Utilities.TokenService;
-using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Enums;
-using GreeenGarden.Data.Models.ResultModel;
-using GreeenGarden.Data.Models.TransactionModel;
 using GreeenGarden.Data.Repositories.OrderRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 

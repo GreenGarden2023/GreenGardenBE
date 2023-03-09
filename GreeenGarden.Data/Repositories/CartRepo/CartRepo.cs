@@ -27,7 +27,7 @@ namespace GreeenGarden.Data.Repositories.CartRepo
         public async Task<sizeProductItem> GetSizeProductItem(Guid? SizeProductItemID)
         {
             var sizeProItem = await _context.TblSizeProductItems.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
-            var size = await _context.TblSizes.Where(x=>x.Id.Equals(sizeProItem.SizeId)).FirstOrDefaultAsync();
+            var size = await _context.TblSizes.Where(x => x.Id.Equals(sizeProItem.SizeId)).FirstOrDefaultAsync();
             var sizeTemp = new size()
             {
                 id = size.Id,
