@@ -16,6 +16,21 @@ namespace GreeenGarden.Data.Repositories.SizeRepo
             _context = context;
         }
 
+        public async Task<bool> DeleteSizes(Guid sizeID)
+        {
+            try
+            {
+                var tblSize = await _context.TblSizes.Where(x=>x.Id.Equals(sizeID)).FirstOrDefaultAsync();
+                _context.TblSizes.Remove(tblSize);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public async Task<List<TblSize>> GetProductItemSizes()
         {
             return await _context.TblSizes.ToListAsync();
