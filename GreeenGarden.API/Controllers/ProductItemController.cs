@@ -47,7 +47,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("update-product-item")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> UpdateProductItem([FromForm] ProductItemUpdateModel model)
+        public async Task<IActionResult> UpdateProductItem([FromBody] ProductItemUpdateModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.UpdateProductItem(token, model);
@@ -56,7 +56,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("update-size-product-item")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> UpdateSizeProductItem([FromForm] SizeProductItemUpdateModel model)
+        public async Task<IActionResult> UpdateSizeProductItem([FromBody] SizeProductItemUpdateModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
             var result = await _service.UpdateSizeProductItem(token, model);
