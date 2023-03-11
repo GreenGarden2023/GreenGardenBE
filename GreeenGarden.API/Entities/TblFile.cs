@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GreeenGarden.Data.Entities;
+namespace GreeenGarden.API.Entities;
 
 public partial class TblFile
 {

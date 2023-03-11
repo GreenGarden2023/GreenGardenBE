@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GreeenGarden.Data.Entities;
+namespace GreeenGarden.API.Entities;
 
 public partial class TblRequest
 {
@@ -13,17 +13,13 @@ public partial class TblRequest
 
     public string? Phone { get; set; }
 
-    public string? TreeName { get; set; }
-
-    public int? Quantity { get; set; }
-
     public DateTime? CreateDate { get; set; }
-
-    public string? Descripton { get; set; }
 
     public virtual ICollection<TblImage> TblImageReportNavigations { get; } = new List<TblImage>();
 
     public virtual ICollection<TblImage> TblImageRequests { get; } = new List<TblImage>();
+
+    public virtual ICollection<TblRequestDetail> TblRequestDetails { get; } = new List<TblRequestDetail>();
 
     public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();
 
