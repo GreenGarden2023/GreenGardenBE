@@ -18,7 +18,7 @@ namespace GreeenGarden.API.Controllers
             _imageService = imageService;
         }
         [HttpPost("upload-images")]
-        public async Task<ActionResult<ResultModel>> Upload([Required][FromForm] IList<IFormFile> files)
+        public async Task<ActionResult<ResultModel>> Upload([Required][FromForm] List<IFormFile> files)
         {
             if (!files.Any())
             {
