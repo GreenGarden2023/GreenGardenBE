@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Business.Service.OrderService;
+﻿using System.ComponentModel.DataAnnotations;
+using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,22 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             ResultModel result = await _orderService.CreateRentOrder(token, rentOrderModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-rent-orders")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetRentOrders()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetRentOrders(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-rent-order-detail")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetRentOrdersDetail([Required] Guid rentOrderDetailID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetRentOrderDetail(token, rentOrderDetailID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

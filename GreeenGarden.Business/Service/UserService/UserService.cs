@@ -136,6 +136,7 @@ namespace GreeenGarden.Business.Service.UserService
             {
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.RoleName),
                 new Claim("rolename", user.RoleName),
+                new Claim("userid", user.ID.ToString()),
                 new Claim("username", user.UserName),
                 new Claim("email", user.Email),
             };

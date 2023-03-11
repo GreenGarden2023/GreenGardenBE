@@ -317,6 +317,11 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.ReferenceOrderId).HasColumnName("ReferenceOrderID");
             entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.TblRentOrders)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_tblRentOrder_tblUser");
         });
 
         modelBuilder.Entity<TblRentOrderDetail>(entity =>

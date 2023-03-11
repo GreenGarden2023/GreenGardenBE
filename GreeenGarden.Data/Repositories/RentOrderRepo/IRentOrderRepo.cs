@@ -5,7 +5,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
 {
 	public interface IRentOrderRepo : IRepository<TblRentOrder>
 	{
-		
+		Task<List<TblRentOrder>> GetRentOrders(Guid userID);
 	}
 }
 

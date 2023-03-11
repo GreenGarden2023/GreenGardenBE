@@ -64,7 +64,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 double deposit = 0;
                 int rewardPointGain = 0;
                 double discountAmount = 0;
-                numberRentDays = (rentOrderModel.EndDateRent - rentOrderModel.StartDateRent).TotalDays;
+                numberRentDays = Math.Ceiling((rentOrderModel.EndDateRent - rentOrderModel.StartDateRent).TotalDays);
                 if (numberRentDays <1)
                 {
                     result.IsSuccess = false;
@@ -131,9 +131,11 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 deposit = totalOrderAmount * 0.2;
                 rewardPointGain = (int)Math.Ceiling((totalOrderAmount * 0.01)/1000);
+                string userID = _decodeToken.Decode(token, "userid");
                 TblRentOrder tblRentOrder = new TblRentOrder
                 {
                     Id = Guid.NewGuid(),
+                    UserId = Guid.Parse(userID),
                     TransportFee = transportFee,
                     StartDateRent = rentOrderModel.StartDateRent,
                     EndDateRent = rentOrderModel.EndDateRent,
@@ -202,6 +204,152 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.Data = rentOrderResModel;
                 result.Message = "Create rent order successful.";
                 return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
+        public async Task<ResultModel> GetRentOrderDetail(string token, Guid rentOrderId)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(rentOrderId);
+                string userID = _decodeToken.Decode(token, "userid");
+                if (!tblRentOrder.UserId.Equals(Guid.Parse(userID)))
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "You can only view your order.";
+                    return result;
+                }
+                else
+                {
+                    List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderId);
+                    RentOrderResModel rentOrderResModel = new RentOrderResModel
+                    {
+                        Id = tblRentOrder.Id,
+                        TransportFee = tblRentOrder.TransportFee,
+                        StartDateRent = tblRentOrder.StartDateRent,
+                        EndDateRent = tblRentOrder.EndDateRent,
+                        Deposit = tblRentOrder.Deposit,
+                        TotalPrice = tblRentOrder.TotalPrice,
+                        Status = tblRentOrder.Status,
+                        RemainMoney = tblRentOrder.RemainMoney,
+                        RewardPointGain = tblRentOrder.RewardPointGain,
+                        RewardPointUsed = tblRentOrder.RewardPointUsed,
+                        ReferenceOrderId = tblRentOrder.ReferenceOrderId,
+                        DiscountAmount = tblRentOrder.DiscountAmount,
+                        RentOrderDetailList = rentOrderDetailResModels
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = rentOrderResModel;
+                    result.Message = "Get rent order detail successful.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
+        public async Task<ResultModel> GetRentOrders(string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                string userID = _decodeToken.Decode(token, "userid");
+                List<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrders(Guid.Parse(userID));
+                List<RentOrderResModel> resList = new List<RentOrderResModel>();
+                if (listTblRentOrder.Any())
+                {
+                    foreach(TblRentOrder order in listTblRentOrder)
+                    {
+                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                        RentOrderResModel rentOrderResModel = new RentOrderResModel
+                        {
+                            Id = order.Id,
+                            TransportFee = order.TransportFee,
+                            StartDateRent = order.StartDateRent,
+                            EndDateRent = order.EndDateRent,
+                            Deposit = order.Deposit,
+                            TotalPrice = order.TotalPrice,
+                            Status = order.Status,
+                            RemainMoney = order.RemainMoney,
+                            RewardPointGain = order.RewardPointGain,
+                            RewardPointUsed = order.RewardPointUsed,
+                            ReferenceOrderId = order.ReferenceOrderId,
+                            DiscountAmount = order.DiscountAmount,
+                            RentOrderDetailList = rentOrderDetailResModels
+                        };
+                        resList.Add(rentOrderResModel);
+                    }
+                }
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = resList;
+                result.Message = "Get rent orders successful.";
+                return result;
+
             }
             catch (Exception e)
             {

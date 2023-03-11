@@ -2,6 +2,7 @@
 {
     public class UserLoginResModel
     {
+        public Guid ID { get; set; }
 
         public string UserName { get; set; } = null!;
 

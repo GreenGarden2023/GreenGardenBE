@@ -29,7 +29,11 @@ public partial class TblRentOrder
 
     public double? DiscountAmount { get; set; }
 
+    public Guid? UserId { get; set; }
+
     public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
+
+    public virtual TblUser? User { get; set; }
 }
