@@ -286,7 +286,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ProductId = prodItem.ProductId,
                         Type = prodItem.Type,
                         ImageURL = prodItemImgURL,
-                        sizeModelList = sizeGet
+                        ProductItemDetail = sizeGet
                     };
                     var productGet = await _proRepo.Get(productItemResModel.ProductId);
                     var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
@@ -365,7 +365,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
         public async Task<ResultModel> GetDetailProductItem(Guid productItemID, string? sizeProductItemStatus)
         {
             var result = new ResultModel();
-            if (productItemID != null && productItemID != Guid.Empty)
+            if ( productItemID != Guid.Empty)
             {
                 var prodItem = await _proItemRepo.Get(productItemID);
                 if (prodItem != null)
@@ -390,7 +390,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ProductId = prodItem.ProductId,
                         Type = prodItem.Type,
                         ImageURL = prodItemImgURL,
-                        sizeModelList = sizeGet
+                        ProductItemDetail = sizeGet
                     };
                     var productGet = await _proRepo.Get(productItemResModel.ProductId);
                     var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
@@ -470,7 +470,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             try
             {
                 var productGet = await _proRepo.Get(productID);
-                if (productID == Guid.Empty || productID == null || productGet == null)
+                if (productID == Guid.Empty || productGet == null)
                 {
                     result.Message = "Can not find product.";
                     result.IsSuccess = false;
@@ -504,7 +504,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                 ProductId = pi.ProductId,
                                 Type = pi.Type,
                                 ImageURL = prodItemImgURL,
-                                sizeModelList = sizeGet
+                                ProductItemDetail = sizeGet
                             };
 
                             dataList.Add(pItem);
@@ -628,7 +628,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Description = updateResult.Description,
                         ProductId = updateResult.ProductId,
                         Type = updateResult.Type,
-                        sizeModelList = sizeGet
+                        ProductItemDetail = sizeGet
                     };
 
                     result.IsSuccess = true;
