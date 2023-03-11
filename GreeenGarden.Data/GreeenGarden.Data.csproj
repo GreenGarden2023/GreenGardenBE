@@ -10,6 +10,11 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>1701;1702;IL2121;CS8629;CS8618;CS8603;CS8602;CS8600;CS8603;CS8604;CS8601;CS8625;</NoWarn>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1701;1702;IL2121;CS8629;CS8618;CS8603;CS8602;CS8600;CS8603;CS8604;CS8601;CS8625;</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <Folder Include="Entities\" />
     <Folder Include="Utilities\" />
