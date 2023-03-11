@@ -188,12 +188,13 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Quantity = productItemDetailModel.Quantity,
                     Status = productItemDetailModel.Status,
                 };
+                
                 Guid insertSizeProdItem = await _sizeProductItemRepo.Insert(tblProductItemDetail);
                 if (insertSizeProdItem == Guid.Empty)
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Create product item size failed.";
+                    result.Message = "Create Product Item Detail failed.";
                     return result;
                 }
                 else
@@ -211,62 +212,26 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 TblProductItem? prodItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
                 if (prodItem != null)
                 {
-                    List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemDetailModel.ProductItemID, null);
-                    TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemDetailModel.ProductItemID);
-                    string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
-                    ProductItemResModel productItemResModel = new()
-                    {
-                        Id = prodItem.Id,
-                        Name = prodItem.Name,
-                        Description = prodItem.Description,
-                        Content = prodItem.Content,
-                        ProductId = prodItem.ProductId,
-                        Type = prodItem.Type,
-                        ImageURL = prodItemImgURL,
-                        ProductItemDetail = sizeGet
-                    };
-                    TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
-                    TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
-                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
-                    ProductModel productModel = new()
-                    {
-                        Id = productGet.Id,
-                        Name = productGet.Name,
-                        Description = productGet.Description,
-                        Status = productGet.Status,
-                        CategoryId = productGet.CategoryId,
-                        ImgUrl = prodImgURL,
-                        IsForRent = productGet.IsForRent,
-                        IsForSale = productGet.IsForSale
-                    };
-                    ///
-                    TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
-                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
-                    string cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
-                    CategoryModel categoryModel = new()
-                    {
-                        Id = cateGet.Id,
-                        Name = cateGet.Name,
-                        Description = cateGet.Description,
-                        Status = cateGet.Status,
-                        ImgUrl = cateImgURL,
-
-                    };
-                    ProductItemDetailResponseResult productItemDetailResponseResult = new()
-                    {
-                        Category = categoryModel,
-                        Product = productModel,
-                        ProductItem = productItemResModel
-                    };
-                    result.Message = "Get Detail successful.";
+                ProductItemDetailModel resModel = new ProductItemDetailModel
+                {
+                    Id = tblProductItemDetail.Id,
+                    SizeId = tblProductItemDetail.SizeId,
+                    ProductItemID = tblProductItemDetail.ProductItemId,
+                    RentPrice = tblProductItemDetail.RentPrice,
+                    SalePrice = tblProductItemDetail.SalePrice,
+                    Quantity = tblProductItemDetail.Quantity,
+                    Status = tblProductItemDetail.Status,
+                    ImagesUrls = productItemDetailModel.ImagesUrls
+                };
+                    result.Message = "Create Product Item Detail successful.";
                     result.IsSuccess = true;
-                    result.Data = productItemDetailResponseResult;
+                    result.Data = resModel;
                     result.Code = 200;
                     return result;
                 }
                 else
                 {
-                    result.Message = "Get Detail failed.";
+                    result.Message = "Create Product Item Detail failed.";
                     result.IsSuccess = false;
                     result.Code = 400;
                     return result;
