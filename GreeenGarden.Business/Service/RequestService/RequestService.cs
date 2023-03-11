@@ -63,10 +63,18 @@ namespace GreeenGarden.Business.Service.RequestService
                     Phone = requestModel.Phone,
                     CreateDate = DateTime.Now,
                 };
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = productResModel;
+                result.Message = "Create new request successfully";
+                return result;
             }
             catch (Exception)
             {
-           
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
             }
             
         }
