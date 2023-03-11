@@ -12,7 +12,7 @@ namespace GreeenGarden.Business.Service.SecretService
             string conn = null;
             try
             {
-                SecretClientOptions options = new SecretClientOptions()
+                SecretClientOptions options = new()
                 {
                     Retry =
                     {
@@ -22,7 +22,7 @@ namespace GreeenGarden.Business.Service.SecretService
                         Mode = RetryMode.Exponential
                     }
                 };
-                var client = new SecretClient(new Uri(URI), new DefaultAzureCredential(), options);
+                SecretClient client = new(new Uri(URI), new DefaultAzureCredential(), options);
 
                 KeyVaultSecret secret = client.GetSecret("ConnectionString");
 
@@ -30,7 +30,7 @@ namespace GreeenGarden.Business.Service.SecretService
             }
             catch (Exception ex)
             {
-                ex.ToString();
+                _ = ex.ToString();
             }
 
             return conn;
@@ -40,7 +40,7 @@ namespace GreeenGarden.Business.Service.SecretService
             string tokenSecret = "";
             try
             {
-                SecretClientOptions options = new SecretClientOptions()
+                SecretClientOptions options = new()
                 {
                     Retry =
                     {
@@ -50,7 +50,7 @@ namespace GreeenGarden.Business.Service.SecretService
                         Mode = RetryMode.Exponential
                     }
                 };
-                var client = new SecretClient(new Uri(URI), new DefaultAzureCredential(), options);
+                SecretClient client = new(new Uri(URI), new DefaultAzureCredential(), options);
 
                 KeyVaultSecret secret = client.GetSecret("TokenSecret");
 
@@ -59,7 +59,7 @@ namespace GreeenGarden.Business.Service.SecretService
             }
             catch (Exception ex)
             {
-                ex.ToString();
+                _ = ex.ToString();
             }
             return tokenSecret;
 
@@ -69,7 +69,7 @@ namespace GreeenGarden.Business.Service.SecretService
             string tokenSecret = null;
             try
             {
-                SecretClientOptions options = new SecretClientOptions()
+                SecretClientOptions options = new()
                 {
                     Retry =
                     {
@@ -79,7 +79,7 @@ namespace GreeenGarden.Business.Service.SecretService
                         Mode = RetryMode.Exponential
                     }
                 };
-                var client = new SecretClient(new Uri(URI), new DefaultAzureCredential(), options);
+                SecretClient client = new(new Uri(URI), new DefaultAzureCredential(), options);
 
                 KeyVaultSecret secret = client.GetSecret("ImgConnection");
 
@@ -87,7 +87,7 @@ namespace GreeenGarden.Business.Service.SecretService
             }
             catch (Exception ex)
             {
-                ex.ToString();
+                _ = ex.ToString();
             }
 
             return tokenSecret;
@@ -97,7 +97,7 @@ namespace GreeenGarden.Business.Service.SecretService
             string tokenSecret = null;
             try
             {
-                SecretClientOptions options = new SecretClientOptions()
+                SecretClientOptions options = new()
                 {
                     Retry =
                     {
@@ -107,7 +107,7 @@ namespace GreeenGarden.Business.Service.SecretService
                         Mode = RetryMode.Exponential
                     }
                 };
-                var client = new SecretClient(new Uri(URI), new DefaultAzureCredential(), options);
+                SecretClient client = new(new Uri(URI), new DefaultAzureCredential(), options);
 
                 KeyVaultSecret secret = client.GetSecret("StorageKey");
 
@@ -115,20 +115,17 @@ namespace GreeenGarden.Business.Service.SecretService
             }
             catch (Exception ex)
             {
-                ex.ToString();
+                _ = ex.ToString();
             }
 
             return tokenSecret;
         }
         public static List<string> GetPaymentSecrets()
         {
-            List<string> secrets = new List<string>();
-            string partnerCode = null;
-            string accessKey = null;
-            string secretKey = null;
+            List<string> secrets = new();
             try
             {
-                SecretClientOptions options = new SecretClientOptions()
+                SecretClientOptions options = new()
                 {
                     Retry =
                     {
@@ -138,21 +135,21 @@ namespace GreeenGarden.Business.Service.SecretService
                         Mode = RetryMode.Exponential
                     }
                 };
-                var client = new SecretClient(new Uri("https://ggkeyvault2023.vault.azure.net/"), new DefaultAzureCredential(), options);
+                SecretClient client = new(new Uri("https://ggkeyvault2023.vault.azure.net/"), new DefaultAzureCredential(), options);
 
                 KeyVaultSecret partner = client.GetSecret("PartnerCode");
-                partnerCode = partner.Value;
+                string partnerCode = partner.Value;
                 KeyVaultSecret access = client.GetSecret("AccessKey");
-                accessKey = access.Value;
+                string accessKey = access.Value;
                 KeyVaultSecret secret = client.GetSecret("Serectkey");
-                secretKey = secret.Value;
+                string secretKey = secret.Value;
                 secrets.Add(partnerCode);
                 secrets.Add(accessKey);
                 secrets.Add(secretKey);
             }
             catch (Exception ex)
             {
-                ex.ToString();
+                _ = ex.ToString();
             }
 
             return secrets;

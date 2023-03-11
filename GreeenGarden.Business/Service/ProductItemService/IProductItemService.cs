@@ -1,7 +1,7 @@
 ﻿using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Models.ResultModel;
-using GreeenGarden.Data.Models.SizeProductItemModel;
 
 namespace GreeenGarden.Business.Service.ProductItemService
 {

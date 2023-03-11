@@ -23,7 +23,7 @@ namespace GreeenGarden.API.Controllers
         {
             try
             {
-                var result = await _userService.Register(request);
+                ResultModel result = await _userService.Register(request);
                 return result;
             }
             catch (Exception e)
@@ -37,7 +37,7 @@ namespace GreeenGarden.API.Controllers
         {
             try
             {
-                var result = await _userService.Login(request);
+                ResultModel result = await _userService.Login(request);
                 return result;
             }
             catch (Exception e)
@@ -53,8 +53,8 @@ namespace GreeenGarden.API.Controllers
         {
             try
             {
-                string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-                var result = await _userService.GetCurrentUser(token);
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.GetCurrentUser(token);
                 return result;
             }
             catch (Exception e)
@@ -68,8 +68,8 @@ namespace GreeenGarden.API.Controllers
         {
             try
             {
-                string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-                var result = await _userService.UpdateUser(token, userUpdateModel);
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.UpdateUser(token, userUpdateModel);
                 return result;
             }
             catch (Exception e)
@@ -86,7 +86,7 @@ namespace GreeenGarden.API.Controllers
             try
             {
 
-                var result = await _eMailService.SendEmailVerificationOTP(email);
+                ResultModel result = await _eMailService.SendEmailVerificationOTP(email);
 
                 return result;
             }
@@ -103,7 +103,7 @@ namespace GreeenGarden.API.Controllers
         {
             try
             {
-                var result = await _userService.ResetPassword(passwordResetModel);
+                ResultModel result = await _userService.ResetPassword(passwordResetModel);
 
                 return result;
             }

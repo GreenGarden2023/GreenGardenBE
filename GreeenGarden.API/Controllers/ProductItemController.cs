@@ -1,8 +1,7 @@
 ﻿using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ProductItemModel;
-using GreeenGarden.Data.Models.SizeProductItemModel;
-using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -23,53 +22,47 @@ namespace GreeenGarden.API.Controllers
         [Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> CreateProductItem([FromBody] ProductItemInsertModel model)
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.CreateProductItem(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.CreateProductItem(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpPost("create-product-item-detail")]
         [Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> CreateProductItemSize([FromBody] ProductItemDetailModel model)
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.CreateProductItemDetail(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.CreateProductItemDetail(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-product-item")]
         [AllowAnonymous]
         public async Task<IActionResult> GetProductItem([FromQuery] PaginationRequestModel pagingModel, [Required] Guid productID, string? status, string? type)
         {
-            var result = await _service.GetProductItem(pagingModel, productID, status, type);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            Data.Models.ResultModel.ResultModel result = await _service.GetProductItem(pagingModel, productID, status, type);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpPost("update-product-item")]
         [Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> UpdateProductItem([FromBody] ProductItemUpdateModel model)
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.UpdateProductItem(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.UpdateProductItem(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpPost("update-product-item-detail")]
         [Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> UpdateSizeProductItem([FromBody] ProductItemDetailModel model)
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.UpdateProductItemDetail(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.UpdateProductItemDetail(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-product-item-detail")]
         [AllowAnonymous]
         public async Task<IActionResult> GetProductItemDetail([Required] Guid productItemId, string? sizeProductItemStatus)
         {
-            var result = await _service.GetDetailProductItem(productItemId, sizeProductItemStatus);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            Data.Models.ResultModel.ResultModel result = await _service.GetDetailProductItem(productItemId, sizeProductItemStatus);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }

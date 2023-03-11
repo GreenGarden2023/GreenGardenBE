@@ -20,10 +20,8 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
 
         public string getImgByCategory(Guid categoryId)
         {
-            var result = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();
-            if (result == null) return null;
-
-            return result.ImageUrl;
+            TblImage? result = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();
+            return result?.ImageUrl;
         }
 
         public async Task<Page<TblCategory>> GetAllCategory(PaginationRequestModel pagingModel)
@@ -43,13 +41,13 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
 
         public bool checkCategoryNameExist(string categoryName)
         {
-            var result = _context.TblCategories.Where(x => x.Name.Contains(categoryName)).FirstOrDefault();
-            if (result != null) { return true; } else { return false; }
+            TblCategory? result = _context.TblCategories.Where(x => x.Name.Contains(categoryName)).FirstOrDefault();
+            return result != null;
         }
         public bool checkCategoryIDExist(Guid categoryID)
         {
-            var result = _context.TblCategories.Where(x => x.Id.Equals(categoryID)).FirstOrDefault();
-            if (result != null) { return true; } else { return false; }
+            TblCategory? result = _context.TblCategories.Where(x => x.Id.Equals(categoryID)).FirstOrDefault();
+            return result != null;
         }
         public async Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel)
         {
@@ -59,27 +57,27 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
                         where cate.Id.Equals(categoryUpdateModel.ID)
                         select new { cate };
 
-            var category = await query.Select(x => x.cate).FirstOrDefaultAsync();
+            TblCategory? category = await query.Select(x => x.cate).FirstOrDefaultAsync();
             if (category == null)
             {
                 return null;
             }
-            if (!String.IsNullOrEmpty(categoryUpdateModel.Name) && !categoryUpdateModel.Name.Equals(category.Name))
+            if (!string.IsNullOrEmpty(categoryUpdateModel.Name) && !categoryUpdateModel.Name.Equals(category.Name))
             {
                 category.Name = categoryUpdateModel.Name;
             }
-            if (!String.IsNullOrEmpty(categoryUpdateModel.Description) && !categoryUpdateModel.Description.Equals(category.Description))
+            if (!string.IsNullOrEmpty(categoryUpdateModel.Description) && !categoryUpdateModel.Description.Equals(category.Description))
             {
                 category.Description = categoryUpdateModel.Description;
             }
-            if (!String.IsNullOrEmpty(categoryUpdateModel.Status) && !categoryUpdateModel.Status.Equals(category.Status))
+            if (!string.IsNullOrEmpty(categoryUpdateModel.Status) && !categoryUpdateModel.Status.Equals(category.Status))
             {
                 category.Status = categoryUpdateModel.Status;
             }
 
 
-            _context.Update(category);
-            await _context.SaveChangesAsync();
+            _ = _context.Update(category);
+            _ = await _context.SaveChangesAsync();
             return category;
         }
     }

@@ -4,7 +4,7 @@ namespace GreeenGarden.Business.Utilities.TokenService
 {
     public class DecodeToken
     {
-        private JwtSecurityTokenHandler _tokenHandler;
+        private readonly JwtSecurityTokenHandler _tokenHandler;
 
         public DecodeToken()
         {
@@ -13,12 +13,8 @@ namespace GreeenGarden.Business.Utilities.TokenService
 
         public string Decode(string token, string nameClaim)
         {
-            var claim = _tokenHandler.ReadJwtToken(token).Claims.FirstOrDefault(selector => selector.Type.ToString().Equals(nameClaim));
-            if (claim != null)
-            {
-                return claim.Value;
-            }
-            return "Error!!!";
+            System.Security.Claims.Claim? claim = _tokenHandler.ReadJwtToken(token).Claims.FirstOrDefault(selector => selector.Type.ToString().Equals(nameClaim));
+            return claim != null ? claim.Value : "Error!!!";
         }
 
     }

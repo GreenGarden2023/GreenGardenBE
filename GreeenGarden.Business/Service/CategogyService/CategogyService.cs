@@ -29,7 +29,7 @@ namespace GreeenGarden.Business.Service.CategogyService
 
         public async Task<ResultModel> createCategory(string token, CategoryCreateModel categoryCreateModel)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
             if (!userRole.Equals(Commons.MANAGER)
                 && !userRole.Equals(Commons.STAFF))
@@ -41,7 +41,7 @@ namespace GreeenGarden.Business.Service.CategogyService
             }
 
 
-            if (String.IsNullOrEmpty(categoryCreateModel.Name) || categoryCreateModel.Name.Length < 2 || categoryCreateModel.Name.Length > 50)
+            if (string.IsNullOrEmpty(categoryCreateModel.Name) || categoryCreateModel.Name.Length < 2 || categoryCreateModel.Name.Length > 50)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
@@ -67,29 +67,29 @@ namespace GreeenGarden.Business.Service.CategogyService
 
 
                 //Insert Category
-                var newCategory = new TblCategory()
+                TblCategory newCategory = new()
                 {
                     Name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(categoryCreateModel.Name.ToLower()),
                     Id = Guid.NewGuid(),
                     Status = Status.ACTIVE,
                     Description = categoryCreateModel.Description
                 };
-                await _cateRepo.Insert(newCategory);
+                _ = await _cateRepo.Insert(newCategory);
 
-                var imgUploadUrl = await _imgService.UploadAnImage(categoryCreateModel.Image);
+                ResultModel? imgUploadUrl = await _imgService.UploadAnImage(categoryCreateModel.Image);
 
                 if (imgUploadUrl != null)
                 {
-                    var newimgCategory = new TblImage()
+                    TblImage newimgCategory = new()
                     {
                         Id = Guid.NewGuid(),
                         ImageUrl = imgUploadUrl.Data.ToString(),
                         CategoryId = newCategory.Id,
                     };
-                    await _imageRepo.Insert(newimgCategory);
+                    _ = await _imageRepo.Insert(newimgCategory);
 
                 }
-                var categoryToShow = new CategoryModel()
+                CategoryModel categoryToShow = new()
                 {
                     Id = newCategory.Id,
                     Name = newCategory.Name,
@@ -116,10 +116,10 @@ namespace GreeenGarden.Business.Service.CategogyService
 
         public async Task<ResultModel> getAllCategories(PaginationRequestModel pagingModel)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var listCategories = await _cateRepo.GetAllCategory(pagingModel);
+                EntityFrameworkPaginateCore.Page<TblCategory>? listCategories = await _cateRepo.GetAllCategory(pagingModel);
                 if (listCategories == null)
                 {
                     result.IsSuccess = true;
@@ -129,10 +129,10 @@ namespace GreeenGarden.Business.Service.CategogyService
                     return result;
                 }
 
-                List<CategoryModel> dataList = new List<CategoryModel>();
-                foreach (var c in listCategories.Results)
+                List<CategoryModel> dataList = new();
+                foreach (TblCategory c in listCategories.Results)
                 {
-                    var CategoryToShow = new CategoryModel
+                    CategoryModel CategoryToShow = new()
                     {
                         Id = c.Id,
                         Name = c.Name,
@@ -143,7 +143,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     };
                     dataList.Add(CategoryToShow);
                 }
-                var paging = new PaginationResponseModel()
+                PaginationResponseModel paging = new PaginationResponseModel()
 
                     .PageSize(listCategories.PageSize)
                     .CurPage(listCategories.CurrentPage)
@@ -151,7 +151,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     .PageCount(listCategories.PageCount);
 
 
-                var response = new ResponseResult()
+                ResponseResult response = new()
                 {
                     Paging = paging,
                     Result = dataList
@@ -171,10 +171,10 @@ namespace GreeenGarden.Business.Service.CategogyService
 
         public async Task<ResultModel> GetCategoryByStatus(PaginationRequestModel pagingModel, string status)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var listCategories = await _cateRepo.GetCategoryByStatus(pagingModel, status);
+                EntityFrameworkPaginateCore.Page<TblCategory>? listCategories = await _cateRepo.GetCategoryByStatus(pagingModel, status);
                 if (listCategories == null)
                 {
                     result.IsSuccess = true;
@@ -184,10 +184,10 @@ namespace GreeenGarden.Business.Service.CategogyService
                     return result;
                 }
 
-                List<CategoryModel> dataList = new List<CategoryModel>();
-                foreach (var c in listCategories.Results)
+                List<CategoryModel> dataList = new();
+                foreach (TblCategory c in listCategories.Results)
                 {
-                    var CategoryToShow = new CategoryModel
+                    CategoryModel CategoryToShow = new()
                     {
                         Id = c.Id,
                         Name = c.Name,
@@ -198,7 +198,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     };
                     dataList.Add(CategoryToShow);
                 }
-                var paging = new PaginationResponseModel()
+                PaginationResponseModel paging = new PaginationResponseModel()
 
                     .PageSize(listCategories.PageSize)
                     .CurPage(listCategories.CurrentPage)
@@ -206,7 +206,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     .PageCount(listCategories.PageCount);
 
 
-                var response = new ResponseResult()
+                ResponseResult response = new()
                 {
                     Paging = paging,
                     Result = dataList
@@ -226,7 +226,7 @@ namespace GreeenGarden.Business.Service.CategogyService
 
         public async Task<ResultModel> updateCategory(string token, CategoryUpdateModel categoryUpdateModel)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
             if (!userRole.Equals(Commons.MANAGER)
                 && !userRole.Equals(Commons.STAFF))
@@ -236,9 +236,9 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.Message = "User role invalid";
                 return result;
             }
-            if (String.IsNullOrEmpty(categoryUpdateModel.Name) &&
-                String.IsNullOrEmpty(categoryUpdateModel.Description) &&
-                String.IsNullOrEmpty(categoryUpdateModel.Status) &&
+            if (string.IsNullOrEmpty(categoryUpdateModel.Name) &&
+                string.IsNullOrEmpty(categoryUpdateModel.Description) &&
+                string.IsNullOrEmpty(categoryUpdateModel.Status) &&
                  categoryUpdateModel.Image == null)
             {
                 result.Code = 400;
@@ -247,7 +247,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 return result;
             }
 
-            if (String.IsNullOrEmpty(categoryUpdateModel.Name) || categoryUpdateModel.Name.Length < 2 || categoryUpdateModel.Name.Length > 50)
+            if (string.IsNullOrEmpty(categoryUpdateModel.Name) || categoryUpdateModel.Name.Length < 2 || categoryUpdateModel.Name.Length > 50)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
@@ -255,7 +255,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 return result;
             }
 
-            if (String.IsNullOrEmpty(categoryUpdateModel.Status) || categoryUpdateModel.Status.Length < 2 || categoryUpdateModel.Status.Length > 50)
+            if (string.IsNullOrEmpty(categoryUpdateModel.Status) || categoryUpdateModel.Status.Length < 2 || categoryUpdateModel.Status.Length > 50)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
@@ -266,7 +266,7 @@ namespace GreeenGarden.Business.Service.CategogyService
 
             try
             {
-                var categoryUpdate = await _cateRepo.updateCategory(categoryUpdateModel);
+                TblCategory categoryUpdate = await _cateRepo.updateCategory(categoryUpdateModel);
                 if (categoryUpdate == null)
                 {
                     result.Code = 400;
@@ -279,7 +279,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 result.Message = "Category updated without image change";
                 if (categoryUpdate != null && categoryUpdateModel.Image != null)
                 {
-                    var imgUpdate = await _imgService.UpdateImageCategory(categoryUpdateModel.ID, categoryUpdateModel.Image);
+                    ResultModel imgUpdate = await _imgService.UpdateImageCategory(categoryUpdateModel.ID, categoryUpdateModel.Image);
                     if (imgUpdate != null)
                     {
                         result.IsSuccess = true;

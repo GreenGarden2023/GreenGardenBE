@@ -1,6 +1,6 @@
 ﻿using GreeenGarden.Data.Models.SizeModel;
 
-namespace GreeenGarden.Data.Models.SizeProductItemModel
+namespace GreeenGarden.Data.Models.ProductItemDetailModel
 {
     public class ProductItemDetailResModel
     {

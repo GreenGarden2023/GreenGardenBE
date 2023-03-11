@@ -17,15 +17,9 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 
         public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID, string? type)
         {
-            if (String.IsNullOrEmpty(type))
-            {
-                return await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
-
-            }
-            else
-            {
-                return await _context.TblProductItems.Where(x => x.Type.Trim().ToLower().Equals(type.Trim().ToLower()) && x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
-            }
+            return string.IsNullOrEmpty(type)
+                ? await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize)
+                : await _context.TblProductItems.Where(x => x.Type.Trim().ToLower().Equals(type.Trim().ToLower()) && x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
         }
 
         public async Task<bool> UpdateProductItem(ProductItemUpdateModel productItemModel)
@@ -40,24 +34,24 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                             where prodItem.Id.Equals(productItemModel.Id)
                             select new { prodItem };
 
-                var productItem = await query.Select(x => x.prodItem).FirstOrDefaultAsync();
+                TblProductItem? productItem = await query.Select(x => x.prodItem).FirstOrDefaultAsync();
                 if (productItem == null)
                 {
                     return false;
                 }
-                if (!String.IsNullOrEmpty(productItemModel.Name) && !productItemModel.Name.Equals(productItem.Name))
+                if (!string.IsNullOrEmpty(productItemModel.Name) && !productItemModel.Name.Equals(productItem.Name))
                 {
                     productItem.Name = productItemModel.Name;
                 }
-                if (!String.IsNullOrEmpty(productItemModel.Description) && !productItemModel.Description.Equals(productItem.Description))
+                if (!string.IsNullOrEmpty(productItemModel.Description) && !productItemModel.Description.Equals(productItem.Description))
                 {
                     productItem.Description = productItemModel.Description;
                 }
-                if (!String.IsNullOrEmpty(productItemModel.Type) && !productItemModel.Type.Equals(productItem.Type))
+                if (!string.IsNullOrEmpty(productItemModel.Type) && !productItemModel.Type.Equals(productItem.Type))
                 {
                     productItem.Type = productItemModel.Type;
                 }
-                if (!String.IsNullOrEmpty(productItemModel.Content) && !productItemModel.Content.Equals(productItem.Content))
+                if (!string.IsNullOrEmpty(productItemModel.Content) && !productItemModel.Content.Equals(productItem.Content))
                 {
                     productItem.Content = productItemModel.Content;
                 }
@@ -65,8 +59,8 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                 {
                     productItem.ProductId = (Guid)productItemModel.ProductId;
                 }
-                context.Update(productItem);
-                await _context.SaveChangesAsync();
+                _ = context.Update(productItem);
+                _ = await _context.SaveChangesAsync();
                 return true;
             }
             else { return false; }

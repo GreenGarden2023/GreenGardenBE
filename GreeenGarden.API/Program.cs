@@ -25,7 +25,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Database
 builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServer(SecretService.GetConnectionString()));
 
@@ -66,7 +66,7 @@ builder.Services.AddSwaggerGen(c =>
         Description = "APIs for GreenGarden"
     });
 
-    var securityScheme = new OpenApiSecurityScheme()
+    OpenApiSecurityScheme securityScheme = new()
     {
         Description = "JWT Authorization header using the Bearer scheme. " +
                         "\n\nEnter 'Bearer' [space] and then your token in the text input below. " +
@@ -128,13 +128,13 @@ builder.Services.AddControllers();
 //Cors
 builder.Services.AddCors(p => p.AddPolicy("AllowOrigin", builder =>
 {
-    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+    _ = builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddHttpContextAccessor();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

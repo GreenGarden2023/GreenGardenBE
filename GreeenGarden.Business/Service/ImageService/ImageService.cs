@@ -14,26 +14,24 @@ namespace GreeenGarden.Business.Service.ImageService
             _imageRepo = imageRepo;
         }
 
-        string defaultURL = "https://greengardenstorage.blob.core.windows.net/greengardensimages/";
+        private readonly string defaultURL = "https://greengardenstorage.blob.core.windows.net/greengardensimages/";
         public async Task<ResultModel> UploadImages(IList<IFormFile> files)
         {
-            ResultModel resultsModel = new ResultModel();
-            List<string> urls = new List<string>();
+            ResultModel resultsModel = new();
+            List<string> urls = new();
             try
             {
 
-                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
+                BlobContainerClient blobContainerClient = new(SecretService.SecretService.GetIMGConn(), "greengardensimages");
                 foreach (IFormFile file in files)
                 {
-                    using (var stream = new MemoryStream())
-                    {
-                        Guid id = Guid.NewGuid();
-                        string format = Path.GetExtension(file.FileName);
-                        await file.CopyToAsync(stream);
-                        stream.Position = 0;
-                        await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
-                        urls.Add(defaultURL + id + format);
-                    }
+                    using MemoryStream stream = new();
+                    Guid id = Guid.NewGuid();
+                    string format = Path.GetExtension(file.FileName);
+                    await file.CopyToAsync(stream);
+                    stream.Position = 0;
+                    _ = await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
+                    urls.Add(defaultURL + id + format);
                 }
                 resultsModel.IsSuccess = true;
                 resultsModel.Code = 200;
@@ -57,20 +55,20 @@ namespace GreeenGarden.Business.Service.ImageService
 
         public async Task<ResultModel> UploadAnImage(IFormFile file)
         {
-            ResultModel resultsModel = new ResultModel();
+            ResultModel resultsModel = new();
             string url = "";
             try
             {
 
-                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
+                BlobContainerClient blobContainerClient = new(SecretService.SecretService.GetIMGConn(), "greengardensimages");
 
-                using (var stream = new MemoryStream())
+                using (MemoryStream stream = new())
                 {
                     Guid id = Guid.NewGuid();
                     string format = Path.GetExtension(file.FileName);
                     await file.CopyToAsync(stream);
                     stream.Position = 0;
-                    await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
+                    _ = await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
                     url = defaultURL + id + format;
                 }
 
@@ -96,14 +94,14 @@ namespace GreeenGarden.Business.Service.ImageService
 
         public async Task<ResultModel> DeleteImages(List<string> fileURLs)
         {
-            ResultModel resultsModel = new ResultModel();
+            ResultModel resultsModel = new();
             try
             {
-                BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.SecretService.GetIMGConn(), "greengardensimages");
+                BlobContainerClient blobContainerClient = new(SecretService.SecretService.GetIMGConn(), "greengardensimages");
                 foreach (string file in fileURLs)
                 {
-                    await blobContainerClient.DeleteBlobAsync(file.Replace(defaultURL, ""));
-                    await _imageRepo.DeleteImage(file);
+                    _ = await blobContainerClient.DeleteBlobAsync(file.Replace(defaultURL, ""));
+                    _ = await _imageRepo.DeleteImage(file);
                 }
                 resultsModel.IsSuccess = true;
                 resultsModel.Message = "Delete Files Successful";
@@ -120,22 +118,22 @@ namespace GreeenGarden.Business.Service.ImageService
 
         public async Task<ResultModel> UpdateImageCategory(Guid CategoryId, IFormFile file)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var imgBefore = await _imageRepo.GetImgUrlCategory(CategoryId);
+                Data.Entities.TblImage imgBefore = await _imageRepo.GetImgUrlCategory(CategoryId);
                 if (imgBefore != null)
                 {
-                    var imgToDelete = new List<string>() { imgBefore.ImageUrl };
-                    await DeleteImages(imgToDelete);
+                    List<string> imgToDelete = new() { imgBefore.ImageUrl };
+                    _ = await DeleteImages(imgToDelete);
 
                 }
 
-                var uploadImg = await UploadAnImage(file);
+                ResultModel uploadImg = await UploadAnImage(file);
                 if (uploadImg.IsSuccess)
                 {
 
-                    await _imageRepo.UpdateImgForCategory(CategoryId, uploadImg.Data.ToString());
+                    _ = await _imageRepo.UpdateImgForCategory(CategoryId, uploadImg.Data.ToString());
                     result.IsSuccess = true;
                     result.Data = uploadImg.Data.ToString();
                     return result;
@@ -154,22 +152,22 @@ namespace GreeenGarden.Business.Service.ImageService
 
         public async Task<ResultModel> UpdateImageProduct(Guid productID, IFormFile file)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var imgBefore = await _imageRepo.GetImgUrlProduct(productID);
+                Data.Entities.TblImage imgBefore = await _imageRepo.GetImgUrlProduct(productID);
                 if (imgBefore != null)
                 {
-                    var imgToDelete = new List<string>() { imgBefore.ImageUrl };
-                    await DeleteImages(imgToDelete);
+                    List<string> imgToDelete = new() { imgBefore.ImageUrl };
+                    _ = await DeleteImages(imgToDelete);
 
                 }
 
-                var uploadImg = await UploadAnImage(file);
+                ResultModel uploadImg = await UploadAnImage(file);
                 if (uploadImg.Code == 200)
                 {
 
-                    var updateImg = await _imageRepo.UpdateImgForProduct(productID, uploadImg.Data.ToString());
+                    Data.Entities.TblImage updateImg = await _imageRepo.UpdateImgForProduct(productID, uploadImg.Data.ToString());
                     if (updateImg != null)
                     {
                         result.IsSuccess = true;
@@ -200,13 +198,13 @@ namespace GreeenGarden.Business.Service.ImageService
 
         public async Task<ResultModel> DeleteImagesByURLs(List<string> fileURLs)
         {
-            ResultModel resultsModel = new ResultModel();
+            ResultModel resultsModel = new();
             try
             {
                 foreach (string file in fileURLs)
                 {
-                    BlobClient blobClient = new BlobClient(new Uri(file), new Azure.Storage.StorageSharedKeyCredential("greengardenstorage", SecretService.SecretService.GetStorageKey()));
-                    await blobClient.DeleteAsync();
+                    BlobClient blobClient = new(new Uri(file), new Azure.Storage.StorageSharedKeyCredential("greengardenstorage", SecretService.SecretService.GetStorageKey()));
+                    _ = await blobClient.DeleteAsync();
                 }
                 resultsModel.IsSuccess = true;
                 resultsModel.Code = 200;

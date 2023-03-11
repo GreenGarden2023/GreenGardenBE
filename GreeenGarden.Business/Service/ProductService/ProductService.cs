@@ -31,7 +31,7 @@ namespace GreeenGarden.Business.Service.ProductService
 
         public async Task<ResultModel> createProduct(ProductCreateModel model, string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -45,7 +45,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         Message = "User not allowed"
                     };
                 }
-                if (String.IsNullOrEmpty(model.Name) || model.Name.Length < 2 || model.Name.Length > 50)
+                if (string.IsNullOrEmpty(model.Name) || model.Name.Length < 2 || model.Name.Length > 50)
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
@@ -59,7 +59,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     result.Message = "Product image not found";
                     return result;
                 }
-                var newProduct = new TblProduct()
+                TblProduct newProduct = new()
                 {
                     Id = Guid.NewGuid(),
                     Name = model.Name,
@@ -69,8 +69,8 @@ namespace GreeenGarden.Business.Service.ProductService
                     IsForRent = model.IsForRent,
                     IsForSale = model.IsForSale
                 };
-                var insertResult = await _productRepo.Insert(newProduct);
-                ProductModel productResModel = new ProductModel()
+                Guid insertResult = await _productRepo.Insert(newProduct);
+                ProductModel productResModel = new()
                 {
                     Id = newProduct.Id,
                     Name = newProduct.Name,
@@ -84,17 +84,17 @@ namespace GreeenGarden.Business.Service.ProductService
 
                 // create, update tbl img()
 
-                var imgUploadUrl = await _imgService.UploadAnImage(model.ImgFile);
+                ResultModel imgUploadUrl = await _imgService.UploadAnImage(model.ImgFile);
                 productResModel.ImgUrl = imgUploadUrl.Data.ToString();
                 if (imgUploadUrl != null)
                 {
-                    var newimgCategory = new TblImage()
+                    TblImage newimgCategory = new()
                     {
                         Id = Guid.NewGuid(),
                         ImageUrl = imgUploadUrl.Data.ToString(),
                         ProductId = newProduct.Id,
                     };
-                    await _imageRepo.Insert(newimgCategory);
+                    _ = await _imageRepo.Insert(newimgCategory);
 
                 }
 
@@ -117,10 +117,10 @@ namespace GreeenGarden.Business.Service.ProductService
 
         public async Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var listProdct = await _productRepo.queryAllProductByCategoryAndStatus(pagingModel, categoryID, status, rentSale);
+                EntityFrameworkPaginateCore.Page<TblProduct> listProdct = await _productRepo.queryAllProductByCategoryAndStatus(pagingModel, categoryID, status, rentSale);
 
                 if (listProdct == null)
                 {
@@ -130,20 +130,12 @@ namespace GreeenGarden.Business.Service.ProductService
                     return result;
                 }
 
-                List<ProductModel> dataList = new List<ProductModel>();
-                foreach (var p in listProdct.Results)
+                List<ProductModel> dataList = new();
+                foreach (TblProduct p in listProdct.Results)
                 {
-                    var img = await _imageRepo.GetImgUrlProduct(p.Id);
-                    string imgURL = "";
-                    if (img != null)
-                    {
-                        imgURL = img.ImageUrl;
-                    }
-                    else
-                    {
-                        imgURL = "";
-                    }
-                    var productToShow = new ProductModel()
+                    TblImage img = await _imageRepo.GetImgUrlProduct(p.Id);
+                    string imgURL = img != null ? img.ImageUrl : "";
+                    ProductModel productToShow = new()
                     {
                         Id = p.Id,
                         Name = p.Name,
@@ -156,14 +148,14 @@ namespace GreeenGarden.Business.Service.ProductService
                     };
                     dataList.Add(productToShow);
                 }
-                var paging = new PaginationResponseModel()
+                PaginationResponseModel paging = new PaginationResponseModel()
                     .PageSize(listProdct.PageSize)
                     .CurPage(listProdct.CurrentPage)
                     .RecordCount(listProdct.RecordCount)
                     .PageCount(listProdct.PageCount);
 
-                var getCategory = await _categoryRepo.selectDetailCategory(categoryID);
-                CategoryModel categoryModel = new CategoryModel()
+                TblCategory getCategory = await _categoryRepo.selectDetailCategory(categoryID);
+                CategoryModel categoryModel = new()
                 {
                     Id = getCategory.Id,
                     Name = getCategory.Name,
@@ -171,7 +163,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     Description = getCategory.Description,
                     ImgUrl = _imageRepo.GetImgUrlCategory(categoryID).Result.ImageUrl
                 };
-                var response = new ProductResponseResult()
+                ProductResponseResult response = new()
                 {
                     Paging = paging,
                     Category = categoryModel,
@@ -193,11 +185,11 @@ namespace GreeenGarden.Business.Service.ProductService
 
         public async Task<ResultModel> getAllProduct(PaginationRequestModel pagingModel)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
 
-                var listProdct = await _productRepo.queryAllProduct(pagingModel);
+                EntityFrameworkPaginateCore.Page<TblProduct>? listProdct = await _productRepo.queryAllProduct(pagingModel);
 
                 if (listProdct == null)
                 {
@@ -208,20 +200,12 @@ namespace GreeenGarden.Business.Service.ProductService
                     return result;
                 }
 
-                List<ProductModel> dataList = new List<ProductModel>();
-                foreach (var p in listProdct.Results)
+                List<ProductModel> dataList = new();
+                foreach (TblProduct p in listProdct.Results)
                 {
-                    var img = await _imageRepo.GetImgUrlProduct(p.Id);
-                    string imgURL = "";
-                    if (img != null)
-                    {
-                        imgURL = img.ImageUrl;
-                    }
-                    else
-                    {
-                        imgURL = "";
-                    }
-                    var productToShow = new ProductModel
+                    TblImage img = await _imageRepo.GetImgUrlProduct(p.Id);
+                    string imgURL = img != null ? img.ImageUrl : "";
+                    ProductModel productToShow = new()
                     {
                         Id = p.Id,
                         Name = p.Name,
@@ -234,14 +218,14 @@ namespace GreeenGarden.Business.Service.ProductService
                     };
                     dataList.Add(productToShow);
                 }
-                var paging = new PaginationResponseModel()
+                PaginationResponseModel paging = new PaginationResponseModel()
                     .PageSize(listProdct.PageSize)
                     .CurPage(listProdct.CurrentPage)
                     .RecordCount(listProdct.RecordCount)
                     .PageCount(listProdct.PageCount);
 
 
-                var response = new ResponseResult()
+                ResponseResult response = new()
                 {
                     Paging = paging,
                     Result = dataList
@@ -262,7 +246,7 @@ namespace GreeenGarden.Business.Service.ProductService
 
         public async Task<ResultModel> UpdateProduct(ProductUpdateModel productUpdateModel, string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -277,9 +261,9 @@ namespace GreeenGarden.Business.Service.ProductService
                         Message = "User not allowed"
                     };
                 }
-                if (String.IsNullOrEmpty(productUpdateModel.Name) &&
-                String.IsNullOrEmpty(productUpdateModel.Description) &&
-                String.IsNullOrEmpty(productUpdateModel.Status) &&
+                if (string.IsNullOrEmpty(productUpdateModel.Name) &&
+                string.IsNullOrEmpty(productUpdateModel.Description) &&
+                string.IsNullOrEmpty(productUpdateModel.Status) &&
                 productUpdateModel.CategoryId == Guid.Empty &&
                  productUpdateModel.Image == null)
                 {
@@ -289,7 +273,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     return result;
                 }
 
-                if (String.IsNullOrEmpty(productUpdateModel.Name) || productUpdateModel.Name.Length < 2 || productUpdateModel.Name.Length > 50)
+                if (string.IsNullOrEmpty(productUpdateModel.Name) || productUpdateModel.Name.Length < 2 || productUpdateModel.Name.Length > 50)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
@@ -297,7 +281,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     return result;
                 }
 
-                if (String.IsNullOrEmpty(productUpdateModel.Status) || productUpdateModel.Status.Length < 2 || productUpdateModel.Status.Length > 50)
+                if (string.IsNullOrEmpty(productUpdateModel.Status) || productUpdateModel.Status.Length < 2 || productUpdateModel.Status.Length > 50)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
@@ -312,7 +296,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     return result;
                 }
 
-                var productUpdate = await _productRepo.UpdateProduct(productUpdateModel);
+                bool productUpdate = await _productRepo.UpdateProduct(productUpdateModel);
 
                 if (productUpdate == false)
                 {
@@ -326,7 +310,7 @@ namespace GreeenGarden.Business.Service.ProductService
                 result.Message = "Product updated without image change";
                 if (productUpdate != false && productUpdateModel.Image != null)
                 {
-                    var productImgUpdate = await _imgService.UpdateImageProduct(productUpdateModel.ID, productUpdateModel.Image);
+                    ResultModel productImgUpdate = await _imgService.UpdateImageProduct(productUpdateModel.ID, productUpdateModel.Image);
                     if (productImgUpdate.Code == 200)
                     {
                         result.IsSuccess = true;

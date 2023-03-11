@@ -14,14 +14,14 @@ namespace GreeenGarden.Business.Utilities.ImgUtility
             }
             string defaultURL = "https://greengardenstorage.blob.core.windows.net/greengardensimages/";
             string url = string.Empty;
-            BlobContainerClient blobContainerClient = new BlobContainerClient(SecretService.GetIMGConn(), "greengardensimages\n\n\n");
-            using (var stream = new MemoryStream())
+            BlobContainerClient blobContainerClient = new(SecretService.GetIMGConn(), "greengardensimages\n\n\n");
+            using (MemoryStream stream = new())
             {
                 Guid id = Guid.NewGuid();
                 string format = Path.GetExtension(file.FileName);
                 await file.CopyToAsync(stream);
                 stream.Position = 0;
-                await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
+                _ = await blobContainerClient.UploadBlobAsync($"{id}{format}", stream);
                 url = defaultURL + id + format;
             }
             return url;

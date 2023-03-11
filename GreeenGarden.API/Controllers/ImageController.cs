@@ -31,12 +31,8 @@ namespace GreeenGarden.API.Controllers
             };
             try
             {
-                var result = await _imageService.UploadImages(files);
-                if (result.IsSuccess == false)
-                {
-                    return BadRequest(result);
-                }
-                return Ok(result);
+                ResultModel result = await _imageService.UploadImages(files);
+                return result.IsSuccess == false ? (ActionResult<ResultModel>)BadRequest(result) : (ActionResult<ResultModel>)Ok(result);
             }
             catch (Exception ex)
             {
@@ -63,12 +59,8 @@ namespace GreeenGarden.API.Controllers
             };
             try
             {
-                var result = await _imageService.DeleteImages(fileURLs);
-                if (result.IsSuccess == false)
-                {
-                    return BadRequest(result);
-                }
-                return Ok(result);
+                ResultModel result = await _imageService.DeleteImages(fileURLs);
+                return result.IsSuccess == false ? (ActionResult<ResultModel>)BadRequest(result) : (ActionResult<ResultModel>)Ok(result);
             }
             catch (Exception ex)
             {
@@ -94,12 +86,8 @@ namespace GreeenGarden.API.Controllers
             };
             try
             {
-                var result = await _imageService.DeleteImagesByURLs(fileURLs);
-                if (result.IsSuccess == false)
-                {
-                    return BadRequest(result);
-                }
-                return Ok(result);
+                ResultModel result = await _imageService.DeleteImagesByURLs(fileURLs);
+                return result.IsSuccess == false ? (ActionResult<ResultModel>)BadRequest(result) : (ActionResult<ResultModel>)Ok(result);
             }
             catch (Exception ex)
             {

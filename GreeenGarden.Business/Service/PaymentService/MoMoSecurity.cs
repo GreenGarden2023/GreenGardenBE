@@ -3,7 +3,7 @@ using System.Text;
 
 namespace GreeenGarden.Business.Service.PaymentService
 {
-    class MoMoSecurity
+    internal class MoMoSecurity
     {
         public MoMoSecurity()
         {
@@ -21,15 +21,15 @@ namespace GreeenGarden.Business.Service.PaymentService
                 storeName + "\"}";
             byte[] data = Encoding.UTF8.GetBytes(json);
             string result = "";
-            using (var rsa = new RSACryptoServiceProvider(4096)) //KeySize
+            using (RSACryptoServiceProvider rsa = new(4096)) //KeySize
             {
                 try
                 {
                     // MoMo's public key has format PEM.
                     // You must convert it to XML format. Recommend tool: https://superdry.apphb.com/tools/online-rsa-key-converter
                     rsa.FromXmlString(publicKeyXML);
-                    var encryptedData = rsa.Encrypt(data, false);
-                    var base64Encrypted = Convert.ToBase64String(encryptedData);
+                    byte[] encryptedData = rsa.Encrypt(data, false);
+                    string base64Encrypted = Convert.ToBase64String(encryptedData);
                     result = base64Encrypted;
                 }
                 finally
@@ -51,14 +51,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                 requestid + "\"}";
             byte[] data = Encoding.UTF8.GetBytes(json);
             string result = "";
-            using (var rsa = new RSACryptoServiceProvider(2048))
+            using (RSACryptoServiceProvider rsa = new(2048))
             {
                 try
                 {
                     // client encrypting data with public key issued by server
                     rsa.FromXmlString(publicKey);
-                    var encryptedData = rsa.Encrypt(data, false);
-                    var base64Encrypted = Convert.ToBase64String(encryptedData);
+                    byte[] encryptedData = rsa.Encrypt(data, false);
+                    string base64Encrypted = Convert.ToBase64String(encryptedData);
                     result = base64Encrypted;
                 }
                 finally
@@ -83,14 +83,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                 description + "\"}";
             byte[] data = Encoding.UTF8.GetBytes(json);
             string result = "";
-            using (var rsa = new RSACryptoServiceProvider(2048))
+            using (RSACryptoServiceProvider rsa = new(2048))
             {
                 try
                 {
                     // client encrypting data with public key issued by server
                     rsa.FromXmlString(publicKey);
-                    var encryptedData = rsa.Encrypt(data, false);
-                    var base64Encrypted = Convert.ToBase64String(encryptedData);
+                    byte[] encryptedData = rsa.Encrypt(data, false);
+                    string base64Encrypted = Convert.ToBase64String(encryptedData);
                     result = base64Encrypted;
                 }
                 finally
@@ -107,14 +107,11 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             byte[] keyByte = Encoding.UTF8.GetBytes(key);
             byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            using (var hmacsha256 = new HMACSHA256(keyByte))
-            {
-                byte[] hashmessage = hmacsha256.ComputeHash(messageBytes);
-                string hex = BitConverter.ToString(hashmessage);
-                hex = hex.Replace("-", "").ToLower();
-                return hex;
-
-            }
+            using HMACSHA256 hmacsha256 = new(keyByte);
+            byte[] hashmessage = hmacsha256.ComputeHash(messageBytes);
+            string hex = BitConverter.ToString(hashmessage);
+            hex = hex.Replace("-", "").ToLower();
+            return hex;
         }
     }
 }

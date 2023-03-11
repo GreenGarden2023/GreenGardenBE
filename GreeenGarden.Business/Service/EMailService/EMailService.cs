@@ -19,12 +19,12 @@ namespace GreeenGarden.Business.Service.EMailService
         }
         public async Task<ResultModel> SendEmailVerificationOTP(string email)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             Random rnd = new();
 
-            string OTP = (rnd.Next(000000, 999999)).ToString();
+            string OTP = rnd.Next(000000, 999999).ToString();
 
-            var checkEmail = await _userRepo.CheckUserEmail(email);
+            bool checkEmail = await _userRepo.CheckUserEmail(email);
             if (checkEmail == false)
             {
                 result.IsSuccess = false;
@@ -53,18 +53,18 @@ namespace GreeenGarden.Business.Service.EMailService
                 "</html>"
             };
 
-            using var smtp = new SmtpClient();
+            using SmtpClient smtp = new();
             await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
             await smtp.AuthenticateAsync(from, password);
-            await smtp.SendAsync(message);
+            _ = await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
 
-            var emailCode = new TblEmailOtpcode()
+            TblEmailOtpcode emailCode = new()
             {
                 Email = email,
                 Optcode = OTP,
             };
-            await _emailOTPCodeRepo.Insert(emailCode);
+            _ = await _emailOTPCodeRepo.Insert(emailCode);
             result.IsSuccess = true;
             result.Code = 200;
             result.Message = OTP;
@@ -74,9 +74,9 @@ namespace GreeenGarden.Business.Service.EMailService
 
         public async Task<ResultModel> VerifyEmailVerificationOTP(string code)
         {
-            ResultModel result = new ResultModel();
-            var verify = await _emailOTPCodeRepo.DeleteCode(code);
-            if (!String.IsNullOrEmpty(verify))
+            ResultModel result = new();
+            string verify = await _emailOTPCodeRepo.DeleteCode(code);
+            if (!string.IsNullOrEmpty(verify))
             {
                 result.IsSuccess = true;
                 result.Code = 200;

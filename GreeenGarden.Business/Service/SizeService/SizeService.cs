@@ -20,7 +20,7 @@ namespace GreeenGarden.Business.Service.SizeService
 
         public async Task<ResultModel> CreateSize(SizeCreateModel sizeCreateModel, string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -35,20 +35,24 @@ namespace GreeenGarden.Business.Service.SizeService
                     };
                 }
 
-                if (String.IsNullOrEmpty(sizeCreateModel.SizeName) || sizeCreateModel.SizeName.Length < 2) return new ResultModel()
+                if (string.IsNullOrEmpty(sizeCreateModel.SizeName) || sizeCreateModel.SizeName.Length < 2)
                 {
-                    IsSuccess = false,
-                    Code = 400,
-                    Message = "SizeName Invalid"
-                };
-                var newSize = new TblSize()
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "SizeName Invalid"
+                    };
+                }
+
+                TblSize newSize = new()
                 {
                     Id = Guid.NewGuid(),
                     Type = sizeCreateModel.SizeType,
                     Name = sizeCreateModel.SizeName
                 };
-                await _sizeRepo.Insert(newSize);
-                var newSizeRes = new SizeResModel()
+                _ = await _sizeRepo.Insert(newSize);
+                SizeResModel newSizeRes = new()
                 {
                     Id = newSize.Id,
                     SizeType = newSize.Type,
@@ -73,7 +77,7 @@ namespace GreeenGarden.Business.Service.SizeService
 
         public async Task<ResultModel> DeleteSizes(Guid sizeID, string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -88,7 +92,7 @@ namespace GreeenGarden.Business.Service.SizeService
                     };
                 }
 
-                var res = await _sizeRepo.DeleteSizes(sizeID);
+                bool res = await _sizeRepo.DeleteSizes(sizeID);
                 if (!res)
                 {
                     result.IsSuccess = false;
@@ -110,28 +114,30 @@ namespace GreeenGarden.Business.Service.SizeService
 
         public async Task<ResultModel> GetSizes()
         {
-            var sizes = await _sizeRepo.GetProductItemSizes();
+            List<TblSize> sizes = await _sizeRepo.GetProductItemSizes();
             List<SizeResModel> sizeModels = new();
             foreach (TblSize size in sizes)
             {
-                var viewSize = new SizeResModel()
+                SizeResModel viewSize = new()
                 {
                     Id = size.Id,
-                    SizeType= size.Type,
+                    SizeType = size.Type,
                     SizeName = size.Name
                 };
                 sizeModels.Add(viewSize);
             }
-            var result = new ResultModel();
-            result.IsSuccess = true;
-            result.Code = 200;
-            result.Data = sizeModels;
+            ResultModel result = new()
+            {
+                IsSuccess = true,
+                Code = 200,
+                Data = sizeModels
+            };
             return result;
         }
 
         public async Task<ResultModel> UpdateSizes(SizeUpdateModel model, string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -146,7 +152,7 @@ namespace GreeenGarden.Business.Service.SizeService
                     };
                 }
 
-                var res = await _sizeRepo.UpdateSizes(model);
+                bool res = await _sizeRepo.UpdateSizes(model);
                 if (!res)
                 {
                     result.IsSuccess = false;

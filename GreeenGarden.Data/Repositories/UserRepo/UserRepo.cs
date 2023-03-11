@@ -19,7 +19,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         on u.RoleId equals ur.Id
                         where u.UserName.Equals(userName)
                         select new { u, ur };
-            var userModel = await query.Select(x => new UserLoginResModel()
+            UserLoginResModel? userModel = await query.Select(x => new UserLoginResModel()
             {
                 UserName = x.u.UserName,
                 FullName = x.u.FullName,
@@ -38,7 +38,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         on u.RoleId equals ur.Id
                         where u.UserName.Equals(userName)
                         select new { u, ur };
-            var userModel = await query.Select(x => new UserCurrResModel()
+            UserCurrResModel? userModel = await query.Select(x => new UserCurrResModel()
             {
                 Id = x.u.Id,
                 UserName = x.u.UserName,
@@ -58,47 +58,47 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         where u.UserName.Equals(userName)
                         select new { u };
 
-            var user = await query.Select(x => x.u).FirstOrDefaultAsync();
+            TblUser? user = await query.Select(x => x.u).FirstOrDefaultAsync();
             if (user == null)
             {
                 return null;
             }
-            if (!String.IsNullOrEmpty(userName) && !userName.Equals(user.UserName))
+            if (!string.IsNullOrEmpty(userName) && !userName.Equals(user.UserName))
             {
                 user.UserName = userName;
             }
-            if (!String.IsNullOrEmpty(userUpdateModel.FullName) && !userUpdateModel.FullName.Equals(user.FullName))
+            if (!string.IsNullOrEmpty(userUpdateModel.FullName) && !userUpdateModel.FullName.Equals(user.FullName))
             {
                 user.FullName = userUpdateModel.FullName;
             }
-            if (!String.IsNullOrEmpty(userUpdateModel.Address) && !userUpdateModel.Address.Equals(user.Address))
+            if (!string.IsNullOrEmpty(userUpdateModel.Address) && !userUpdateModel.Address.Equals(user.Address))
             {
                 user.Address = userUpdateModel.Address;
             }
-            if (!String.IsNullOrEmpty(userUpdateModel.Phone) && !userUpdateModel.Phone.Equals(user.Phone))
+            if (!string.IsNullOrEmpty(userUpdateModel.Phone) && !userUpdateModel.Phone.Equals(user.Phone))
             {
                 user.Phone = userUpdateModel.Phone;
             }
-            if (!String.IsNullOrEmpty(userUpdateModel.Favorite) && !userUpdateModel.Favorite.Equals(user.Favorite))
+            if (!string.IsNullOrEmpty(userUpdateModel.Favorite) && !userUpdateModel.Favorite.Equals(user.Favorite))
             {
                 user.Favorite = userUpdateModel.Favorite;
             }
-            if (!String.IsNullOrEmpty(userUpdateModel.Mail) && !userUpdateModel.Mail.Equals(user.Mail))
+            if (!string.IsNullOrEmpty(userUpdateModel.Mail) && !userUpdateModel.Mail.Equals(user.Mail))
             {
                 user.Mail = userUpdateModel.Mail;
             }
-            _context.Update(user);
-            await _context.SaveChangesAsync();
+            _ = _context.Update(user);
+            _ = await _context.SaveChangesAsync();
             return user;
 
         }
 
         public async Task<bool> CheckUserEmail(string email)
         {
-            if (!String.IsNullOrEmpty(email))
+            if (!string.IsNullOrEmpty(email))
             {
-                var check = await _context.TblUsers.Where(x => x.Mail.Equals(email)).FirstOrDefaultAsync();
-                if (check != null) { return true; } else { return false; }
+                TblUser? check = await _context.TblUsers.Where(x => x.Mail.Equals(email)).FirstOrDefaultAsync();
+                return check != null;
             }
             else { return false; }
         }
@@ -109,13 +109,13 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         where u.Mail.Equals(email)
                         select new { u };
 
-            var user = await query.Select(x => x.u).FirstOrDefaultAsync();
+            TblUser? user = await query.Select(x => x.u).FirstOrDefaultAsync();
             if (user != null)
             {
                 user.PasswordHash = passHash;
                 user.PasswordSalt = passSalt;
-                _context.Update(user);
-                await _context.SaveChangesAsync();
+                _ = _context.Update(user);
+                _ = await _context.SaveChangesAsync();
                 return user;
             }
             return null;

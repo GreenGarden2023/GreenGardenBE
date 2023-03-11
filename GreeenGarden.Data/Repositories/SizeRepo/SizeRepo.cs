@@ -2,7 +2,6 @@
 using GreeenGarden.Data.Models.SizeModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace GreeenGarden.Data.Repositories.SizeRepo
 {
@@ -20,9 +19,9 @@ namespace GreeenGarden.Data.Repositories.SizeRepo
         {
             try
             {
-                var tblSize = await _context.TblSizes.Where(x=>x.Id.Equals(sizeID)).FirstOrDefaultAsync();
-                _context.TblSizes.Remove(tblSize);
-                await _context.SaveChangesAsync();
+                TblSize? tblSize = await _context.TblSizes.Where(x => x.Id.Equals(sizeID)).FirstOrDefaultAsync();
+                _ = _context.TblSizes.Remove(tblSize);
+                _ = await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
@@ -40,11 +39,19 @@ namespace GreeenGarden.Data.Repositories.SizeRepo
         {
             try
             {
-                var size = await _context.TblSizes.Where(x => x.Id == model.SizeID).FirstOrDefaultAsync();
-                if (model.SizeName != null) size.Name = model.SizeName;
-                if (model.SizeType != null) size.Type = model.SizeType;
-                _context.TblSizes.Update(size);
-                await _context.SaveChangesAsync();
+                TblSize? size = await _context.TblSizes.Where(x => x.Id == model.SizeID).FirstOrDefaultAsync();
+                if (model.SizeName != null)
+                {
+                    size.Name = model.SizeName;
+                }
+
+                if (model.SizeType != null)
+                {
+                    size.Type = model.SizeType;
+                }
+
+                _ = _context.TblSizes.Update(size);
+                _ = await _context.SaveChangesAsync();
             }
             catch (Exception)
             {

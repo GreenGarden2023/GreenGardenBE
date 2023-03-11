@@ -1,6 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.GenericRepository;
-using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.TransactionRepo
 {

@@ -1,4 +1,4 @@
-﻿using GreeenGarden.Data.Models.SizeProductItemModel;
+﻿using GreeenGarden.Data.Models.ProductItemDetailModel;
 
 namespace GreeenGarden.Data.Models.ProductItemModel
 {

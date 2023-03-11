@@ -20,38 +20,30 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
 
         public async Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
         {
-            if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && !String.IsNullOrEmpty(status))
+            if (!string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && !string.IsNullOrEmpty(status))
             {
                 return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                 && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())
                 && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
-            else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && !String.IsNullOrEmpty(status))
-            {
-                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-                && x.IsForRent == true
-                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-            }
-            else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && String.IsNullOrEmpty(status))
-            {
-                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-                && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-            }
-            else if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && String.IsNullOrEmpty(status))
-            {
-                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-                && x.IsForRent == true
-                ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-            }
-            else if (String.IsNullOrEmpty(rentSale) && !String.IsNullOrEmpty(status))
-            {
-                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-            }
             else
             {
-                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
-               ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+                return !string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && !string.IsNullOrEmpty(status)
+                    ? await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                                && x.IsForRent == true
+                                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize)
+                    : !string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && string.IsNullOrEmpty(status)
+                                    ? await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                                                && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize)
+                                    : !string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && string.IsNullOrEmpty(status)
+                                                    ? await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                                                                && x.IsForRent == true
+                                                                ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize)
+                                                    : string.IsNullOrEmpty(rentSale) && !string.IsNullOrEmpty(status)
+                                                                    ? await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                                                                                && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize)
+                                                                    : await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+                                                                               ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             }
         }
 
@@ -74,20 +66,20 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
                         where prod.Id.Equals(productUpdateModel.ID)
                         select new { prod };
 
-            var product = await query.Select(x => x.prod).FirstOrDefaultAsync();
+            TblProduct? product = await query.Select(x => x.prod).FirstOrDefaultAsync();
             if (product == null)
             {
                 return false;
             }
-            if (!String.IsNullOrEmpty(productUpdateModel.Name) && !productUpdateModel.Name.Equals(product.Name))
+            if (!string.IsNullOrEmpty(productUpdateModel.Name) && !productUpdateModel.Name.Equals(product.Name))
             {
                 product.Name = productUpdateModel.Name;
             }
-            if (!String.IsNullOrEmpty(productUpdateModel.Description) && !productUpdateModel.Description.Equals(product.Description))
+            if (!string.IsNullOrEmpty(productUpdateModel.Description) && !productUpdateModel.Description.Equals(product.Description))
             {
                 product.Description = productUpdateModel.Description;
             }
-            if (!String.IsNullOrEmpty(productUpdateModel.Status) && !productUpdateModel.Status.Equals(product.Status))
+            if (!string.IsNullOrEmpty(productUpdateModel.Status) && !productUpdateModel.Status.Equals(product.Status))
             {
                 product.Status = productUpdateModel.Status;
             }
@@ -105,8 +97,8 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             }
 
 
-            _context.Update(product);
-            await _context.SaveChangesAsync();
+            _ = _context.Update(product);
+            _ = await _context.SaveChangesAsync();
             return true;
         }
     }

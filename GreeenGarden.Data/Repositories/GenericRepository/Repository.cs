@@ -6,7 +6,7 @@ namespace GreeenGarden.Data.Repositories.GenericRepository
     public class Repository<T> : IRepository<T> where T : class
     {
         protected readonly GreenGardenDbContext context;
-        private DbSet<T> _entities;
+        private readonly DbSet<T> _entities;
 
         public Repository(GreenGardenDbContext context)
         {
@@ -21,7 +21,7 @@ namespace GreeenGarden.Data.Repositories.GenericRepository
 
         public async Task<Guid> Insert(T entity)
         {
-            await _entities.AddAsync(entity);
+            _ = await _entities.AddAsync(entity);
             await Update();
             return (Guid)entity.GetType().GetProperty("Id").GetValue(entity);
         }
@@ -29,7 +29,7 @@ namespace GreeenGarden.Data.Repositories.GenericRepository
 
         public async Task Update()
         {
-            await context.SaveChangesAsync();
+            _ = await context.SaveChangesAsync();
         }
 
 

@@ -1,5 +1,4 @@
-﻿using GreeenGarden.Data.Models.SizeProductItemModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GreeenGarden.Data.Models.ProductItemModel
 {

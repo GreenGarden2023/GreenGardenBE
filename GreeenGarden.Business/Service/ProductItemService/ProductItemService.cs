@@ -4,11 +4,11 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.SizeModel;
-using GreeenGarden.Data.Models.SizeProductItemModel;
 using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
@@ -43,7 +43,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         public async Task<ResultModel> CreateProductItem(string token, ProductItemInsertModel productItemInsertModel)
         {
-            if (!String.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(token))
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
                 if (!userRole.Equals(Commons.MANAGER)
@@ -65,10 +65,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Message = "User not allowed"
                 };
             }
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                TblProductItem productItemModel = new TblProductItem
+                TblProductItem productItemModel = new()
                 {
                     Id = Guid.NewGuid(),
                     Name = productItemInsertModel.Name,
@@ -76,9 +76,9 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Content = productItemInsertModel.Content,
                     ProductId = productItemInsertModel.ProductId,
                     Type = productItemInsertModel.Type,
-                    
+
                 };
-                var insertProdItem = await _proItemRepo.Insert(productItemModel);
+                Guid insertProdItem = await _proItemRepo.Insert(productItemModel);
                 if (insertProdItem == Guid.Empty)
                 {
                     result.IsSuccess = false;
@@ -86,28 +86,21 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Message = "Add product item failed.";
                     return result;
                 }
-                else {
-                    TblImage tblImage = new TblImage
+                else
+                {
+                    TblImage tblImage = new()
                     {
                         ImageUrl = productItemInsertModel.ImageURL,
                         ProductItemId = productItemModel.Id
                     };
-                    await _imageRepo.Insert(tblImage);
+                    _ = await _imageRepo.Insert(tblImage);
                 }
 
                 if (productItemModel != null)
                 {
-                    var getProdItemImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.Id);
-                    string prodItemImgURL = "";
-                    if (getProdItemImgURL != null)
-                    {
-                        prodItemImgURL = getProdItemImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        prodItemImgURL = "";
-                    }
-                    ProductItemResModel responseProdItem = new ProductItemResModel()
+                    TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.Id);
+                    string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                    ProductItemResModel responseProdItem = new()
                     {
                         Id = productItemModel.Id,
                         Name = productItemModel.Name,
@@ -118,17 +111,9 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ImageURL = prodItemImgURL,
                     };
                     TblProduct productTbl = await _proRepo.Get(productItemModel.ProductId);
-                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.ProductId);
-                    string prodImgURL = "";
-                    if (getProdImgURL != null)
-                    {
-                        prodImgURL = getProdImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        prodImgURL = "";
-                    }
-                    ProductModel productModel = new ProductModel()
+                    TblImage getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.ProductId);
+                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    ProductModel productModel = new()
                     {
                         Id = productTbl.Id,
                         Name = productTbl.Name,
@@ -140,17 +125,9 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         IsForSale = productTbl.IsForSale
                     };
                     TblCategory categoryTBL = await _categoryRepo.Get(productModel.CategoryId);
-                    var getCateImgURL = await _imageRepo.GetImgUrlCategory(categoryTBL.Id);
-                    string cateImgURL = "";
-                    if (getCateImgURL != null)
-                    {
-                        cateImgURL = getCateImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        cateImgURL = "";
-                    }
-                    CategoryModel categoryModel = new CategoryModel()
+                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(categoryTBL.Id);
+                    string cateImgURL = getCateImgURL != null ? getCateImgURL.ImageUrl : "";
+                    CategoryModel categoryModel = new()
                     {
                         Id = categoryTBL.Id,
                         Name = categoryTBL.Name,
@@ -159,7 +136,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ImgUrl = cateImgURL,
 
                     };
-                    ProductItemCreateResponseResult productItemCreateResponseResult = new ProductItemCreateResponseResult()
+                    ProductItemCreateResponseResult productItemCreateResponseResult = new()
                     {
                         Category = categoryModel,
                         Product = productModel,
@@ -192,7 +169,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         public async Task<ResultModel> CreateProductItemDetail(string token, ProductItemDetailModel productItemDetailModel)
         {
-            if (!String.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(token))
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
                 if (!userRole.Equals(Commons.MANAGER)
@@ -214,18 +191,18 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Message = "User not allowed"
                 };
             }
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var size = await _sizeRepo.Get(productItemDetailModel.SizeId);
-                if (size == null )
+                TblSize? size = await _sizeRepo.Get(productItemDetailModel.SizeId);
+                if (size == null)
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
                     result.Message = "Size ID invalid.";
                     return result;
                 }
-                var proItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
+                TblProductItem? proItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
                 if (proItem == null)
                 {
                     result.IsSuccess = false;
@@ -233,7 +210,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Message = "Product item ID invalid.";
                     return result;
                 }
-                TblProductItemDetail tblProductItemDetail = new TblProductItemDetail
+                TblProductItemDetail tblProductItemDetail = new()
                 {
                     Id = Guid.NewGuid(),
                     SizeId = productItemDetailModel.SizeId,
@@ -243,7 +220,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Quantity = productItemDetailModel.Quantity,
                     Status = productItemDetailModel.Status,
                 };
-                var insertSizeProdItem = await _sizeProductItemRepo.Insert(tblProductItemDetail);
+                Guid insertSizeProdItem = await _sizeProductItemRepo.Insert(tblProductItemDetail);
                 if (insertSizeProdItem == Guid.Empty)
                 {
                     result.IsSuccess = false;
@@ -255,29 +232,21 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 {
                     foreach (string url in productItemDetailModel.ImagesUrls)
                     {
-                        TblImage tblImage = new TblImage
+                        TblImage tblImage = new()
                         {
                             ImageUrl = url,
                             ProductItemDetailId = tblProductItemDetail.Id,
                         };
-                        await _imageRepo.Insert(tblImage);
+                        _ = await _imageRepo.Insert(tblImage);
                     }
                 }
-                var prodItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
+                TblProductItem? prodItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
                 if (prodItem != null)
                 {
-                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemDetailModel.ProductItemID, null);
-                    var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemDetailModel.ProductItemID);
-                    string prodItemImgURL = "";
-                    if (getProdItemImgURL != null)
-                    {
-                        prodItemImgURL = getProdItemImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        prodItemImgURL = "";
-                    }
-                    ProductItemResModel productItemResModel = new ProductItemResModel()
+                    List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemDetailModel.ProductItemID, null);
+                    TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemDetailModel.ProductItemID);
+                    string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                    ProductItemResModel productItemResModel = new()
                     {
                         Id = prodItem.Id,
                         Name = prodItem.Name,
@@ -288,18 +257,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ImageURL = prodItemImgURL,
                         ProductItemDetail = sizeGet
                     };
-                    var productGet = await _proRepo.Get(productItemResModel.ProductId);
-                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
-                    string prodImgURL = "";
-                    if (getProdImgURL != null)
-                    {
-                        prodImgURL = getProdImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        prodImgURL = "";
-                    }
-                    ProductModel productModel = new ProductModel()
+                    TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
+                    TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
+                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    ProductModel productModel = new()
                     {
                         Id = productGet.Id,
                         Name = productGet.Name,
@@ -311,18 +272,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         IsForSale = productGet.IsForSale
                     };
                     ///
-                    var cateGet = await _categoryRepo.Get(productModel.CategoryId);
-                    var getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
-                    string cateImgURL = "";
-                    if (getCateImgURL != null)
-                    {
-                        cateImgURL = getProdImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        cateImgURL = "";
-                    }
-                    CategoryModel categoryModel = new CategoryModel()
+                    TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                    string cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    CategoryModel categoryModel = new()
                     {
                         Id = cateGet.Id,
                         Name = cateGet.Name,
@@ -331,7 +284,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ImgUrl = cateImgURL,
 
                     };
-                    ProductItemDetailResponseResult productItemDetailResponseResult = new ProductItemDetailResponseResult
+                    ProductItemDetailResponseResult productItemDetailResponseResult = new()
                     {
                         Category = categoryModel,
                         Product = productModel,
@@ -364,24 +317,16 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         public async Task<ResultModel> GetDetailProductItem(Guid productItemID, string? sizeProductItemStatus)
         {
-            var result = new ResultModel();
-            if ( productItemID != Guid.Empty)
+            ResultModel result = new();
+            if (productItemID != Guid.Empty)
             {
-                var prodItem = await _proItemRepo.Get(productItemID);
+                TblProductItem? prodItem = await _proItemRepo.Get(productItemID);
                 if (prodItem != null)
                 {
-                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemID, sizeProductItemStatus);
-                    var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemID);
-                    string prodItemImgURL = "";
-                    if (getProdItemImgURL != null)
-                    {
-                        prodItemImgURL = getProdItemImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        prodItemImgURL = "";
-                    }
-                    ProductItemResModel productItemResModel = new ProductItemResModel()
+                    List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemID, sizeProductItemStatus);
+                    TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemID);
+                    string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                    ProductItemResModel productItemResModel = new()
                     {
                         Id = prodItem.Id,
                         Name = prodItem.Name,
@@ -392,18 +337,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ImageURL = prodItemImgURL,
                         ProductItemDetail = sizeGet
                     };
-                    var productGet = await _proRepo.Get(productItemResModel.ProductId);
-                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
-                    string prodImgURL = "";
-                    if (getProdImgURL != null)
-                    {
-                        prodImgURL = getProdImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        prodImgURL = "";
-                    }
-                    ProductModel productModel = new ProductModel()
+                    TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
+                    TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
+                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    ProductModel productModel = new()
                     {
                         Id = productGet.Id,
                         Name = productGet.Name,
@@ -415,18 +352,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         IsForSale = productGet.IsForSale
                     };
                     ///
-                    var cateGet = await _categoryRepo.Get(productModel.CategoryId);
-                    var getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
-                    string cateImgURL = "";
-                    if (getCateImgURL != null)
-                    {
-                        cateImgURL = getProdImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        cateImgURL = "";
-                    }
-                    CategoryModel categoryModel = new CategoryModel()
+                    TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                    string cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    CategoryModel categoryModel = new()
                     {
                         Id = cateGet.Id,
                         Name = cateGet.Name,
@@ -435,7 +364,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ImgUrl = cateImgURL,
 
                     };
-                    ProductItemDetailResponseResult productItemDetailResponseResult = new ProductItemDetailResponseResult
+                    ProductItemDetailResponseResult productItemDetailResponseResult = new()
                     {
                         Category = categoryModel,
                         Product = productModel,
@@ -466,10 +395,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         public async Task<ResultModel> GetProductItem(PaginationRequestModel pagingModel, Guid productID, string? status, string? type)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var productGet = await _proRepo.Get(productID);
+                TblProduct? productGet = await _proRepo.Get(productID);
                 if (productID == Guid.Empty || productGet == null)
                 {
                     result.Message = "Can not find product.";
@@ -477,59 +406,42 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Code = 400;
                     return result;
                 }
-                var prodItemList = await _proItemRepo.GetProductItemByType(pagingModel, productID, type);
+                EntityFrameworkPaginateCore.Page<TblProductItem> prodItemList = await _proItemRepo.GetProductItemByType(pagingModel, productID, type);
                 if (prodItemList != null)
                 {
-                    List<ProductItemResModel> dataList = new List<ProductItemResModel>();
-                    foreach (var pi in prodItemList.Results)
+                    List<ProductItemResModel> dataList = new();
+                    foreach (TblProductItem pi in prodItemList.Results)
                     {
-                        var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(pi.Id, status);
-                        var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
-                        string prodItemImgURL = "";
-                        if (getProdItemImgURL != null)
+                        List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(pi.Id, status);
+                        TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
+                        string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                        ProductItemResModel pItem = new()
                         {
-                            prodItemImgURL = getProdItemImgURL.ImageUrl;
-                        }
-                        else
-                        {
-                            prodItemImgURL = "";
-                        }
-                        
-                            ProductItemResModel pItem = new ProductItemResModel()
-                            {
-                                Id = pi.Id,
-                                Name = pi.Name,
-                                Description = pi.Description,
-                                Content = pi.Content,
-                                ProductId = pi.ProductId,
-                                Type = pi.Type,
-                                ImageURL = prodItemImgURL,
-                                ProductItemDetail = sizeGet
-                            };
+                            Id = pi.Id,
+                            Name = pi.Name,
+                            Description = pi.Description,
+                            Content = pi.Content,
+                            ProductId = pi.ProductId,
+                            Type = pi.Type,
+                            ImageURL = prodItemImgURL,
+                            ProductItemDetail = sizeGet
+                        };
 
-                            dataList.Add(pItem);
-                       
+                        dataList.Add(pItem);
+
 
                     }
                     ///
-                    var paging = new PaginationResponseModel()
+                    PaginationResponseModel paging = new PaginationResponseModel()
                     .PageSize(prodItemList.PageSize)
                     .CurPage(prodItemList.CurrentPage)
                     .RecordCount(prodItemList.RecordCount)
                     .PageCount(prodItemList.PageCount);
                     ///
 
-                    var getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
-                    string prodImgURL = "";
-                    if (getProdImgURL != null)
-                    {
-                        prodImgURL = getProdImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        prodImgURL = "";
-                    }
-                    ProductModel productModel = new ProductModel()
+                    TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
+                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    ProductModel productModel = new()
                     {
                         Id = productGet.Id,
                         Name = productGet.Name,
@@ -541,18 +453,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         IsForSale = productGet.IsForSale
                     };
                     ///
-                    var cateGet = await _categoryRepo.Get(productModel.CategoryId);
-                    var getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
-                    string cateImgURL = "";
-                    if (getCateImgURL != null)
-                    {
-                        cateImgURL = getProdImgURL.ImageUrl;
-                    }
-                    else
-                    {
-                        cateImgURL = "";
-                    }
-                    CategoryModel categoryModel = new CategoryModel()
+                    TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                    string cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    CategoryModel categoryModel = new()
                     {
                         Id = cateGet.Id,
                         Name = cateGet.Name,
@@ -561,7 +465,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ImgUrl = cateImgURL,
 
                     };
-                    ProductItemGetResponseResult productItemGetResponseResult = new ProductItemGetResponseResult()
+                    ProductItemGetResponseResult productItemGetResponseResult = new()
                     {
                         Paging = paging,
                         Category = categoryModel,
@@ -595,7 +499,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         public async Task<ResultModel> UpdateProductItem(string token, ProductItemUpdateModel productItemModel)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -609,19 +513,19 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Message = "User not allowed"
                     };
                 }
-                var updateProItem = await _proItemRepo.UpdateProductItem(productItemModel);
-                var oldImage = await _imageRepo.GetImgUrlProductItem(productItemModel.Id);
+                bool updateProItem = await _proItemRepo.UpdateProductItem(productItemModel);
+                TblImage oldImage = await _imageRepo.GetImgUrlProductItem(productItemModel.Id);
                 if (oldImage != null)
                 {
-                    List<string> url = new List<string> { oldImage.ImageUrl};
-                    var delete = await _imgService.DeleteImagesByURLs(url);
+                    List<string> url = new() { oldImage.ImageUrl };
+                    ResultModel delete = await _imgService.DeleteImagesByURLs(url);
                 }
-                var updateNewImage = await _imageRepo.UpdateImgForProductItem(productItemModel.Id, productItemModel.ImageURL);
+                TblImage updateNewImage = await _imageRepo.UpdateImgForProductItem(productItemModel.Id, productItemModel.ImageURL);
                 if (updateProItem == true)
                 {
-                    var updateResult = await _proItemRepo.Get(productItemModel.Id);
-                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(updateResult.Id, null);
-                    ProductItemResModel upResult = new ProductItemResModel
+                    TblProductItem? updateResult = await _proItemRepo.Get(productItemModel.Id);
+                    List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(updateResult.Id, null);
+                    ProductItemResModel upResult = new()
                     {
                         Id = updateResult.Id,
                         Name = updateResult.Name,
@@ -658,7 +562,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         public async Task<ResultModel> UpdateProductItemDetail(string token, ProductItemDetailModel productItemDetailModel)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -672,27 +576,27 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Message = "User not allowed"
                     };
                 }
-                var updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(productItemDetailModel);
+                bool updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(productItemDetailModel);
                 if (updateProItem == true)
                 {
-                    var oldImgs = await _imageRepo.GetImgUrlProductItemDetail(productItemDetailModel.Id);
+                    List<string> oldImgs = await _imageRepo.GetImgUrlProductItemDetail(productItemDetailModel.Id);
                     if (oldImgs.Any())
                     {
-                        await _imgService.DeleteImagesByURLs(oldImgs);
+                        _ = await _imgService.DeleteImagesByURLs(oldImgs);
                     }
                     foreach (string url in productItemDetailModel.ImagesUrls)
                     {
-                        var updateImg = await _imageRepo.UpdateImgForProductItemDetail(productItemDetailModel.Id,productItemDetailModel.ImagesUrls);
+                        bool updateImg = await _imageRepo.UpdateImgForProductItemDetail(productItemDetailModel.Id, productItemDetailModel.ImagesUrls);
                     }
-                    var updateResult = await _sizeProductItemRepo.Get(productItemDetailModel.Id);
-                    var sizeGet = await _sizeRepo.Get(updateResult.SizeId);
-                    var imgGet = await _imageRepo.GetImgUrlProductItemDetail(updateResult.Id);
-                    var size = new SizeResModel()
+                    TblProductItemDetail? updateResult = await _sizeProductItemRepo.Get(productItemDetailModel.Id);
+                    TblSize? sizeGet = await _sizeRepo.Get(updateResult.SizeId);
+                    List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(updateResult.Id);
+                    SizeResModel size = new()
                     {
                         Id = sizeGet.Id,
                         SizeName = sizeGet.Name
                     };
-                    ProductItemDetailResModel upResult = new ProductItemDetailResModel()
+                    ProductItemDetailResModel upResult = new()
                     {
                         Id = updateResult.Id,
                         Size = size,

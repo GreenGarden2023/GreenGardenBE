@@ -14,12 +14,12 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<bool> DeleteImage(string imgURL)
         {
-            if (!String.IsNullOrEmpty(imgURL))
+            if (!string.IsNullOrEmpty(imgURL))
             {
-                var img = _context.TblImages.Where(x => x.ImageUrl == imgURL).FirstOrDefault();
+                TblImage? img = _context.TblImages.Where(x => x.ImageUrl == imgURL).FirstOrDefault();
                 if (img != null)
                 {
-                    _context.TblImages.Remove(img);
+                    _ = _context.TblImages.Remove(img);
                     await Update();
                     return true;
                 }
@@ -33,7 +33,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             var query = from c in context.TblImages
                         where c.CategoryId.Equals(categoryId)
                         select new { c };
-            var result = await query.Select(x => new TblImage()
+            TblImage? result = await query.Select(x => new TblImage()
             {
                 Id = x.c.Id,
                 CategoryId = x.c.CategoryId,
@@ -47,7 +47,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             var query = from c in context.TblImages
                         where c.ProductId.Equals(productID)
                         select new { c };
-            var result = await query.Select(x => new TblImage()
+            TblImage? result = await query.Select(x => new TblImage()
             {
                 Id = x.c.Id,
                 ProductId = x.c.ProductId,
@@ -61,7 +61,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             var query = from c in context.TblImages
                         where c.ProductItemId.Equals(productItemID)
                         select new { c };
-            var result = await query.Select(x => new TblImage()
+            TblImage? result = await query.Select(x => new TblImage()
             {
                 Id = x.c.Id,
                 ProductId = x.c.ProductId,
@@ -72,17 +72,17 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<List<string>> GetImgUrlProductItemDetail(Guid productItemDetailID)
         {
-            List<string> urls = new List<string>();
+            List<string> urls = new();
             if (productItemDetailID != Guid.Empty)
             {
 
-                var result = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(productItemDetailID)).ToListAsync();
+                List<TblImage> result = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(productItemDetailID)).ToListAsync();
                 if (result != null)
                 {
 
                     foreach (TblImage image in result)
                     {
-                        if (!String.IsNullOrEmpty(image.ImageUrl))
+                        if (!string.IsNullOrEmpty(image.ImageUrl))
                         {
                             urls.Add(image.ImageUrl);
                         }
@@ -95,36 +95,36 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
         {
-            var imgCategory = await _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefaultAsync();
+            TblImage? imgCategory = await _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefaultAsync();
             if (imgCategory != null)
             {
                 imgCategory.ImageUrl = imgUrl;
-                _context.Update(imgCategory);
-                await _context.SaveChangesAsync();
+                _ = _context.Update(imgCategory);
+                _ = await _context.SaveChangesAsync();
             }
-             
+
             return imgCategory;
         }
 
         public async Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl)
         {
-            var imgProduct = await _context.TblImages.Where(x => x.ProductId.Equals(ProductID)).FirstOrDefaultAsync();
+            TblImage? imgProduct = await _context.TblImages.Where(x => x.ProductId.Equals(ProductID)).FirstOrDefaultAsync();
             if (imgProduct != null)
             {
                 imgProduct.ImageUrl = ImgUrl;
-                _context.Update(imgProduct);
-                await _context.SaveChangesAsync();
+                _ = _context.Update(imgProduct);
+                _ = await _context.SaveChangesAsync();
                 return imgProduct;
             }
             else
             {
-                var newProdIMG = new TblImage
+                TblImage newProdIMG = new()
                 {
                     ImageUrl = ImgUrl,
                     ProductId = ProductID
                 };
-                await _context.TblImages.AddAsync(newProdIMG);
-                await _context.SaveChangesAsync();
+                _ = await _context.TblImages.AddAsync(newProdIMG);
+                _ = await _context.SaveChangesAsync();
                 return newProdIMG;
             }
 
@@ -132,23 +132,23 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<TblImage> UpdateImgForProductItem(Guid ProductItemID, string ImgUrl)
         {
-            var imgProduct = await _context.TblImages.Where(x => x.ProductItemId.Equals(ProductItemID)).FirstOrDefaultAsync();
+            TblImage? imgProduct = await _context.TblImages.Where(x => x.ProductItemId.Equals(ProductItemID)).FirstOrDefaultAsync();
             if (imgProduct != null)
             {
                 imgProduct.ImageUrl = ImgUrl;
-                _context.Update(imgProduct);
-                await _context.SaveChangesAsync();
+                _ = _context.Update(imgProduct);
+                _ = await _context.SaveChangesAsync();
                 return imgProduct;
             }
             else
             {
-                var newProdIMG = new TblImage
+                TblImage newProdIMG = new()
                 {
                     ImageUrl = ImgUrl,
                     ProductItemId = ProductItemID
                 };
-                await _context.TblImages.AddAsync(newProdIMG);
-                await _context.SaveChangesAsync();
+                _ = await _context.TblImages.AddAsync(newProdIMG);
+                _ = await _context.SaveChangesAsync();
                 return newProdIMG;
             }
         }
@@ -156,13 +156,13 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         public async Task<bool> UpdateImgForProductItemDetail(Guid ProductItemDetailId, List<string> ImgUrls)
         {
             bool success = false;
-            var oldImgList = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(ProductItemDetailId)).ToListAsync();
+            List<TblImage> oldImgList = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(ProductItemDetailId)).ToListAsync();
             foreach (TblImage tblImage in oldImgList)
             {
                 try
                 {
-                    _context.Remove(tblImage);
-                    await _context.SaveChangesAsync();
+                    _ = _context.Remove(tblImage);
+                    _ = await _context.SaveChangesAsync();
                     success = true;
                 }
                 catch
@@ -175,13 +175,13 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             {
                 try
                 {
-                    var newProdIMG = new TblImage
+                    TblImage newProdIMG = new()
                     {
                         ImageUrl = url,
                         ProductItemDetailId = ProductItemDetailId
                     };
-                    _context.Add(newProdIMG);
-                    await _context.SaveChangesAsync();
+                    _ = _context.Add(newProdIMG);
+                    _ = await _context.SaveChangesAsync();
                     success = true;
                 }
                 catch

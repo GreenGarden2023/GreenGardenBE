@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GreeenGarden.Business.Service.PaymentService
 {
-    class PaymentRequest
+    internal class PaymentRequest
     {
         public PaymentRequest()
         {
@@ -18,9 +18,9 @@ namespace GreeenGarden.Business.Service.PaymentService
                 HttpWebRequest httpWReq = (HttpWebRequest)WebRequest.Create(endpoint);
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
 
-                var postData = postJsonString;
+                string postData = postJsonString;
 
-                var data = Encoding.UTF8.GetBytes(postData);
+                byte[] data = Encoding.UTF8.GetBytes(postData);
 
                 httpWReq.ProtocolVersion = HttpVersion.Version11;
                 httpWReq.Method = "POST";
@@ -37,16 +37,14 @@ namespace GreeenGarden.Business.Service.PaymentService
 
                 string jsonresponse = "";
 
-                using (var reader = new StreamReader(response.GetResponseStream()))
+                using (StreamReader reader = new(response.GetResponseStream()))
                 {
 
                     string temp = "";
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                     while ((temp = reader.ReadLine()) != null)
                     {
                         jsonresponse += temp;
                     }
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                 }
 
 

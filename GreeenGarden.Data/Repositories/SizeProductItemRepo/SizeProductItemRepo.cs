@@ -1,6 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.SizeModel;
-using GreeenGarden.Data.Models.SizeProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
@@ -22,22 +22,22 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 
         public async Task<List<ProductItemDetailResModel>> GetSizeProductItems(Guid ProductItemID, string? status)
         {
-            if (String.IsNullOrEmpty(status))
+            if (string.IsNullOrEmpty(status))
             {
-                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID)).ToListAsync();
-                List<ProductItemDetailResModel> listSizeProd = new List<ProductItemDetailResModel>();
+                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID)).ToListAsync();
+                List<ProductItemDetailResModel> listSizeProd = new();
                 foreach (TblProductItemDetail item in result)
                 {
-                    var sizeGet = await _sizeRepo.Get(item.SizeId);
-                    var imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
+                    TblSize? sizeGet = await _sizeRepo.Get(item.SizeId);
+                    List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
                     if (sizeGet != null)
                     {
-                        var size = new SizeResModel()
+                        SizeResModel size = new()
                         {
                             Id = sizeGet.Id,
                             SizeName = sizeGet.Name
                         };
-                        var sizeProd = new ProductItemDetailResModel
+                        ProductItemDetailResModel sizeProd = new()
                         {
                             Id = item.Id,
                             Size = size,
@@ -55,20 +55,20 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
             else
             {
-                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
-                List<ProductItemDetailResModel> listSizeProd = new List<ProductItemDetailResModel>();
+                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
+                List<ProductItemDetailResModel> listSizeProd = new();
                 foreach (TblProductItemDetail item in result)
                 {
-                    var sizeGet = await _sizeRepo.Get(item.SizeId);
-                    var imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
+                    TblSize? sizeGet = await _sizeRepo.Get(item.SizeId);
+                    List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
                     if (sizeGet != null && imgGet != null)
                     {
-                        var size = new SizeResModel()
+                        SizeResModel size = new()
                         {
                             Id = sizeGet.Id,
                             SizeName = sizeGet.Name
                         };
-                        var sizeProd = new ProductItemDetailResModel
+                        ProductItemDetailResModel sizeProd = new()
                         {
                             Id = item.Id,
                             Size = size,
@@ -102,20 +102,20 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             where sizeProdItem.Id.Equals(productItemDetailModel.Id)
                             select new { sizeProdItem };
 
-                var sizeProductItem = await query.Select(x => x.sizeProdItem).FirstOrDefaultAsync();
+                TblProductItemDetail? sizeProductItem = await query.Select(x => x.sizeProdItem).FirstOrDefaultAsync();
                 if (sizeProductItem == null)
                 {
                     return false;
                 }
                 if ((productItemDetailModel.SizeId != Guid.Empty) && !productItemDetailModel.SizeId.Equals(sizeProductItem.SizeId))
                 {
-                    sizeProductItem.SizeId = (Guid)productItemDetailModel.SizeId;
+                    sizeProductItem.SizeId = productItemDetailModel.SizeId;
                 }
                 if ((productItemDetailModel.ProductItemID != Guid.Empty) && !productItemDetailModel.ProductItemID.Equals(sizeProductItem.ProductItemId))
                 {
-                    sizeProductItem.ProductItemId = (Guid)productItemDetailModel.ProductItemID;
+                    sizeProductItem.ProductItemId = productItemDetailModel.ProductItemID;
                 }
-                if (!String.IsNullOrEmpty(productItemDetailModel.Status) && !productItemDetailModel.Status.Equals(sizeProductItem.Status))
+                if (!string.IsNullOrEmpty(productItemDetailModel.Status) && !productItemDetailModel.Status.Equals(sizeProductItem.Status))
                 {
                     sizeProductItem.Status = productItemDetailModel.Status;
                 }
@@ -131,8 +131,8 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 {
                     sizeProductItem.Quantity = productItemDetailModel.Quantity;
                 }
-                _context.Update(sizeProductItem);
-                await _context.SaveChangesAsync();
+                _ = _context.Update(sizeProductItem);
+                _ = await _context.SaveChangesAsync();
                 return true;
             }
             else { return false; }

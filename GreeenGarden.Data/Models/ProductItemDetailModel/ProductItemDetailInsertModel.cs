@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace GreeenGarden.Data.Models.SizeProductItemModel
+namespace GreeenGarden.Data.Models.ProductItemDetailModel
 {
     public class ProductItemDetailModel
     {

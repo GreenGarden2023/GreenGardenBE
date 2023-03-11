@@ -84,7 +84,7 @@ namespace GreeenGarden.Business.Service.UserService
             try
             {
                 CreatePasswordHash(userInsertModel.Password, out byte[] passwordHash, out byte[] passwordSalt);
-                TblUser userModel = new TblUser()
+                TblUser userModel = new()
                 {
                     UserName = userInsertModel.UserName,
                     PasswordHash = passwordHash,
@@ -95,7 +95,7 @@ namespace GreeenGarden.Business.Service.UserService
                     Favorite = userInsertModel.Favorite,
                     Mail = userInsertModel.Mail,
                 };
-                await _userRepo.Insert(userModel);
+                _ = await _userRepo.Insert(userModel);
                 userModel.PasswordHash = null;
                 userModel.PasswordSalt = null;
                 return new ResultModel()
@@ -118,25 +118,21 @@ namespace GreeenGarden.Business.Service.UserService
 
         private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-            }
+            using HMACSHA512 hmac = new();
+            passwordSalt = hmac.Key;
+            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
         }
 
         private bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
-            }
+            using HMACSHA512 hmac = new(passwordSalt);
+            byte[] computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(passwordHash);
         }
 
         private string CreateToken(UserLoginResModel user)
         {
-            List<Claim> claims = new List<Claim>
+            List<Claim> claims = new()
             {
                 new Claim(ClaimsIdentity.DefaultRoleClaimType, user.RoleName),
                 new Claim("rolename", user.RoleName),
@@ -144,17 +140,17 @@ namespace GreeenGarden.Business.Service.UserService
                 new Claim("email", user.Email),
             };
 
-            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+            SymmetricSecurityKey key = new(System.Text.Encoding.UTF8.GetBytes(
                 SecretService.SecretService.GetTokenSecret()));
 
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            SigningCredentials creds = new(key, SecurityAlgorithms.HmacSha512Signature);
 
-            var token = new JwtSecurityToken(
+            JwtSecurityToken token = new(
                 claims: claims,
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: creds);
 
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+            string jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
         }
@@ -197,7 +193,7 @@ namespace GreeenGarden.Business.Service.UserService
 
         public async Task<ResultModel> UpdateUser(string token, UserUpdateModel userUpdateModel)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
             string userName = _decodeToken.Decode(token, "username");
             if (!userRole.Equals(Commons.ADMIN)
@@ -215,7 +211,7 @@ namespace GreeenGarden.Business.Service.UserService
             }
             try
             {
-                var updateUser = await _userRepo.UpdateUser(userName, userUpdateModel);
+                TblUser updateUser = await _userRepo.UpdateUser(userName, userUpdateModel);
                 if (updateUser == null)
                 {
                     result.IsSuccess = false;
@@ -244,14 +240,14 @@ namespace GreeenGarden.Business.Service.UserService
 
         public async Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var verifyCode = await _eMailService.VerifyEmailVerificationOTP(passwordResetModel.OTPCode);
+                ResultModel verifyCode = await _eMailService.VerifyEmailVerificationOTP(passwordResetModel.OTPCode);
                 if (verifyCode.Code == 200)
                 {
                     CreatePasswordHash(passwordResetModel.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
-                    var update = await _userRepo.ResetPassword(verifyCode.Data.ToString(), passwordHash, passwordSalt);
+                    TblUser update = await _userRepo.ResetPassword(verifyCode.Data.ToString(), passwordHash, passwordSalt);
                     if (update != null)
                     {
                         result.IsSuccess = true;
@@ -287,10 +283,10 @@ namespace GreeenGarden.Business.Service.UserService
 
         public async Task<ResultModel> GetListUserByFullName(string token, string fullName)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var tblUser = await _userRepo.GetUser(_decodeToken.Decode(token, "username"));
+                UserLoginResModel tblUser = await _userRepo.GetUser(_decodeToken.Decode(token, "username"));
                 if (!tblUser.UserName.Equals(Commons.MANAGER))
                 {
                     result.IsSuccess = false;
