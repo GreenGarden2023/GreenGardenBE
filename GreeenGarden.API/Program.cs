@@ -1,6 +1,7 @@
 using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Business.Service.PaymentService;
 using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Business.Service.ProductService;
@@ -13,6 +14,9 @@ using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
+using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
+using GreeenGarden.Data.Repositories.RentOrderRepo;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
@@ -37,7 +41,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
-
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
 
@@ -45,6 +49,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
+builder.Services.AddTransient<IRewardRepo, RewardRepo>();
+builder.Services.AddTransient<IRentOrderRepo, RentOrderRepo>();
+builder.Services.AddTransient<IRentOrderDetailRepo, RentOrderDetailRepo>();
 builder.Services.AddTransient<IEmailOTPCodeRepo, EmailOTPCodeRepo>();
 builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
 builder.Services.AddTransient<IProductRepo, ProductRepo>();

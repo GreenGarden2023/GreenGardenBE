@@ -39,6 +39,7 @@
     <Folder Include="Service\ImageService\" />
     <Folder Include="Service\PaymentService\" />
     <Folder Include="Service\EMailService\" />
+    <Folder Include="Service\OrderService\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,5 +53,6 @@
     <None Remove="Service\PaymentService\" />
     <None Remove="Newtonsoft.Json" />
     <None Remove="Service\EMailService\" />
+    <None Remove="Service\OrderService\" />
   </ItemGroup>
 </Project>

@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblServiceOrder
 {
@@ -22,9 +25,11 @@ public partial class TblServiceOrder
 
     public Guid RequestId { get; set; }
 
-    public Guid UserId { get; set; }
+    public Guid TechnicianId { get; set; }
 
     public virtual TblRequest Request { get; set; } = null!;
+
+    public virtual ICollection<TblRequestDetail> TblRequestDetails { get; } = new List<TblRequestDetail>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }

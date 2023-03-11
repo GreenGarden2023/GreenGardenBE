@@ -28,6 +28,10 @@
     <Folder Include="Repositories\SizeProductItemRepo\" />
     <Folder Include="Models\MoMoModel\" />
     <Folder Include="Repositories\TransactionRepo\" />
+    <Folder Include="Models\OrderModel\" />
+    <Folder Include="Repositories\RentOrderRepo\" />
+    <Folder Include="Repositories\RentOrderDetailRepo\" />
+    <Folder Include="Repositories\RewardRepo\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -64,5 +68,9 @@
     <None Remove="Repositories\SizeProductItemRepo\" />
     <None Remove="Models\MoMoModel\" />
     <None Remove="Repositories\TransactionRepo\" />
+    <None Remove="Models\OrderModel\" />
+    <None Remove="Repositories\RentOrderRepo\" />
+    <None Remove="Repositories\RentOrderDetailRepo\" />
+    <None Remove="Repositories\RewardRepo\" />
   </ItemGroup>
 </Project>

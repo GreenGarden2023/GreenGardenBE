@@ -1,5 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ImageRepo

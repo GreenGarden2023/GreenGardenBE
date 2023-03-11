@@ -1,6 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
-using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.Repository;
 
 namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
