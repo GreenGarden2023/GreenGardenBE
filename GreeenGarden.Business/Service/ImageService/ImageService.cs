@@ -1,6 +1,4 @@
 ﻿using Azure.Storage.Blobs;
-using Azure.Storage.Blobs.Models;
-using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.AspNetCore.Http;
@@ -197,31 +195,7 @@ namespace GreeenGarden.Business.Service.ImageService
             }
         }
 
-        public async Task<FileData> DownloadAnImage(string imgURL)
-        {
-            try
-            {
-                string fileName = imgURL.Replace(defaultURL, "");
-                BlobClient blobClient = new BlobClient(SecretService.SecretService.GetIMGConn(), "greengardensimages", fileName);
 
-                using (var stream = new MemoryStream())
-                {
-                    await blobClient.DownloadToAsync(stream);
-                    stream.Position = 0;
-                    var contenType = (blobClient.GetProperties()).Value.ContentType;
-                    //return new FileData(stream.ToArray(), contenType, blobClient.Name);
-                    //return file;
-                    return new FileData(stream.ToArray(), contenType, blobClient.Name);
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                ex.ToString();
-                return null;
-            }
-        }
 
         public async Task<ResultModel> UpdateImageSizeProductItem(Guid SizeProductItemID, List<IFormFile> files)
         {

@@ -7,7 +7,7 @@ public partial class TblCartDetail
 {
     public Guid Id { get; set; }
 
-    public Guid? ProductItemDetailId { get; set; }
+    public Guid? SizeProductItemId { get; set; }
 
     public int? Quantity { get; set; }
 

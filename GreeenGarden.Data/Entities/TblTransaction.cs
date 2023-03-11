@@ -7,9 +7,7 @@ public partial class TblTransaction
 {
     public Guid Id { get; set; }
 
-    public Guid? OrderId { get; set; }
-
-    public Guid? AddendumId { get; set; }
+    public Guid? RentOrderId { get; set; }
 
     public double? Amount { get; set; }
 
@@ -21,9 +19,15 @@ public partial class TblTransaction
 
     public Guid PaymentId { get; set; }
 
-    public virtual TblAddendum? Addendum { get; set; }
+    public Guid? SaleOrderId { get; set; }
 
-    public virtual TblOrder? Order { get; set; }
+    public Guid? ServiceOrderId { get; set; }
 
     public virtual TblPayment Payment { get; set; } = null!;
+
+    public virtual TblRentOrder? RentOrder { get; set; }
+
+    public virtual TblSaleOrder? SaleOrder { get; set; }
+
+    public virtual TblServiceOrder? ServiceOrder { get; set; }
 }

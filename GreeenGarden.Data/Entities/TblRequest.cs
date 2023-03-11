@@ -7,19 +7,25 @@ public partial class TblRequest
 {
     public Guid Id { get; set; }
 
-    public string? Name { get; set; }
-
-    public string? Status { get; set; }
-
-    public int NumberTree { get; set; }
-
-    public DateTime CreateDate { get; set; }
-
     public Guid UserId { get; set; }
 
-    public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
+    public string? Address { get; set; }
 
-    public virtual ICollection<TblOrder> TblOrders { get; } = new List<TblOrder>();
+    public string? Phone { get; set; }
+
+    public string? TreeName { get; set; }
+
+    public int? Quantity { get; set; }
+
+    public DateTime? CreateDate { get; set; }
+
+    public string? Descripton { get; set; }
+
+    public virtual ICollection<TblImage> TblImageReportNavigations { get; } = new List<TblImage>();
+
+    public virtual ICollection<TblImage> TblImageRequests { get; } = new List<TblImage>();
+
+    public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();
 
     public virtual TblUser User { get; set; } = null!;
 }

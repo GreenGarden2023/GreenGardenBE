@@ -22,13 +22,11 @@
     <Folder Include="Repositories\GenericRepository\" />
     <Folder Include="Models\UserModels\" />
     <Folder Include="Models\SizeModel\" />
-    <Folder Include="Models\FileModel\" />
     <Folder Include="Repositories\EmailOTPCodeRepo\" />
     <Folder Include="Models\EmailCodeVerifyModel\" />
     <Folder Include="Models\ProductItemModel\" />
     <Folder Include="Repositories\SizeProductItemRepo\" />
     <Folder Include="Models\MoMoModel\" />
-    <Folder Include="Repositories\AddendumRepo\" />
     <Folder Include="Repositories\TransactionRepo\" />
   </ItemGroup>
 
@@ -60,13 +58,11 @@
     <None Remove="Models\UserModels\" />
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Models\SizeModel\" />
-    <None Remove="Models\FileModel\" />
     <None Remove="Repositories\EmailOTPCodeRepo\" />
     <None Remove="Models\EmailCodeVerifyModel\" />
     <None Remove="Models\ProductItemModel\" />
     <None Remove="Repositories\SizeProductItemRepo\" />
     <None Remove="Models\MoMoModel\" />
-    <None Remove="Repositories\AddendumRepo\" />
     <None Remove="Repositories\TransactionRepo\" />
   </ItemGroup>
 </Project>

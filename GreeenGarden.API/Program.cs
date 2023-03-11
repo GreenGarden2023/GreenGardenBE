@@ -1,22 +1,16 @@
-using GreeenGarden.Business.Service.CartService;
 using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Business.Service.ImageService;
-using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Business.Service.PaymentService;
 using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Business.Service.SecretService;
 using GreeenGarden.Business.Service.SizeService;
-using GreeenGarden.Business.Service.TransactionService;
 using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Repositories.AddendumRepo;
-using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
-using GreeenGarden.Data.Repositories.OrderRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
@@ -42,10 +36,7 @@ builder.Services.AddScoped<ICategogyService, CategogyService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
@@ -54,17 +45,14 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
-builder.Services.AddTransient<IAddendumRepo, AddendumRepo>();
 builder.Services.AddTransient<IEmailOTPCodeRepo, EmailOTPCodeRepo>();
 builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
 builder.Services.AddTransient<IProductRepo, ProductRepo>();
 builder.Services.AddTransient<IProductItemRepo, ProductItemRepo>();
-builder.Services.AddTransient<IOrderRepo, OrderRepo>();
 builder.Services.AddTransient<ISizeRepo, SizeRepo>();
 builder.Services.AddTransient<ISizeProductItemRepo, SizeProductItemRepo>();
 builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
-builder.Services.AddTransient<ICartRepo, CartRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>

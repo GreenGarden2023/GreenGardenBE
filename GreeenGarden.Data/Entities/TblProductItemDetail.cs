@@ -23,8 +23,6 @@ public partial class TblProductItemDetail
 
     public virtual TblSize Size { get; set; } = null!;
 
-    public virtual ICollection<TblAddendumProductItem> TblAddendumProductItems { get; } = new List<TblAddendumProductItem>();
-
     public virtual ICollection<TblCartDetail> TblCartDetails { get; } = new List<TblCartDetail>();
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();

@@ -13,6 +13,10 @@ public partial class TblReport
 
     public string? Sumary { get; set; }
 
+    public Guid CreateBy { get; set; }
+
+    public virtual TblUser CreateByNavigation { get; set; } = null!;
+
     public virtual ICollection<TblFile> TblFiles { get; } = new List<TblFile>();
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();

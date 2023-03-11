@@ -35,5 +35,7 @@ public partial class TblImage
 
     public virtual TblReport? Report { get; set; }
 
+    public virtual TblRequest? ReportNavigation { get; set; }
+
     public virtual TblRequest? Request { get; set; }
 }
