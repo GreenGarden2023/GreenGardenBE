@@ -22,7 +22,7 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                 : await _context.TblProductItems.Where(x => x.Type.Trim().ToLower().Equals(type.Trim().ToLower()) && x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
         }
 
-        public async Task<bool> UpdateProductItem(ProductItemUpdateModel productItemModel)
+        public async Task<bool> UpdateProductItem(ProductItemModel productItemModel)
         {
             if (productItemModel.ProductId == null)
             {

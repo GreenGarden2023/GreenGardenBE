@@ -41,7 +41,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             _sizeProductItemRepo = sizeProductItemRepo;
         }
 
-        public async Task<ResultModel> CreateProductItem(string token, ProductItemInsertModel productItemInsertModel)
+        public async Task<ResultModel> CreateProductItem(string token, ProductItemModel productItemInsertModel)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -74,7 +74,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Name = productItemInsertModel.Name,
                     Description = productItemInsertModel.Description,
                     Content = productItemInsertModel.Content,
-                    ProductId = productItemInsertModel.ProductId,
+                    ProductId = (Guid)productItemInsertModel.ProductId,
                     Type = productItemInsertModel.Type,
 
                 };
@@ -110,42 +110,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Type = productItemModel.Type,
                         ImageURL = prodItemImgURL,
                     };
-                    TblProduct productTbl = await _proRepo.Get(productItemModel.ProductId);
-                    TblImage getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.ProductId);
-                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
-                    ProductModel productModel = new()
-                    {
-                        Id = productTbl.Id,
-                        Name = productTbl.Name,
-                        Description = productTbl.Description,
-                        Status = productTbl.Status,
-                        CategoryId = productTbl.CategoryId,
-                        ImgUrl = prodImgURL,
-                        IsForRent = productTbl.IsForRent,
-                        IsForSale = productTbl.IsForSale
-                    };
-                    TblCategory categoryTBL = await _categoryRepo.Get(productModel.CategoryId);
-                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(categoryTBL.Id);
-                    string cateImgURL = getCateImgURL != null ? getCateImgURL.ImageUrl : "";
-                    CategoryModel categoryModel = new()
-                    {
-                        Id = categoryTBL.Id,
-                        Name = categoryTBL.Name,
-                        Description = categoryTBL.Description,
-                        Status = categoryTBL.Status,
-                        ImgUrl = cateImgURL,
-
-                    };
-                    ProductItemCreateResponseResult productItemCreateResponseResult = new()
-                    {
-                        Category = categoryModel,
-                        Product = productModel,
-                        ProductItems = responseProdItem
-                    };
-
+                    
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = productItemCreateResponseResult;
+                    result.Data = responseProdItem;
                     result.Message = "Create product item success.";
                     return result;
                 }
@@ -497,7 +465,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             }
         }
 
-        public async Task<ResultModel> UpdateProductItem(string token, ProductItemUpdateModel productItemModel)
+        public async Task<ResultModel> UpdateProductItem(string token, ProductItemModel productItemModel)
         {
             ResultModel result = new();
             try
