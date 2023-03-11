@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblSaleOrderDetail
 {
@@ -11,4 +14,8 @@ public partial class TblSaleOrderDetail
     public double? ProductItemPrice { get; set; }
 
     public int? Quantity { get; set; }
+
+    public virtual TblProductItemDetail? ProductItemDetail { get; set; }
+
+    public virtual TblSaleOrder? SaleOder { get; set; }
 }

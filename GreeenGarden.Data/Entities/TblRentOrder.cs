@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblRentOrder
 {
@@ -23,6 +26,8 @@ public partial class TblRentOrder
     public int? RewardPointUsed { get; set; }
 
     public Guid? ReferenceOrderId { get; set; }
+
+    public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }

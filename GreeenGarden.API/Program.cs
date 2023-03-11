@@ -7,6 +7,7 @@ using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Business.Service.SecretService;
 using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Business.Service.UserService;
+using GreeenGarden.Business.Service.RequestService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
@@ -17,6 +18,7 @@ using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
+using GreeenGarden.Data.Repositories.RequestRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -37,6 +39,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
+builder.Services.AddScoped<IRequestSevice, RequestService>();
 
 
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
@@ -53,6 +56,7 @@ builder.Services.AddTransient<ISizeRepo, SizeRepo>();
 builder.Services.AddTransient<ISizeProductItemRepo, SizeProductItemRepo>();
 builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
+builder.Services.AddTransient<IRequestRepo, RequestRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
