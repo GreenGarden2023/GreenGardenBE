@@ -8,6 +8,8 @@
 
         public string? Description { get; set; }
 
+        public string? Content { get; set; }
+
         public Guid ProductId { get; set; }
 
         public string Type { get; set; } = null!;

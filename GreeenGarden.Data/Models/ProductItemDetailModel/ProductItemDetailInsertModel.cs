@@ -2,7 +2,7 @@
 
 namespace GreeenGarden.Data.Models.SizeProductItemModel
 {
-    public class SizeProductItemInsertModel
+    public class ProductItemDetailInsertModel
     {
 
         [Required]
@@ -16,8 +16,6 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
         public double? SalePrice { get; set; }
 
         public int? Quantity { get; set; }
-
-        public string? Content { get; set; }
 
         public string Status { get; set; } = null!;
 

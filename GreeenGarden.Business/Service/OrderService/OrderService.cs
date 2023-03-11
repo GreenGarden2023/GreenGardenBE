@@ -137,7 +137,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             Id = Guid.NewGuid(),
                             SizeProductItemPrice = sizeProItem.RentPrice,
-                            SizeProductItemId = sizeProItem.Id,
+                            ProductItemDetailId = sizeProItem.Id,
                             AddendumId = newAddendum.Id,
                             Quantity = item1.quantity
                         };
@@ -362,7 +362,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                 {
                                     Id = Guid.NewGuid(),
                                     SizeProductItemPrice = sizeProItem.RentPrice,
-                                    SizeProductItemId = sizeProItem.Id,
+                                    ProductItemDetailId = sizeProItem.Id,
                                     AddendumId = newAddendum.Id,
                                     Quantity = item1.quantity
                                 };
@@ -448,7 +448,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                 {
                                     Id = Guid.NewGuid(),
                                     SizeProductItemPrice = sizeProItem.SalePrice,
-                                    SizeProductItemId = sizeProItem.Id,
+                                    ProductItemDetailId = sizeProItem.Id,
                                     AddendumId = newAddendum.Id,
                                     Quantity = item.quantity
                                 };

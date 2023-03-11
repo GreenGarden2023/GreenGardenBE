@@ -131,7 +131,7 @@ namespace GreeenGarden.Business.Service.CartService
                             var newCartDetail = new TblCartDetail()
                             {
                                 Id = Guid.NewGuid(),
-                                SizeProductItemId = item.sizeProductItemID,
+                                ProductItemDetailId = item.sizeProductItemID,
                                 Quantity = item.quantity,
                                 CartId = cart.Id,
                                 IsForRent = true
@@ -177,7 +177,7 @@ namespace GreeenGarden.Business.Service.CartService
                             var newCartDetail = new TblCartDetail()
                             {
                                 Id = Guid.NewGuid(),
-                                SizeProductItemId = item.sizeProductItemID,
+                                ProductItemDetailId = item.sizeProductItemID,
                                 Quantity = item.quantity,
                                 CartId = cart.Id,
                                 IsForRent = false
@@ -224,7 +224,6 @@ namespace GreeenGarden.Business.Service.CartService
                 var modelResponse = new CartShowModel();
                 modelResponse.rentItems = new List<ItemRequest>();
                 modelResponse.saleItems = new List<ItemRequest>();
-                double? totalPrice = 0;
                 double? totalRentPriceCart = 0;
                 double? totalSalePriceCart = 0;
                 var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
@@ -248,7 +247,7 @@ namespace GreeenGarden.Business.Service.CartService
                 {
                     if (item.IsForRent == true)
                     {
-                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
+                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.ProductItemDetailId);
                         var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
                         var ItemRequest = new ItemRequest()
                         {
@@ -262,7 +261,7 @@ namespace GreeenGarden.Business.Service.CartService
                     }
                     if (item.IsForRent == false)
                     {
-                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.SizeProductItemId);
+                        var sizeProductItem = await _cartRepo.GetSizeProductItem(item.ProductItemDetailId);
                         var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
                         var ItemRequest = new ItemRequest()
                         {

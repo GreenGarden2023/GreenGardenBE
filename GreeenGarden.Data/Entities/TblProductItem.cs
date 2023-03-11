@@ -15,11 +15,13 @@ public partial class TblProductItem
 
     public string Type { get; set; } = null!;
 
+    public string? Content { get; set; }
+
     public virtual TblProduct Product { get; set; } = null!;
 
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 
-    public virtual ICollection<TblSizeProductItem> TblSizeProductItems { get; } = new List<TblSizeProductItem>();
+    public virtual ICollection<TblProductItemDetail> TblProductItemDetails { get; } = new List<TblProductItemDetail>();
 }

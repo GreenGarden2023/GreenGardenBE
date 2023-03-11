@@ -12,4 +12,8 @@ public partial class TblReport
     public DateTime? CreateDate { get; set; }
 
     public string? Sumary { get; set; }
+
+    public virtual ICollection<TblFile> TblFiles { get; } = new List<TblFile>();
+
+    public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 }

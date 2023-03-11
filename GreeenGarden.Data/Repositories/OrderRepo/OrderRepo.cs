@@ -17,9 +17,9 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             _context = context;
         }
 
-        public async Task<TblSizeProductItem> GetSizeProductItem(Guid sizeProductItemID)
+        public async Task<TblProductItemDetail> GetSizeProductItem(Guid sizeProductItemID)
         {
-            return await _context.TblSizeProductItems.Where(x => x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
+            return await _context.TblProductItemDetails.Where(x => x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
         }
 
         public async Task<AdddendumResponseModel> getDetailAddendum(Guid AddendumId)
@@ -42,7 +42,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
             {
                 var Items = new addendumProductItemResponseModel()
                 {
-                    sizeProductItemID = item.SizeProductItemId,
+                    sizeProductItemID = item.ProductItemDetailId,
                     sizeProductItemPrice = item.SizeProductItemPrice,
                     quantity = item.Quantity
                 };
@@ -99,10 +99,10 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                 addendumShow.addendumProductItems = new List<addendumProductItemShowModel>();
                 foreach (var addendumProductItem in listAddendumProductItem)
                 {
-                    var sizeProductItem = await _context.TblSizeProductItems.Where(x => x.Id == addendumProductItem.SizeProductItemId).FirstOrDefaultAsync();
+                    var sizeProductItem = await _context.TblProductItemDetails.Where(x => x.Id == addendumProductItem.ProductItemDetailId).FirstOrDefaultAsync();
                     var productItem = await _context.TblProductItems.Where(x => x.Id == sizeProductItem.ProductItemId).FirstOrDefaultAsync();
                     var size = await _context.TblSizes.Where(x => x.Id == sizeProductItem.SizeId).FirstOrDefaultAsync();
-                    var listImg = await _context.TblImages.Where(x => x.SizeProductItemId == sizeProductItem.Id).ToListAsync();
+                    var listImg = await _context.TblImages.Where(x => x.ProductItemDetailId == sizeProductItem.Id).ToListAsync();
                     List<string> listImgUrl = new List<string>();
                     foreach (var img in listImg)
                     {
@@ -118,7 +118,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                     {
                         productName = productItem.Name,
                         sizeName = size.Name,
-                        sizeProductItemID = addendumProductItem.SizeProductItemId,
+                        sizeProductItemID = addendumProductItem.ProductItemDetailId,
                         imgUrl = listImgUrl
                     };
                     addendumShow.addendumProductItems.Add(addendumProductItemShow);
@@ -177,10 +177,10 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                     addendumShow.addendumProductItems = new List<addendumProductItemShowModel>();
                     foreach (var addendumProductItems in listAddendumProductItems)
                     {
-                        var sizeProductItem = await _context.TblSizeProductItems.Where(x => x.Id == addendumProductItems.SizeProductItemId).FirstOrDefaultAsync();
+                        var sizeProductItem = await _context.TblProductItemDetails.Where(x => x.Id == addendumProductItems.ProductItemDetailId).FirstOrDefaultAsync();
                         var productItem = await _context.TblProductItems.Where(x => x.Id == sizeProductItem.ProductItemId).FirstOrDefaultAsync();
                         var size = await _context.TblSizes.Where(x => x.Id == sizeProductItem.SizeId).FirstOrDefaultAsync();
-                        var img = await _context.TblImages.Where(x => x.SizeProductItemId == sizeProductItem.Id).ToListAsync();
+                        var img = await _context.TblImages.Where(x => x.ProductItemDetailId == sizeProductItem.Id).ToListAsync();
                         var listImgUrl = new List<string>();
                         foreach (var image in img)
                         {
@@ -196,7 +196,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
                         {
                             productName = productItem.Name,
                             sizeName = size.Name,
-                            sizeProductItemID = addendumProductItems.SizeProductItemId,
+                            sizeProductItemID = addendumProductItems.ProductItemDetailId,
                             imgUrl = listImgUrl
                         };
                         addendumShow.addendumProductItems.Add(addendumProductItemShow);
@@ -245,10 +245,10 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
 
         public async Task<bool> minusQuantitySizeProductItem(Guid sizeProductItemID, int quantity)
         {
-            var result = await _context.TblSizeProductItems.Where(x => x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
+            var result = await _context.TblProductItemDetails.Where(x => x.Id.Equals(sizeProductItemID)).FirstOrDefaultAsync();
             if (result.Quantity < quantity) return false;
             result.Quantity -= quantity;
-            _context.TblSizeProductItems.Update(result);
+            _context.TblProductItemDetails.Update(result);
             await _context.SaveChangesAsync();
             return true;
         }

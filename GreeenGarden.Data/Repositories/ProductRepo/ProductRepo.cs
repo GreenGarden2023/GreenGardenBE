@@ -18,17 +18,6 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         }
 
 
-
-        public async void increaseQuantity(Guid subId, int plus)
-        {
-            /*var subPro = await _context.TblSubProducts.Where(x => x.Id == subId).FirstAsync();
-            var result = await _context.TblProducts.Where(x => x.Equals(subPro.ProductId)).FirstAsync();
-            result.Quantity = result.Quantity + plus;
-            _context.Update(result);
-            await _context.SaveChangesAsync();*/
-        }
-
-
         public async Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
         {
             if (!String.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && !String.IsNullOrEmpty(status))

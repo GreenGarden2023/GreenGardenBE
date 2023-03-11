@@ -18,7 +18,7 @@ namespace GreeenGarden.Data.Repositories.OrderRepo
         public Task<TblUser> GetUser(string username);
         public Task<TblUser> GetUserByID(Guid userID);
         public Task<TblRole> GetRole(Guid roleID);
-        public Task<TblSizeProductItem> GetSizeProductItem(Guid sizeProductItemID);
+        public Task<TblProductItemDetail> GetSizeProductItem(Guid sizeProductItemID);
         public Task<bool> minusQuantitySizeProductItem(Guid sizeProductItemID, int quantity);
         public Task<listOrder> GetListOrderByUserID(Guid userID);
         public Task<bool> UpdateOrderPayment(Guid orderID);

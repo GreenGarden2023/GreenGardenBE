@@ -4,9 +4,9 @@ using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
-    public interface ISizeProductItemRepo : IRepository<TblSizeProductItem>
+    public interface ISizeProductItemRepo : IRepository<TblProductItemDetail>
     {
-        Task<List<SizeProductItemResModel>> GetSizeProductItems(Guid productItemId, string? status);
+        Task<List<ProductItemDetailResModel>> GetSizeProductItems(Guid productItemId, string? status);
         Task<bool> UpdateSizeProductItem(SizeProductItemUpdateModel sizeProductItemUpdateModel);
     }
 }

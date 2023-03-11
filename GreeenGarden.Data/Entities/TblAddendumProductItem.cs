@@ -11,11 +11,11 @@ public partial class TblAddendumProductItem
 
     public int? Quantity { get; set; }
 
-    public Guid SizeProductItemId { get; set; }
+    public Guid ProductItemDetailId { get; set; }
 
     public Guid AddendumId { get; set; }
 
     public virtual TblAddendum Addendum { get; set; } = null!;
 
-    public virtual TblSizeProductItem SizeProductItem { get; set; } = null!;
+    public virtual TblProductItemDetail SizeProductItem { get; set; } = null!;
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace GreeenGarden.Data.Entities;
 
-public partial class TblSizeProductItem
+public partial class TblProductItemDetail
 {
     public Guid Id { get; set; }
 
@@ -16,8 +16,6 @@ public partial class TblSizeProductItem
     public double? SalePrice { get; set; }
 
     public int? Quantity { get; set; }
-
-    public string? Content { get; set; }
 
     public string Status { get; set; } = null!;
 

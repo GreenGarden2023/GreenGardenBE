@@ -11,5 +11,5 @@ public partial class TblSize
 
     public bool? Type { get; set; }
 
-    public virtual ICollection<TblSizeProductItem> TblSizeProductItems { get; } = new List<TblSizeProductItem>();
+    public virtual ICollection<TblProductItemDetail> TblProductItemDetails { get; } = new List<TblProductItemDetail>();
 }

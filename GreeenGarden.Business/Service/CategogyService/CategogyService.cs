@@ -119,7 +119,7 @@ namespace GreeenGarden.Business.Service.CategogyService
             var result = new ResultModel();
             try
             {
-                var listCategories = _cateRepo.GetAllCategory(pagingModel);
+                var listCategories = await _cateRepo.GetAllCategory(pagingModel);
                 if (listCategories == null)
                 {
                     result.IsSuccess = true;

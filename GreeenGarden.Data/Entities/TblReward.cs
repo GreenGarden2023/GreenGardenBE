@@ -16,4 +16,6 @@ public partial class TblReward
     public Guid? UserId { get; set; }
 
     public virtual ICollection<TblOrder> TblOrders { get; } = new List<TblOrder>();
+
+    public virtual TblUser? User { get; set; }
 }

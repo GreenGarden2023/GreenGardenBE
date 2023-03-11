@@ -12,6 +12,5 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
         public Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale);
         public Task<TblProduct> queryAProductByProId(Guid? proId);
         public Task<bool> UpdateProduct(ProductUpdateModel productUpdateModel);
-        public void increaseQuantity(Guid subId, int plus);
     }
 }

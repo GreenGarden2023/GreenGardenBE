@@ -2,7 +2,7 @@
 
 namespace GreeenGarden.Data.Models.SizeProductItemModel
 {
-    public class SizeProductItemResModel
+    public class ProductItemDetailResModel
     {
         public Guid Id { get; set; }
 
@@ -13,8 +13,6 @@ namespace GreeenGarden.Data.Models.SizeProductItemModel
         public double? SalePrice { get; set; }
 
         public int? Quantity { get; set; }
-
-        public string? Content { get; set; }
 
         public string Status { get; set; } = null!;
 

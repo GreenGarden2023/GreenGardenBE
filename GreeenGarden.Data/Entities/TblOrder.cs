@@ -23,6 +23,8 @@ public partial class TblOrder
 
     public Guid? RequestId { get; set; }
 
+    public virtual TblRequest? Request { get; set; }
+
     public virtual TblReward? Reward { get; set; }
 
     public virtual ICollection<TblAddendum> TblAddenda { get; } = new List<TblAddendum>();
@@ -30,6 +32,4 @@ public partial class TblOrder
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 
     public virtual TblUser User { get; set; } = null!;
-
-    public virtual TblVoucher? Voucher { get; set; }
 }

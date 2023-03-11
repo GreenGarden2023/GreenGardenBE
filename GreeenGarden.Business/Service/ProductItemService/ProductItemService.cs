@@ -73,6 +73,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Id = Guid.NewGuid(),
                     Name = productItemInsertModel.Name,
                     Description = productItemInsertModel.Description,
+                    Content = productItemInsertModel.Content,
                     ProductId = productItemInsertModel.ProductId,
                     Type = productItemInsertModel.Type,
                     
@@ -111,6 +112,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Id = productItemModel.Id,
                         Name = productItemModel.Name,
                         Description = productItemModel.Description,
+                        Content = productItemModel.Content,
                         ProductId = productItemModel.ProductId,
                         Type = productItemModel.Type,
                         ImageURL = prodItemImgURL,
@@ -188,7 +190,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             }
         }
 
-        public async Task<ResultModel> CreateProductItemSize(string token, SizeProductItemInsertModel sizeProductItemInsertModel)
+        public async Task<ResultModel> CreateProductItemDetail(string token, ProductItemDetailInsertModel sizeProductItemInsertModel)
         {
             if (!String.IsNullOrEmpty(token))
             {
@@ -231,7 +233,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Message = "Product item ID invalid.";
                     return result;
                 }
-                TblSizeProductItem tblSizeProductItem = new TblSizeProductItem
+                TblProductItemDetail tblProductItemDetail = new TblProductItemDetail
                 {
                     Id = Guid.NewGuid(),
                     SizeId = sizeProductItemInsertModel.SizeId,
@@ -239,10 +241,9 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     RentPrice = sizeProductItemInsertModel.RentPrice,
                     SalePrice = sizeProductItemInsertModel.SalePrice,
                     Quantity = sizeProductItemInsertModel.Quantity,
-                    Content = sizeProductItemInsertModel.Content,
                     Status = sizeProductItemInsertModel.Status,
                 };
-                var insertSizeProdItem = await _sizeProductItemRepo.Insert(tblSizeProductItem);
+                var insertSizeProdItem = await _sizeProductItemRepo.Insert(tblProductItemDetail);
                 if (insertSizeProdItem == Guid.Empty)
                 {
                     result.IsSuccess = false;
@@ -257,7 +258,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         TblImage tblImage = new TblImage
                         {
                             ImageUrl = url,
-                            SizeProductItemId = tblSizeProductItem.Id,
+                            ProductItemDetailId = tblProductItemDetail.Id,
                         };
                         await _imageRepo.Insert(tblImage);
                     }
@@ -281,6 +282,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Id = prodItem.Id,
                         Name = prodItem.Name,
                         Description = prodItem.Description,
+                        Content = prodItem.Content,
                         ProductId = prodItem.ProductId,
                         Type = prodItem.Type,
                         ImageURL = prodItemImgURL,
@@ -384,6 +386,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Id = prodItem.Id,
                         Name = prodItem.Name,
                         Description = prodItem.Description,
+                        Content = prodItem.Content,
                         ProductId = prodItem.ProductId,
                         Type = prodItem.Type,
                         ImageURL = prodItemImgURL,
@@ -497,6 +500,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                 Id = pi.Id,
                                 Name = pi.Name,
                                 Description = pi.Description,
+                                Content = pi.Content,
                                 ProductId = pi.ProductId,
                                 Type = pi.Type,
                                 ImageURL = prodItemImgURL,
@@ -652,7 +656,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         }
 
-        public async Task<ResultModel> UpdateSizeProductItem(string token, SizeProductItemUpdateModel sizeProductItemResModel)
+        public async Task<ResultModel> UpdateProductItemDetail(string token, SizeProductItemUpdateModel sizeProductItemResModel)
         {
             var result = new ResultModel();
             try
@@ -685,14 +689,13 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Id = sizeGet.Id,
                         SizeName = sizeGet.Name
                     };
-                    SizeProductItemResModel upResult = new SizeProductItemResModel()
+                    ProductItemDetailResModel upResult = new ProductItemDetailResModel()
                     {
                         Id = updateResult.Id,
                         Size = size,
                         RentPrice = updateResult.RentPrice,
                         SalePrice = updateResult.SalePrice,
                         Quantity = updateResult.Quantity,
-                        Content = updateResult.Content,
                         Status = updateResult.Status,
                         ImagesURL = imgGet
                     };

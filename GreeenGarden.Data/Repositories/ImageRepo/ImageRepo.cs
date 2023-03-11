@@ -76,7 +76,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             if (sizeproductItemId != Guid.Empty)
             {
 
-                var result = await _context.TblImages.Where(x => x.SizeProductItemId.Equals(sizeproductItemId)).ToListAsync();
+                var result = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(sizeproductItemId)).ToListAsync();
                 if (result != null)
                 {
 
@@ -95,13 +95,14 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
         {
-            var imgCategory = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();
+            var imgCategory = await _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefaultAsync();
             if (imgCategory != null)
             {
                 imgCategory.ImageUrl = imgUrl;
+                _context.Update(imgCategory);
+                await _context.SaveChangesAsync();
             }
-            _context.Update(imgCategory);
-            await _context.SaveChangesAsync();
+             
             return imgCategory;
         }
 
@@ -152,10 +153,10 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             }
         }
 
-        public async Task<bool> UpdateImgForSizeProductItem(Guid SizeProductItemId, List<string> ImgUrls)
+        public async Task<bool> UpdateImgForSizeProductItem(Guid ProductItemDetailId, List<string> ImgUrls)
         {
             bool success = false;
-            var oldImgList = await _context.TblImages.Where(x => x.SizeProductItemId.Equals(SizeProductItemId)).ToListAsync();
+            var oldImgList = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(ProductItemDetailId)).ToListAsync();
             foreach (TblImage tblImage in oldImgList)
             {
                 try
@@ -177,7 +178,7 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
                     var newProdIMG = new TblImage
                     {
                         ImageUrl = url,
-                        SizeProductItemId = SizeProductItemId
+                        ProductItemDetailId = ProductItemDetailId
                     };
                     _context.Add(newProdIMG);
                     await _context.SaveChangesAsync();

@@ -128,6 +128,7 @@ namespace GreeenGarden.API.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return NoContent();
             }
         }
@@ -144,6 +145,7 @@ namespace GreeenGarden.API.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return NoContent();
             }
         }
@@ -160,6 +162,7 @@ namespace GreeenGarden.API.Controllers
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex);
                 return NoContent();
             }
         }

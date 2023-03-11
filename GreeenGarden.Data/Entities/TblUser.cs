@@ -34,4 +34,8 @@ public partial class TblUser
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
 
     public virtual ICollection<TblOrder> TblOrders { get; } = new List<TblOrder>();
+
+    public virtual ICollection<TblRequest> TblRequests { get; } = new List<TblRequest>();
+
+    public virtual ICollection<TblReward> TblRewards { get; } = new List<TblReward>();
 }

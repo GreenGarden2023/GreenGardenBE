@@ -10,4 +10,6 @@ public partial class TblFile
     public string FileUrl { get; set; } = null!;
 
     public Guid ReportId { get; set; }
+
+    public virtual TblReport Report { get; set; } = null!;
 }

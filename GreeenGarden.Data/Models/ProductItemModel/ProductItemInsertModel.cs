@@ -10,6 +10,8 @@ namespace GreeenGarden.Data.Models.ProductItemModel
 
         public string? Description { get; set; }
 
+        public string? Content { get; set; }
+
         [Required]
         public Guid ProductId { get; set; }
 
@@ -18,6 +20,8 @@ namespace GreeenGarden.Data.Models.ProductItemModel
 
         [Required]
         public string ImageURL { get; set; } = null!;
+
+
     }
 }
 

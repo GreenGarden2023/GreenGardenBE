@@ -26,7 +26,7 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         public async Task<sizeProductItem> GetSizeProductItem(Guid? SizeProductItemID)
         {
-            var sizeProItem = await _context.TblSizeProductItems.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
+            var sizeProItem = await _context.TblProductItemDetails.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
             var size = await _context.TblSizes.Where(x => x.Id.Equals(sizeProItem.SizeId)).FirstOrDefaultAsync();
             var sizeTemp = new size()
             {
@@ -36,7 +36,6 @@ namespace GreeenGarden.Data.Repositories.CartRepo
             return new sizeProductItem()
             {
                 Id = sizeProItem.Id,
-                Content = sizeProItem.Content,
                 SizeId = sizeProItem.SizeId,
                 ProductItemId = sizeProItem.ProductItemId,
                 RentPrice = sizeProItem.RentPrice,
@@ -79,7 +78,7 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         public async Task<List<string>> GetListImgBySizeProItem(Guid sizeProItemID)
         {
-            var img = await _context.TblImages.Where(x => x.SizeProductItemId.Equals(sizeProItemID)).ToListAsync();
+            var img = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(sizeProItemID)).ToListAsync();
             var result = new List<string>();
             foreach (var imgItem in img)
             {

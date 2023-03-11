@@ -28,12 +28,12 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
-        [HttpPost("create-product-item-size")]
+        [HttpPost("create-product-item-detail")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> CreateProductItemSize([FromBody] SizeProductItemInsertModel model)
+        public async Task<IActionResult> CreateProductItemSize([FromBody] ProductItemDetailInsertModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.CreateProductItemSize(token, model);
+            var result = await _service.CreateProductItemDetail(token, model);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
@@ -54,12 +54,12 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
-        [HttpPost("update-size-product-item")]
+        [HttpPost("update-product-item-detail")]
         [Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> UpdateSizeProductItem([FromBody] SizeProductItemUpdateModel model)
         {
             string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.UpdateSizeProductItem(token, model);
+            var result = await _service.UpdateProductItemDetail(token, model);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }

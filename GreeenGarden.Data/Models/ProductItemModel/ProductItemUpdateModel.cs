@@ -9,6 +9,8 @@ namespace GreeenGarden.Data.Models.ProductItemModel
 
         public string? Name { get; set; } = null!;
 
+        public string? Content { get; set; }
+
         public string? Description { get; set; }
 
         public Guid? ProductId { get; set; }

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
-    public class SizeProductItemRepo : Repository<TblSizeProductItem>, ISizeProductItemRepo
+    public class SizeProductItemRepo : Repository<TblProductItemDetail>, ISizeProductItemRepo
     {
         private readonly GreenGardenDbContext _context;
         private readonly ISizeRepo _sizeRepo;
@@ -20,13 +20,13 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             _imageRepo = imageRepo;
         }
 
-        public async Task<List<SizeProductItemResModel>> GetSizeProductItems(Guid productItemId, string? status)
+        public async Task<List<ProductItemDetailResModel>> GetSizeProductItems(Guid productItemId, string? status)
         {
             if (String.IsNullOrEmpty(status))
             {
-                var result = await _context.TblSizeProductItems.Where(x => x.ProductItemId.Equals(productItemId)).ToListAsync();
-                List<SizeProductItemResModel> listSizeProd = new List<SizeProductItemResModel>();
-                foreach (TblSizeProductItem item in result)
+                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemId)).ToListAsync();
+                List<ProductItemDetailResModel> listSizeProd = new List<ProductItemDetailResModel>();
+                foreach (TblProductItemDetail item in result)
                 {
                     var sizeGet = await _sizeRepo.Get(item.SizeId);
                     var imgGet = await _imageRepo.GetImgUrlSizeProduct(item.Id);
@@ -37,14 +37,13 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             Id = sizeGet.Id,
                             SizeName = sizeGet.Name
                         };
-                        var sizeProd = new SizeProductItemResModel
+                        var sizeProd = new ProductItemDetailResModel
                         {
                             Id = item.Id,
                             Size = size,
                             RentPrice = item.RentPrice,
                             SalePrice = item.SalePrice,
                             Quantity = item.Quantity,
-                            Content = item.Content,
                             Status = item.Status,
                             ImagesURL = imgGet
                         };
@@ -56,9 +55,9 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
             else
             {
-                var result = await _context.TblSizeProductItems.Where(x => x.ProductItemId.Equals(productItemId) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
-                List<SizeProductItemResModel> listSizeProd = new List<SizeProductItemResModel>();
-                foreach (TblSizeProductItem item in result)
+                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemId) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
+                List<ProductItemDetailResModel> listSizeProd = new List<ProductItemDetailResModel>();
+                foreach (TblProductItemDetail item in result)
                 {
                     var sizeGet = await _sizeRepo.Get(item.SizeId);
                     var imgGet = await _imageRepo.GetImgUrlSizeProduct(item.Id);
@@ -69,14 +68,13 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             Id = sizeGet.Id,
                             SizeName = sizeGet.Name
                         };
-                        var sizeProd = new SizeProductItemResModel
+                        var sizeProd = new ProductItemDetailResModel
                         {
                             Id = item.Id,
                             Size = size,
                             RentPrice = item.RentPrice,
                             SalePrice = item.SalePrice,
                             Quantity = item.Quantity,
-                            Content = item.Content,
                             Status = item.Status,
                             ImagesURL = imgGet,
                         };
@@ -100,7 +98,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
             if (sizeProductItemUpdateModel != null)
             {
-                var query = from sizeProdItem in context.TblSizeProductItems
+                var query = from sizeProdItem in context.TblProductItemDetails
                             where sizeProdItem.Id.Equals(sizeProductItemUpdateModel.Id)
                             select new { sizeProdItem };
 
@@ -116,10 +114,6 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 if ((sizeProductItemUpdateModel.ProductItemId != Guid.Empty) && !sizeProductItemUpdateModel.ProductItemId.Equals(sizeProductItem.ProductItemId))
                 {
                     sizeProductItem.ProductItemId = (Guid)sizeProductItemUpdateModel.ProductItemId;
-                }
-                if (!String.IsNullOrEmpty(sizeProductItemUpdateModel.Content) && !sizeProductItemUpdateModel.Content.Equals(sizeProductItem.Content))
-                {
-                    sizeProductItem.Content = sizeProductItemUpdateModel.Content;
                 }
                 if (!String.IsNullOrEmpty(sizeProductItemUpdateModel.Status) && !sizeProductItemUpdateModel.Status.Equals(sizeProductItem.Status))
                 {

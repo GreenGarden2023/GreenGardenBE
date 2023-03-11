@@ -14,4 +14,12 @@ public partial class TblRequest
     public int NumberTree { get; set; }
 
     public DateTime CreateDate { get; set; }
+
+    public Guid UserId { get; set; }
+
+    public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
+
+    public virtual ICollection<TblOrder> TblOrders { get; } = new List<TblOrder>();
+
+    public virtual TblUser User { get; set; } = null!;
 }

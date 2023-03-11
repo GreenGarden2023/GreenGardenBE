@@ -26,9 +26,9 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             return result.ImageUrl;
         }
 
-        public Page<TblCategory> GetAllCategory(PaginationRequestModel pagingModel)
+        public async Task<Page<TblCategory>> GetAllCategory(PaginationRequestModel pagingModel)
         {
-            return _context.TblCategories.Paginate(pagingModel.curPage, pagingModel.pageSize);
+            return await _context.TblCategories.PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
         }
 
         public async Task<Page<TblCategory>> GetCategoryByStatus(PaginationRequestModel pagingModel, string status)
