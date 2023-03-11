@@ -512,11 +512,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 bool updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(productItemDetailModel);
                 if (updateProItem == true)
                 {
-                    List<string> oldImgs = await _imageRepo.GetImgUrlProductItemDetail(productItemDetailModel.Id);
-                    if (oldImgs.Any())
-                    {
-                        _ = await _imgService.DeleteImagesByURLs(oldImgs);
-                    }
                     foreach (string url in productItemDetailModel.ImagesUrls)
                     {
                         bool updateImg = await _imageRepo.UpdateImgForProductItemDetail(productItemDetailModel.Id, productItemDetailModel.ImagesUrls);
