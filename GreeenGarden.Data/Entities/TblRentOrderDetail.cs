@@ -7,7 +7,7 @@ public partial class TblRentOrderDetail
 {
     public Guid Id { get; set; }
 
-    public double? ProductItemDetailTotalPrice { get; set; }
+    public double? ProductItemRentPrice { get; set; }
 
     public int? Quantity { get; set; }
 

@@ -1,11 +1,11 @@
 using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Business.Service.ImageService;
-using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Business.Service.PaymentService;
 using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Business.Service.SecretService;
+using GreeenGarden.Business.Service.ServiceOrderService;
 using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Data.Entities;
@@ -14,9 +14,7 @@ using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
-using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
-using GreeenGarden.Data.Repositories.RentOrderRepo;
-using GreeenGarden.Data.Repositories.RewardRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
@@ -41,7 +39,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
-builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
+
 
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
 
@@ -49,9 +48,6 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
-builder.Services.AddTransient<IRewardRepo, RewardRepo>();
-builder.Services.AddTransient<IRentOrderRepo, RentOrderRepo>();
-builder.Services.AddTransient<IRentOrderDetailRepo, RentOrderDetailRepo>();
 builder.Services.AddTransient<IEmailOTPCodeRepo, EmailOTPCodeRepo>();
 builder.Services.AddTransient<ICategoryRepo, CategoryRepo>();
 builder.Services.AddTransient<IProductRepo, ProductRepo>();
@@ -60,6 +56,7 @@ builder.Services.AddTransient<ISizeRepo, SizeRepo>();
 builder.Services.AddTransient<ISizeProductItemRepo, SizeProductItemRepo>();
 builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
+builder.Services.AddTransient<IServiceOrderRepo, ServiceOrderRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
