@@ -20,16 +20,16 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             _imageRepo = imageRepo;
         }
 
-        public async Task<List<ProductItemDetailResModel>> GetSizeProductItems(Guid productItemId, string? status)
+        public async Task<List<ProductItemDetailResModel>> GetSizeProductItems(Guid ProductItemID, string? status)
         {
             if (String.IsNullOrEmpty(status))
             {
-                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemId)).ToListAsync();
+                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID)).ToListAsync();
                 List<ProductItemDetailResModel> listSizeProd = new List<ProductItemDetailResModel>();
                 foreach (TblProductItemDetail item in result)
                 {
                     var sizeGet = await _sizeRepo.Get(item.SizeId);
-                    var imgGet = await _imageRepo.GetImgUrlSizeProduct(item.Id);
+                    var imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
                     if (sizeGet != null)
                     {
                         var size = new SizeResModel()
@@ -55,12 +55,12 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
             else
             {
-                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemId) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
+                var result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
                 List<ProductItemDetailResModel> listSizeProd = new List<ProductItemDetailResModel>();
                 foreach (TblProductItemDetail item in result)
                 {
                     var sizeGet = await _sizeRepo.Get(item.SizeId);
-                    var imgGet = await _imageRepo.GetImgUrlSizeProduct(item.Id);
+                    var imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
                     if (sizeGet != null && imgGet != null)
                     {
                         var size = new SizeResModel()
@@ -86,20 +86,20 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
         }
 
-        public async Task<bool> UpdateSizeProductItem(SizeProductItemUpdateModel sizeProductItemUpdateModel)
+        public async Task<bool> UpdateSizeProductItem(ProductItemDetailModel productItemDetailModel)
         {
-            if (sizeProductItemUpdateModel.SizeId == null)
+            if (productItemDetailModel.SizeId == null)
             {
-                sizeProductItemUpdateModel.SizeId = Guid.Empty;
+                productItemDetailModel.SizeId = Guid.Empty;
             }
-            if (sizeProductItemUpdateModel.ProductItemId == null)
+            if (productItemDetailModel.ProductItemID == null)
             {
-                sizeProductItemUpdateModel.ProductItemId = Guid.Empty;
+                productItemDetailModel.ProductItemID = Guid.Empty;
             }
-            if (sizeProductItemUpdateModel != null)
+            if (productItemDetailModel != null)
             {
                 var query = from sizeProdItem in context.TblProductItemDetails
-                            where sizeProdItem.Id.Equals(sizeProductItemUpdateModel.Id)
+                            where sizeProdItem.Id.Equals(productItemDetailModel.Id)
                             select new { sizeProdItem };
 
                 var sizeProductItem = await query.Select(x => x.sizeProdItem).FirstOrDefaultAsync();
@@ -107,29 +107,29 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 {
                     return false;
                 }
-                if ((sizeProductItemUpdateModel.SizeId != Guid.Empty) && !sizeProductItemUpdateModel.SizeId.Equals(sizeProductItem.SizeId))
+                if ((productItemDetailModel.SizeId != Guid.Empty) && !productItemDetailModel.SizeId.Equals(sizeProductItem.SizeId))
                 {
-                    sizeProductItem.SizeId = (Guid)sizeProductItemUpdateModel.SizeId;
+                    sizeProductItem.SizeId = (Guid)productItemDetailModel.SizeId;
                 }
-                if ((sizeProductItemUpdateModel.ProductItemId != Guid.Empty) && !sizeProductItemUpdateModel.ProductItemId.Equals(sizeProductItem.ProductItemId))
+                if ((productItemDetailModel.ProductItemID != Guid.Empty) && !productItemDetailModel.ProductItemID.Equals(sizeProductItem.ProductItemId))
                 {
-                    sizeProductItem.ProductItemId = (Guid)sizeProductItemUpdateModel.ProductItemId;
+                    sizeProductItem.ProductItemId = (Guid)productItemDetailModel.ProductItemID;
                 }
-                if (!String.IsNullOrEmpty(sizeProductItemUpdateModel.Status) && !sizeProductItemUpdateModel.Status.Equals(sizeProductItem.Status))
+                if (!String.IsNullOrEmpty(productItemDetailModel.Status) && !productItemDetailModel.Status.Equals(sizeProductItem.Status))
                 {
-                    sizeProductItem.Status = sizeProductItemUpdateModel.Status;
+                    sizeProductItem.Status = productItemDetailModel.Status;
                 }
-                if (sizeProductItemUpdateModel.RentPrice != null && sizeProductItemUpdateModel.RentPrice != sizeProductItem.RentPrice)
+                if (productItemDetailModel.RentPrice != null && productItemDetailModel.RentPrice != sizeProductItem.RentPrice)
                 {
-                    sizeProductItem.RentPrice = sizeProductItemUpdateModel.RentPrice;
+                    sizeProductItem.RentPrice = productItemDetailModel.RentPrice;
                 }
-                if (sizeProductItemUpdateModel.SalePrice != null && sizeProductItemUpdateModel.SalePrice != sizeProductItem.SalePrice)
+                if (productItemDetailModel.SalePrice != null && productItemDetailModel.SalePrice != sizeProductItem.SalePrice)
                 {
-                    sizeProductItem.SalePrice = sizeProductItemUpdateModel.SalePrice;
+                    sizeProductItem.SalePrice = productItemDetailModel.SalePrice;
                 }
-                if (sizeProductItemUpdateModel.Quantity != null && sizeProductItemUpdateModel.Quantity != sizeProductItem.Quantity)
+                if (productItemDetailModel.Quantity != null && productItemDetailModel.Quantity != sizeProductItem.Quantity)
                 {
-                    sizeProductItem.Quantity = sizeProductItemUpdateModel.Quantity;
+                    sizeProductItem.Quantity = productItemDetailModel.Quantity;
                 }
                 _context.Update(sizeProductItem);
                 await _context.SaveChangesAsync();

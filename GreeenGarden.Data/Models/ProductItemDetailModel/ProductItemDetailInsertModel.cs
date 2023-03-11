@@ -2,8 +2,11 @@
 
 namespace GreeenGarden.Data.Models.SizeProductItemModel
 {
-    public class ProductItemDetailInsertModel
+    public class ProductItemDetailModel
     {
+
+        [Required]
+        public Guid Id { get; set; }
 
         [Required]
         public Guid SizeId { get; set; }

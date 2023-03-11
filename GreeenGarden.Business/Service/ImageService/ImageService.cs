@@ -197,47 +197,6 @@ namespace GreeenGarden.Business.Service.ImageService
 
 
 
-        public async Task<ResultModel> UpdateImageSizeProductItem(Guid SizeProductItemID, List<IFormFile> files)
-        {
-            var result = new ResultModel();
-            try
-            {
-                var imgsBefore = await _imageRepo.GetImgUrlSizeProduct(SizeProductItemID);
-                if (imgsBefore != null)
-                {
-                    await DeleteImages(imgsBefore);
-
-                }
-
-                var uploadImg = await UploadImages(files);
-                if (uploadImg.Code == 200)
-                {
-
-                    var updateImg = await _imageRepo.UpdateImgForSizeProductItem(SizeProductItemID, (List<string>)uploadImg.Data);
-                    if (updateImg == true)
-                    {
-                        result.IsSuccess = true;
-                        result.Code = 200;
-                        result.Data = uploadImg.Data.ToString();
-                    }
-                    else
-                    {
-                        result.IsSuccess = false;
-                        result.Code = 400;
-                        result.Data = "Update product image failed.";
-                    }
-                }
-                return result;
-
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
-                result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-                return result;
-            }
-        }
 
         public async Task<ResultModel> DeleteImagesByURLs(List<string> fileURLs)
         {

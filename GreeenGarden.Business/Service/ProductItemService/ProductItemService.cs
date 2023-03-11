@@ -190,7 +190,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             }
         }
 
-        public async Task<ResultModel> CreateProductItemDetail(string token, ProductItemDetailInsertModel sizeProductItemInsertModel)
+        public async Task<ResultModel> CreateProductItemDetail(string token, ProductItemDetailModel productItemDetailModel)
         {
             if (!String.IsNullOrEmpty(token))
             {
@@ -217,7 +217,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             var result = new ResultModel();
             try
             {
-                var size = await _sizeRepo.Get(sizeProductItemInsertModel.SizeId);
+                var size = await _sizeRepo.Get(productItemDetailModel.SizeId);
                 if (size == null )
                 {
                     result.IsSuccess = false;
@@ -225,7 +225,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     result.Message = "Size ID invalid.";
                     return result;
                 }
-                var proItem = await _proItemRepo.Get(sizeProductItemInsertModel.ProductItemID);
+                var proItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
                 if (proItem == null)
                 {
                     result.IsSuccess = false;
@@ -236,12 +236,12 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 TblProductItemDetail tblProductItemDetail = new TblProductItemDetail
                 {
                     Id = Guid.NewGuid(),
-                    SizeId = sizeProductItemInsertModel.SizeId,
-                    ProductItemId = sizeProductItemInsertModel.ProductItemID,
-                    RentPrice = sizeProductItemInsertModel.RentPrice,
-                    SalePrice = sizeProductItemInsertModel.SalePrice,
-                    Quantity = sizeProductItemInsertModel.Quantity,
-                    Status = sizeProductItemInsertModel.Status,
+                    SizeId = productItemDetailModel.SizeId,
+                    ProductItemId = productItemDetailModel.ProductItemID,
+                    RentPrice = productItemDetailModel.RentPrice,
+                    SalePrice = productItemDetailModel.SalePrice,
+                    Quantity = productItemDetailModel.Quantity,
+                    Status = productItemDetailModel.Status,
                 };
                 var insertSizeProdItem = await _sizeProductItemRepo.Insert(tblProductItemDetail);
                 if (insertSizeProdItem == Guid.Empty)
@@ -253,7 +253,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 }
                 else
                 {
-                    foreach (string url in sizeProductItemInsertModel.ImagesUrls)
+                    foreach (string url in productItemDetailModel.ImagesUrls)
                     {
                         TblImage tblImage = new TblImage
                         {
@@ -263,11 +263,11 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         await _imageRepo.Insert(tblImage);
                     }
                 }
-                var prodItem = await _proItemRepo.Get(sizeProductItemInsertModel.ProductItemID);
+                var prodItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
                 if (prodItem != null)
                 {
-                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(sizeProductItemInsertModel.ProductItemID, null);
-                    var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(sizeProductItemInsertModel.ProductItemID);
+                    var sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemDetailModel.ProductItemID, null);
+                    var getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemDetailModel.ProductItemID);
                     string prodItemImgURL = "";
                     if (getProdItemImgURL != null)
                     {
@@ -656,7 +656,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         }
 
-        public async Task<ResultModel> UpdateProductItemDetail(string token, SizeProductItemUpdateModel sizeProductItemResModel)
+        public async Task<ResultModel> UpdateProductItemDetail(string token, ProductItemDetailModel productItemDetailModel)
         {
             var result = new ResultModel();
             try
@@ -672,18 +672,21 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Message = "User not allowed"
                     };
                 }
-                var updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(sizeProductItemResModel);
+                var updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(productItemDetailModel);
                 if (updateProItem == true)
                 {
-                    result.Message = "Size product item updated with out image change.";
-                    if (sizeProductItemResModel.Images != null && sizeProductItemResModel.Images.Any())
+                    var oldImgs = await _imageRepo.GetImgUrlProductItemDetail(productItemDetailModel.Id);
+                    if (oldImgs.Any())
                     {
-                        var updateImages = await _imgService.UpdateImageSizeProductItem(sizeProductItemResModel.Id, sizeProductItemResModel.Images);
-                        result.Message = "Size product item updated with image change.";
+                        await _imgService.DeleteImagesByURLs(oldImgs);
                     }
-                    var updateResult = await _sizeProductItemRepo.Get(sizeProductItemResModel.Id);
+                    foreach (string url in productItemDetailModel.ImagesUrls)
+                    {
+                        var updateImg = await _imageRepo.UpdateImgForProductItemDetail(productItemDetailModel.Id,productItemDetailModel.ImagesUrls);
+                    }
+                    var updateResult = await _sizeProductItemRepo.Get(productItemDetailModel.Id);
                     var sizeGet = await _sizeRepo.Get(updateResult.SizeId);
-                    var imgGet = await _imageRepo.GetImgUrlSizeProduct(updateResult.Id);
+                    var imgGet = await _imageRepo.GetImgUrlProductItemDetail(updateResult.Id);
                     var size = new SizeResModel()
                     {
                         Id = sizeGet.Id,
