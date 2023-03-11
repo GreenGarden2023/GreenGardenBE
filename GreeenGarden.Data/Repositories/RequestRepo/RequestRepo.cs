@@ -19,9 +19,11 @@ namespace GreeenGarden.Data.Repositories.RequestRepo
             _context = context;
         }
 
-        public Task<TblRequest> Create(TblRequest request)
+        public async Task<TblRequestDetail> CreateRequestDetail(TblRequestDetail entities)
         {
-            throw new NotImplementedException();
+            await _context.TblRequestDetails.AddAsync(entities);
+            await _context.SaveChangesAsync();
+            return entities;
         }
     }
 }

@@ -10,6 +10,6 @@ namespace GreeenGarden.Business.Service.RequestService
 {
     public interface IRequestService
     {
-        Task<ResultModel> createRequest(string token, RequestModel requestModel);
+        Task<ResultModel> createRequest(string token, RequestCreateModel requestModel);
     }
 }

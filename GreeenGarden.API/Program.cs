@@ -39,7 +39,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
-builder.Services.AddScoped<IRequestSevice, RequestService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 
 builder.Services.AddScoped<IMoMoService, MoMoServices>();

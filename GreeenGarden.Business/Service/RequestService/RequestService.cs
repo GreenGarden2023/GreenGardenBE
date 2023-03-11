@@ -12,6 +12,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using GreeenGarden.Data.Enums;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using GreeenGarden.Data.Models.CategoryModel;
 
 namespace GreeenGarden.Business.Service.RequestService
 {
@@ -19,14 +21,18 @@ namespace GreeenGarden.Business.Service.RequestService
     {
         private readonly IRequestRepo _requestRepo;
         private readonly DecodeToken _decodeToken;
+        private readonly IImageService _imgService;
+        private readonly IImageRepo _imageRepo;
 
-        public RequestService(IRequestRepo requestRepo)
+        public RequestService(IRequestRepo requestRepo, IImageService imgService, IImageRepo imageRepo)
         {
             _requestRepo = requestRepo;
             _decodeToken = new DecodeToken();
+            _imgService = imgService;
+            _imageRepo = imageRepo;
         }
 
-        public async Task<ResultModel> createRequest( RequestModel requestModel, string token)
+        public async Task<ResultModel> createRequest(string token, RequestCreateModel model)
         {
             ResultModel result = new();
             try
@@ -40,36 +46,67 @@ namespace GreeenGarden.Business.Service.RequestService
                         Message = "User not allwed"
                     };
                 }
-                if(string.IsNullOrEmpty(requestModel.Adress) || string.IsNullOrEmpty(requestModel.Phone) || requestModel.Adress.Length < 8 || requestModel.Adress.Length > 200 || requestModel.Phone.Length < 9 || requestModel.Phone.Length > 11){
+
+                /*if(string.IsNullOrEmpty(requestModel.Adress) || string.IsNullOrEmpty(requestModel.Phone) || requestModel.Adress.Length < 8 || requestModel.Adress.Length > 200 || requestModel.Phone.Length < 9 || requestModel.Phone.Length > 11){
                    result.IsSuccess = false;
                    result.Code = 400;
                    result.Message = "Error format address or phone";
                    return result;
-                }
+                }*/
+                
+                
                 TblRequest newRequest = new()
                 {
                     Id = Guid.NewGuid(),
-                    UserId = (Guid)requestModel.UserID,
-                    Address = requestModel.Adress,
-                    Phone = requestModel.Phone,
+                    UserId = model.UserID,
+                    Address = model.Adress,
+                    Phone = model.Phone,
                     CreateDate = DateTime.Now,
                 };
-                Guid insertResult = await _requestRepo.Insert(newRequest);
-                RequestModel requestReModel = new()
+                await _requestRepo.Insert(newRequest);
+
+
+                foreach (var item in model.requestDetails)
                 {
-                    ID = newRequest.Id,
-                    UserId = (Guid)requestModel.UserID,
-                    Address = requestModel.Adress,
-                    Phone = requestModel.Phone,
-                    CreateDate = DateTime.Now,
-                };
+                    var newRequestDetail = new TblRequestDetail() {
+                        Id = Guid.NewGuid(),
+                        Description = item.Description,
+                        TreeName = item.TreeName,
+                        Quantity = item.Quantity,
+                        Price = 0,
+                        RequestId = newRequest.Id,
+                        ServiceOrderId = null,
+                    };
+                    await _requestRepo.CreateRequestDetail(newRequestDetail);
+
+                    foreach (var j in item.Images)
+                    {
+                        ResultModel? imgUploadUrl = await _imgService.UploadAnImage(j);
+
+                        if (imgUploadUrl != null)
+                        {
+                            TblImage newimgCategory = new()
+                            {
+                                Id = Guid.NewGuid(),
+                                ImageUrl = imgUploadUrl.Data.ToString(),
+                                CategoryId = newRequestDetail.Id,
+                            };
+                            _ = await _imageRepo.Insert(newimgCategory);
+
+                        }
+                    }
+
+                }
+
+
+
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = productResModel;
+                result.Data = "";
                 result.Message = "Create new request successfully";
                 return result;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 result.IsSuccess = false;
                 result.Code = 400;

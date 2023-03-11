@@ -10,6 +10,6 @@ namespace GreeenGarden.Data.Repositories.RequestRepo
 {
     public interface IRequestRepo: IRepository<TblRequest>
     {
-        Task<TblRequest> Create(TblRequest request);
+        Task<TblRequestDetail> CreateRequestDetail(TblRequestDetail entities);
     }
 }
