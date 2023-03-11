@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblProductItemDetail
 {
@@ -23,4 +26,8 @@ public partial class TblProductItemDetail
     public virtual ICollection<TblCartDetail> TblCartDetails { get; } = new List<TblCartDetail>();
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
+
+    public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();
+
+    public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();
 }
