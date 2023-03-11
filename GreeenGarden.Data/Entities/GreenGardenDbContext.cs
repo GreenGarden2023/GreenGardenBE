@@ -41,6 +41,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblRequest> TblRequests { get; set; }
 
+    public virtual DbSet<TblRequestDetail> TblRequestDetails { get; set; }
+
     public virtual DbSet<TblReward> TblRewards { get; set; }
 
     public virtual DbSet<TblRole> TblRoles { get; set; }
@@ -366,15 +368,35 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.Address).HasMaxLength(200);
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.Descripton).HasMaxLength(200);
             entity.Property(e => e.Phone).HasMaxLength(50);
-            entity.Property(e => e.TreeName).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.User).WithMany(p => p.TblRequests)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblRequests_tblUsers");
+        });
+
+        modelBuilder.Entity<TblRequestDetail>(entity =>
+        {
+            entity.ToTable("tblRequestDetail");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.RequestId).HasColumnName("RequestID");
+            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
+            entity.Property(e => e.TreeName).HasMaxLength(50);
+
+            entity.HasOne(d => d.Request).WithMany(p => p.TblRequestDetails)
+                .HasForeignKey(d => d.RequestId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblRequestDetail_tblRequest");
+
+            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblRequestDetails)
+                .HasForeignKey(d => d.ServiceOrderId)
+                .HasConstraintName("FK_tblRequestDetail_tblServiceOrder");
         });
 
         modelBuilder.Entity<TblReward>(entity =>
@@ -448,7 +470,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ServiceEndDate).HasColumnType("datetime");
             entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
 
             entity.HasOne(d => d.Request).WithMany(p => p.TblServiceOrders)
                 .HasForeignKey(d => d.RequestId)

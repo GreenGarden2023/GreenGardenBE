@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GreeenGarden.API.Entities;
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblRequestDetail
 {

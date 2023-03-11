@@ -11,5 +11,7 @@ namespace GreeenGarden.Business.Service.ServiceOrderService
     public interface IServiceOrderService
     {
         Task<ResultModel> createServiceOrder(string token, ServiceOrderCreateModel model);
+        Task<ResultModel> showTechnician(string token);
+        Task<ResultModel> showListServiceOrder(string token);
     }
 }

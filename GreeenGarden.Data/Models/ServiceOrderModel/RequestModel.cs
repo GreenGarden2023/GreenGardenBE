@@ -14,8 +14,8 @@ namespace GreeenGarden.Data.Models.ServiceOrderModel
     {
         public Guid ID { get; set; }
         public string TreeName { get; set; }
-        public int Quantity { get; set; }
+        public int? Quantity { get; set; }
         public string Description { get; set; }
-        public double Price { get; set; }
+        public double? Price { get; set; }
     }
 }
