@@ -6,7 +6,12 @@ using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Models.ProductItemDetailModel
 {
-    internal class ProductItemDetailUpdateModel
+    public class ProductItemDetailUpdateModel
     {
+    }
+    public class ProductItemDetailUpdateStatusModel
+    {
+        public Guid ProductItemDetailID { get; set; }
+        public string Status { get; set; }  
     }
 }

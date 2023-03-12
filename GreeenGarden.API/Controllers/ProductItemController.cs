@@ -64,5 +64,14 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.GetDetailProductItem(productItemId, sizeProductItemStatus);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
+        [HttpPost("change-status")]
+        [Authorize(Roles = "Staff, Manager, Admin")]
+        public async Task<IActionResult> ChangeStatus([FromBody] ProductItemDetailUpdateStatusModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.ChangeStatus(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
