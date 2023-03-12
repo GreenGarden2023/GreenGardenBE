@@ -149,7 +149,7 @@ namespace GreeenGarden.Business.Service.CartService
 
                             var ItemRequest = new ItemRequest()
                             {
-                                productItemDetial = productItemDetail,
+                                productItemDetail = productItemDetail,
                                 quantity = item.quantity,
                                 unitPrice = productItemDetail.RentPrice,
                                 productItem = productItemRecord
@@ -202,7 +202,7 @@ namespace GreeenGarden.Business.Service.CartService
                             };
                             var ItemRequest = new ItemRequest()
                             {
-                                productItemDetial = sizeProductItem,
+                                productItemDetail = sizeProductItem,
                                 quantity = item.quantity,
                                 unitPrice = sizeProductItem.SalePrice,
                                 productItem = productItemRecord
@@ -275,7 +275,7 @@ namespace GreeenGarden.Business.Service.CartService
                         };
                         var ItemRequest = new ItemRequest()
                         {
-                            productItemDetial = productItemDetail,
+                            productItemDetail = productItemDetail,
                             quantity = item.Quantity,
                             unitPrice = productItemDetail.RentPrice,
                             productItem = productItemRecord
@@ -297,7 +297,7 @@ namespace GreeenGarden.Business.Service.CartService
                         };
                         var ItemRequest = new ItemRequest()
                         {
-                            productItemDetial = sizeProductItem,
+                            productItemDetail = sizeProductItem,
                             quantity = item.Quantity,
                             unitPrice = sizeProductItem.SalePrice,
                             productItem = productItemRecord
