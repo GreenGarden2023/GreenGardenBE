@@ -40,4 +40,6 @@ public partial class TblUser
     public virtual ICollection<TblRequest> TblRequests { get; } = new List<TblRequest>();
 
     public virtual ICollection<TblReward> TblRewards { get; } = new List<TblReward>();
+
+    public virtual ICollection<TblSaleOrder> TblSaleOrders { get; } = new List<TblSaleOrder>();
 }

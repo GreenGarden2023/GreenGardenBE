@@ -15,6 +15,15 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             _context = context;
         }
 
+        public async Task<bool> ChangeStatus(ProductItemDetailUpdateStatusModel model)
+        {
+            var result = await _context.TblProductItemDetails.Where(x => x.Id.Equals(model.ProductItemDetailId)).FirstOrDefaultAsync();
+            result.Status = model.Status;
+            _context.TblProductItemDetails.Update(result);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID, string? type)
         {
             return string.IsNullOrEmpty(type)

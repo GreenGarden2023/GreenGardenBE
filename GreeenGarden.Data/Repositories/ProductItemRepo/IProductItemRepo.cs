@@ -10,5 +10,6 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
     {
         Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productId, string? type);
         Task<bool> UpdateProductItem(ProductItemModel productItemModel);
+        Task<bool> ChangeStatus(ProductItemDetailUpdateStatusModel model);
     }
 }

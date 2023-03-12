@@ -23,7 +23,13 @@ public partial class TblSaleOrder
 
     public int? RewardPointUsed { get; set; }
 
+    public double? RemainMoney { get; set; }
+
+    public double? DiscountAmount { get; set; }
+
     public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
+
+    public virtual TblUser User { get; set; } = null!;
 }

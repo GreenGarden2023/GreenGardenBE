@@ -80,5 +80,14 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             _ = await _context.SaveChangesAsync();
             return category;
         }
+
+        public async Task<bool> updateStatus(CategoryUpdateStatusModel model)
+        {
+            var result = await _context.TblCategories.Where(x=>x.Id.Equals(model.CategoryID)).FirstOrDefaultAsync();
+            result.Status = model.status;
+            _context.TblCategories.Update(result);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
