@@ -359,6 +359,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.UserId).HasColumnName("UserID");
         });
 

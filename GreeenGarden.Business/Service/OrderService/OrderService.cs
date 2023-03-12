@@ -713,8 +713,10 @@ namespace GreeenGarden.Business.Service.OrderService
                                 resList.Add(rentOrderResModel);
                             }
                         }
+                        resList.Sort((x, y) => y.EndDateRent.CompareTo(x.EndDateRent));
                         RentOrderGroupModel rentOrderGroupModel = new RentOrderGroupModel
                         {
+                            CreateDate = (DateTime)tblRentGroup.CreateDate,
                             NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
                             TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
                             RentOrderList = resList
@@ -726,6 +728,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         .CurPage(tblRentOrderGroups.CurrentPage)
                         .RecordCount(tblRentOrderGroups.RecordCount)
                         .PageCount(tblRentOrderGroups.PageCount);
+
+                    listGroup.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
+
 
                     RentOrderGroupResModel rentOrderGroupResModel = new RentOrderGroupResModel
                     {
@@ -890,6 +895,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         .RecordCount(listTblSaleOrder.RecordCount)
                         .PageCount(listTblSaleOrder.PageCount);
 
+                    resList.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
                     SaleOrderGetResModel saleOrderGetResModel = new SaleOrderGetResModel
                     {
                         Paging = paging,
@@ -983,6 +989,9 @@ namespace GreeenGarden.Business.Service.OrderService
                                 resList.Add(rentOrderResModel);
                             }
                         }
+
+                        resList.Sort((x, y) => y.EndDateRent.CompareTo(x.EndDateRent));
+
                         RentOrderGroupModel rentOrderGroupModel = new RentOrderGroupModel
                         {
                             NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
@@ -996,6 +1005,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         .CurPage(tblRentOrderGroups.CurrentPage)
                         .RecordCount(tblRentOrderGroups.RecordCount)
                         .PageCount(tblRentOrderGroups.PageCount);
+
+
+                    listGroup.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
 
                     RentOrderGroupResModel rentOrderGroupResModel = new RentOrderGroupResModel
                     {
@@ -1085,6 +1097,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         .CurPage(listTblSaleOrder.CurrentPage)
                         .RecordCount(listTblSaleOrder.RecordCount)
                         .PageCount(listTblSaleOrder.PageCount);
+
+
+                    resList.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
 
                     SaleOrderGetResModel saleOrderGetResModel = new SaleOrderGetResModel
                     {

@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using System.Net.NetworkInformation;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.Repository;
@@ -54,6 +55,58 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
 			{
 				return null;
 			}
+        }
+
+        public async Task<ResultModel> UpdateRentOrderDeposit(Guid rentOrderID)
+        {
+            ResultModel result = new ResultModel();
+            TblRentOrder order = await _context.TblRentOrders.Where(x => x.Id.Equals(rentOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                order.Status = Status.READY;
+                order.RemainMoney -= order.Deposit;
+                _ = _context.Update(order);
+                _ = await _context.SaveChangesAsync();
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Update rent order status success.";
+                return result;
+            }
+            else
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Update rent order status failed.";
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> UpdateRentOrderRemain(Guid rentOrderID, double amount)
+        {
+            ResultModel result = new ResultModel();
+            TblRentOrder order = await _context.TblRentOrders.Where(x => x.Id.Equals(rentOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+
+                order.RemainMoney -= amount;
+                if (order.RemainMoney == 0)
+                {
+                    order.Status = Status.PAID;
+                }
+                _ = _context.Update(order);
+                _ = await _context.SaveChangesAsync();
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Update rent order status success.";
+                return result;
+            }
+            else
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Update rent order status failed.";
+                return result;
+            }
         }
     }
 }

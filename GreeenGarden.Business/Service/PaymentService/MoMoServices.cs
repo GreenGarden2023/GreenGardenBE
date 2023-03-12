@@ -18,15 +18,15 @@ namespace GreeenGarden.Business.Service.PaymentService
             _rentOrderRepo = rentOrderRepo;
             _saleOrderRepo = saleOrderRepo;
         }
-        public async Task<ResultModel> CreateDepositPaymentMoMo(Guid orderID, string orderType)
+        public async Task<ResultModel> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
         {
             ResultModel resultModel = new ResultModel();
             double amount = 0;
             string base64OrderString = "";
             MoMoOrderModel moMoOrderModel = new();
-            if (orderType.ToLower().Trim().Equals("rent"))
+            if (moMoDepositModel.OrderType.ToLower().Trim().Equals("rent"))
             {
-                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(orderID);
+                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoDepositModel.OrderId);
                  amount = (double)tblRentOrder.Deposit;
                 if (tblRentOrder == null)
                 {
@@ -47,12 +47,49 @@ namespace GreeenGarden.Business.Service.PaymentService
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
-                moMoOrderModel.OrderId = orderID;
+                moMoOrderModel.OrderId = moMoDepositModel.OrderId;
                 moMoOrderModel.PayAmount = amount;
                 var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
                 var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
                  base64OrderString = Convert.ToBase64String(orderTextBytes);
+            }
+            else if (moMoDepositModel.OrderType.ToLower().Trim().Equals("sale"))
+            {
+                TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoDepositModel.OrderId);
+                amount = (double)tblSaleOrder.Deposit;
+                if (tblSaleOrder == null)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Rent order Id invalid.";
+                    return resultModel;
+                }
+                if (tblSaleOrder.Status.Equals(Status.READY))
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Rent order deposit is paid.";
+                    return resultModel;
+                }
+
+                JsonSerializerSettings jsonSerializerSettings = new()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                moMoOrderModel.OrderId = moMoDepositModel.OrderId;
+                moMoOrderModel.PayAmount = amount;
+                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                    jsonSerializerSettings);
+                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
+            }
+            else
+            {
+                resultModel.Code = 400;
+                resultModel.IsSuccess = false;
+                resultModel.Message = "service order not yet available.";
+                return resultModel;
             }
 
             List<string> secrets = SecretService.SecretService.GetPaymentSecrets();
@@ -105,12 +142,132 @@ namespace GreeenGarden.Business.Service.PaymentService
             };
             Console.WriteLine("Json request to MoMo: " + message.ToString());
             string responseFromMomo = await Task.FromResult(PaymentRequest.sendPaymentRequest(endpoint, message.ToString()));
+            Console.WriteLine("Response from MoMo: " + responseFromMomo.ToString());
             JObject resJSON = JObject.Parse(responseFromMomo);
             resultModel.Code = 200;
             resultModel.IsSuccess = true;
             resultModel.Message = "Create sale payment success.";
             resultModel.Data = resJSON;
             return resultModel;
+        }
+
+        public async Task<ResultModel> DepositPaymentCash(MoMoDepositModel moMoDepositModel)
+        {
+            ResultModel result = new ResultModel();
+            try
+            {
+                if (moMoDepositModel.OrderType.Trim().ToLower().Equals("rent"))
+                {
+                    ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(moMoDepositModel.OrderId);
+                    if(updateDeposit.IsSuccess == true)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Update order deposit success.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update order deposit failed.";
+                        return result;
+                    }
+                }else if (moMoDepositModel.OrderType.Trim().ToLower().Equals("sale"))
+                {
+                    ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(moMoDepositModel.OrderId);
+                    if (updateDeposit.IsSuccess == true)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Update order deposit success.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update order deposit failed.";
+                        return result;
+                    }
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Update service deposit not yet available.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
+        public async Task<ResultModel> OrderPaymentCash(MoMoPaymentModel moMoPaymentModel)
+        {
+            ResultModel result = new ResultModel();
+            try
+            {
+                if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("rent"))
+                {
+                    ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
+                    if (updateDeposit.IsSuccess == true)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Update order payment success.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update order payment failed.";
+                        return result;
+                    }
+                }
+                else if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("sale"))
+                {
+                    ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
+                    if (updateDeposit.IsSuccess == true)
+                    {
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Update order payment success.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update order payment failed.";
+                        return result;
+                    }
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Update service payment not yet available.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
         }
     }
 }

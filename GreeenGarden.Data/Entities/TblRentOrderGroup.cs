@@ -13,5 +13,7 @@ public partial class TblRentOrderGroup
 
     public Guid? UserId { get; set; }
 
+    public DateTime? CreateDate { get; set; }
+
     public virtual ICollection<TblRentOrder> TblRentOrders { get; } = new List<TblRentOrder>();
 }

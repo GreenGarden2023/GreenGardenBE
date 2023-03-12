@@ -22,7 +22,7 @@ namespace GreeenGarden.API.Controllers
         public async Task<IActionResult> CreateRentOrder(OrderCreateModel orderModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            if (orderModel.StartDateRent != DateTime.MinValue && orderModel.EndDateRent != DateTime.MinValue)
+            if (orderModel.StartDateRent != DateTime.MinValue &&  orderModel.EndDateRent != DateTime.MinValue )
             {
                 ResultModel result = await _orderService.CreateRentOrder(token, orderModel);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);

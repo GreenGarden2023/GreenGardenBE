@@ -11,7 +11,9 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
     {
         Task<Page<TblSaleOrder>> GetAllSaleOrders(PaginationRequestModel paginationRequestModel);
         Task<Page<TblSaleOrder>> GetSaleOrders(PaginationRequestModel paginationRequestModel, Guid userID);
-        Task<ResultModel> UpdateSaleOrderStatus(Guid SaleOrderID, string status);
+        Task<ResultModel> UpdateSaleOrderStatus(Guid saleOrderID, string status);
+        Task<ResultModel> UpdateSaleOrderDeposit(Guid saleOrderID);
+        Task<ResultModel> UpdateSaleOrderRemain(Guid saleOrderID, double amount);
     }
 }
 

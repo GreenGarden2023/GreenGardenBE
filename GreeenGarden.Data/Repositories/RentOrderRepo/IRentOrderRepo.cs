@@ -8,7 +8,9 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
 	{
 		Task<List<TblRentOrder>> GetRentOrders(Guid userID);
         Task<List<TblRentOrder>> GetRentOrdersByGroup(Guid rentOrderGroupID);
-        Task<ResultModel> UpdateRentOrderStatus(Guid RentOrderID, string status);
-	}
+        Task<ResultModel> UpdateRentOrderStatus(Guid rentOrderID, string status);
+        Task<ResultModel> UpdateRentOrderDeposit(Guid rentOrderID);
+        Task<ResultModel> UpdateRentOrderRemain(Guid rentOrderID, double amount);
+    }
 }
 
