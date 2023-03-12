@@ -38,14 +38,6 @@ namespace GreeenGarden.Business.Service.RequestService
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                if (!userRole.Equals(Commons.CUSTOMER))
-                {
-                    return new ResultModel()
-                    {
-                        IsSuccess = false,
-                        Message = "User not allwed"
-                    };
-                }
 
                 /*if(string.IsNullOrEmpty(requestModel.Adress) || string.IsNullOrEmpty(requestModel.Phone) || requestModel.Adress.Length < 8 || requestModel.Adress.Length > 200 || requestModel.Phone.Length < 9 || requestModel.Phone.Length > 11){
                    result.IsSuccess = false;
@@ -66,7 +58,7 @@ namespace GreeenGarden.Business.Service.RequestService
                 await _requestRepo.Insert(newRequest);
 
 
-                foreach (var item in model.requestDetails)
+                foreach (var item in model.RequestDetails)
                 {
                     var newRequestDetail = new TblRequestDetail() {
                         Id = Guid.NewGuid(),
@@ -79,21 +71,15 @@ namespace GreeenGarden.Business.Service.RequestService
                     };
                     await _requestRepo.CreateRequestDetail(newRequestDetail);
 
-                    foreach (var j in item.Images)
+                    foreach (var j in item.ImagesUrl)
                     {
-                        ResultModel? imgUploadUrl = await _imgService.UploadAnImage(j);
-
-                        if (imgUploadUrl != null)
+                        var img = new TblImage()
                         {
-                            TblImage newimgCategory = new()
-                            {
-                                Id = Guid.NewGuid(),
-                                ImageUrl = imgUploadUrl.Data.ToString(),
-                                CategoryId = newRequestDetail.Id,
-                            };
-                            _ = await _imageRepo.Insert(newimgCategory);
-
-                        }
+                            Id = Guid.NewGuid(),
+                            ReportId = newRequestDetail.Id,
+                            ImageUrl = j
+                        };
+                        await _imageRepo.Insert(img);
                     }
 
                 }
@@ -114,6 +100,26 @@ namespace GreeenGarden.Business.Service.RequestService
                 return result;
             }
             
+        }
+
+        public async Task<ResultModel> getListRequest(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }

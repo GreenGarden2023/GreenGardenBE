@@ -11,5 +11,6 @@ namespace GreeenGarden.Business.Service.RequestService
     public interface IRequestService
     {
         Task<ResultModel> createRequest(string token, RequestCreateModel requestModel);
+        Task<ResultModel> getListRequest(string token);
     }
 }

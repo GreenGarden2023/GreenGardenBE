@@ -41,6 +41,36 @@ namespace GreeenGarden.Business.Service.ProductItemService
             _sizeProductItemRepo = sizeProductItemRepo;
         }
 
+        public async Task<ResultModel> ChangeStatus(string token, ProductItemDetailUpdateStatusModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+
+                result.IsSuccess = await _proItemRepo.ChangeStatusByProductItemDetailID(model);
+                if (!result.IsSuccess) result.Message = "Update Fail";
+                result.Message = "Update Succesfull";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> CreateProductItem(string token, ProductItemModel productItemInsertModel)
         {
             if (!string.IsNullOrEmpty(token))

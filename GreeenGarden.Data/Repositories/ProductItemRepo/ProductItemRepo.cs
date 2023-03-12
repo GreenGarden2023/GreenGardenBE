@@ -1,6 +1,7 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,22 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
         public ProductItemRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<bool> ChangeStatusByProductItemDetailID(ProductItemDetailUpdateStatusModel model)
+        {
+            try
+            {
+                var result = await _context.TblProductItemDetails.Where(x => x.Id.Equals(model.ProductItemDetailID)).FirstOrDefaultAsync();
+                result.Status = model.Status;
+                _context.TblProductItemDetails.Update(result);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID, string? type)

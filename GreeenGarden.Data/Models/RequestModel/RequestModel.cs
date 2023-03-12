@@ -12,7 +12,7 @@ namespace GreeenGarden.Data.Models.RequestModel
         public Guid UserID { get; set; }
         public string Phone { get; set; }
         public string Adress { get; set; }  
-        public List<RequestDetailCreateModel> requestDetails { get; set; }
+        public List<RequestDetailCreateModel> RequestDetails { get; set; }
         
     }
     public class RequestDetailCreateModel
@@ -20,6 +20,6 @@ namespace GreeenGarden.Data.Models.RequestModel
         public string TreeName { get; set; }
         public int Quantity { get; set; }
         public string Description { get; set; }
-        public List<IFormFile> Images { get; set; }
+        public List<string> ImagesUrl { get; set; }
     }
 }

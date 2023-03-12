@@ -1,12 +1,13 @@
 ﻿using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Business.Service.RequestService;
 using GreeenGarden.Data.Models.RequestModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
     [Route("request/")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class RequestController : Controller
     {

@@ -1,6 +1,7 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
@@ -10,5 +11,6 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
     {
         Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productId, string? type);
         Task<bool> UpdateProductItem(ProductItemModel productItemModel);
+        Task<bool> ChangeStatusByProductItemDetailID(ProductItemDetailUpdateStatusModel model);
     }
 }
