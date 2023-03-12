@@ -51,10 +51,10 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("update-rent-order-status")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> UpdateRentOrderStatus(Guid rentOrderID, string status)
+        public async Task<IActionResult> UpdateRentOrderStatus(OrderUpdateModel orderUpdateModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.UpdateRentOrderStatus(token, rentOrderID, status);
+            ResultModel result = await _orderService.UpdateRentOrderStatus(token, orderUpdateModel.orderID, orderUpdateModel.status);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-sale-orders")]
@@ -75,10 +75,10 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("update-sale-order-status")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> UpdateSaleOrderStatus(Guid saleOrderID, string status)
+        public async Task<IActionResult> UpdateSaleOrderStatus(OrderUpdateModel orderUpdateModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.UpdateSaleOrderStatus(token, saleOrderID, status);
+            ResultModel result = await _orderService.UpdateSaleOrderStatus(token, orderUpdateModel.orderID, orderUpdateModel.status);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
