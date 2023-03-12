@@ -1,6 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.SizeModel;
-using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.Repository;
 
 namespace GreeenGarden.Data.Repositories.SizeRepo
 {
