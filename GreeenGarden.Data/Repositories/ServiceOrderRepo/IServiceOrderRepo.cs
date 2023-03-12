@@ -1,6 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ServiceOrderModel;
-using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;

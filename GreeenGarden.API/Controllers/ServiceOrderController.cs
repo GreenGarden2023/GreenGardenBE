@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("category/")]
+    [Route("serviceOrder/")]
     [Authorize]
     [ApiController]
     public class ServiceOrderController : Controller

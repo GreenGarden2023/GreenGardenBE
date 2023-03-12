@@ -1,8 +1,8 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.SizeModel;
-using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.Repository;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using Microsoft.EntityFrameworkCore;
 
