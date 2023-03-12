@@ -15,9 +15,9 @@ public partial class TblRequest
 
     public DateTime? CreateDate { get; set; }
 
-    public virtual ICollection<TblImage> TblImageReportNavigations { get; } = new List<TblImage>();
+    public string? Status { get; set; }
 
-    public virtual ICollection<TblImage> TblImageRequests { get; } = new List<TblImage>();
+    public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 
     public virtual ICollection<TblRequestDetail> TblRequestDetails { get; } = new List<TblRequestDetail>();
 

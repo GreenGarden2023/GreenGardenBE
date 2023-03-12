@@ -195,7 +195,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.ReportId).HasColumnName("ReportID");
-            entity.Property(e => e.RequestId).HasColumnName("RequestID");
+            entity.Property(e => e.RequestDetailId).HasColumnName("RequestDetailID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.CategoryId)
@@ -221,13 +221,13 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.ReportId)
                 .HasConstraintName("FK_tblImages_tblReport");
 
-            entity.HasOne(d => d.ReportNavigation).WithMany(p => p.TblImageReportNavigations)
+            entity.HasOne(d => d.ReportNavigation).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ReportId)
                 .HasConstraintName("FK_tblImage_tblRequest");
 
-            entity.HasOne(d => d.Request).WithMany(p => p.TblImageRequests)
-                .HasForeignKey(d => d.RequestId)
-                .HasConstraintName("FK_tblImages_tblRequest");
+            entity.HasOne(d => d.RequestDetail).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.RequestDetailId)
+                .HasConstraintName("FK_tblImage_tblRequestDetail");
         });
 
         modelBuilder.Entity<TblPayment>(entity =>
@@ -374,6 +374,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Address).HasMaxLength(200);
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Phone).HasMaxLength(50);
+            entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.User).WithMany(p => p.TblRequests)

@@ -6,6 +6,7 @@ using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Business.Service.PaymentService;
 using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Business.Service.ProductService;
+using GreeenGarden.Business.Service.RequestService;
 using GreeenGarden.Business.Service.SecretService;
 using GreeenGarden.Business.Service.ServiceOrderService;
 using GreeenGarden.Business.Service.SizeService;
@@ -19,6 +20,7 @@ using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Repositories.RentOrderRepo;
+using GreeenGarden.Data.Repositories.RequestRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
@@ -47,6 +49,8 @@ builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
 builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 
@@ -69,6 +73,7 @@ builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
 builder.Services.AddTransient<IServiceOrderRepo, ServiceOrderRepo>();
 builder.Services.AddTransient<ICartRepo, CartRepo>();
+builder.Services.AddTransient<IRequestRepo, RequestRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
