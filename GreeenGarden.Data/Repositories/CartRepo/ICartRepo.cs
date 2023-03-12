@@ -1,6 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CartModel;
-using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.Repository;
 
 namespace GreeenGarden.Data.Repositories.CartRepo
 {
