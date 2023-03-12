@@ -11,6 +11,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderGroupRepo
 	{
 		Task<ResultModel> UpdateRentOrderGroup(Guid rentOrderGroupID, double newRentOrderAmount);
 		Task<Page<TblRentOrderGroup>> GetRentOrderGroup(PaginationRequestModel paginationRequestModel, Guid userID);
-	}
+        Task<Page<TblRentOrderGroup>> GetAllRentOrderGroup(PaginationRequestModel paginationRequestModel);
+    }
 }
 

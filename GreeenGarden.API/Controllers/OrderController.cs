@@ -41,6 +41,14 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.GetRentOrders(token, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-all-rent-orders")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetAllRentOrders([FromQuery] PaginationRequestModel pagingModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetAllRentOrders(token, pagingModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpGet("get-rent-order-detail")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
         public async Task<IActionResult> GetRentOrdersDetail([Required] Guid rentOrderDetailID)
@@ -63,6 +71,14 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             ResultModel result = await _orderService.GetSaleOrders(token, pagingModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-all-sale-orders")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetAllSaleOrders([FromQuery] PaginationRequestModel pagingModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetAllSaleOrders(token, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-sale-order-detail")]

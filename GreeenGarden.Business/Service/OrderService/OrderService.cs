@@ -921,5 +921,201 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
         }
+
+        public async Task<ResultModel> GetAllRentOrders(string token, PaginationRequestModel pagingModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                Page<TblRentOrderGroup> tblRentOrderGroups = await _rentOrderGroupRepo.GetAllRentOrderGroup(pagingModel);
+                if (tblRentOrderGroups != null)
+                {
+                    List<RentOrderGroupModel> listGroup = new List<RentOrderGroupModel>();
+
+                    foreach (TblRentOrderGroup tblRentGroup in tblRentOrderGroups.Results)
+                    {
+                        List<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrdersByGroup(tblRentGroup.Id);
+                        List<RentOrderResModel> resList = new List<RentOrderResModel>();
+                        if (listTblRentOrder.Any())
+                        {
+                            foreach (TblRentOrder order in listTblRentOrder)
+                            {
+                                List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                                RentOrderResModel rentOrderResModel = new RentOrderResModel
+                                {
+                                    Id = order.Id,
+                                    TransportFee = order.TransportFee,
+                                    StartDateRent = order.StartDateRent,
+                                    EndDateRent = order.EndDateRent,
+                                    Deposit = order.Deposit,
+                                    TotalPrice = order.TotalPrice,
+                                    Status = order.Status,
+                                    RemainMoney = order.RemainMoney,
+                                    RewardPointGain = order.RewardPointGain,
+                                    RewardPointUsed = order.RewardPointUsed,
+                                    RentOrderGroupID = order.RentOrderGroupId,
+                                    DiscountAmount = order.DiscountAmount,
+                                    RentOrderDetailList = rentOrderDetailResModels
+                                };
+                                resList.Add(rentOrderResModel);
+                            }
+                        }
+                        RentOrderGroupModel rentOrderGroupModel = new RentOrderGroupModel
+                        {
+                            NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
+                            TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
+                            RentOrderList = resList
+                        };
+                        listGroup.Add(rentOrderGroupModel);
+                    }
+                    PaginationResponseModel paging = new PaginationResponseModel()
+                        .PageSize(tblRentOrderGroups.PageSize)
+                        .CurPage(tblRentOrderGroups.CurrentPage)
+                        .RecordCount(tblRentOrderGroups.RecordCount)
+                        .PageCount(tblRentOrderGroups.PageCount);
+
+                    RentOrderGroupResModel rentOrderGroupResModel = new RentOrderGroupResModel
+                    {
+                        Paging = paging,
+                        RentOrderGroups = listGroup
+                    };
+
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = rentOrderGroupResModel;
+                    result.Message = "Get rent orders successful.";
+                    return result;
+                }
+                else
+                {
+                    result.Message = "List empty.";
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
+        public async Task<ResultModel> GetAllSaleOrders(string token, PaginationRequestModel pagingModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
+                Page<TblSaleOrder> listTblSaleOrder = await _saleOrderRepo.GetAllSaleOrders(pagingModel);
+                List<SaleOrderResModel> resList = new List<SaleOrderResModel>();
+                if (listTblSaleOrder != null)
+                {
+                    foreach (TblSaleOrder order in listTblSaleOrder.Results)
+                    {
+                        List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(order.Id);
+                        SaleOrderResModel saleOrderResModel = new SaleOrderResModel
+                        {
+                            Id = order.Id,
+                            TransportFee = order.TransportFee,
+                            CreateDate = (DateTime)order.CreateDate,
+                            Deposit = order.Deposit,
+                            TotalPrice = order.TotalPrice,
+                            Status = order.Status,
+                            RemainMoney = order.RemainMoney,
+                            RewardPointGain = order.RewardPointGain,
+                            RewardPointUsed = order.RewardPointUsed,
+                            DiscountAmount = order.DiscountAmount,
+                            RentOrderDetailList = saleOrderDetailResModels
+                        };
+                        resList.Add(saleOrderResModel);
+                    }
+
+                    PaginationResponseModel paging = new PaginationResponseModel()
+                        .PageSize(listTblSaleOrder.PageSize)
+                        .CurPage(listTblSaleOrder.CurrentPage)
+                        .RecordCount(listTblSaleOrder.RecordCount)
+                        .PageCount(listTblSaleOrder.PageCount);
+
+                    SaleOrderGetResModel saleOrderGetResModel = new SaleOrderGetResModel
+                    {
+                        Paging = paging,
+                        SaleOrderList = resList
+                    };
+
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = saleOrderGetResModel;
+                    result.Message = "Get sale orders successful.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Get sale orders failed.";
+                    return result;
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
     }
 }

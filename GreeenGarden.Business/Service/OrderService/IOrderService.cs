@@ -11,12 +11,14 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> CreateSaleOrder(string token, OrderCreateModel saleOrderModel);
 
         Task<ResultModel> GetRentOrders(string token, PaginationRequestModel pagingModel);
+        Task<ResultModel> GetAllRentOrders(string token, PaginationRequestModel pagingModel);
 
         Task<ResultModel> GetRentOrderDetail(string token, Guid rentOrderID);
 
         Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status);
 
         Task<ResultModel> GetSaleOrders(string token, PaginationRequestModel pagingModel);
+        Task<ResultModel> GetAllSaleOrders(string token, PaginationRequestModel pagingModel);
 
         Task<ResultModel> GetSaleOrderDetail(string token, Guid saleOrderID);
 

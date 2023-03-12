@@ -16,6 +16,12 @@ namespace GreeenGarden.Data.Repositories.RentOrderGroupRepo
 			_context = context;
 		}
 
+        public async Task<Page<TblRentOrderGroup>> GetAllRentOrderGroup(PaginationRequestModel paginationRequestModel)
+        {
+            Page<TblRentOrderGroup> tblRentOrderGroups = await _context.TblRentOrderGroups.PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            return tblRentOrderGroups;
+        }
+
         public async Task<Page<TblRentOrderGroup>> GetRentOrderGroup(PaginationRequestModel paginationRequestModel, Guid userID)
         {
 			Page<TblRentOrderGroup> tblRentOrderGroups = await _context.TblRentOrderGroups.Where(x => x.UserId.Equals(userID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);

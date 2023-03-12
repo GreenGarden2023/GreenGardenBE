@@ -9,6 +9,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
 {
 	public interface ISaleOrderRepo : IRepository<TblSaleOrder>
     {
+        Task<Page<TblSaleOrder>> GetAllSaleOrders(PaginationRequestModel paginationRequestModel);
         Task<Page<TblSaleOrder>> GetSaleOrders(PaginationRequestModel paginationRequestModel, Guid userID);
         Task<ResultModel> UpdateSaleOrderStatus(Guid SaleOrderID, string status);
     }
