@@ -25,8 +25,6 @@ namespace GreeenGarden.Data.Models.ServiceOrderModel
         public string Username { get; set; }
         public string? Fullname { get; set; }
         public string? Phone { get; set; }
-        public string? Mail { get; set; }
-
-    
+        public string? Mail { get; set; }    
     }
 }

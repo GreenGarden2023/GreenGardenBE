@@ -22,4 +22,6 @@ public partial class TblRequestDetail
     public virtual TblRequest Request { get; set; } = null!;
 
     public virtual TblServiceOrder? ServiceOrder { get; set; }
+
+    public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 }
