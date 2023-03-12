@@ -219,7 +219,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                         Id = c.Id,
                         Name = c.Name,
                         Status = c.Status,
-                        ImgUrl = "" + _cateRepo.getImgByCategory(c.Id),
+                        ImgUrl = "" + await _cateRepo.getImgByCategory(c.Id),
                         Description = c.Description
 
                     };

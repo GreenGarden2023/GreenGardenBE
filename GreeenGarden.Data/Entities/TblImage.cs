@@ -19,7 +19,7 @@ public partial class TblImage
 
     public Guid? ProductItemId { get; set; }
 
-    public Guid? RequestId { get; set; }
+    public Guid? RequestDetailId { get; set; }
 
     public Guid? ReportId { get; set; }
 
@@ -37,5 +37,5 @@ public partial class TblImage
 
     public virtual TblRequest? ReportNavigation { get; set; }
 
-    public virtual TblRequest? Request { get; set; }
+    public virtual TblRequest? RequestDetail { get; set; }
 }

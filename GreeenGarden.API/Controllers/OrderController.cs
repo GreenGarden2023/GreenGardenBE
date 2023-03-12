@@ -16,21 +16,21 @@ namespace GreeenGarden.API.Controllers
 		{
             _orderService = orderService;
 		}
-        [HttpPost("create-rent-order")]
+        [HttpPost("create-order")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> CreateRentOrder(RentOrderModel rentOrderModel)
+        public async Task<IActionResult> CreateRentOrder(OrderCreateModel orderModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.CreateRentOrder(token, rentOrderModel);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
-        [HttpPost("create-sale-order")]
-        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> CreateSaleOrder(SaleOrderModel saleOrderModel )
-        {
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.CreateSaleOrder(token, saleOrderModel);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            if (orderModel.StartDateRent != DateTime.MinValue && orderModel.EndDateRent != DateTime.MinValue)
+            {
+                ResultModel result = await _orderService.CreateRentOrder(token, orderModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            else
+            {
+                ResultModel result = await _orderService.CreateSaleOrder(token, orderModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
         }
         [HttpGet("get-rent-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
@@ -50,10 +50,34 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("cancel-rent-order")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> CancelRentOrder(Guid rentorderID)
+        public async Task<IActionResult> CancelRentOrder(Guid rentOrderID)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.CancelRentOrder(token, rentorderID);
+            ResultModel result = await _orderService.CancelRentOrder(token, rentOrderID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-sale-orders")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetSaleOrders()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetSaleOrders(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-sale-order-detail")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetSaleOrdersDetail([Required] Guid saleOrderDetailID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetSaleOrderDetail(token, saleOrderDetailID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("cancel-sale-order")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> CancelSaleOrder(Guid saleOrderID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.CancelSaleOrder(token, saleOrderID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

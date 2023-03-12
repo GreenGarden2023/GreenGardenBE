@@ -195,7 +195,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.ReportId).HasColumnName("ReportID");
-            entity.Property(e => e.RequestId).HasColumnName("RequestID");
+            entity.Property(e => e.RequestDetailId).HasColumnName("RequestDetailID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.CategoryId)
@@ -225,8 +225,8 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.ReportId)
                 .HasConstraintName("FK_tblImage_tblRequest");
 
-            entity.HasOne(d => d.Request).WithMany(p => p.TblImageRequests)
-                .HasForeignKey(d => d.RequestId)
+            entity.HasOne(d => d.RequestDetail).WithMany(p => p.TblImageRequestDetails)
+                .HasForeignKey(d => d.RequestDetailId)
                 .HasConstraintName("FK_tblImages_tblRequest");
         });
 

@@ -17,7 +17,7 @@ public partial class TblRequest
 
     public virtual ICollection<TblImage> TblImageReportNavigations { get; } = new List<TblImage>();
 
-    public virtual ICollection<TblImage> TblImageRequests { get; } = new List<TblImage>();
+    public virtual ICollection<TblImage> TblImageRequestDetails { get; } = new List<TblImage>();
 
     public virtual ICollection<TblRequestDetail> TblRequestDetails { get; } = new List<TblRequestDetail>();
 
