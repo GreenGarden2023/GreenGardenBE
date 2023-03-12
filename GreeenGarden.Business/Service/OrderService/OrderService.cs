@@ -10,6 +10,7 @@ using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
+using GreeenGarden.Data.Repositories.RentOrderGroupRepo;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -17,12 +18,13 @@ namespace GreeenGarden.Business.Service.OrderService
     {
         private readonly DecodeToken _decodeToken;
         private readonly IRentOrderRepo _rentOrderRepo;
+        private readonly IRentOrderGroupRepo _rentOrderGroupRepo;
         private readonly IRentOrderDetailRepo _rentOrderDetailRepo;
         private readonly ISaleOrderRepo _saleOrderRepo;
         private readonly ISaleOrderDetailRepo _saleOrderDetailRepo;
         private readonly ISizeProductItemRepo _sizeProductItemRepo;
         private readonly IRewardRepo _rewardRepo;
-        public OrderService(ISaleOrderRepo saleOrderRepo,  ISaleOrderDetailRepo saleOrderDetailRepo, IRewardRepo rewardRepo, IRentOrderRepo rentOrderRepo, IRentOrderDetailRepo rentOrderDetailRepo, ISizeProductItemRepo sizeProductItemRepo)
+        public OrderService(IRentOrderGroupRepo rentOrderGroupRepo, ISaleOrderRepo saleOrderRepo,  ISaleOrderDetailRepo saleOrderDetailRepo, IRewardRepo rewardRepo, IRentOrderRepo rentOrderRepo, IRentOrderDetailRepo rentOrderDetailRepo, ISizeProductItemRepo sizeProductItemRepo)
 		{
             _decodeToken = new DecodeToken();
             _rentOrderRepo = rentOrderRepo;
@@ -31,6 +33,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _rewardRepo = rewardRepo;
             _saleOrderDetailRepo = saleOrderDetailRepo;
             _saleOrderRepo = saleOrderRepo;
+            _rentOrderGroupRepo = rentOrderGroupRepo;
         }
 
         public async Task<ResultModel> CancelRentOrder(string token, Guid rentOrderID)
@@ -78,7 +81,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RemainMoney = rentOrder.RemainMoney,
                         RewardPointGain = rentOrder.RewardPointGain,
                         RewardPointUsed = rentOrder.RewardPointUsed,
-                        ReferenceOrderId = rentOrder.ReferenceOrderId,
+                        RentOrderGroupID = rentOrder.RentOrderGroupId,
                         DiscountAmount = rentOrder.DiscountAmount,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
@@ -285,6 +288,22 @@ namespace GreeenGarden.Business.Service.OrderService
                 deposit = totalOrderAmount * 0.2;
                 rewardPointGain = (int)Math.Ceiling((totalOrderAmount * 0.01)/1000);
                 string userID = _decodeToken.Decode(token, "userid");
+                if (rentOrderModel.RentOrderGroupID == Guid.Empty || rentOrderModel.RentOrderGroupID == null)
+                {
+                    TblRentOrderGroup tblRentOrderGroup = new TblRentOrderGroup
+                    {
+                        Id = Guid.NewGuid(),
+                        GroupTotalAmount = totalOrderAmount,
+                        NumberOfOrders = 1,
+                        UserId = Guid.Parse(userID)
+                    };
+                    _ = await _rentOrderGroupRepo.Insert(tblRentOrderGroup);
+                    rentOrderModel.RentOrderGroupID = tblRentOrderGroup.Id;
+                }
+                else
+                {
+                    ResultModel resultModel = await _rentOrderGroupRepo.UpdateRentOrderGroup((Guid)rentOrderModel.RentOrderGroupID, totalOrderAmount);
+                }
                 TblRentOrder tblRentOrder = new TblRentOrder
                 {
                     Id = Guid.NewGuid(),
@@ -299,7 +318,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     RewardPointGain = rewardPointGain,
                     RewardPointUsed = rentOrderModel.RewardPointUsed,
                     DiscountAmount = discountAmount,
-                    ReferenceOrderId = rentOrderModel.ReferenceOrderID,
+                    RentOrderGroupId = rentOrderModel.RentOrderGroupID,
                 };
                 Guid insertRentOrder = await _rentOrderRepo.Insert(tblRentOrder);
                 if(insertRentOrder != Guid.Empty)
@@ -348,7 +367,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     RemainMoney = tblRentOrder.RemainMoney,
                     RewardPointGain = tblRentOrder.RewardPointGain,
                     RewardPointUsed = tblRentOrder.RewardPointUsed,
-                    ReferenceOrderId = tblRentOrder.ReferenceOrderId,
+                    RentOrderGroupID = tblRentOrder.RentOrderGroupId,
                     DiscountAmount = tblRentOrder.DiscountAmount,
                     RentOrderDetailList = rentOrderDetailResModels
                 };
@@ -596,7 +615,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RemainMoney = tblRentOrder.RemainMoney,
                         RewardPointGain = tblRentOrder.RewardPointGain,
                         RewardPointUsed = tblRentOrder.RewardPointUsed,
-                        ReferenceOrderId = tblRentOrder.ReferenceOrderId,
+                        RentOrderGroupID = tblRentOrder.RentOrderGroupId,
                         DiscountAmount = tblRentOrder.DiscountAmount,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
@@ -647,35 +666,49 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 string userID = _decodeToken.Decode(token, "userid");
-                List<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrders(Guid.Parse(userID));
-                List<RentOrderResModel> resList = new List<RentOrderResModel>();
-                if (listTblRentOrder.Any())
+                List<TblRentOrderGroup> tblRentOrderGroups = await _rentOrderGroupRepo.GetRentOrderGroup(Guid.Parse(userID));
+                List<RentOrderGroupModel> listGroup = new List<RentOrderGroupModel>();
+
+                foreach(TblRentOrderGroup tblRentGroup in tblRentOrderGroups)
                 {
-                    foreach(TblRentOrder order in listTblRentOrder)
+                    List<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrdersByGroup(tblRentGroup.Id);
+                    List<RentOrderResModel> resList = new List<RentOrderResModel>();
+                    if (listTblRentOrder.Any())
                     {
-                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
-                        RentOrderResModel rentOrderResModel = new RentOrderResModel
+                        foreach (TblRentOrder order in listTblRentOrder)
                         {
-                            Id = order.Id,
-                            TransportFee = order.TransportFee,
-                            StartDateRent = order.StartDateRent,
-                            EndDateRent = order.EndDateRent,
-                            Deposit = order.Deposit,
-                            TotalPrice = order.TotalPrice,
-                            Status = order.Status,
-                            RemainMoney = order.RemainMoney,
-                            RewardPointGain = order.RewardPointGain,
-                            RewardPointUsed = order.RewardPointUsed,
-                            ReferenceOrderId = order.ReferenceOrderId,
-                            DiscountAmount = order.DiscountAmount,
-                            RentOrderDetailList = rentOrderDetailResModels
-                        };
-                        resList.Add(rentOrderResModel);
+                            List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                            RentOrderResModel rentOrderResModel = new RentOrderResModel
+                            {
+                                Id = order.Id,
+                                TransportFee = order.TransportFee,
+                                StartDateRent = order.StartDateRent,
+                                EndDateRent = order.EndDateRent,
+                                Deposit = order.Deposit,
+                                TotalPrice = order.TotalPrice,
+                                Status = order.Status,
+                                RemainMoney = order.RemainMoney,
+                                RewardPointGain = order.RewardPointGain,
+                                RewardPointUsed = order.RewardPointUsed,
+                                RentOrderGroupID = order.RentOrderGroupId,
+                                DiscountAmount = order.DiscountAmount,
+                                RentOrderDetailList = rentOrderDetailResModels
+                            };
+                            resList.Add(rentOrderResModel);
+                        }
                     }
+                    RentOrderGroupModel rentOrderGroupModel = new RentOrderGroupModel
+                    {
+                        NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
+                        TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
+                        RentOrderList = resList
+                    };
+                    listGroup.Add(rentOrderGroupModel);
                 }
+                
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = resList;
+                result.Data = listGroup;
                 result.Message = "Get rent orders successful.";
                 return result;
 
@@ -791,8 +824,8 @@ namespace GreeenGarden.Business.Service.OrderService
             ResultModel result = new();
             try
             {
-                string userID = _decodeToken.Decode(token, "userid");
-                List<TblSaleOrder> listTblSaleOrder = await _saleOrderRepo.GetSaleOrders(Guid.Parse(userID));
+                Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
+                List<TblSaleOrder> listTblSaleOrder = await _saleOrderRepo.GetSaleOrders(userID);
                 List<SaleOrderResModel> resList = new List<SaleOrderResModel>();
                 if (listTblSaleOrder.Any())
                 {
@@ -815,12 +848,20 @@ namespace GreeenGarden.Business.Service.OrderService
                         };
                         resList.Add(saleOrderResModel);
                     }
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = resList;
+                    result.Message = "Get rent orders successful.";
+                    return result;
                 }
-                result.IsSuccess = true;
-                result.Code = 200;
-                result.Data = resList;
-                result.Message = "Get rent orders successful.";
-                return result;
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Get rent orders failed.";
+                    return result;
+                }
+                
 
             }
             catch (Exception e)

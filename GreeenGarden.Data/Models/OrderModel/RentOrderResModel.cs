@@ -23,7 +23,7 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public int? RewardPointUsed { get; set; }
 
-        public Guid? ReferenceOrderId { get; set; }
+        public Guid? RentOrderGroupID { get; set; }
 
         public double? DiscountAmount { get; set; }
 

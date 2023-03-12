@@ -9,7 +9,7 @@
 
         public int? RewardPointUsed { get; set; }
 
-        public Guid? ReferenceOrderID { get; set; }
+        public Guid? RentOrderGroupID { get; set; }
 
         public List<OrderDetailModel> ItemList { get; set; }
 

@@ -12,6 +12,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
         private readonly GreenGardenDbContext _context;
         public SaleOrderRepo(GreenGardenDbContext context) : base(context)
         {
+            _context = context;
 		}
 
         public async Task<ResultModel> CancelSaleOrder(Guid SaleOrderID)

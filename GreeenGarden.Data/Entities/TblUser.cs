@@ -33,6 +33,8 @@ public partial class TblUser
 
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
 
+    public virtual ICollection<TblRentOrderGroup> TblRentOrderGroups { get; } = new List<TblRentOrderGroup>();
+
     public virtual ICollection<TblRentOrder> TblRentOrders { get; } = new List<TblRentOrder>();
 
     public virtual ICollection<TblReport> TblReports { get; } = new List<TblReport>();

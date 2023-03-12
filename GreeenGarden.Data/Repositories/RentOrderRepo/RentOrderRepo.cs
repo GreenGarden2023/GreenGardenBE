@@ -42,6 +42,19 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
 			List<TblRentOrder> listTblOrder = await _context.TblRentOrders.Where(x => x.UserId.Equals(userID)).ToListAsync();
 			return listTblOrder;
 		}
-	}
+
+        public async Task<List<TblRentOrder>> GetRentOrdersByGroup(Guid rentOrderGroupID)
+        {
+            List<TblRentOrder> listTblOrder = await _context.TblRentOrders.Where(x => x.RentOrderGroupId.Equals(rentOrderGroupID)).ToListAsync();
+			if (listTblOrder.Any())
+			{
+                return listTblOrder;
+			}
+			else
+			{
+				return null;
+			}
+        }
+    }
 }
 

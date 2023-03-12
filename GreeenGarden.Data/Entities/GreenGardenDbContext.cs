@@ -37,6 +37,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblRentOrderDetail> TblRentOrderDetails { get; set; }
 
+    public virtual DbSet<TblRentOrderGroup> TblRentOrderGroups { get; set; }
+
     public virtual DbSet<TblReport> TblReports { get; set; }
 
     public virtual DbSet<TblRequest> TblRequests { get; set; }
@@ -315,9 +317,13 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.ReferenceOrderId).HasColumnName("ReferenceOrderID");
+            entity.Property(e => e.RentOrderGroupId).HasColumnName("RentOrderGroupID");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.RentOrderGroup).WithMany(p => p.TblRentOrders)
+                .HasForeignKey(d => d.RentOrderGroupId)
+                .HasConstraintName("FK_tblRentOrder_tblRentOrderGroup");
 
             entity.HasOne(d => d.User).WithMany(p => p.TblRentOrders)
                 .HasForeignKey(d => d.UserId)
@@ -345,6 +351,22 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.RentOrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblRentOrderDetail_tblRentOrder");
+        });
+
+        modelBuilder.Entity<TblRentOrderGroup>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_RentOrderGroup");
+
+            entity.ToTable("tblRentOrderGroup");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.TblRentOrderGroups)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_tblRentOrderGroup_tblUser");
         });
 
         modelBuilder.Entity<TblReport>(entity =>

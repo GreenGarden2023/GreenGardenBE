@@ -25,11 +25,13 @@ public partial class TblRentOrder
 
     public int? RewardPointUsed { get; set; }
 
-    public Guid? ReferenceOrderId { get; set; }
+    public Guid? RentOrderGroupId { get; set; }
 
     public double? DiscountAmount { get; set; }
 
     public Guid? UserId { get; set; }
+
+    public virtual TblRentOrderGroup? RentOrderGroup { get; set; }
 
     public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();
 

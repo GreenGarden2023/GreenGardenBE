@@ -19,6 +19,7 @@ using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
+using GreeenGarden.Data.Repositories.RentOrderGroupRepo;
 using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.RequestRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
@@ -63,6 +64,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<IRentOrderRepo, RentOrderRepo>();
+builder.Services.AddTransient<IRentOrderGroupRepo, RentOrderGroupRepo>();
 builder.Services.AddTransient<IRentOrderDetailRepo, RentOrderDetailRepo>();
 builder.Services.AddTransient<ISaleOrderRepo, SaleOrderRepo>();
 builder.Services.AddTransient<ISaleOrderDetailRepo, SaleOrderDetailRepo>();

@@ -33,6 +33,7 @@
     <Folder Include="Repositories\RewardRepo\" />
     <Folder Include="Repositories\SaleOrderRepo\" />
     <Folder Include="Repositories\SaleOrderDetailRepo\" />
+    <Folder Include="Repositories\RentOrderGroupRepo\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,5 +76,6 @@
     <None Remove="Repositories\RewardRepo\" />
     <None Remove="Repositories\SaleOrderRepo\" />
     <None Remove="Repositories\SaleOrderDetailRepo\" />
+    <None Remove="Repositories\RentOrderGroupRepo\" />
   </ItemGroup>
 </Project>
