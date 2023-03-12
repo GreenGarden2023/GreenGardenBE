@@ -37,7 +37,7 @@ namespace GreeenGarden.Data.Models.CartModel
     }
     public class ItemRequest
     {
-        public productItemDetail productItemDetial { get; set; } = new productItemDetail();
+        public productItemDetail productItemDetail { get; set; } = new productItemDetail();
         public productItem productItem { get; set; }
         public int? quantity { get; set; }
         public double? unitPrice { get; set; }
