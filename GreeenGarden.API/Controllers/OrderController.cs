@@ -24,6 +24,14 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.CreateRentOrder(token, rentOrderModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("create-sale-order")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> CreateSaleOrder(SaleOrderModel saleOrderModel )
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.CreateSaleOrder(token, saleOrderModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpGet("get-rent-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
         public async Task<IActionResult> GetRentOrders()
@@ -38,6 +46,14 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             ResultModel result = await _orderService.GetRentOrderDetail(token, rentOrderDetailID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("cancel-rent-order")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> CancelRentOrder(Guid rentorderID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.CancelRentOrder(token, rentorderID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

@@ -27,6 +27,81 @@ namespace GreeenGarden.Business.Service.OrderService
             _rewardRepo = rewardRepo;
         }
 
+        public async Task<ResultModel> CancelRentOrder(string token, Guid rentOrderID)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                ResultModel cancelResult = await _rentOrderRepo.CancelRentOrder(rentOrderID);
+                if(cancelResult.IsSuccess == true)
+                {
+                    TblRentOrder rentOrder = await _rentOrderRepo.Get(rentOrderID);
+                    List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
+                    RentOrderResModel rentOrderResModel = new RentOrderResModel
+                    {
+                        Id = rentOrder.Id,
+                        TransportFee = rentOrder.TransportFee,
+                        StartDateRent = rentOrder.StartDateRent,
+                        EndDateRent = rentOrder.EndDateRent,
+                        Deposit = rentOrder.Deposit,
+                        TotalPrice = rentOrder.TotalPrice,
+                        Status = rentOrder.Status,
+                        RemainMoney = rentOrder.RemainMoney,
+                        RewardPointGain = rentOrder.RewardPointGain,
+                        RewardPointUsed = rentOrder.RewardPointUsed,
+                        ReferenceOrderId = rentOrder.ReferenceOrderId,
+                        DiscountAmount = rentOrder.DiscountAmount,
+                        RentOrderDetailList = rentOrderDetailResModels
+                    };
+
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = rentOrderResModel;
+                    result.Message = "Cancel rent order success.";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Cancel rent order failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+
+        }
+
         public async Task<ResultModel> CreateRentOrder(string token, RentOrderModel rentOrderModel)
         {
             if (!string.IsNullOrEmpty(token))
@@ -215,6 +290,133 @@ namespace GreeenGarden.Business.Service.OrderService
             }
         }
 
+        public async Task<ResultModel> CreateSaleOrder(string token, SaleOrderModel saleOrderModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                string userName = _decodeToken.Decode(token, "username");
+                double totalAmountPerDay = 0;
+                int totalQuantity = 0;
+                double totalOrderAmount = 0;
+                double transportFee = 0;
+                double deposit = 0;
+                int rewardPointGain = 0;
+                double discountAmount = 0;
+
+                foreach (SaleOrderDetailModel item in saleOrderModel.ItemList)
+                {
+                    TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ID);
+                    if (itemDetail == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Atleast 1 product item is invalid.";
+                        return result;
+                    }
+                    else
+                    {
+                        totalAmountPerDay = (double) (item.Quantity * itemDetail.SalePrice);
+                        totalQuantity = totalQuantity + item.Quantity;
+                    }
+                }
+                if (totalQuantity <= 10 && totalAmountPerDay <= 1000000)
+                {
+                    transportFee = ShipFee.L_10QUAN_L_1MIL * totalAmountPerDay;
+                }
+                else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 1000000)
+                {
+                    transportFee = ShipFee.L_30QUAN_L_1MIL * totalAmountPerDay;
+                }
+                else if (totalQuantity > 30 && totalAmountPerDay <= 1000000)
+                {
+                    transportFee = ShipFee.M_30QUAN_L_1MIL * totalAmountPerDay;
+                }
+                else if (totalQuantity <= 10 && totalAmountPerDay <= 10000000)
+                {
+                    transportFee = ShipFee.L_10QUAN_L_10MIL * totalAmountPerDay;
+                }
+                else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 10000000)
+                {
+                    transportFee = ShipFee.L_30QUAN_L_10MIL * totalAmountPerDay;
+                }
+                else if (totalQuantity > 30 && totalAmountPerDay <= 10000000)
+                {
+                    transportFee = ShipFee.M_30QUAN_L_10MIL * totalAmountPerDay;
+                }
+                else if (totalQuantity <= 10 && totalAmountPerDay > 10000000)
+                {
+                    transportFee = ShipFee.L_10QUAN_M_10MIL * totalAmountPerDay;
+                }
+                else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay > 10000000)
+                {
+                    transportFee = ShipFee.L_30QUAN_M_10MIL * totalAmountPerDay;
+                }
+                else
+                {
+                    transportFee = ShipFee.M_30QUAN_M_10MIL * totalAmountPerDay;
+                }
+                discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
+                totalOrderAmount =  totalAmountPerDay + transportFee - discountAmount;
+
+                deposit = totalOrderAmount * 0.2;
+                rewardPointGain = (int)Math.Ceiling((totalOrderAmount * 0.01) / 1000);
+                string userID = _decodeToken.Decode(token, "userid");
+                DateTime createDate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+
+                TblSaleOrder tblSaleOrder = new TblSaleOrder
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = Guid.Parse(userID),
+                    TransportFee = transportFee,
+                    CreateDate = createDate,
+                    Deposit = deposit,
+                    TotalPrice = totalOrderAmount,
+                    Status = Status.UNPAID,
+                    RemainMoney = totalOrderAmount,
+                    RewardPointGain = rewardPointGain,
+                    RewardPointUsed = saleOrderModel.RewardPointUsed,
+                    DiscountAmount = discountAmount,
+                };
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = tblSaleOrder;
+                result.Message = "Create rent order successful.";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
         public async Task<ResultModel> GetRentOrderDetail(string token, Guid rentOrderId)
         {
             if (!string.IsNullOrEmpty(token))
@@ -360,6 +562,8 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
         }
+
+
     }
 }
 
