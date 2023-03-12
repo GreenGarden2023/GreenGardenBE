@@ -27,6 +27,12 @@ public partial class TblSaleOrder
 
     public double? DiscountAmount { get; set; }
 
+    public string? RecipientAddress { get; set; }
+
+    public string? RecipientPhone { get; set; }
+
+    public string? RecipientName { get; set; }
+
     public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();

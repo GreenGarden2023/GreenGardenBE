@@ -44,7 +44,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _rentOrderGroupRepo = rentOrderGroupRepo;
         }
 
-        public async Task<ResultModel> CancelRentOrder(string token, Guid rentOrderID)
+        public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -72,8 +72,8 @@ namespace GreeenGarden.Business.Service.OrderService
             ResultModel result = new();
             try
             {
-                ResultModel cancelResult = await _rentOrderRepo.CancelRentOrder(rentOrderID);
-                if(cancelResult.IsSuccess == true)
+                ResultModel updateResult = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, status);
+                if(updateResult.IsSuccess == true)
                 {
                     TblRentOrder rentOrder = await _rentOrderRepo.Get(rentOrderID);
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
@@ -97,14 +97,14 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Code = 200;
                     result.IsSuccess = true;
                     result.Data = rentOrderResModel;
-                    result.Message = "Cancel rent order success.";
+                    result.Message = "Update rent order success.";
                     return result;
                 }
                 else
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
-                    result.Message = "Cancel rent order failed.";
+                    result.Message = "Update rent order failed.";
                     return result;
                 }
             }
@@ -119,7 +119,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         }
 
-        public async Task<ResultModel> CancelSaleOrder(string token, Guid saleOrderID)
+        public async Task<ResultModel> UpdateSaleOrderStatus(string token, Guid saleOrderID, string status)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -147,8 +147,8 @@ namespace GreeenGarden.Business.Service.OrderService
             ResultModel result = new();
             try
             {
-                ResultModel cancelResult = await _saleOrderRepo.CancelSaleOrder(saleOrderID);
-                if (cancelResult.IsSuccess == true)
+                ResultModel updateResult = await _saleOrderRepo.UpdateSaleOrderStatus(saleOrderID, status);
+                if (updateResult.IsSuccess == true)
                 {
                     TblSaleOrder saleOrder = await _saleOrderRepo.Get(saleOrderID);
                     List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
@@ -170,14 +170,14 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Code = 200;
                     result.IsSuccess = true;
                     result.Data = saleOrderResModel;
-                    result.Message = "Cancel sale order success.";
+                    result.Message = "Update sale order success.";
                     return result;
                 }
                 else
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
-                    result.Message = "Cancel sale order failed.";
+                    result.Message = "Update sale order failed.";
                     return result;
                 }
             }
@@ -327,6 +327,9 @@ namespace GreeenGarden.Business.Service.OrderService
                     RewardPointUsed = rentOrderModel.RewardPointUsed,
                     DiscountAmount = discountAmount,
                     RentOrderGroupId = rentOrderModel.RentOrderGroupID,
+                    RecipientAddress = "" + rentOrderModel.RecipientAddress,
+                    RecipientPhone = ""+ rentOrderModel.RecipientPhone,
+                    RecipientName = "" +rentOrderModel.RecipientName
                 };
                 Guid insertRentOrder = await _rentOrderRepo.Insert(tblRentOrder);
                 if(insertRentOrder != Guid.Empty)
@@ -505,6 +508,9 @@ namespace GreeenGarden.Business.Service.OrderService
                     RewardPointGain = rewardPointGain,
                     RewardPointUsed = saleOrderModel.RewardPointUsed,
                     DiscountAmount = discountAmount,
+                    RecipientAddress = "" + saleOrderModel.RecipientAddress,
+                    RecipientPhone = "" + saleOrderModel.RecipientPhone,
+                    RecipientName = "" + saleOrderModel.RecipientName
                 };
                 Guid insertSaleOrder = await _saleOrderRepo.Insert(tblSaleOrder);
                 if (insertSaleOrder != Guid.Empty)
@@ -917,4 +923,3 @@ namespace GreeenGarden.Business.Service.OrderService
         }
     }
 }
-

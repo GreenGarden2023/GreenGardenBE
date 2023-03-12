@@ -14,25 +14,25 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
 			_context = context;
 		}
 
-        public async Task<ResultModel> CancelRentOrder(Guid RentOrderID)
+        public async Task<ResultModel> UpdateRentOrderStatus(Guid RentOrderID, string status)
         {
 			ResultModel result = new ResultModel();
 			TblRentOrder order = await _context.TblRentOrders.Where(x => x.Id.Equals(RentOrderID)).FirstOrDefaultAsync();
 			if(order != null)
 			{
-				order.Status = Status.CANCEL;
+				order.Status = status.Trim().ToLower();
 				_ = _context.Update(order);
-				_ = _context.SaveChangesAsync();
+				_ = await _context.SaveChangesAsync();
 				result.Code = 200;
 				result.IsSuccess = true;
-				result.Message = "Cancel rent order sucess.";
+				result.Message = "Update rent order status success.";
 				return result;
 			}
 			else
 			{
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Cancel rent order failed.";
+                result.Message = "Update rent order status failed.";
                 return result;
             }
         }

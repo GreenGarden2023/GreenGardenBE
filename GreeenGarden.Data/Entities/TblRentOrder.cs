@@ -31,6 +31,12 @@ public partial class TblRentOrder
 
     public Guid? UserId { get; set; }
 
+    public string? RecipientAddress { get; set; }
+
+    public string? RecipientPhone { get; set; }
+
+    public string? RecipientName { get; set; }
+
     public virtual TblRentOrderGroup? RentOrderGroup { get; set; }
 
     public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();

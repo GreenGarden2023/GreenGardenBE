@@ -17,15 +17,15 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             _context = context;
 		}
 
-        public async Task<ResultModel> CancelSaleOrder(Guid SaleOrderID)
+        public async Task<ResultModel> UpdateSaleOrderStatus(Guid SaleOrderID, string status)
         {
             ResultModel result = new ResultModel();
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.Id.Equals(SaleOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
-                order.Status = Status.CANCEL;
+                order.Status = status.Trim().ToLower();
                 _ = _context.Update(order);
-                _ = _context.SaveChangesAsync();
+                _ = await _context.SaveChangesAsync();
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Message = "Cancel rent order sucess.";

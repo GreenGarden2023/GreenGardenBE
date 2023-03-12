@@ -9,6 +9,12 @@
 
         public int? RewardPointUsed { get; set; }
 
+        public string? RecipientAddress { get; set; }
+
+        public string? RecipientPhone { get; set; }
+
+        public string? RecipientName { get; set; }
+
         public Guid? RentOrderGroupID { get; set; }
 
         public List<OrderDetailModel> ItemList { get; set; }
