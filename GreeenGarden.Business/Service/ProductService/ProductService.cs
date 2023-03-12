@@ -335,5 +335,22 @@ namespace GreeenGarden.Business.Service.ProductService
                 return result;
             }
         }
+
+        public async Task<ResultModel> ChangeStatus(string token, ProductUpdateStatusModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                result.IsSuccess = await _productRepo.changeStatus(model);
+                result.Message = "Update sucessfully";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }

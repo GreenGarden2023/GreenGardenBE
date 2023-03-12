@@ -101,5 +101,16 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             _ = await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> changeStatus(ProductUpdateStatusModel model)
+        {
+            var res = false;
+            var result = await _context.TblProducts.Where(x => x.Id.Equals(model.ID)).FirstOrDefaultAsync();
+            result.Status = model.Status;
+            _context.TblProducts.Update(result);
+            await _context.SaveChangesAsync();
+            res = true;
+            return res;
+        }
     }
 }

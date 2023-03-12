@@ -10,5 +10,6 @@ namespace GreeenGarden.Business.Service.ProductService
         Task<ResultModel> getAllProduct(PaginationRequestModel pagingModel);
         Task<ResultModel> UpdateProduct(ProductUpdateModel model, string token);
         Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale);
+        Task<ResultModel> ChangeStatus(string token, ProductUpdateStatusModel model);
     }
 }
