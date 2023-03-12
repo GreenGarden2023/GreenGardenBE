@@ -473,12 +473,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     };
                 }
                 bool updateProItem = await _proItemRepo.UpdateProductItem(productItemModel);
-                TblImage oldImage = await _imageRepo.GetImgUrlProductItem(productItemModel.Id);
-                if (oldImage != null)
-                {
-                    List<string> url = new() { oldImage.ImageUrl };
-                    ResultModel delete = await _imgService.DeleteImagesByURLs(url);
-                }
+
                 TblImage updateNewImage = await _imageRepo.UpdateImgForProductItem(productItemModel.Id, productItemModel.ImageURL);
                 if (updateProItem == true)
                 {

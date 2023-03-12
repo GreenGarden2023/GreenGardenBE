@@ -18,9 +18,9 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
         }
 
 
-        public string getImgByCategory(Guid categoryId)
+        public async Task<string> getImgByCategory(Guid categoryId)
         {
-            TblImage? result = _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefault();
+            TblImage? result = await _context.TblImages.Where(x => x.CategoryId.Equals(categoryId)).FirstOrDefaultAsync();
             return result?.ImageUrl;
         }
 

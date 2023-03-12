@@ -107,30 +107,19 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 {
                     return false;
                 }
-                if ((productItemDetailModel.SizeId != Guid.Empty) && !productItemDetailModel.SizeId.Equals(sizeProductItem.SizeId))
-                {
+                
                     sizeProductItem.SizeId = productItemDetailModel.SizeId;
-                }
-                if ((productItemDetailModel.ProductItemID != Guid.Empty) && !productItemDetailModel.ProductItemID.Equals(sizeProductItem.ProductItemId))
-                {
+                
                     sizeProductItem.ProductItemId = productItemDetailModel.ProductItemID;
-                }
-                if (!string.IsNullOrEmpty(productItemDetailModel.Status) && !productItemDetailModel.Status.Equals(sizeProductItem.Status))
-                {
+                
                     sizeProductItem.Status = productItemDetailModel.Status;
-                }
-                if (productItemDetailModel.RentPrice != null && productItemDetailModel.RentPrice != sizeProductItem.RentPrice)
-                {
+                
                     sizeProductItem.RentPrice = productItemDetailModel.RentPrice;
-                }
-                if (productItemDetailModel.SalePrice != null && productItemDetailModel.SalePrice != sizeProductItem.SalePrice)
-                {
+                
                     sizeProductItem.SalePrice = productItemDetailModel.SalePrice;
-                }
-                if (productItemDetailModel.Quantity != null && productItemDetailModel.Quantity != sizeProductItem.Quantity)
-                {
+                
                     sizeProductItem.Quantity = productItemDetailModel.Quantity;
-                }
+                
                 _ = _context.Update(sizeProductItem);
                 _ = await _context.SaveChangesAsync();
                 return true;
