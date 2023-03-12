@@ -336,7 +336,7 @@ namespace GreeenGarden.Business.Service.ProductService
             }
         }
 
-        /*public async Task<ResultModel> ChangeStatus(string token, ProductUpdateStatusModel model)
+        public async Task<ResultModel> ChangeStatus(string token, ProductUpdateStatusModel model)
         {
             var result = new ResultModel();
             try
@@ -351,6 +351,6 @@ namespace GreeenGarden.Business.Service.ProductService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
-        }*/
+        }
     }
 }
