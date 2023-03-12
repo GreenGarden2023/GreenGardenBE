@@ -53,5 +53,14 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
+        [HttpPost("change-status-category")]
+        [Authorize]
+        public async Task<IActionResult> changeStatus([FromForm] CategoryUpdateStatusModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.changeStatus(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
     }
 }

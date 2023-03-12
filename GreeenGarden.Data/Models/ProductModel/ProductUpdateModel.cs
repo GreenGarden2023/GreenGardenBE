@@ -15,4 +15,10 @@ namespace GreeenGarden.Data.Models.ProductModel
         public bool? IsForSale { get; set; }
         public bool? IsForRent { get; set; }
     }
+    public class ProductUpdateStatusModel
+    {
+        [Required]
+        public Guid ID { get; set; }
+        public string Status { get; set; }
+    }
 }

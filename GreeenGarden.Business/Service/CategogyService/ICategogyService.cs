@@ -10,5 +10,6 @@ namespace GreeenGarden.Business.Service.CategogyService
         Task<ResultModel> GetCategoryByStatus(PaginationRequestModel pagingModel, string status);
         Task<ResultModel> createCategory(string token, CategoryCreateModel categoryCreateModel);
         Task<ResultModel> updateCategory(string token, CategoryUpdateModel categoryUpdateModel);
+        Task<ResultModel> changeStatus(string token, CategoryUpdateStatusModel model);
     }
 }

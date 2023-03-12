@@ -15,5 +15,6 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
         public Task<TblCategory> updateCategory(CategoryUpdateModel categoryUpdateModel);
         public bool checkCategoryNameExist(string categoryName);
         public bool checkCategoryIDExist(Guid categoryID);
+        public Task<bool> updateStatus(CategoryUpdateStatusModel model);
     }
 }

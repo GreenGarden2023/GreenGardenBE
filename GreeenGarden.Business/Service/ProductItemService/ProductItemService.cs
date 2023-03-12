@@ -41,6 +41,32 @@ namespace GreeenGarden.Business.Service.ProductItemService
             _sizeProductItemRepo = sizeProductItemRepo;
         }
 
+        public async Task<ResultModel> ChangeStatusProductItemDetial(string token, ProductItemDetailUpdateStatusModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER))
+                {
+                    result.Code = 403;
+                    result.IsSuccess = false;
+                    result.Message = "User role invalid";
+                    return result;
+                }
+                result.IsSuccess = await _proItemRepo.ChangeStatus(model);
+
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> CreateProductItem(string token, ProductItemModel productItemInsertModel)
         {
             if (!string.IsNullOrEmpty(token))
