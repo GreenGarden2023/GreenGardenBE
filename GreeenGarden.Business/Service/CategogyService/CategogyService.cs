@@ -27,6 +27,33 @@ namespace GreeenGarden.Business.Service.CategogyService
             _imageRepo = imageRepo;
         }
 
+        public async Task<ResultModel> changeStatus(string token, CategoryUpdateStatusModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF))
+                {
+                    result.Code = 403;
+                    result.IsSuccess = false;
+                    result.Message = "User role invalid";
+                    return result;
+                }
+
+
+                result.IsSuccess = await _cateRepo.updateStatus(model);
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> createCategory(string token, CategoryCreateModel categoryCreateModel)
         {
             ResultModel result = new();

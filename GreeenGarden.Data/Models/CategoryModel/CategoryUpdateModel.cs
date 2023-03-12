@@ -16,5 +16,11 @@ namespace GreeenGarden.Data.Models.CategoryModel
 
         public IFormFile? Image { get; set; }
     }
+
+    public class CategoryUpdateStatusModel
+    {
+        public Guid CategoryID { get; set; }
+        public string status { get; set; }
+    }
 }
 

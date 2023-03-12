@@ -24,7 +24,6 @@
     <Folder Include="Models\SizeModel\" />
     <Folder Include="Repositories\EmailOTPCodeRepo\" />
     <Folder Include="Models\EmailCodeVerifyModel\" />
-    <Folder Include="Models\ProductItemModel\" />
     <Folder Include="Repositories\SizeProductItemRepo\" />
     <Folder Include="Models\MoMoModel\" />
     <Folder Include="Repositories\TransactionRepo\" />

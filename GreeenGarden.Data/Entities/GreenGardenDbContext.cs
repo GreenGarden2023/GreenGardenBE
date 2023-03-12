@@ -442,6 +442,11 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.TblSaleOrders)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblSaleOrder_tblUser");
         });
 
         modelBuilder.Entity<TblSaleOrderDetail>(entity =>
