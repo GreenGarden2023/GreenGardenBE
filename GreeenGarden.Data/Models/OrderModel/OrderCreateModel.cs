@@ -22,7 +22,7 @@
     }
     public class OrderDetailModel
     {
-        public Guid ID { get; set; }
+        public Guid ProductItemDetailID { get; set; }
         public int Quantity { get; set; }
 
     }

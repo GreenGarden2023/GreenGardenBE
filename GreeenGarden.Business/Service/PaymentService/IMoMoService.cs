@@ -4,6 +4,7 @@ namespace GreeenGarden.Business.Service.PaymentService
 {
     public interface IMoMoService
     {
-        Task<ResultModel> CreateDepositPaymentMoMo(Guid orderID);
+        Task<ResultModel> CreateDepositPaymentMoMo(Guid orderID, string orderType);
+
     }
 }

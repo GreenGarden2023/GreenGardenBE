@@ -238,7 +238,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 }
                 foreach (OrderDetailModel item in rentOrderModel.ItemList)
                 {
-                    TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ID);
+                    TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
                     if(itemDetail == null)
                     {
                         result.IsSuccess = false;
@@ -336,7 +336,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     foreach (OrderDetailModel item in rentOrderModel.ItemList)
                     {
-                        TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ID);
+                        TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
                         if (itemDetail == null)
                         {
                             result.IsSuccess = false;
@@ -349,7 +349,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TblRentOrderDetail tblRentOrderDetail = new TblRentOrderDetail
                             {
                                 RentOrderId = tblRentOrder.Id,
-                                ProductItemDetailId = item.ID,
+                                ProductItemDetailId = item.ProductItemDetailID,
                                 Quantity = item.Quantity,
                                 ProductItemDetailTotalPrice = itemDetail.RentPrice * item.Quantity
                             };
@@ -437,7 +437,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 foreach (OrderDetailModel item in saleOrderModel.ItemList)
                 {
-                    TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ID);
+                    TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
                     if (itemDetail == null)
                     {
                         result.IsSuccess = false;
@@ -517,7 +517,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     foreach (OrderDetailModel item in saleOrderModel.ItemList)
                     {
-                        TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ID);
+                        TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
                         if (itemDetail == null)
                         {
                             result.IsSuccess = false;
@@ -530,7 +530,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TblSaleOrderDetail tblSaleOrderDetail = new TblSaleOrderDetail
                             {
                                 SaleOderId = tblSaleOrder.Id,
-                                ProductItemDetailId = item.ID,
+                                ProductItemDetailId = item.ProductItemDetailID,
                                 Quantity = item.Quantity,
                                 ProductItemDetailTotalPrice = itemDetail.RentPrice * item.Quantity
                             };
