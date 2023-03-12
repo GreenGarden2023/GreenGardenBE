@@ -14,6 +14,4 @@ public partial class TblRentOrderGroup
     public Guid? UserId { get; set; }
 
     public virtual ICollection<TblRentOrder> TblRentOrders { get; } = new List<TblRentOrder>();
-
-    public virtual TblUser? User { get; set; }
 }

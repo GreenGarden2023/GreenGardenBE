@@ -23,13 +23,11 @@ public partial class TblServiceOrder
 
     public int? RewardPointUsed { get; set; }
 
-    public Guid RequestId { get; set; }
-
     public Guid TechnicianId { get; set; }
 
-    public virtual TblRequest Request { get; set; } = null!;
+    public Guid? ServiceId { get; set; }
 
-    public virtual ICollection<TblRequestDetail> TblRequestDetails { get; } = new List<TblRequestDetail>();
+    public virtual TblService? Service { get; set; }
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }

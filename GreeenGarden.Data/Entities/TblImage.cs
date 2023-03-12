@@ -19,9 +19,9 @@ public partial class TblImage
 
     public Guid? ProductItemId { get; set; }
 
-    public Guid? RequestDetailId { get; set; }
-
     public Guid? ReportId { get; set; }
+
+    public Guid? UserTreeId { get; set; }
 
     public virtual TblCategory? Category { get; set; }
 
@@ -34,8 +34,4 @@ public partial class TblImage
     public virtual TblProductItemDetail? ProductItemDetail { get; set; }
 
     public virtual TblReport? Report { get; set; }
-
-    public virtual TblRequest? ReportNavigation { get; set; }
-
-    public virtual TblRequestDetail? RequestDetail { get; set; }
 }

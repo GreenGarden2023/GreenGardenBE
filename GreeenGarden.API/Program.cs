@@ -6,9 +6,7 @@ using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Business.Service.PaymentService;
 using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Business.Service.ProductService;
-using GreeenGarden.Business.Service.RequestService;
 using GreeenGarden.Business.Service.SecretService;
-using GreeenGarden.Business.Service.ServiceOrderService;
 using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Data.Entities;
@@ -21,11 +19,9 @@ using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Repositories.RentOrderGroupRepo;
 using GreeenGarden.Data.Repositories.RentOrderRepo;
-using GreeenGarden.Data.Repositories.RequestRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
-using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
@@ -50,10 +46,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
-builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<IRequestService, RequestService>();
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 
@@ -77,9 +71,7 @@ builder.Services.AddTransient<ISizeRepo, SizeRepo>();
 builder.Services.AddTransient<ISizeProductItemRepo, SizeProductItemRepo>();
 builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
-builder.Services.AddTransient<IServiceOrderRepo, ServiceOrderRepo>();
 builder.Services.AddTransient<ICartRepo, CartRepo>();
-builder.Services.AddTransient<IRequestRepo, RequestRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>

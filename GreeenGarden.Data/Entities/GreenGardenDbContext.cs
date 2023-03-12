@@ -41,10 +41,6 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblReport> TblReports { get; set; }
 
-    public virtual DbSet<TblRequest> TblRequests { get; set; }
-
-    public virtual DbSet<TblRequestDetail> TblRequestDetails { get; set; }
-
     public virtual DbSet<TblReward> TblRewards { get; set; }
 
     public virtual DbSet<TblRole> TblRoles { get; set; }
@@ -53,13 +49,19 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblSaleOrderDetail> TblSaleOrderDetails { get; set; }
 
+    public virtual DbSet<TblService> TblServices { get; set; }
+
     public virtual DbSet<TblServiceOrder> TblServiceOrders { get; set; }
+
+    public virtual DbSet<TblServiceUserTree> TblServiceUserTrees { get; set; }
 
     public virtual DbSet<TblSize> TblSizes { get; set; }
 
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
+
+    public virtual DbSet<TblUserTree> TblUserTrees { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -197,7 +199,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.ReportId).HasColumnName("ReportID");
-            entity.Property(e => e.RequestDetailId).HasColumnName("RequestDetailID");
+            entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.CategoryId)
@@ -222,14 +224,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.Report).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ReportId)
                 .HasConstraintName("FK_tblImages_tblReport");
-
-            entity.HasOne(d => d.ReportNavigation).WithMany(p => p.TblImages)
-                .HasForeignKey(d => d.ReportId)
-                .HasConstraintName("FK_tblImage_tblRequest");
-
-            entity.HasOne(d => d.RequestDetail).WithMany(p => p.TblImages)
-                .HasForeignKey(d => d.RequestDetailId)
-                .HasConstraintName("FK_tblImage_tblRequestDetail");
         });
 
         modelBuilder.Entity<TblPayment>(entity =>
@@ -366,10 +360,6 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.UserId).HasColumnName("UserID");
-
-            entity.HasOne(d => d.User).WithMany(p => p.TblRentOrderGroups)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK_tblRentOrderGroup_tblUser");
         });
 
         modelBuilder.Entity<TblReport>(entity =>
@@ -387,47 +377,6 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.CreateBy)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblReport_tblUser");
-        });
-
-        modelBuilder.Entity<TblRequest>(entity =>
-        {
-            entity.ToTable("tblRequest");
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("ID");
-            entity.Property(e => e.Address).HasMaxLength(200);
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.Phone).HasMaxLength(50);
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
-
-            entity.HasOne(d => d.User).WithMany(p => p.TblRequests)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblRequests_tblUsers");
-        });
-
-        modelBuilder.Entity<TblRequestDetail>(entity =>
-        {
-            entity.ToTable("tblRequestDetail");
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("ID");
-            entity.Property(e => e.Description).HasMaxLength(200);
-            entity.Property(e => e.RequestId).HasColumnName("RequestID");
-            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
-            entity.Property(e => e.TreeName).HasMaxLength(50);
-
-            entity.HasOne(d => d.Request).WithMany(p => p.TblRequestDetails)
-                .HasForeignKey(d => d.RequestId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblRequestDetail_tblRequest");
-
-            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblRequestDetails)
-                .HasForeignKey(d => d.ServiceOrderId)
-                .HasConstraintName("FK_tblRequestDetail_tblServiceOrder");
         });
 
         modelBuilder.Entity<TblReward>(entity =>
@@ -497,6 +446,23 @@ public partial class GreenGardenDbContext : DbContext
                 .HasConstraintName("FK_tblSaleOrderDetail_tblSaleOrder");
         });
 
+        modelBuilder.Entity<TblService>(entity =>
+        {
+            entity.ToTable("tblService");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
+            entity.Property(e => e.Address)
+                .HasMaxLength(200)
+                .IsFixedLength();
+            entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.Phone).HasMaxLength(50);
+            entity.Property(e => e.StartDate).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.UserName).HasMaxLength(50);
+        });
+
         modelBuilder.Entity<TblServiceOrder>(entity =>
         {
             entity.ToTable("tblServiceOrder");
@@ -505,16 +471,34 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.RequestId).HasColumnName("RequestID");
             entity.Property(e => e.ServiceEndDate).HasColumnType("datetime");
+            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
             entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
 
-            entity.HasOne(d => d.Request).WithMany(p => p.TblServiceOrders)
-                .HasForeignKey(d => d.RequestId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblServiceOrder_tblRequest");
+            entity.HasOne(d => d.Service).WithMany(p => p.TblServiceOrders)
+                .HasForeignKey(d => d.ServiceId)
+                .HasConstraintName("FK_tblServiceOrder_tblService");
+        });
+
+        modelBuilder.Entity<TblServiceUserTree>(entity =>
+        {
+            entity.ToTable("tblServiceUserTree");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
+            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
+            entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
+
+            entity.HasOne(d => d.Service).WithMany(p => p.TblServiceUserTrees)
+                .HasForeignKey(d => d.ServiceId)
+                .HasConstraintName("FK_tblServiceUserTree_tblService");
+
+            entity.HasOne(d => d.UserTree).WithMany(p => p.TblServiceUserTrees)
+                .HasForeignKey(d => d.UserTreeId)
+                .HasConstraintName("FK_tblServiceUserTree_tblUserTree");
         });
 
         modelBuilder.Entity<TblSize>(entity =>
@@ -591,6 +575,24 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblUsers_tblRoles");
+        });
+
+        modelBuilder.Entity<TblUserTree>(entity =>
+        {
+            entity.ToTable("tblUserTree");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
+            entity.Property(e => e.Description)
+                .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.TreeName).HasMaxLength(50);
+            entity.Property(e => e.UserId)
+                .HasMaxLength(10)
+                .IsFixedLength()
+                .HasColumnName("UserID");
         });
 
         OnModelCreatingPartial(modelBuilder);
