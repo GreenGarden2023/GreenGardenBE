@@ -1,6 +1,8 @@
 ﻿using System;
+using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -38,9 +40,9 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             }
         }
 
-        public async Task<List<TblSaleOrder>> GetSaleOrders(Guid userID)
+        public async Task<Page<TblSaleOrder>> GetSaleOrders(PaginationRequestModel paginationRequestModel, Guid userID)
         {
-            List<TblSaleOrder> listTblOrder = await _context.TblSaleOrders.Where(x => x.UserId.Equals(userID)).ToListAsync();
+            Page<TblSaleOrder> listTblOrder = await _context.TblSaleOrders.Where(x => x.UserId.Equals(userID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             return listTblOrder;
         }
     }

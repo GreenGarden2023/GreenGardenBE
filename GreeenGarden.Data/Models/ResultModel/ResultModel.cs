@@ -45,4 +45,14 @@
         public object? Product { get; set; }
         public object? ProductItem { get; set; }
     }
+    public class RentOrderGroupResModel
+    {
+        public object? Paging { get; set; }
+        public object? RentOrderGroups { get; set; }
+    }
+    public class SaleOrderGetResModel
+    {
+        public object? Paging { get; set; }
+        public object? SaleOrderList { get; set; }
+    }
 }

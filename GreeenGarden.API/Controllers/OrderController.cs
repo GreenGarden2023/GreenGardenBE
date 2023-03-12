@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -34,10 +35,10 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-rent-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> GetRentOrders()
+        public async Task<IActionResult> GetRentOrders([FromQuery] PaginationRequestModel pagingModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.GetRentOrders(token);
+            ResultModel result = await _orderService.GetRentOrders(token, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-rent-order-detail")]
@@ -58,10 +59,10 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-sale-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> GetSaleOrders()
+        public async Task<IActionResult> GetSaleOrders([FromQuery] PaginationRequestModel pagingModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.GetSaleOrders(token);
+            ResultModel result = await _orderService.GetSaleOrders(token, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-sale-order-detail")]

@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 
 namespace GreeenGarden.Business.Service.OrderService
@@ -9,13 +10,13 @@ namespace GreeenGarden.Business.Service.OrderService
 
         Task<ResultModel> CreateSaleOrder(string token, OrderCreateModel saleOrderModel);
 
-        Task<ResultModel> GetRentOrders(string token);
+        Task<ResultModel> GetRentOrders(string token, PaginationRequestModel pagingModel);
 
         Task<ResultModel> GetRentOrderDetail(string token, Guid rentOrderID);
 
         Task<ResultModel> CancelRentOrder(string token, Guid rentOrderID);
 
-        Task<ResultModel> GetSaleOrders(string token);
+        Task<ResultModel> GetSaleOrders(string token, PaginationRequestModel pagingModel);
 
         Task<ResultModel> GetSaleOrderDetail(string token, Guid saleOrderID);
 
