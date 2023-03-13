@@ -9,6 +9,7 @@ using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Business.Service.SecretService;
 using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Business.Service.UserService;
+using GreeenGarden.Business.Service.UserTreeService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.CategoryRepo;
@@ -42,16 +43,21 @@ builder.Services.AddDbContext<GreenGardenDbContext>(option => option.UseSqlServe
 
 // Add services to interface
 
+
 builder.Services.AddScoped<ICategogyService, CategogyService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddScoped<IOrderService, OrderService>();
+
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
+
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IUserTreeService, UserTreeService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<IRentOrderRepo, RentOrderRepo>();
