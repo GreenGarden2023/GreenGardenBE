@@ -13,6 +13,7 @@ using GreeenGarden.Data.Repositories.SaleOrderRepo;
 using GreeenGarden.Data.Repositories.RentOrderGroupRepo;
 using GreeenGarden.Data.Models.PaginationModel;
 using EntityFrameworkPaginateCore;
+using GreeenGarden.Business.Service.CartService;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -26,13 +27,15 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly ISaleOrderDetailRepo _saleOrderDetailRepo;
         private readonly ISizeProductItemRepo _sizeProductItemRepo;
         private readonly IRewardRepo _rewardRepo;
+        private readonly ICartService _cartService;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             ISaleOrderRepo saleOrderRepo,
             ISaleOrderDetailRepo saleOrderDetailRepo,
             IRewardRepo rewardRepo,
             IRentOrderRepo rentOrderRepo,
             IRentOrderDetailRepo rentOrderDetailRepo,
-            ISizeProductItemRepo sizeProductItemRepo)
+            ISizeProductItemRepo sizeProductItemRepo,
+            ICartService cartService)
 		{
             _decodeToken = new DecodeToken();
             _rentOrderRepo = rentOrderRepo;
@@ -42,6 +45,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _saleOrderDetailRepo = saleOrderDetailRepo;
             _saleOrderRepo = saleOrderRepo;
             _rentOrderGroupRepo = rentOrderGroupRepo;
+            _cartService = cartService;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -91,7 +95,11 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointUsed = rentOrder.RewardPointUsed,
                         RentOrderGroupID = rentOrder.RentOrderGroupId,
                         DiscountAmount = rentOrder.DiscountAmount,
-                        RentOrderDetailList = rentOrderDetailResModels
+                        RecipientAddress = rentOrder.RecipientAddress,
+                        RecipientName = rentOrder.RecipientName,
+                        RecipientPhone = rentOrder.RecipientPhone,
+                        RentOrderDetailList = rentOrderDetailResModels,
+
                     };
 
                     result.Code = 200;
@@ -164,6 +172,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointGain = saleOrder.RewardPointGain,
                         RewardPointUsed = saleOrder.RewardPointUsed,
                         DiscountAmount = saleOrder.DiscountAmount,
+                        RecipientAddress = saleOrder.RecipientAddress,
+                        RecipientName = saleOrder.RecipientName,
+                        RecipientPhone = saleOrder.RecipientPhone,
                         RentOrderDetailList = saleOrderDetailResModels
                     };
 
@@ -380,8 +391,12 @@ namespace GreeenGarden.Business.Service.OrderService
                     RewardPointUsed = tblRentOrder.RewardPointUsed,
                     RentOrderGroupID = tblRentOrder.RentOrderGroupId,
                     DiscountAmount = tblRentOrder.DiscountAmount,
+                    RecipientAddress = tblRentOrder.RecipientAddress,
+                    RecipientName = tblRentOrder.RecipientName,
+                    RecipientPhone = tblRentOrder.RecipientPhone,
                     RentOrderDetailList = rentOrderDetailResModels
                 };
+                _ = await _cartService.CleanCart(token);
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = rentOrderResModel;
@@ -559,8 +574,12 @@ namespace GreeenGarden.Business.Service.OrderService
                     RewardPointGain = tblSaleOrder.RewardPointGain,
                     RewardPointUsed = tblSaleOrder.RewardPointUsed,
                     DiscountAmount = tblSaleOrder.DiscountAmount,
+                    RecipientAddress = tblSaleOrder.RecipientAddress,
+                    RecipientName = tblSaleOrder.RecipientName,
+                    RecipientPhone = tblSaleOrder.RecipientPhone,
                     RentOrderDetailList = rentOrderDetailResModels
                 };
+                _ = await _cartService.CleanCart(token);
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = saleOrderResModel;
@@ -631,6 +650,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointUsed = tblRentOrder.RewardPointUsed,
                         RentOrderGroupID = tblRentOrder.RentOrderGroupId,
                         DiscountAmount = tblRentOrder.DiscountAmount,
+                        RecipientAddress = tblRentOrder.RecipientAddress,
+                        RecipientName = tblRentOrder.RecipientName,
+                        RecipientPhone = tblRentOrder.RecipientPhone,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
                     result.IsSuccess = true;
@@ -708,6 +730,9 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RewardPointUsed = order.RewardPointUsed,
                                     RentOrderGroupID = order.RentOrderGroupId,
                                     DiscountAmount = order.DiscountAmount,
+                                    RecipientAddress = order.RecipientAddress,
+                                    RecipientName = order.RecipientName,
+                                    RecipientPhone = order.RecipientPhone,
                                     RentOrderDetailList = rentOrderDetailResModels
                                 };
                                 resList.Add(rentOrderResModel);
@@ -816,6 +841,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointGain = tblSaleOrder.RewardPointGain,
                         RewardPointUsed = tblSaleOrder.RewardPointUsed,
                         DiscountAmount = tblSaleOrder.DiscountAmount,
+                        RecipientAddress = tblSaleOrder.RecipientAddress,
+                        RecipientName = tblSaleOrder.RecipientName,
+                        RecipientPhone = tblSaleOrder.RecipientPhone,
                         RentOrderDetailList = saleOrderDetailResModels
                     };
                     result.IsSuccess = true;
@@ -884,6 +912,9 @@ namespace GreeenGarden.Business.Service.OrderService
                             RewardPointGain = order.RewardPointGain,
                             RewardPointUsed = order.RewardPointUsed,
                             DiscountAmount = order.DiscountAmount,
+                            RecipientAddress = order.RecipientAddress,
+                            RecipientName = order.RecipientName,
+                            RecipientPhone = order.RecipientPhone,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
@@ -984,6 +1015,9 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RewardPointUsed = order.RewardPointUsed,
                                     RentOrderGroupID = order.RentOrderGroupId,
                                     DiscountAmount = order.DiscountAmount,
+                                    RecipientAddress = order.RecipientAddress,
+                                    RecipientName = order.RecipientName,
+                                    RecipientPhone = order.RecipientPhone,
                                     RentOrderDetailList = rentOrderDetailResModels
                                 };
                                 resList.Add(rentOrderResModel);
@@ -1087,6 +1121,9 @@ namespace GreeenGarden.Business.Service.OrderService
                             RewardPointGain = order.RewardPointGain,
                             RewardPointUsed = order.RewardPointUsed,
                             DiscountAmount = order.DiscountAmount,
+                            RecipientAddress = order.RecipientAddress,
+                            RecipientName = order.RecipientName,
+                            RecipientPhone = order.RecipientPhone,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
