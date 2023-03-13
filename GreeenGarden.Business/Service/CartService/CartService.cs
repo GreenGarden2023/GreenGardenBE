@@ -63,6 +63,7 @@ namespace GreeenGarden.Business.Service.CartService
                             var proItemDetial = await _cartRepo.GetProductItemDetails((Guid)i.productItemDetailID);
                             if (proItemDetial == null)
                             {
+                                result.Code = 102;
                                 result.IsSuccess = false;
                                 result.Message = "Don't product: " + i.productItemDetailID;
                                 return result;
@@ -70,6 +71,7 @@ namespace GreeenGarden.Business.Service.CartService
                             }
                             if ((i.quantity + j.quantity) > proItemDetial.Quantity)
                             {
+                                result.Code = 101;
                                 result.IsSuccess = false;
                                 result.Message = "Số lượng của sản phẩm: " + i.productItemDetailID + " trong kho chỉ còn: " + proItemDetial.Quantity + ", đơn hàng của bạn tổng: " + (i.quantity + j.quantity);
                                 return result;
@@ -124,13 +126,14 @@ namespace GreeenGarden.Business.Service.CartService
                                 var productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
                                 if (item.quantity > productItemDetail.Quantity)
                                 {
+                                    result.Code = 101;
                                     result.IsSuccess = false;
                                     result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
                                     return result;
                                 }
                                 if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.RentPrice == 0)
                                 {
-                                    result.Code = 400;
+                                    result.Code = 102;
                                     result.IsSuccess = false;
                                     result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
                                     return result;
@@ -183,13 +186,14 @@ namespace GreeenGarden.Business.Service.CartService
 
                                 if (item.quantity > sizeProductItem.Quantity)
                                 {
+                                    result.Code = 101;
                                     result.IsSuccess = false;
                                     result.Message = "Product " + sizeProductItem.Id + " don't enough quantity!";
                                     return result;
                                 }
                                 if (sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.SalePrice == 0)
                                 {
-                                    result.Code = 400;
+                                    result.Code = 102;
                                     result.IsSuccess = false;
                                     result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
                                     return result;
