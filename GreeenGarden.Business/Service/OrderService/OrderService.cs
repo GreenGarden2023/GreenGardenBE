@@ -625,16 +625,6 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(rentOrderId);
-                string userID = _decodeToken.Decode(token, "userid");
-                if (!tblRentOrder.UserId.Equals(Guid.Parse(userID)))
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "You can only view your order.";
-                    return result;
-                }
-                else
-                {
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderId);
                     RentOrderResModel rentOrderResModel = new RentOrderResModel
                     {
@@ -660,7 +650,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Data = rentOrderResModel;
                     result.Message = "Get rent order detail successful.";
                     return result;
-                }
+                
 
             }
             catch (Exception e)
@@ -817,17 +807,6 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(saleOrderID);
-                string userID = _decodeToken.Decode(token, "userid");
-                if (!tblSaleOrder.UserId.Equals(Guid.Parse(userID)))
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "You can only view your order.";
-                    return result;
-                }
-                else
-                {
-
                     List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
                     SaleOrderResModel saleOrderResModel = new SaleOrderResModel
                     {
@@ -851,7 +830,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Data = saleOrderDetailResModels;
                     result.Message = "Get sale order detail successful.";
                     return result;
-                }
+                
 
             }
             catch (Exception e)
