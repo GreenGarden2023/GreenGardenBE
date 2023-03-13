@@ -4,7 +4,7 @@ using GreeenGarden.Data.Repositories.Repository;
 
 namespace GreeenGarden.Data.Repositories.CartRepo
 {
-    public interface ICartRepo : IRepository<TblUserTree>
+    public interface ICartRepo : IRepository<TblCart>
     {
 
         Task<TblUser> GetByUserName(string username);

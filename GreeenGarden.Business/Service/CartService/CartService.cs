@@ -85,7 +85,7 @@ namespace GreeenGarden.Business.Service.CartService
                 var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
                 if (await _cartRepo.GetCart(user.Id) == null)
                 {
-                    var cartTemp = new TblUserTree()
+                    var cartTemp = new TblCart()
                     {
                         Id = Guid.NewGuid(),
                         UserId = user.Id,
@@ -97,6 +97,13 @@ namespace GreeenGarden.Business.Service.CartService
 
 
                 var cart = await _cartRepo.GetCart(user.Id);
+                if (cart == null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "sai cho nay ne";
+                    return result;
+
+                }
                 var cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
                 foreach (var item in cartDetail)
                 {
