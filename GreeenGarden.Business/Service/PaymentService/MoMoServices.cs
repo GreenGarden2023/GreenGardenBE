@@ -4,6 +4,7 @@ using GreeenGarden.Data.Models.MoMoModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
+using GreeenGarden.Data.Repositories.TransactionRepo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -13,10 +14,12 @@ namespace GreeenGarden.Business.Service.PaymentService
     {
         private readonly IRentOrderRepo _rentOrderRepo;
         private readonly ISaleOrderRepo _saleOrderRepo;
-        public MoMoServices(IRentOrderRepo rentOrderRepo, ISaleOrderRepo saleOrderRepo)
+        private readonly ITransactionRepo _transactionRepo; 
+        public MoMoServices( ITransactionRepo transactionRepo, IRentOrderRepo rentOrderRepo, ISaleOrderRepo saleOrderRepo)
         {
             _rentOrderRepo = rentOrderRepo;
             _saleOrderRepo = saleOrderRepo;
+            _transactionRepo = transactionRepo;
         }
         public async Task<ResultModel> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
         {
@@ -169,7 +172,13 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(moMoDepositModel.OrderId);
                     if(updateDeposit.IsSuccess == true)
                     {
-
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            RentOrderId = tblRentOrder.Id,
+                            Amount = tblRentOrder.Deposit,
+                            Type = TransactionType.RENT_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         result.IsSuccess = true;
                         result.Code = 200;
                         result.Message = "Update order deposit success.";
@@ -195,6 +204,13 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(moMoDepositModel.OrderId);
                     if (updateDeposit.IsSuccess == true)
                     {
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            SaleOrderId = tblSaleOrder.Id,
+                            Amount = tblSaleOrder.Deposit,
+                            Type = TransactionType.SALE_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         result.IsSuccess = true;
                         result.Code = 200;
                         result.Message = "Update order deposit success.";
@@ -249,9 +265,16 @@ namespace GreeenGarden.Business.Service.PaymentService
                         result.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
                         return result;
                     }
-                    ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
-                    if (updateDeposit.IsSuccess == true)
+                    ResultModel updateRemain = await _rentOrderRepo.UpdateRentOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
+                    if (updateRemain.IsSuccess == true)
                     {
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            RentOrderId = tblRentOrder.Id,
+                            Amount = moMoPaymentModel.Amount,
+                            Type = TransactionType.RENT_ORDER
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         result.IsSuccess = true;
                         result.Code = 200;
                         result.Message = "Update order payment success.";
@@ -282,9 +305,16 @@ namespace GreeenGarden.Business.Service.PaymentService
                         result.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
                         return result;
                     }
-                    ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
-                    if (updateDeposit.IsSuccess == true)
+                    ResultModel updateRemain = await _saleOrderRepo.UpdateSaleOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
+                    if (updateRemain.IsSuccess == true)
                     {
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            SaleOrderId = tblSaleOrder.Id,
+                            Amount = moMoPaymentModel.Amount,
+                            Type = TransactionType.SALE_ORDER
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         result.IsSuccess = true;
                         result.Code = 200;
                         result.Message = "Update order payment success.";
@@ -329,11 +359,25 @@ namespace GreeenGarden.Business.Service.PaymentService
                     if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
                     {
                         ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(orderModel.OrderId);
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            RentOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            Type = TransactionType.RENT_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         return updateDeposit.IsSuccess;
                     }
                     else if (orderModel.OrderType.Trim().ToLower().Equals("sale"))
                     {
                         ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(orderModel.OrderId);
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            SaleOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            Type = TransactionType.SALE_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         return updateDeposit.IsSuccess;
                     }
                     else
@@ -509,11 +553,25 @@ namespace GreeenGarden.Business.Service.PaymentService
                     if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
                     {
                         ResultModel updateRemain = await _rentOrderRepo.UpdateRentOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            RentOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            Type = TransactionType.RENT_ORDER
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         return updateRemain.IsSuccess;
                     }
                     else if (orderModel.OrderType.Trim().ToLower().Equals("sale"))
                     {
                         ResultModel updateRemain = await _saleOrderRepo.UpdateSaleOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                        TblTransaction tblTransaction = new TblTransaction
+                        {
+                            SaleOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            Type = TransactionType.SALE_ORDER
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
                         return updateRemain.IsSuccess;
                     }
                     else
