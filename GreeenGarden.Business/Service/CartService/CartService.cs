@@ -108,109 +108,115 @@ namespace GreeenGarden.Business.Service.CartService
 
                 if (model.rentItems != null)
                 {
-                    foreach (var item in model.rentItems)
+                    if (model.rentItems.Count != 0)
                     {
-                        if (item.productItemDetailID != null)
+                        foreach (var item in model.rentItems)
                         {
-                            var productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
-                            if (item.quantity > productItemDetail.Quantity)
+                            if (item.productItemDetailID != null)
                             {
-                                result.IsSuccess = false;
-                                result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
-                                return result;
-                            }
-                            if ( productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.RentPrice == 0)
-                            {
-                                result.Code = 400;
-                                result.IsSuccess = false;
-                                result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
-                                return result;
-                            }
-                            var newCartDetail = new TblCartDetail()
-                            {
-                                Id = Guid.NewGuid(),
-                                SizeProductItemId = item.productItemDetailID,
-                                Quantity = item.quantity,
-                                CartId = cart.Id,
-                                IsForRent = true
-                            };
-                            await _cartRepo.AddProductItemToCart(newCartDetail);
-                            //show
-                            var productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
-                            var productItemRecord = new productItem()
-                            {
-                                Content = productItem.Content,
-                                Description= productItem.Description,
-                                Id = productItem.Id,
-                                Name= productItem.Name,
-                                Type = productItem.Type
-                            };
+                                var productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
+                                if (item.quantity > productItemDetail.Quantity)
+                                {
+                                    result.IsSuccess = false;
+                                    result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
+                                    return result;
+                                }
+                                if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.RentPrice == 0)
+                                {
+                                    result.Code = 400;
+                                    result.IsSuccess = false;
+                                    result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
+                                    return result;
+                                }
+                                var newCartDetail = new TblCartDetail()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SizeProductItemId = item.productItemDetailID,
+                                    Quantity = item.quantity,
+                                    CartId = cart.Id,
+                                    IsForRent = true
+                                };
+                                await _cartRepo.AddProductItemToCart(newCartDetail);
+                                //show
+                                var productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
+                                var productItemRecord = new productItem()
+                                {
+                                    Content = productItem.Content,
+                                    Description = productItem.Description,
+                                    Id = productItem.Id,
+                                    Name = productItem.Name,
+                                    Type = productItem.Type
+                                };
 
 
-                            var ItemRequest = new ItemRequest()
-                            {
-                                productItemDetail = productItemDetail,
-                                quantity = item.quantity,
-                                unitPrice = productItemDetail.RentPrice,
-                                productItem = productItemRecord
-                            };
-                            modelResponse.rentItems.Add(ItemRequest);
-                            totalRentPriceCart += productItemDetail.RentPrice * item.quantity;
+                                var ItemRequest = new ItemRequest()
+                                {
+                                    productItemDetail = productItemDetail,
+                                    quantity = item.quantity,
+                                    unitPrice = productItemDetail.RentPrice,
+                                    productItem = productItemRecord
+                                };
+                                modelResponse.rentItems.Add(ItemRequest);
+                                totalRentPriceCart += productItemDetail.RentPrice * item.quantity;
+                            }
                         }
+
                     }
                 }
 
                 if (model.saleItems != null)
                 {
-                    foreach (var item in model.saleItems)
+                    if (model.saleItems.Count != 0)
                     {
-                        if (item.productItemDetailID != null)
+                        foreach (var item in model.saleItems)
                         {
-                            var sizeProductItem = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
+                            if (item.productItemDetailID != null)
+                            {
+                                var sizeProductItem = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
 
-                            if (item.quantity > sizeProductItem.Quantity)
-                            {
-                                result.IsSuccess = false;
-                                result.Message = "Product " + sizeProductItem.Id + " don't enough quantity!";
-                                return result;
+                                if (item.quantity > sizeProductItem.Quantity)
+                                {
+                                    result.IsSuccess = false;
+                                    result.Message = "Product " + sizeProductItem.Id + " don't enough quantity!";
+                                    return result;
+                                }
+                                if (sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.SalePrice == 0)
+                                {
+                                    result.Code = 400;
+                                    result.IsSuccess = false;
+                                    result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
+                                    return result;
+                                }
+                                var newCartDetail = new TblCartDetail()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    SizeProductItemId = item.productItemDetailID,
+                                    Quantity = item.quantity,
+                                    CartId = cart.Id,
+                                    IsForRent = false
+                                };
+                                await _cartRepo.AddProductItemToCart(newCartDetail);
+                                //show
+                                var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
+                                var productItemRecord = new productItem()
+                                {
+                                    Content = productItem.Content,
+                                    Description = productItem.Description,
+                                    Id = productItem.Id,
+                                    Name = productItem.Name,
+                                    Type = productItem.Type
+                                };
+                                var ItemRequest = new ItemRequest()
+                                {
+                                    productItemDetail = sizeProductItem,
+                                    quantity = item.quantity,
+                                    unitPrice = sizeProductItem.SalePrice,
+                                    productItem = productItemRecord
+                                };
+                                modelResponse.saleItems.Add(ItemRequest);
+                                totalSalePriceCart += sizeProductItem.SalePrice * item.quantity;
                             }
-                            if (sizeProductItem.Status.ToLower() != Status.ACTIVE || sizeProductItem.SalePrice == 0)
-                            {
-                                result.Code = 400;
-                                result.IsSuccess = false;
-                                result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
-                                return result;
-                            }
-                            var newCartDetail = new TblCartDetail()
-                            {
-                                Id = Guid.NewGuid(),
-                                SizeProductItemId = item.productItemDetailID,
-                                Quantity = item.quantity,
-                                CartId = cart.Id,
-                                IsForRent = false
-                            };
-                            await _cartRepo.AddProductItemToCart(newCartDetail);
-                            //show
-                            var productItem = await _cartRepo.GetProductItem(sizeProductItem.ProductItemId);
-                            var productItemRecord = new productItem()
-                            {
-                                Content = productItem.Content,
-                                Description = productItem.Description,
-                                Id = productItem.Id,
-                                Name = productItem.Name,
-                                Type = productItem.Type
-                            };
-                            var ItemRequest = new ItemRequest()
-                            {
-                                productItemDetail = sizeProductItem,
-                                quantity = item.quantity,
-                                unitPrice = sizeProductItem.SalePrice,
-                                productItem = productItemRecord
-                            };
-                            modelResponse.saleItems.Add(ItemRequest);
-                            totalSalePriceCart += sizeProductItem.SalePrice * item.quantity;
                         }
-
                     }
                 }
 
