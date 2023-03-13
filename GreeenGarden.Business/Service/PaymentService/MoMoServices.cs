@@ -80,6 +80,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 };
                 moMoOrderModel.OrderId = moMoDepositModel.OrderId;
                 moMoOrderModel.PayAmount = amount;
+                moMoOrderModel.OrderType = moMoDepositModel.OrderType;
                 var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
                 var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
