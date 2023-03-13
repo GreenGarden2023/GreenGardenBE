@@ -47,7 +47,6 @@ builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<ICartService, CartService>();
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 

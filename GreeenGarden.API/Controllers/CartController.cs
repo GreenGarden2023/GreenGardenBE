@@ -33,5 +33,14 @@ namespace GreeenGarden.API.Controllers
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
+
+        [HttpDelete("clean-cart")]
+        public async Task<IActionResult> CleanCart()
+        {
+            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
+            var result = await _service.CleanCart(token);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }
