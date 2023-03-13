@@ -24,11 +24,39 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _moMoService.DepositPaymentMoMo(moMoDepositModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("receive-deposit-payment-momo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ReceiveDepositPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        {
+             _ = await _moMoService.ProcessDepositPaymentMoMo(moMoResponseModel);
+            return  NoContent();
+        }
+        [HttpPost("receive-order-payment-momo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ReceiveOrderPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        {
+            _ = await _moMoService.ProcessOrderPaymentMoMo(moMoResponseModel);
+            return NoContent();
+        }
         [HttpPost("deposit-payment-cash")]
         [AllowAnonymous]
-        public async Task<IActionResult> epositPaymentCash(MoMoDepositModel moMoDepositModel)
+        public async Task<IActionResult> DepositPaymentCash(MoMoDepositModel moMoDepositModel)
         {
             Data.Models.ResultModel.ResultModel result = await _moMoService.DepositPaymentCash(moMoDepositModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("payment-cash")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PaymentCash(MoMoPaymentModel MoMoPaymentModel)
+        {
+            Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(MoMoPaymentModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("payment-momo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PaymentMoMo(MoMoPaymentModel MoMoPaymentModel)
+        {
+            Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentMoMo(MoMoPaymentModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
