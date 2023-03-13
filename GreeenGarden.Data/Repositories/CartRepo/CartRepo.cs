@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.CartRepo
 {
-    public class CartRepo : Repository<TblCart>, ICartRepo
+    public class CartRepo : Repository<TblUserTree>, ICartRepo
     {
         //private readonly IMapper _mapper;
         private readonly GreenGardenDbContext _context;

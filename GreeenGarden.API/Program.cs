@@ -26,6 +26,7 @@ using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
+using GreeenGarden.Data.Repositories.UserTreeRepo;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -48,6 +49,7 @@ builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 
@@ -72,6 +74,7 @@ builder.Services.AddTransient<ISizeProductItemRepo, SizeProductItemRepo>();
 builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
 builder.Services.AddTransient<ICartRepo, CartRepo>();
+builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
