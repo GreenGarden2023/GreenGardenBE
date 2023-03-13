@@ -8,6 +8,9 @@ namespace GreeenGarden.Business.Service.PaymentService
         Task<ResultModel> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel);
         Task<bool> ProcessDepositPaymentMoMo(MoMoResponseModel moMoResponseModel);
 
+        Task<ResultModel> OrderPaymentMoMo(MoMoPaymentModel moMoPaymentModel);
+        Task<bool> ProcessOrderPaymentMoMo(MoMoResponseModel moMoResponseModel);
+
         Task<ResultModel> DepositPaymentCash(MoMoDepositModel moMoDepositModel);
 
         Task<ResultModel> OrderPaymentCash(MoMoPaymentModel moMoPaymentModel);

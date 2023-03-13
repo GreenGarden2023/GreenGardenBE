@@ -24,6 +24,8 @@ namespace GreeenGarden.Business.Service.PaymentService
             double amount = 0;
             string base64OrderString = "";
             MoMoOrderModel moMoOrderModel = new();
+            moMoOrderModel.OrderId = moMoDepositModel.OrderId;
+            moMoOrderModel.OrderType = moMoDepositModel.OrderType;
             if (moMoDepositModel.OrderType.ToLower().Trim().Equals("rent"))
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoDepositModel.OrderId);
@@ -47,9 +49,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
-                moMoOrderModel.OrderId = moMoDepositModel.OrderId;
                 moMoOrderModel.PayAmount = amount;
-                moMoOrderModel.OrderType = moMoDepositModel.OrderType;
                 var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
                 var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
@@ -63,14 +63,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                 {
                     resultModel.Code = 400;
                     resultModel.IsSuccess = false;
-                    resultModel.Message = "Rent order Id invalid.";
+                    resultModel.Message = "Sale order Id invalid.";
                     return resultModel;
                 }
                 if (tblSaleOrder.Status.Equals(Status.READY))
                 {
                     resultModel.Code = 400;
                     resultModel.IsSuccess = false;
-                    resultModel.Message = "Rent order deposit is paid.";
+                    resultModel.Message = "Sale order deposit is paid.";
                     return resultModel;
                 }
 
@@ -78,9 +78,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
-                moMoOrderModel.OrderId = moMoDepositModel.OrderId;
                 moMoOrderModel.PayAmount = amount;
-                moMoOrderModel.OrderType = moMoDepositModel.OrderType;
                 var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
                 var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
@@ -90,7 +88,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             {
                 resultModel.Code = 400;
                 resultModel.IsSuccess = false;
-                resultModel.Message = "service order not yet available.";
+                resultModel.Message = "Service order not yet available.";
                 return resultModel;
             }
 
@@ -337,6 +335,186 @@ namespace GreeenGarden.Business.Service.PaymentService
                     {
                         ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(orderModel.OrderId);
                         return updateDeposit.IsSuccess;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<ResultModel> OrderPaymentMoMo(MoMoPaymentModel moMoPaymentModel)
+        {
+            ResultModel resultModel = new ResultModel();
+            double amount = moMoPaymentModel.Amount;
+            string base64OrderString = "";
+            MoMoOrderModel moMoOrderModel = new();
+            moMoOrderModel.OrderId = moMoPaymentModel.OrderId;
+            moMoOrderModel.OrderType = moMoPaymentModel.OrderType;
+            if (moMoPaymentModel.OrderType.ToLower().Trim().Equals("rent"))
+            {
+                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoPaymentModel.OrderId);
+                if (tblRentOrder == null)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Rent order Id invalid.";
+                    return resultModel;
+                }
+                if (tblRentOrder.RemainMoney < amount || amount < 1000)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
+                    return resultModel;
+                }
+                if (!tblRentOrder.Status.Equals(Status.READY))
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Rent order deposit is not paid.";
+                    return resultModel;
+                }
+
+                JsonSerializerSettings jsonSerializerSettings = new()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                moMoOrderModel.PayAmount = amount;
+                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                    jsonSerializerSettings);
+                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
+            }
+            else if (moMoPaymentModel.OrderType.ToLower().Trim().Equals("sale"))
+            {
+                TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoPaymentModel.OrderId);
+                if (tblSaleOrder == null)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Sale order Id invalid.";
+                    return resultModel;
+                }
+                if (tblSaleOrder.RemainMoney < amount || amount < 1000)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
+                    return resultModel;
+                }
+                if (!tblSaleOrder.Status.Equals(Status.READY))
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Sale order deposit is not paid.";
+                    return resultModel;
+                }
+
+                JsonSerializerSettings jsonSerializerSettings = new()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                moMoOrderModel.PayAmount = amount;
+                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                    jsonSerializerSettings);
+                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
+            }
+            else
+            {
+                resultModel.Code = 400;
+                resultModel.IsSuccess = false;
+                resultModel.Message = "service order not yet available.";
+                return resultModel;
+            }
+
+            List<string> secrets = SecretService.SecretService.GetPaymentSecrets();
+            string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+            string partnerCode = secrets[0];
+            string accessKey = secrets[1];
+            string serectkey = secrets[2];
+            string orderInfo = "GreenGarden Payment";
+            string redirectUrl = "https://ggarden.shop/thanks";
+            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-order-payment-momo";
+            string requestType = "captureWallet";
+            string orderId = Guid.NewGuid().ToString();
+            string requestId = Guid.NewGuid().ToString();
+            string extraData = base64OrderString;
+
+            string rawHash = "accessKey=" + accessKey +
+                "&amount=" + amount +
+                "&extraData=" + extraData +
+                "&ipnUrl=" + ipnUrl +
+                "&orderId=" + orderId +
+                "&orderInfo=" + orderInfo +
+                "&partnerCode=" + partnerCode +
+                "&redirectUrl=" + redirectUrl +
+                "&requestId=" + requestId +
+                "&requestType=" + requestType
+                ;
+
+            Console.WriteLine("rawHash = " + rawHash);
+
+            MoMoSecurity crypto = new MoMoSecurity();
+            string signature = crypto.signSHA256(rawHash, serectkey);
+            Console.WriteLine("Signature = " + signature);
+
+            JObject message = new JObject
+            {
+                { "partnerCode", partnerCode },
+                { "partnerName", "Test" },
+                { "storeId", "MomoTestStore" },
+                { "requestId", requestId },
+                { "amount", amount },
+                { "orderId", orderId },
+                { "orderInfo", orderInfo },
+                { "redirectUrl", redirectUrl },
+                { "ipnUrl", ipnUrl },
+                { "lang", "en" },
+                { "extraData", extraData },
+                { "requestType", requestType },
+                { "signature", signature }
+
+            };
+            Console.WriteLine("Json request to MoMo: " + message.ToString());
+            string responseFromMomo = await Task.FromResult(PaymentRequest.sendPaymentRequest(endpoint, message.ToString()));
+            Console.WriteLine("Response from MoMo: " + responseFromMomo.ToString());
+            JObject resJSON = JObject.Parse(responseFromMomo);
+            resultModel.Code = 200;
+            resultModel.IsSuccess = true;
+            resultModel.Message = "Create sale payment success.";
+            resultModel.Data = resJSON;
+            return resultModel;
+        }
+
+        public async Task<bool> ProcessOrderPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        {
+            try
+            {
+                var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
+                var orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
+                var orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
+                if (orderModel != null && moMoResponseModel.resultCode == 0)
+                {
+                    if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
+                    {
+                        ResultModel updateRemain = await _rentOrderRepo.UpdateRentOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                        return updateRemain.IsSuccess;
+                    }
+                    else if (orderModel.OrderType.Trim().ToLower().Equals("sale"))
+                    {
+                        ResultModel updateRemain = await _saleOrderRepo.UpdateSaleOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                        return updateRemain.IsSuccess;
                     }
                     else
                     {

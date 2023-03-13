@@ -31,6 +31,13 @@ namespace GreeenGarden.API.Controllers
              _ = await _moMoService.ProcessDepositPaymentMoMo(moMoResponseModel);
             return  NoContent();
         }
+        [HttpPost("receive-order-payment-momo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ReceiveOrderPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        {
+            _ = await _moMoService.ProcessOrderPaymentMoMo(moMoResponseModel);
+            return NoContent();
+        }
         [HttpPost("deposit-payment-cash")]
         [AllowAnonymous]
         public async Task<IActionResult> DepositPaymentCash(MoMoDepositModel moMoDepositModel)
@@ -43,6 +50,13 @@ namespace GreeenGarden.API.Controllers
         public async Task<IActionResult> PaymentCash(MoMoPaymentModel MoMoPaymentModel)
         {
             Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(MoMoPaymentModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("payment-momo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> PaymentMoMo(MoMoPaymentModel MoMoPaymentModel)
+        {
+            Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentMoMo(MoMoPaymentModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
