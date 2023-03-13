@@ -19,7 +19,7 @@ namespace GreeenGarden.API.Controllers
         }
 
         [HttpPost("create-user-tree")]
-        public async Task<IActionResult> createUserTree([FromBody] UserTreeCreateModel model)
+        public async Task<IActionResult> createUserTree([FromBody] List<UserTreeCreateModel> model)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             Data.Models.ResultModel.ResultModel result = await _service.createUserTree(token, model);

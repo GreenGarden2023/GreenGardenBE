@@ -48,14 +48,9 @@ builder.Services.AddScoped<IProductItemService, ProductItemService>();
 builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
 builder.Services.AddScoped<ICartService, CartService>();
-builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IUserService, UserService>();
-
 builder.Services.AddScoped<IOrderService, OrderService>();
-
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
-
-builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();

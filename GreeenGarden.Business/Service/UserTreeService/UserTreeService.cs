@@ -54,34 +54,38 @@ namespace GreeenGarden.Business.Service.UserTreeService
             return result;
         }
 
-        public async Task<ResultModel> createUserTree(string token, UserTreeCreateModel model)
+        public async Task<ResultModel> createUserTree(string token, List<UserTreeCreateModel> model)
         {
             var result = new ResultModel();
             try
             {
                 var tblUser = await _utRepo.GetTblUserByUsername(_decodeToken.Decode(token, "username"));
-
-                var ut = new TblUserTree()
+                foreach (var modelItem in model)
                 {
-                    Id = Guid.NewGuid(),
-                    TreeName = model.TreeName,
-                    UserId = tblUser.Id,
-                    Description = model.Description,
-                    Quantity = model.Quantity,
-                    Status = Status.ACTIVE
-                };
-                await _utRepo.Insert(ut);
-
-                foreach (var i in model.ImageUrl)
-                {
-                    var img = new TblImage()
+                    var ut = new TblUserTree()
                     {
                         Id = Guid.NewGuid(),
-                        UserTreeId = ut.Id,
-                        ImageUrl = i
+                        TreeName = modelItem.TreeName,
+                        UserId = tblUser.Id,
+                        Description = modelItem.Description,
+                        Quantity = modelItem.Quantity,
+                        Status = Status.ACTIVE
                     };
-                    await _utRepo.InsertImg(img);
+                    await _utRepo.Insert(ut);
+
+                    foreach (var i in modelItem.ImageUrl)
+                    {
+                        var img = new TblImage()
+                        {
+                            Id = Guid.NewGuid(),
+                            UserTreeId = ut.Id,
+                            ImageUrl = i
+                        };
+                        await _utRepo.InsertImg(img);
+                    }
+
                 }
+                
 
                 result.Code = 200;
                 result.IsSuccess = true;
