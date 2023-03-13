@@ -49,6 +49,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 };
                 moMoOrderModel.OrderId = moMoDepositModel.OrderId;
                 moMoOrderModel.PayAmount = amount;
+                moMoOrderModel.OrderType = moMoDepositModel.OrderType;
                 var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
                 var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
@@ -99,7 +100,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             string serectkey = secrets[2];
             string orderInfo = "GreenGarden Payment";
             string redirectUrl = "https://ggarden.shop/thanks";
-            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-sale-payment-reponse";
+            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-deposit-payment-momo";
             string requestType = "captureWallet";
             string orderId = Guid.NewGuid().ToString();
             string requestId = Guid.NewGuid().ToString();
@@ -158,9 +159,18 @@ namespace GreeenGarden.Business.Service.PaymentService
             {
                 if (moMoDepositModel.OrderType.Trim().ToLower().Equals("rent"))
                 {
+                    TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoDepositModel.OrderId);
+                    if (tblRentOrder.Status.Equals(Status.READY))
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Order deposit has been paid.";
+                        return result;
+                    }
                     ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(moMoDepositModel.OrderId);
                     if(updateDeposit.IsSuccess == true)
                     {
+
                         result.IsSuccess = true;
                         result.Code = 200;
                         result.Message = "Update order deposit success.";
@@ -175,6 +185,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                     }
                 }else if (moMoDepositModel.OrderType.Trim().ToLower().Equals("sale"))
                 {
+                    TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoDepositModel.OrderId);
+                    if (tblSaleOrder.Status.Equals(Status.READY))
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Order deposit has been paid.";
+                        return result;
+                    }
                     ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(moMoDepositModel.OrderId);
                     if (updateDeposit.IsSuccess == true)
                     {
@@ -217,6 +235,21 @@ namespace GreeenGarden.Business.Service.PaymentService
             {
                 if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("rent"))
                 {
+                    TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoPaymentModel.OrderId);
+                    if (tblRentOrder.Status.Equals(Status.PAID))
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Order is fully paid.";
+                        return result;
+                    }
+                    if (moMoPaymentModel.Amount < 1000 || moMoPaymentModel.Amount > tblRentOrder.RemainMoney)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
+                        return result;
+                    }
                     ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
                     if (updateDeposit.IsSuccess == true)
                     {
@@ -235,6 +268,21 @@ namespace GreeenGarden.Business.Service.PaymentService
                 }
                 else if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("sale"))
                 {
+                    TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoPaymentModel.OrderId);
+                    if (tblSaleOrder.Status.Equals(Status.COMPLETED))
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Order is fully paid.";
+                        return result;
+                    }
+                    if (moMoPaymentModel.Amount < 1000 || moMoPaymentModel.Amount > tblSaleOrder.RemainMoney)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
+                        return result;
+                    }
                     ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
                     if (updateDeposit.IsSuccess == true)
                     {
@@ -267,6 +315,41 @@ namespace GreeenGarden.Business.Service.PaymentService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
 
+            }
+        }
+
+        public async Task<bool> ProcessDepositPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        {
+            try
+            {
+                var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
+                var orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
+                var orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
+                if (orderModel != null && moMoResponseModel.resultCode == 0)
+                {
+                    if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
+                    {
+                        ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(orderModel.OrderId);
+                        return updateDeposit.IsSuccess;
+                    }
+                    else if (orderModel.OrderType.Trim().ToLower().Equals("sale"))
+                    {
+                        ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(orderModel.OrderId);
+                        return updateDeposit.IsSuccess;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
     }

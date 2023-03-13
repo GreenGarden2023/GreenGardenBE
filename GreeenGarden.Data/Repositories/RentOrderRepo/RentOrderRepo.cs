@@ -69,6 +69,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 _ = await _context.SaveChangesAsync();
                 result.Code = 200;
                 result.IsSuccess = true;
+                result.Data = order.Deposit;
                 result.Message = "Update rent order status success.";
                 return result;
             }
