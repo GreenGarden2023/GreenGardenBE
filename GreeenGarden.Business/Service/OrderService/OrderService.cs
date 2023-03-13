@@ -741,6 +741,7 @@ namespace GreeenGarden.Business.Service.OrderService
 						resList.Sort((x, y) => y.EndDateRent.CompareTo(x.EndDateRent));
 						RentOrderGroupModel rentOrderGroupModel = new RentOrderGroupModel
 						{
+							ID = tblRentGroup.Id,
 							CreateDate = (DateTime)tblRentGroup.CreateDate,
 							NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
 							TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
@@ -1020,6 +1021,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
 						RentOrderGroupModel rentOrderGroupModel = new RentOrderGroupModel
 						{
+							ID = tblRentGroup.Id,
 							NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
 							TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
 							RentOrderList = resList
@@ -1185,6 +1187,90 @@ namespace GreeenGarden.Business.Service.OrderService
 
 			return orderCode;
         }
-		
-	}
+
+        public async Task<ResultModel> GetRentOrdersByGroup(string token, Guid groupID)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+			try
+			{
+				TblRentOrderGroup tblRentOrderGroups = await _rentOrderGroupRepo.Get(groupID);
+                List<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrdersByGroup(tblRentOrderGroups.Id);
+                List<RentOrderResModel> resList = new List<RentOrderResModel>();
+                if (listTblRentOrder.Any())
+                {
+                    foreach (TblRentOrder order in listTblRentOrder)
+                    {
+                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                        RentOrderResModel rentOrderResModel = new RentOrderResModel
+                        {
+                            Id = order.Id,
+                            TransportFee = order.TransportFee,
+                            StartDateRent = order.StartDateRent,
+                            EndDateRent = order.EndDateRent,
+                            Deposit = order.Deposit,
+                            TotalPrice = order.TotalPrice,
+                            Status = order.Status,
+                            RemainMoney = order.RemainMoney,
+                            RewardPointGain = order.RewardPointGain,
+                            RewardPointUsed = order.RewardPointUsed,
+                            RentOrderGroupID = order.RentOrderGroupId,
+                            DiscountAmount = order.DiscountAmount,
+                            RecipientAddress = order.RecipientAddress,
+                            RecipientName = order.RecipientName,
+                            RecipientPhone = order.RecipientPhone,
+                            OrderCode = order.OrderCode,
+                            RentOrderDetailList = rentOrderDetailResModels
+                        };
+                        resList.Add(rentOrderResModel);
+                    }
+                }
+                resList.Sort((x, y) => y.EndDateRent.CompareTo(x.EndDateRent));
+				RentOrderGroupModel rentOrderGroupModel = new RentOrderGroupModel
+				{
+					ID = tblRentOrderGroups.Id,
+                    CreateDate = (DateTime)tblRentOrderGroups.CreateDate,
+                    NumberOfOrder = (int)tblRentOrderGroups.NumberOfOrders,
+                    TotalGroupAmount = (double)tblRentOrderGroups.GroupTotalAmount,
+                    RentOrderList = resList
+                };
+                result.Message = "Get rent group success";
+				result.Data = rentOrderGroupModel;
+                result.IsSuccess = true;
+                result.Code = 200;
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+
+        }
+    }
 }

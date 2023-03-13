@@ -57,6 +57,14 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.GetRentOrderDetail(token, rentOrderDetailID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-rent-order-group")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetRentOrdersGroup([Required] Guid groupID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetRentOrdersByGroup(token, groupID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpPost("update-rent-order-status")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
         public async Task<IActionResult> UpdateRentOrderStatus(OrderUpdateModel orderUpdateModel)
