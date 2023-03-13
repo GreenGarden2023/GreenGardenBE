@@ -4,6 +4,7 @@
     {
         public Guid OrderId { get; set; }
         public double PayAmount { get; set; }
+        public string OrderType { get; set; }
     }
     public class MoMoDepositModel
     {

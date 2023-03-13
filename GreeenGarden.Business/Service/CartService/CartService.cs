@@ -239,6 +239,49 @@ namespace GreeenGarden.Business.Service.CartService
             return result;
         }
 
+        public async Task<ResultModel> CleanCart(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var tblUser = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                var cart = await _cartRepo.GetCart(tblUser.Id);
+                if (cart==null)
+                {
+                    result.Code=201;
+                    result.IsSuccess = true;
+                    result.Data = "Xóa thành công";
+                    return result;
+                }
+                var cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
+                if (cartDetail == null || cartDetail.Count == 0)
+                {
+                    result.Code = 201;
+                    result.IsSuccess = true;
+                    result.Data = "Xóa thành công";
+                    return result;
+                }
+
+                foreach (var i in cartDetail)
+                {
+                    await _cartRepo.RemoveCartDetail(i);
+                }
+
+
+
+                result.Code = 201;
+                result.IsSuccess = true;
+                result.Message = "Xóa thành công";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> GetCart(string token)
         {
             var result = new ResultModel();
