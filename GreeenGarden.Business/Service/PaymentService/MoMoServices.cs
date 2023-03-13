@@ -176,6 +176,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             RentOrderId = tblRentOrder.Id,
                             Amount = tblRentOrder.Deposit,
+                            PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.RENT_DEPOSIT
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
@@ -208,6 +209,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             SaleOrderId = tblSaleOrder.Id,
                             Amount = tblSaleOrder.Deposit,
+                            PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.SALE_DEPOSIT
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
@@ -272,6 +274,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             RentOrderId = tblRentOrder.Id,
                             Amount = moMoPaymentModel.Amount,
+                            PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.RENT_ORDER
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
@@ -312,6 +315,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             SaleOrderId = tblSaleOrder.Id,
                             Amount = moMoPaymentModel.Amount,
+                            PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.SALE_ORDER
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
@@ -363,6 +367,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             RentOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.RENT_DEPOSIT
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
@@ -375,6 +380,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             SaleOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.SALE_DEPOSIT
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
@@ -557,6 +563,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             RentOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.RENT_ORDER
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
@@ -569,6 +576,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             SaleOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.SALE_ORDER
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
