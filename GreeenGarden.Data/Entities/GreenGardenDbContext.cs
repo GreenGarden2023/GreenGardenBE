@@ -311,6 +311,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.OrderCode).HasMaxLength(20);
             entity.Property(e => e.RecipientAddress).HasMaxLength(500);
             entity.Property(e => e.RecipientName).HasMaxLength(200);
             entity.Property(e => e.RecipientPhone).HasMaxLength(50);
@@ -416,6 +417,7 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.OrderCode).HasMaxLength(20);
             entity.Property(e => e.RecipientAddress).HasMaxLength(500);
             entity.Property(e => e.RecipientName).HasMaxLength(200);
             entity.Property(e => e.RecipientPhone).HasMaxLength(50);
@@ -458,10 +460,11 @@ public partial class GreenGardenDbContext : DbContext
                 .HasMaxLength(200)
                 .IsFixedLength();
             entity.Property(e => e.EndDate).HasColumnType("datetime");
+            entity.Property(e => e.Mail).HasMaxLength(50);
+            entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Phone).HasMaxLength(50);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UserName).HasMaxLength(50);
         });
 
         modelBuilder.Entity<TblServiceOrder>(entity =>
@@ -590,10 +593,7 @@ public partial class GreenGardenDbContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.TreeName).HasMaxLength(50);
-            entity.Property(e => e.UserId)
-                .HasMaxLength(10)
-                .IsFixedLength()
-                .HasColumnName("UserID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
         });
 
         OnModelCreatingPartial(modelBuilder);

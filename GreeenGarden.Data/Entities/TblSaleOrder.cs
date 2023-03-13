@@ -33,6 +33,8 @@ public partial class TblSaleOrder
 
     public string? RecipientName { get; set; }
 
+    public string? OrderCode { get; set; }
+
     public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();

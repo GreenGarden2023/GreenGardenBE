@@ -11,13 +11,17 @@ public partial class TblService
 
     public DateTime? EndDate { get; set; }
 
-    public string? UserName { get; set; }
+    public string? Mail { get; set; }
 
     public string? Phone { get; set; }
 
     public string? Address { get; set; }
 
     public string? Status { get; set; }
+
+    public string? Name { get; set; }
+
+    public Guid UserId { get; set; }
 
     public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();
 
