@@ -172,10 +172,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(moMoDepositModel.OrderId);
                     if(updateDeposit.IsSuccess == true)
                     {
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                         TblTransaction tblTransaction = new TblTransaction
                         {
                             RentOrderId = tblRentOrder.Id,
                             Amount = tblRentOrder.Deposit,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.RENT_DEPOSIT
                         };
@@ -204,11 +208,15 @@ namespace GreeenGarden.Business.Service.PaymentService
                     }
                     ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(moMoDepositModel.OrderId);
                     if (updateDeposit.IsSuccess == true)
-                    {
+                    { 
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                         TblTransaction tblTransaction = new TblTransaction
                         {
                             SaleOrderId = tblSaleOrder.Id,
                             Amount = tblSaleOrder.Deposit,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.SALE_DEPOSIT
                         };
@@ -252,6 +260,8 @@ namespace GreeenGarden.Business.Service.PaymentService
             {
                 if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("rent"))
                 {
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                     TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoPaymentModel.OrderId);
                     if (tblRentOrder.Status.Equals(Status.PAID))
                     {
@@ -274,6 +284,8 @@ namespace GreeenGarden.Business.Service.PaymentService
                         {
                             RentOrderId = tblRentOrder.Id,
                             Amount = moMoPaymentModel.Amount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.RENT_ORDER
                         };
@@ -311,10 +323,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ResultModel updateRemain = await _saleOrderRepo.UpdateSaleOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
                     if (updateRemain.IsSuccess == true)
                     {
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                         TblTransaction tblTransaction = new TblTransaction
                         {
                             SaleOrderId = tblSaleOrder.Id,
                             Amount = moMoPaymentModel.Amount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.CASH,
                             Type = TransactionType.SALE_ORDER
                         };
@@ -363,10 +379,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                     if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
                     {
                         ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(orderModel.OrderId);
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                         TblTransaction tblTransaction = new TblTransaction
                         {
                             RentOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.RENT_DEPOSIT
                         };
@@ -376,10 +396,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                     else if (orderModel.OrderType.Trim().ToLower().Equals("sale"))
                     {
                         ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(orderModel.OrderId);
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                         TblTransaction tblTransaction = new TblTransaction
                         {
                             SaleOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.SALE_DEPOSIT
                         };
@@ -559,10 +583,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                     if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
                     {
                         ResultModel updateRemain = await _rentOrderRepo.UpdateRentOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                         TblTransaction tblTransaction = new TblTransaction
                         {
                             RentOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.RENT_ORDER
                         };
@@ -572,10 +600,14 @@ namespace GreeenGarden.Business.Service.PaymentService
                     else if (orderModel.OrderType.Trim().ToLower().Equals("sale"))
                     {
                         ResultModel updateRemain = await _saleOrderRepo.UpdateSaleOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                         TblTransaction tblTransaction = new TblTransaction
                         {
                             SaleOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.SALE_ORDER
                         };
