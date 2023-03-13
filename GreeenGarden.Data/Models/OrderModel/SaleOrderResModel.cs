@@ -29,6 +29,8 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public string? RecipientName { get; set; }
 
+        public string? OrderCode { get; set; }
+
         public List<SaleOrderDetailResModel> RentOrderDetailList { get; set; }
     }
     public class SaleOrderDetailResModel

@@ -37,6 +37,8 @@ public partial class TblRentOrder
 
     public string? RecipientName { get; set; }
 
+    public string? OrderCode { get; set; }
+
     public virtual TblRentOrderGroup? RentOrderGroup { get; set; }
 
     public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();
