@@ -342,6 +342,17 @@ namespace GreeenGarden.Business.Service.OrderService
 				}
 				else
 				{
+					List<TblRentOrder> checkPreviousOrder = await _rentOrderRepo.GetRentOrdersByGroup((Guid)rentOrderModel.RentOrderGroupID);
+					foreach(TblRentOrder preOrder in checkPreviousOrder)
+					{
+						if (!preOrder.Status.Equals(Status.COMPLETED))
+						{
+                            result.IsSuccess = false;
+                            result.Code = 400;
+                            result.Message = "Please complete previous order to create a new one.";
+                            return result;
+                        }
+					}
 					ResultModel resultModel = await _rentOrderGroupRepo.UpdateRentOrderGroup((Guid)rentOrderModel.RentOrderGroupID, totalOrderAmount);
 				}
 				TblRentOrder tblRentOrder = new TblRentOrder
