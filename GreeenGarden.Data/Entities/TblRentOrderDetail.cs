@@ -7,15 +7,17 @@ public partial class TblRentOrderDetail
 {
     public Guid Id { get; set; }
 
-    public double? ProductItemDetailTotalPrice { get; set; }
+    public double? TotalPrice { get; set; }
 
     public int? Quantity { get; set; }
 
-    public Guid ProductItemDetailId { get; set; }
-
     public Guid RentOrderId { get; set; }
 
-    public virtual TblProductItemDetail ProductItemDetail { get; set; } = null!;
+    public double? RentPricePerUnit { get; set; }
+
+    public string? SizeName { get; set; }
+
+    public string? ProductItemName { get; set; }
 
     public virtual TblRentOrder RentOrder { get; set; } = null!;
 }

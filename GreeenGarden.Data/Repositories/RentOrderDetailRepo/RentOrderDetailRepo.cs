@@ -29,17 +29,14 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
 			List<RentOrderDetailResModel> resultList = new List<RentOrderDetailResModel>();
 			foreach(TblRentOrderDetail detail in list)
 			{
-				TblProductItemDetail tblProductItemDetail = await _productItemDetailRepo.Get(detail.ProductItemDetailId);
-				TblProductItem tblProductItem = await _productItemRepo.Get(tblProductItemDetail.ProductItemId);
-				TblImage tblImage = await _imageRepo.GetImgUrlProductItem(tblProductItem.Id);
 				RentOrderDetailResModel model = new RentOrderDetailResModel
 				{
 					ID = detail.Id,
-					productItemDetailID = detail.ProductItemDetailId,
-					productItemName = tblProductItem.Name,
-					productItemUrl = "" + tblImage.ImageUrl,
-                    productItemDetailTotalPrice = (double)detail.ProductItemDetailTotalPrice,
-					Quantity = (int)detail.Quantity
+					Quantity = detail.Quantity ?? null,
+					TotalPrice = detail.TotalPrice ?? null,
+					RentPricePerUnit = detail.RentPricePerUnit ?? null,
+					SizeName = "" + detail.SizeName,
+					ProductItemName = "" + detail.ProductItemName,
 				};
 				resultList.Add(model);
             }

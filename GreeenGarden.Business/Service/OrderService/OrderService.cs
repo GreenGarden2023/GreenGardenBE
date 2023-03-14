@@ -15,6 +15,8 @@ using GreeenGarden.Data.Models.PaginationModel;
 using EntityFrameworkPaginateCore;
 using GreeenGarden.Business.Service.CartService;
 using System;
+using GreeenGarden.Data.Repositories.SizeRepo;
+using GreeenGarden.Data.Repositories.ProductItemRepo;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -27,7 +29,9 @@ namespace GreeenGarden.Business.Service.OrderService
 		private readonly ISaleOrderRepo _saleOrderRepo;
 		private readonly ISaleOrderDetailRepo _saleOrderDetailRepo;
 		private readonly IProductItemDetailRepo _productItemDetailRepo;
-		private readonly IRewardRepo _rewardRepo;
+        private readonly IProductItemRepo _productItemRepo;
+        private readonly IRewardRepo _rewardRepo;
+		private readonly ISizeRepo _sizeRepo;
 		private readonly ICartService _cartService;
 		public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
 			ISaleOrderRepo saleOrderRepo,
@@ -36,7 +40,9 @@ namespace GreeenGarden.Business.Service.OrderService
 			IRentOrderRepo rentOrderRepo,
 			IRentOrderDetailRepo rentOrderDetailRepo,
 			IProductItemDetailRepo sizeProductItemRepo,
-			ICartService cartService)
+			ICartService cartService,
+			ISizeRepo sizeRepo,
+			IProductItemRepo productItemRepo)
 		{
 			_decodeToken = new DecodeToken();
 			_rentOrderRepo = rentOrderRepo;
@@ -47,6 +53,8 @@ namespace GreeenGarden.Business.Service.OrderService
 			_saleOrderRepo = saleOrderRepo;
 			_rentOrderGroupRepo = rentOrderGroupRepo;
 			_cartService = cartService;
+			_sizeRepo = sizeRepo;
+			_productItemRepo = productItemRepo;
 		}
 
 		public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -319,12 +327,15 @@ namespace GreeenGarden.Business.Service.OrderService
 				string userID = _decodeToken.Decode(token, "userid");
 				if (rentOrderModel.RentOrderGroupID == Guid.Empty || rentOrderModel.RentOrderGroupID == null)
 				{
-					TblRentOrderGroup tblRentOrderGroup = new TblRentOrderGroup
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblRentOrderGroup tblRentOrderGroup = new TblRentOrderGroup
 					{
 						Id = Guid.NewGuid(),
 						GroupTotalAmount = totalOrderAmount,
 						NumberOfOrders = 1,
-						UserId = Guid.Parse(userID)
+						CreateDate = currentTime,
+                        UserId = Guid.Parse(userID)
 					};
 					_ = await _rentOrderGroupRepo.Insert(tblRentOrderGroup);
 					rentOrderModel.RentOrderGroupID = tblRentOrderGroup.Id;
@@ -360,6 +371,8 @@ namespace GreeenGarden.Business.Service.OrderService
 					foreach (OrderDetailModel item in rentOrderModel.ItemList)
 					{
 						TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+						TblProductItem tblProductItem = await _productItemRepo.Get(itemDetail.ProductItemId);
+						TblSize tblSize = await _sizeRepo.Get(itemDetail.SizeId);
 						if (itemDetail == null)
 						{
 							result.IsSuccess = false;
@@ -372,9 +385,11 @@ namespace GreeenGarden.Business.Service.OrderService
 							TblRentOrderDetail tblRentOrderDetail = new TblRentOrderDetail
 							{
 								RentOrderId = tblRentOrder.Id,
-								ProductItemDetailId = item.ProductItemDetailID,
 								Quantity = item.Quantity,
-								ProductItemDetailTotalPrice = itemDetail.RentPrice * item.Quantity
+								TotalPrice = item.Quantity * itemDetail.RentPrice,
+								RentPricePerUnit = itemDetail.RentPrice,
+								SizeName = tblSize.Name,
+								ProductItemName = tblProductItem.Name
 							};
 							await _rentOrderDetailRepo.Insert(tblRentOrderDetail);
                             _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);
@@ -556,6 +571,8 @@ namespace GreeenGarden.Business.Service.OrderService
 					foreach (OrderDetailModel item in saleOrderModel.ItemList)
 					{
 						TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+                        TblProductItem tblProductItem = await _productItemRepo.Get(itemDetail.ProductItemId);
+                        TblSize tblSize = await _sizeRepo.Get(itemDetail.SizeId);
                         if (itemDetail == null)
 						{
 							result.IsSuccess = false;
@@ -568,9 +585,11 @@ namespace GreeenGarden.Business.Service.OrderService
 							TblSaleOrderDetail tblSaleOrderDetail = new TblSaleOrderDetail
 							{
 								SaleOderId = tblSaleOrder.Id,
-								ProductItemDetailId = item.ProductItemDetailID,
 								Quantity = item.Quantity,
-								ProductItemDetailTotalPrice = itemDetail.RentPrice * item.Quantity
+								TotalPrice = item.Quantity * itemDetail.SalePrice,
+								SalePricePerUnit = itemDetail.SalePrice,
+								SizeName = tblSize.Name,
+								ProductItemName = tblProductItem.Name
 							};
 							await _saleOrderDetailRepo.Insert(tblSaleOrderDetail);
                             _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);

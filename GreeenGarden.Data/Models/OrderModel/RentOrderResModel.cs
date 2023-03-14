@@ -40,11 +40,11 @@ namespace GreeenGarden.Data.Models.OrderModel
     public class RentOrderDetailResModel
     {
         public Guid ID { get; set; }
-        public Guid productItemDetailID { get; set; }
-        public string productItemName { get; set; }
-        public string productItemUrl { get; set; }
-        public double productItemDetailTotalPrice { get; set; }
-        public int Quantity { get; set; }
+        public double? TotalPrice { get; set; }
+        public int? Quantity { get; set; }
+        public double? RentPricePerUnit { get; set; }
+        public string? SizeName { get; set; }
+        public string? ProductItemName { get; set; }
     }
 }
 
