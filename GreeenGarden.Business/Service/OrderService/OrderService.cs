@@ -6,7 +6,7 @@ using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Repositories.SizeProductItemRepo;
+using GreeenGarden.Data.Repositories.ProductItemDetailRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
@@ -26,7 +26,7 @@ namespace GreeenGarden.Business.Service.OrderService
 		private readonly IRentOrderDetailRepo _rentOrderDetailRepo;
 		private readonly ISaleOrderRepo _saleOrderRepo;
 		private readonly ISaleOrderDetailRepo _saleOrderDetailRepo;
-		private readonly ISizeProductItemRepo _sizeProductItemRepo;
+		private readonly IProductItemDetailRepo _productItemDetailRepo;
 		private readonly IRewardRepo _rewardRepo;
 		private readonly ICartService _cartService;
 		public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
@@ -35,13 +35,13 @@ namespace GreeenGarden.Business.Service.OrderService
 			IRewardRepo rewardRepo,
 			IRentOrderRepo rentOrderRepo,
 			IRentOrderDetailRepo rentOrderDetailRepo,
-			ISizeProductItemRepo sizeProductItemRepo,
+			IProductItemDetailRepo sizeProductItemRepo,
 			ICartService cartService)
 		{
 			_decodeToken = new DecodeToken();
 			_rentOrderRepo = rentOrderRepo;
 			_rentOrderDetailRepo = rentOrderDetailRepo;
-			_sizeProductItemRepo = sizeProductItemRepo;
+			_productItemDetailRepo = sizeProductItemRepo;
 			_rewardRepo = rewardRepo;
 			_saleOrderDetailRepo = saleOrderDetailRepo;
 			_saleOrderRepo = saleOrderRepo;
@@ -252,7 +252,14 @@ namespace GreeenGarden.Business.Service.OrderService
 				}
 				foreach (OrderDetailModel item in rentOrderModel.ItemList)
 				{
-					TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
+					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+					if (itemDetail.Quantity <item.Quantity)
+					{
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Item does not have enough quantity left.";
+                        return result;
+                    }
 					if(itemDetail == null)
 					{
 						result.IsSuccess = false;
@@ -349,9 +356,10 @@ namespace GreeenGarden.Business.Service.OrderService
 				Guid insertRentOrder = await _rentOrderRepo.Insert(tblRentOrder);
 				if(insertRentOrder != Guid.Empty)
 				{
+
 					foreach (OrderDetailModel item in rentOrderModel.ItemList)
 					{
-						TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
+						TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
 						if (itemDetail == null)
 						{
 							result.IsSuccess = false;
@@ -369,8 +377,9 @@ namespace GreeenGarden.Business.Service.OrderService
 								ProductItemDetailTotalPrice = itemDetail.RentPrice * item.Quantity
 							};
 							await _rentOrderDetailRepo.Insert(tblRentOrderDetail);
-						}
-					}
+                            _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);
+                        }
+                    }
 					await _rewardRepo.UpdateUserRewardPoint(userName, rewardPointGain, (int)rentOrderModel.RewardPointUsed);
 				}
 				else
@@ -458,8 +467,15 @@ namespace GreeenGarden.Business.Service.OrderService
 
 				foreach (OrderDetailModel item in saleOrderModel.ItemList)
 				{
-					TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
-					if (itemDetail == null)
+					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+                    if (itemDetail.Quantity < item.Quantity)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Item does not have enough quantity left.";
+                        return result;
+                    }
+                    if (itemDetail == null)
 					{
 						result.IsSuccess = false;
 						result.Code = 400;
@@ -539,8 +555,8 @@ namespace GreeenGarden.Business.Service.OrderService
 				{
 					foreach (OrderDetailModel item in saleOrderModel.ItemList)
 					{
-						TblProductItemDetail itemDetail = await _sizeProductItemRepo.Get(item.ProductItemDetailID);
-						if (itemDetail == null)
+						TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+                        if (itemDetail == null)
 						{
 							result.IsSuccess = false;
 							result.Code = 400;
@@ -557,8 +573,9 @@ namespace GreeenGarden.Business.Service.OrderService
 								ProductItemDetailTotalPrice = itemDetail.RentPrice * item.Quantity
 							};
 							await _saleOrderDetailRepo.Insert(tblSaleOrderDetail);
-						}
-					}
+                            _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);
+                        }
+                    }
 					await _rewardRepo.UpdateUserRewardPoint(userName, rewardPointGain, (int)saleOrderModel.RewardPointUsed);
 				}
 				else

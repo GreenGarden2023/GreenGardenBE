@@ -13,7 +13,7 @@ using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
-using GreeenGarden.Data.Repositories.SizeProductItemRepo;
+using GreeenGarden.Data.Repositories.ProductItemDetailRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using System.Security.Claims;
 
@@ -28,8 +28,8 @@ namespace GreeenGarden.Business.Service.ProductItemService
         private readonly IProductRepo _proRepo;
         private readonly ICategoryRepo _categoryRepo;
         private readonly ISizeRepo _sizeRepo;
-        private readonly ISizeProductItemRepo _sizeProductItemRepo;
-        public ProductItemService(ISizeProductItemRepo sizeProductItemRepo, ISizeRepo sizeRepo, IProductItemRepo proItemRepo, IProductRepo proRepo, IImageRepo imageRepo, IImageService imgService, ICategoryRepo categoryRepo)
+        private readonly IProductItemDetailRepo _productItemDetailRepo;
+        public ProductItemService(IProductItemDetailRepo sizeProductItemRepo, ISizeRepo sizeRepo, IProductItemRepo proItemRepo, IProductRepo proRepo, IImageRepo imageRepo, IImageService imgService, ICategoryRepo categoryRepo)
         {
             _proItemRepo = proItemRepo;
             _imgService = imgService;
@@ -38,7 +38,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             _proRepo = proRepo;
             _categoryRepo = categoryRepo;
             _sizeRepo = sizeRepo;
-            _sizeProductItemRepo = sizeProductItemRepo;
+            _productItemDetailRepo = sizeProductItemRepo;
         }
 
         public async Task<ResultModel> ChangeStatusProductItemDetial(string token, ProductItemDetailUpdateStatusModel model)
@@ -215,7 +215,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Status = productItemDetailModel.Status,
                 };
                 
-                Guid insertSizeProdItem = await _sizeProductItemRepo.Insert(tblProductItemDetail);
+                Guid insertSizeProdItem = await _productItemDetailRepo.Insert(tblProductItemDetail);
                 if (insertSizeProdItem == Guid.Empty)
                 {
                     result.IsSuccess = false;
@@ -282,7 +282,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 TblProductItem? prodItem = await _proItemRepo.Get(productItemID);
                 if (prodItem != null)
                 {
-                    List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(productItemID, sizeProductItemStatus);
+                    List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(productItemID, sizeProductItemStatus);
                     TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemID);
                     string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
                     ProductItemResModel productItemResModel = new()
@@ -371,7 +371,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     List<ProductItemResModel> dataList = new();
                     foreach (TblProductItem pi in prodItemList.Results)
                     {
-                        List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(pi.Id, status);
+                        List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(pi.Id, status);
                         TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
                         string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
                         ProductItemResModel pItem = new()
@@ -478,7 +478,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 if (updateProItem == true)
                 {
                     TblProductItem? updateResult = await _proItemRepo.Get(productItemModel.Id);
-                    List<ProductItemDetailResModel> sizeGet = await _sizeProductItemRepo.GetSizeProductItems(updateResult.Id, null);
+                    List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(updateResult.Id, null);
                     ProductItemResModel upResult = new()
                     {
                         Id = updateResult.Id,
@@ -530,14 +530,14 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Message = "User not allowed"
                     };
                 }
-                bool updateProItem = await _sizeProductItemRepo.UpdateSizeProductItem(productItemDetailModel);
+                bool updateProItem = await _productItemDetailRepo.UpdateSizeProductItem(productItemDetailModel);
                 if (updateProItem == true)
                 {
                     foreach (string url in productItemDetailModel.ImagesUrls)
                     {
                         bool updateImg = await _imageRepo.UpdateImgForProductItemDetail(productItemDetailModel.Id, productItemDetailModel.ImagesUrls);
                     }
-                    TblProductItemDetail? updateResult = await _sizeProductItemRepo.Get(productItemDetailModel.Id);
+                    TblProductItemDetail? updateResult = await _productItemDetailRepo.Get(productItemDetailModel.Id);
                     TblSize? sizeGet = await _sizeRepo.Get(updateResult.SizeId);
                     List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(updateResult.Id);
                     SizeResModel size = new()

@@ -52,11 +52,25 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(MoMoPaymentModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("whole-payment-cash")]
+        [AllowAnonymous]
+        public async Task<IActionResult> WholePaymentCash(MoMoWholeOrderModel moMoWholeOrderModel)
+        {
+            Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentCash(moMoWholeOrderModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpPost("payment-momo")]
         [AllowAnonymous]
         public async Task<IActionResult> PaymentMoMo(MoMoPaymentModel MoMoPaymentModel)
         {
             Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentMoMo(MoMoPaymentModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("whole-payment-momo")]
+        [AllowAnonymous]
+        public async Task<IActionResult> WholePaymentMoMo(MoMoWholeOrderModel moMoWholeOrderModel)
+        {
+            Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentMoMo(moMoWholeOrderModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
