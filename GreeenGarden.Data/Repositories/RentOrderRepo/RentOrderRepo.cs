@@ -109,6 +109,20 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 return result;
             }
         }
+
+        public async Task<bool> CheckOrderCode(string Code)
+        {
+            TblRentOrder order = await _context.TblRentOrders.Where(x => x.OrderCode.Equals(Code)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
+        }
     }
 }
 

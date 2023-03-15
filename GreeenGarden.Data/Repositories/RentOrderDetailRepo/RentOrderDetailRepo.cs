@@ -4,7 +4,7 @@ using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.Repository;
-using GreeenGarden.Data.Repositories.SizeProductItemRepo;
+using GreeenGarden.Data.Repositories.ProductItemDetailRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
@@ -12,13 +12,13 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
 	public class RentOrderDetailRepo : Repository<TblRentOrderDetail> , IRentOrderDetailRepo
 	{
 		private readonly GreenGardenDbContext _context;
-		private readonly ISizeProductItemRepo _sizeProductItemRepo;
+		private readonly IProductItemDetailRepo _productItemDetailRepo;
         private readonly IProductItemRepo _productItemRepo;
         private readonly IImageRepo _imageRepo;
-		public RentOrderDetailRepo(GreenGardenDbContext context, ISizeProductItemRepo sizeProductItemRepo, IImageRepo imageRepo, IProductItemRepo productItemRepo) : base(context) 
+		public RentOrderDetailRepo(GreenGardenDbContext context, IProductItemDetailRepo sizeProductItemRepo, IImageRepo imageRepo, IProductItemRepo productItemRepo) : base(context) 
 		{
 			_context = context;
-			_sizeProductItemRepo = sizeProductItemRepo;
+			_productItemDetailRepo = sizeProductItemRepo;
 			_imageRepo = imageRepo;
 			_productItemRepo = productItemRepo;
 		}
@@ -29,17 +29,14 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
 			List<RentOrderDetailResModel> resultList = new List<RentOrderDetailResModel>();
 			foreach(TblRentOrderDetail detail in list)
 			{
-				TblProductItemDetail tblProductItemDetail = await _sizeProductItemRepo.Get(detail.ProductItemDetailId);
-				TblProductItem tblProductItem = await _productItemRepo.Get(tblProductItemDetail.ProductItemId);
-				TblImage tblImage = await _imageRepo.GetImgUrlProductItem(tblProductItem.Id);
 				RentOrderDetailResModel model = new RentOrderDetailResModel
 				{
 					ID = detail.Id,
-					productItemDetailID = detail.ProductItemDetailId,
-					productItemName = tblProductItem.Name,
-					productItemUrl = "" + tblImage.ImageUrl,
-                    productItemDetailTotalPrice = (double)detail.ProductItemDetailTotalPrice,
-					Quantity = (int)detail.Quantity
+					Quantity = detail.Quantity ?? null,
+					TotalPrice = detail.TotalPrice ?? null,
+					RentPricePerUnit = detail.RentPricePerUnit ?? null,
+					SizeName = "" + detail.SizeName,
+					ProductItemName = "" + detail.ProductItemName,
 				};
 				resultList.Add(model);
             }

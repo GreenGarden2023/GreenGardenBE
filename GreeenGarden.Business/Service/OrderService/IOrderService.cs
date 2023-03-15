@@ -12,6 +12,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         Task<ResultModel> GetRentOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetAllRentOrders(string token, PaginationRequestModel pagingModel);
+        Task<ResultModel> GetRentOrdersByGroup(string token, Guid groupID);
 
         Task<ResultModel> GetRentOrderDetail(string token, Guid rentOrderID);
 

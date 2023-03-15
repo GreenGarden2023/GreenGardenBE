@@ -7,15 +7,17 @@ public partial class TblSaleOrderDetail
 {
     public Guid Id { get; set; }
 
-    public Guid? ProductItemDetailId { get; set; }
+    public Guid SaleOderId { get; set; }
 
-    public Guid? SaleOderId { get; set; }
-
-    public double? ProductItemDetailTotalPrice { get; set; }
+    public double? TotalPrice { get; set; }
 
     public int? Quantity { get; set; }
 
-    public virtual TblProductItemDetail? ProductItemDetail { get; set; }
+    public double? SalePricePerUnit { get; set; }
 
-    public virtual TblSaleOrder? SaleOder { get; set; }
+    public string? SizeName { get; set; }
+
+    public string? ProductItemName { get; set; }
+
+    public virtual TblSaleOrder SaleOder { get; set; } = null!;
 }

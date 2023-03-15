@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.CartRepo
 {
-    public class CartRepo : Repository<TblUserTree>, ICartRepo
+    public class CartRepo : Repository<TblCart>, ICartRepo
     {
         //private readonly IMapper _mapper;
         private readonly GreenGardenDbContext _context;
@@ -24,9 +24,9 @@ namespace GreeenGarden.Data.Repositories.CartRepo
             return await _context.TblCarts.Where(x => x.UserId.Equals(UserID)).FirstOrDefaultAsync();
         }
 
-        public async Task<productItemDetail> GetProductItemDetail(Guid? SizeProductItemID)
+        public async Task<productItemDetail> GetProductItemDetail(Guid? productItemDetailID)
         {
-            var proItemDetail = await _context.TblProductItemDetails.Where(x => x.Id.Equals(SizeProductItemID)).FirstOrDefaultAsync();
+            var proItemDetail = await _context.TblProductItemDetails.Where(x => x.Id.Equals(productItemDetailID)).FirstOrDefaultAsync();
             var size = await _context.TblSizes.Where(x=>x.Id.Equals(proItemDetail.SizeId)).FirstOrDefaultAsync();
             var sizeTemp = new size()
             {

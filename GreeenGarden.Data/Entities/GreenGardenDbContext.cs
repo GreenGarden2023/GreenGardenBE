@@ -337,13 +337,9 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
+            entity.Property(e => e.ProductItemName).HasMaxLength(200);
             entity.Property(e => e.RentOrderId).HasColumnName("RentOrderID");
-
-            entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblRentOrderDetails)
-                .HasForeignKey(d => d.ProductItemDetailId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblRentOrderDetail_tblProductItemDetail");
+            entity.Property(e => e.SizeName).HasMaxLength(200);
 
             entity.HasOne(d => d.RentOrder).WithMany(p => p.TblRentOrderDetails)
                 .HasForeignKey(d => d.RentOrderId)
@@ -437,15 +433,13 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
+            entity.Property(e => e.ProductItemName).HasMaxLength(200);
             entity.Property(e => e.SaleOderId).HasColumnName("SaleOderID");
-
-            entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblSaleOrderDetails)
-                .HasForeignKey(d => d.ProductItemDetailId)
-                .HasConstraintName("FK_tblSaleOrderDetail_tblProductItemDetail");
+            entity.Property(e => e.SizeName).HasMaxLength(200);
 
             entity.HasOne(d => d.SaleOder).WithMany(p => p.TblSaleOrderDetails)
                 .HasForeignKey(d => d.SaleOderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSaleOrderDetail_tblSaleOrder");
         });
 

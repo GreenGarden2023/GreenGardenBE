@@ -1,19 +1,21 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.SizeModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.Repository;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
+namespace GreeenGarden.Data.Repositories.ProductItemDetailRepo
 {
-    public class SizeProductItemRepo : Repository<TblProductItemDetail>, ISizeProductItemRepo
+    public class ProductItemDetailRepo : Repository<TblProductItemDetail>, IProductItemDetailRepo
     {
         private readonly GreenGardenDbContext _context;
         private readonly ISizeRepo _sizeRepo;
         private readonly IImageRepo _imageRepo;
-        public SizeProductItemRepo(GreenGardenDbContext context, ISizeRepo sizeRepo, IImageRepo imageRepo) : base(context)
+        public ProductItemDetailRepo(GreenGardenDbContext context, ISizeRepo sizeRepo, IImageRepo imageRepo) : base(context)
         {
             _context = context;
             _sizeRepo = sizeRepo;
@@ -102,30 +104,43 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             where sizeProdItem.Id.Equals(productItemDetailModel.Id)
                             select new { sizeProdItem };
 
-                TblProductItemDetail? sizeProductItem = await query.Select(x => x.sizeProdItem).FirstOrDefaultAsync();
-                if (sizeProductItem == null)
+                TblProductItemDetail? productItemDetail = await query.Select(x => x.sizeProdItem).FirstOrDefaultAsync();
+                if (productItemDetail == null)
                 {
                     return false;
                 }
                 
-                    sizeProductItem.SizeId = productItemDetailModel.SizeId;
+                    productItemDetail.SizeId = productItemDetailModel.SizeId;
                 
-                    sizeProductItem.ProductItemId = productItemDetailModel.ProductItemID;
+                    productItemDetail.ProductItemId = productItemDetailModel.ProductItemID;
                 
-                    sizeProductItem.Status = productItemDetailModel.Status;
+                    productItemDetail.Status = productItemDetailModel.Status;
                 
-                    sizeProductItem.RentPrice = productItemDetailModel.RentPrice;
+                    productItemDetail.RentPrice = productItemDetailModel.RentPrice;
                 
-                    sizeProductItem.SalePrice = productItemDetailModel.SalePrice;
+                    productItemDetail.SalePrice = productItemDetailModel.SalePrice;
                 
-                    sizeProductItem.Quantity = productItemDetailModel.Quantity;
+                    productItemDetail.Quantity = productItemDetailModel.Quantity;
                 
-                _ = _context.Update(sizeProductItem);
+                _ = _context.Update(productItemDetail);
                 _ = await _context.SaveChangesAsync();
                 return true;
             }
             else { return false; }
 
+        }
+
+        public async Task<bool> UpdateProductItemDetailQuantity(Guid productItemDetailID, int deductQuantity)
+        {
+            TblProductItemDetail result = await _context.TblProductItemDetails.Where(x => x.Id.Equals(productItemDetailID)).FirstOrDefaultAsync();
+            if (result == null)
+            {
+                return false;
+            }
+            result.Quantity -= deductQuantity;
+            _ = _context.Update(result);
+            _ = await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

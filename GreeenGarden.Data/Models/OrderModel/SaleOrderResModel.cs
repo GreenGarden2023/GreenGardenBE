@@ -29,14 +29,18 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public string? RecipientName { get; set; }
 
+        public string? OrderCode { get; set; }
+
         public List<SaleOrderDetailResModel> RentOrderDetailList { get; set; }
     }
     public class SaleOrderDetailResModel
     {
         public Guid ID { get; set; }
-        public Guid productItemDetailId { get; set; }
-        public double productItemDetailTotalPrice { get; set; }
-        public int Quantity { get; set; }
+        public double? TotalPrice { get; set; }
+        public int? Quantity { get; set; }
+        public double? SalePricePerUnit { get; set; }
+        public string? SizeName { get; set; }
+        public string? ProductItemName { get; set; }
     }
 }
 

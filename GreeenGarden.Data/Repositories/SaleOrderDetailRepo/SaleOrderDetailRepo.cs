@@ -24,9 +24,11 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
                 SaleOrderDetailResModel model = new SaleOrderDetailResModel
                 {
                     ID = detail.Id,
-                    productItemDetailId = (Guid)detail.ProductItemDetailId,
-                    productItemDetailTotalPrice = (double)detail.ProductItemDetailTotalPrice,
-                    Quantity = (int)detail.Quantity
+                    Quantity = detail.Quantity ?? null,
+                    TotalPrice = detail.TotalPrice ?? null,
+                    SalePricePerUnit = detail.SalePricePerUnit ?? null,
+                    SizeName = "" + detail.SizeName,
+                    ProductItemName = "" + detail.ProductItemName
                 };
                 resultList.Add(model);
             }
