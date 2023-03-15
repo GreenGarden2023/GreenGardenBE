@@ -43,12 +43,12 @@ namespace GreeenGarden.Business.Service.ServiceServicer
             return result;
         }
 
-        public async Task<ResultModel> createService(string token, ServiceCreateModel model)
+        public async Task<ResultModel> createService(string token/*, ServiceCreateModel model*/)
         {
             var result = new ResultModel();
             try
             {
-                var tblUser = await _serRepo.getTblUserByUsername(_decodeToken.Decode(token, "username"));
+                /*var tblUser = await _serRepo.getTblUserByUsername(_decodeToken.Decode(token, "username"));
                 DateTime StartDate = Utilities.Convert.ConvertUtil.convertStringToDateTime(model.StartDate);
                 DateTime EndDate = Utilities.Convert.ConvertUtil.convertStringToDateTime(model.EndDate);
 
@@ -78,7 +78,7 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                         Price = 0
                     };
                     await _serRepo.insertServiceUserTree(newServiceUt);
-                }
+                }*/
 
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -165,7 +165,7 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                 var serUtRemove = await _serRepo.GetListTblServiceUserTree(model.serviceID);
                 foreach (var sut in listSerUt)
                 {
-                    foreach (var sutModel in model.service.userTrees)
+                    /*foreach (var sutModel in model.service.userTrees)
                     {
                         if (sut.UserTreeId == sutModel.UserTreeID)
                         {
@@ -174,7 +174,7 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                             await _serRepo.UpdateServiceUserTree(tblSerUt);
                             serUtRemove.Remove(sut);
                         }
-                    }
+                    }*/
                 }
                 foreach (var sr in serUtRemove)
                 {

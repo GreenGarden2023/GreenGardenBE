@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("service/")]
+    [Route("service1/")]
     [Authorize]
     [ApiController]
     public class ServiceController : Controller
@@ -17,35 +17,11 @@ namespace GreeenGarden.API.Controllers
             _service = service;
         }
 
-        [HttpPost("create-service")]
-        public async Task<IActionResult> createService(ServiceCreateModel model)
-        {
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _service.createService(token, model);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
-
         [HttpGet("get-list-service-by-customer")]
         public async Task<IActionResult> getListServiceByCustomer()
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             Data.Models.ResultModel.ResultModel result = await _service.getListServiceByCustomer(token);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
-
-        [HttpGet("get-detail-service-by-customer")]
-        public async Task<IActionResult> getDetailServiceByCustomer(Guid serviceID)
-        {
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _service.getDetailServiceByCustomer(token, serviceID);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
-
-        [HttpPost("update-service")]
-        public async Task<IActionResult> updateService(ServiceUpdateModel model)
-        {
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _service.updateService(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
@@ -56,5 +32,14 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.changeStatus(token, serviceID, status);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("create-service")]
+        public async Task<IActionResult> createService( ServiceCreateModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.createService(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        
     }
 }

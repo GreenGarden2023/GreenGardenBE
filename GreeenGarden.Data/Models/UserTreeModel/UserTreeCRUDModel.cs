@@ -18,9 +18,14 @@ namespace GreeenGarden.Data.Models.UserTreeModel
     }
     public class UserTreeUpdateModel
     {
-        public Guid UserTreeId { get; set; }
+        public Guid UserTreeID { get; set; }
         public string TreeName { get; set; }
         public string Description { get; set; }
         public int Quantity { get; set; }
+    }
+    public class UserTreeChangeStatusModel
+    {
+        public Guid UserTreeID { get; set; }
+        public string Status { get; set; }
     }
 }

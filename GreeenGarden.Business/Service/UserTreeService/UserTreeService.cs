@@ -25,20 +25,20 @@ namespace GreeenGarden.Business.Service.UserTreeService
             _decodeToken = new DecodeToken();
         }
 
-        public async Task<ResultModel> changeStatus(string token, Guid userTreeID, string status)
+        public async Task<ResultModel> changeStatus(string token, UserTreeChangeStatusModel model)
         {
             var result = new ResultModel();
             try
             {
                 var tblUser = await _utRepo.GetTblUserByUsername(_decodeToken.Decode(token, "username"));
-                var detailUt = await _utRepo.GetDetailUserTreeByCustomer(userTreeID);
+                var detailUt = await _utRepo.GetDetailUserTreeByCustomer(model.UserTreeID);
                 if (detailUt.User.Id != tblUser.Id)
                 {
                     result.IsSuccess = false;
                     result.Data = "Cây này k thuộc sở hữu của user";
                     return result;
                 }
-                result.IsSuccess = await _utRepo.ChangeUserTreeByCustomer(userTreeID, status);
+                result.IsSuccess = await _utRepo.ChangeUserTreeByCustomer(model.UserTreeID, model.Status);
 
 
                 result.Code = 200;
@@ -156,7 +156,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
             try
             {
                 var tblUser = await _utRepo.GetTblUserByUsername(_decodeToken.Decode(token, "username"));
-                var detailUt = await _utRepo.GetDetailUserTreeByCustomer(model.UserTreeId);
+                var detailUt = await _utRepo.GetDetailUserTreeByCustomer(model.UserTreeID);
                 if (detailUt.User.Id != tblUser.Id)
                 {
                     result.IsSuccess = false;
