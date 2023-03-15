@@ -12,6 +12,8 @@ namespace GreeenGarden.Business.Service.ImageService
         public Task<ResultModel> UploadAFile(IFormFile file);
         public Task<ResultModel> UpdateImageCategory(Guid categoryId, IFormFile file);
         public Task<ResultModel> UpdateImageProduct(Guid productID, IFormFile file);
+
+        public Task<string> ReUpload(string oldFileURL);
     }
 }
 

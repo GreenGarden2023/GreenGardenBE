@@ -100,6 +100,26 @@ namespace GreeenGarden.API.Controllers
             }
         }
 
+        [HttpPost("re-upload-image")]
+        public async Task<ActionResult<ResultModel>> ReUpload(string oldImageURL)
+        {
+
+            try
+            {
+                ResultModel result = await _imageService.ReUpload(oldImageURL);
+                return result.IsSuccess == false ? (ActionResult<ResultModel>)BadRequest(result) : (ActionResult<ResultModel>)Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResultModel()
+                {
+                    IsSuccess = false,
+                    Data = ex.ToString(),
+                    Message = "Upload Failed"
+
+                });
+            }
+        }
     }
 }
 

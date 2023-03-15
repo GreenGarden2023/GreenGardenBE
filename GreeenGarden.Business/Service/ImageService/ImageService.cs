@@ -231,9 +231,6 @@ namespace GreeenGarden.Business.Service.ImageService
             }
         }
 
-
-
-
         public async Task<ResultModel> DeleteImagesByURLs(List<string> fileURLs)
         {
             ResultModel resultsModel = new();
@@ -255,6 +252,37 @@ namespace GreeenGarden.Business.Service.ImageService
                 resultsModel.Data = ex.ToString();
                 resultsModel.Message = "Delete Files Failed";
                 return resultsModel;
+            }
+        }
+
+        public async Task<string> ReUpload(string oldFileURL)
+        {
+            try
+            {
+                string sourceBlobName = oldFileURL.Replace(defaultURL, "");
+
+                string sourceExtension = Path.GetExtension(sourceBlobName);
+
+                string destinationBlobName = Guid.NewGuid().ToString() + sourceExtension;
+
+                BlobContainerClient blobContainerClient = new(SecretService.SecretService.GetIMGConn(), "greengardensimages");
+                BlobClient sourceBlobClient = blobContainerClient.GetBlobClient(sourceBlobName);
+
+                MemoryStream memoryStream = new MemoryStream();
+                await sourceBlobClient.DownloadToAsync(memoryStream);
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
+
+                BlobClient destinationBlobClient = blobContainerClient.GetBlobClient(destinationBlobName);
+                await destinationBlobClient.UploadAsync(memoryStream);
+
+                // Close the memory stream
+                memoryStream.Close();
+                return defaultURL + destinationBlobName;
+            }
+            catch
+            {
+                return "";
             }
         }
     }

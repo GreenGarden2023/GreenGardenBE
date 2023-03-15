@@ -198,7 +198,9 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ImageURL");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            entity.Property(e => e.RentOrderDetailId).HasColumnName("RentOrderDetailID");
             entity.Property(e => e.ReportId).HasColumnName("ReportID");
+            entity.Property(e => e.SaleOrderDetailId).HasColumnName("SaleOrderDetailID");
             entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
@@ -221,9 +223,17 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.ProductItemId)
                 .HasConstraintName("FK_tblImages_tblProductItems");
 
+            entity.HasOne(d => d.RentOrderDetail).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.RentOrderDetailId)
+                .HasConstraintName("FK_tblImage_tblRentOrderDetail");
+
             entity.HasOne(d => d.Report).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ReportId)
                 .HasConstraintName("FK_tblImages_tblReport");
+
+            entity.HasOne(d => d.SaleOrderDetail).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.SaleOrderDetailId)
+                .HasConstraintName("FK_tblImage_tblSaleOrderDetail");
         });
 
         modelBuilder.Entity<TblPayment>(entity =>

@@ -10,6 +10,7 @@ public partial class TblService
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
+
     public string? Mail { get; set; }
 
     public string? Phone { get; set; }
