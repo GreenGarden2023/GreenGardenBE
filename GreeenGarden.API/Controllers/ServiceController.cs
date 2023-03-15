@@ -1,12 +1,11 @@
-﻿using GreeenGarden.Business.Service.CartService;
-using GreeenGarden.Business.Service.ServiceServicer;
+﻿using GreeenGarden.Business.Service.ServiceServicer;
 using GreeenGarden.Data.Models.ServiceModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GreeenGarden.API.Controllers
 {
-    [Route("service1/")]
+    [Route("service/")]
     [Authorize]
     [ApiController]
     public class ServiceController : Controller
@@ -33,10 +32,24 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpPost("create-service")]
-        public async Task<IActionResult> createService( ServiceCreateModel model)
+        public async Task<IActionResult> createService([FromBody] ServiceCreateModel model)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _service.createService(token);
+            Data.Models.ResultModel.ResultModel result = await _service.createService(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("get-detail-service-by-customer")]
+        public async Task<IActionResult> getDetailServiceByCustomer(Guid serviceID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.getDetailServiceByCustomer(token, serviceID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("update-service")]
+        public async Task<IActionResult> updateService(ServiceUpdateModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.updateService(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
