@@ -7,6 +7,8 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public double? TransportFee { get; set; }
 
+        public DateTime? CreateDate { get; set; }
+
         public DateTime StartDateRent { get; set; }
 
         public DateTime EndDateRent { get; set; }

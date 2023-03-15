@@ -329,10 +329,11 @@ namespace GreeenGarden.Business.Service.OrderService
 				deposit = totalOrderAmount * 0.2;
 				rewardPointGain = (int)Math.Ceiling((totalOrderAmount * 0.01)/1000);
 				string userID = _decodeToken.Decode(token, "userid");
-				if (rentOrderModel.RentOrderGroupID == Guid.Empty || rentOrderModel.RentOrderGroupID == null)
+                TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                if (rentOrderModel.RentOrderGroupID == Guid.Empty || rentOrderModel.RentOrderGroupID == null)
 				{
-                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    
                     TblRentOrderGroup tblRentOrderGroup = new TblRentOrderGroup
 					{
 						Id = Guid.NewGuid(),
@@ -377,7 +378,8 @@ namespace GreeenGarden.Business.Service.OrderService
 					RecipientAddress = "" + rentOrderModel.RecipientAddress,
 					RecipientPhone = "" + rentOrderModel.RecipientPhone,
 					RecipientName = "" + rentOrderModel.RecipientName,
-					OrderCode = await GenerateOrderCode()
+					CreateDate = currentTime,
+                    OrderCode = await GenerateOrderCode()
 				};
 				Guid insertRentOrder = await _rentOrderRepo.Insert(tblRentOrder);
 				if(insertRentOrder != Guid.Empty)
@@ -446,6 +448,7 @@ namespace GreeenGarden.Business.Service.OrderService
 					RecipientName = tblRentOrder.RecipientName,
 					RecipientPhone = tblRentOrder.RecipientPhone,
 					OrderCode = tblRentOrder.OrderCode,
+					CreateDate = tblRentOrder.CreateDate,
 					RentOrderDetailList = rentOrderDetailResModels,
 
 				};
@@ -721,6 +724,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientName = tblRentOrder.RecipientName,
                         RecipientPhone = tblRentOrder.RecipientPhone,
                         OrderCode = tblRentOrder.OrderCode,
+						CreateDate = tblRentOrder.CreateDate,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
                     result.IsSuccess = true;
@@ -810,6 +814,7 @@ namespace GreeenGarden.Business.Service.OrderService
 									RecipientName = order.RecipientName,
 									RecipientPhone = order.RecipientPhone,
 									OrderCode = order.OrderCode,
+									CreateDate = order.CreateDate,
 									RentOrderDetailList = rentOrderDetailResModels
 								};
 								resList.Add(rentOrderResModel);
@@ -1328,6 +1333,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientName = order.RecipientName,
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
+							CreateDate = order.CreateDate,
                             RentOrderDetailList = rentOrderDetailResModels
                         };
                         resList.Add(rentOrderResModel);

@@ -27,7 +27,5 @@ public partial class TblServiceOrder
 
     public Guid? ServiceId { get; set; }
 
-    public virtual TblService? Service { get; set; }
-
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }

@@ -23,7 +23,5 @@ public partial class TblService
 
     public Guid UserId { get; set; }
 
-    public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();
-
     public virtual ICollection<TblServiceUserTree> TblServiceUserTrees { get; } = new List<TblServiceUserTree>();
 }

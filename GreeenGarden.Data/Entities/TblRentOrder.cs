@@ -39,6 +39,8 @@ public partial class TblRentOrder
 
     public string? OrderCode { get; set; }
 
+    public DateTime? CreateDate { get; set; }
+
     public virtual TblRentOrderGroup? RentOrderGroup { get; set; }
 
     public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();

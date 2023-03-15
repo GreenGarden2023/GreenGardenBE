@@ -321,6 +321,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.OrderCode).HasMaxLength(20);
             entity.Property(e => e.RecipientAddress).HasMaxLength(500);
             entity.Property(e => e.RecipientName).HasMaxLength(200);
@@ -460,9 +461,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
-            entity.Property(e => e.Address)
-                .HasMaxLength(200)
-                .IsFixedLength();
+            entity.Property(e => e.Address).HasMaxLength(200);
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Mail).HasMaxLength(50);
             entity.Property(e => e.Name).HasMaxLength(200);
@@ -484,10 +483,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
-
-            entity.HasOne(d => d.Service).WithMany(p => p.TblServiceOrders)
-                .HasForeignKey(d => d.ServiceId)
-                .HasConstraintName("FK_tblServiceOrder_tblService");
         });
 
         modelBuilder.Entity<TblServiceUserTree>(entity =>
