@@ -700,32 +700,42 @@ namespace GreeenGarden.Business.Service.OrderService
 			try
 			{
 				TblRentOrder tblRentOrder = await _rentOrderRepo.Get(rentOrderId);
-					List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderId);
-					RentOrderResModel rentOrderResModel = new RentOrderResModel
-					{
-						Id = tblRentOrder.Id,
-						TransportFee = tblRentOrder.TransportFee,
-						StartDateRent = tblRentOrder.StartDateRent,
-						EndDateRent = tblRentOrder.EndDateRent,
-						Deposit = tblRentOrder.Deposit,
-						TotalPrice = tblRentOrder.TotalPrice,
-						Status = tblRentOrder.Status,
-						RemainMoney = tblRentOrder.RemainMoney,
-						RewardPointGain = tblRentOrder.RewardPointGain,
-						RewardPointUsed = tblRentOrder.RewardPointUsed,
-						RentOrderGroupID = tblRentOrder.RentOrderGroupId,
-						DiscountAmount = tblRentOrder.DiscountAmount,
-						RecipientAddress = tblRentOrder.RecipientAddress,
-						RecipientName = tblRentOrder.RecipientName,
-						RecipientPhone = tblRentOrder.RecipientPhone,
-						OrderCode = tblRentOrder.OrderCode,
-						RentOrderDetailList = rentOrderDetailResModels
-					};
-					result.IsSuccess = true;
-					result.Code = 200;
-					result.Data = rentOrderResModel;
-					result.Message = "Get rent order detail successful.";
-					return result;
+				if (tblRentOrder != null)
+				{
+                    List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderId);
+                    RentOrderResModel rentOrderResModel = new RentOrderResModel
+                    {
+                        Id = tblRentOrder.Id,
+                        TransportFee = tblRentOrder.TransportFee,
+                        StartDateRent = tblRentOrder.StartDateRent,
+                        EndDateRent = tblRentOrder.EndDateRent,
+                        Deposit = tblRentOrder.Deposit,
+                        TotalPrice = tblRentOrder.TotalPrice,
+                        Status = tblRentOrder.Status,
+                        RemainMoney = tblRentOrder.RemainMoney,
+                        RewardPointGain = tblRentOrder.RewardPointGain,
+                        RewardPointUsed = tblRentOrder.RewardPointUsed,
+                        RentOrderGroupID = tblRentOrder.RentOrderGroupId,
+                        DiscountAmount = tblRentOrder.DiscountAmount,
+                        RecipientAddress = tblRentOrder.RecipientAddress,
+                        RecipientName = tblRentOrder.RecipientName,
+                        RecipientPhone = tblRentOrder.RecipientPhone,
+                        OrderCode = tblRentOrder.OrderCode,
+                        RentOrderDetailList = rentOrderDetailResModels
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = rentOrderResModel;
+                    result.Message = "Get rent order detail successful.";
+                    return result;
+				}
+				else
+				{
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Id invalid.";
+                    return result;
+                }
 				
 
 			}
@@ -885,6 +895,8 @@ namespace GreeenGarden.Business.Service.OrderService
 			try
 			{
 				TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(saleOrderID);
+				if (tblSaleOrder != null)
+				{
 					List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
 					SaleOrderResModel saleOrderResModel = new SaleOrderResModel
 					{
@@ -909,7 +921,14 @@ namespace GreeenGarden.Business.Service.OrderService
 					result.Data = saleOrderDetailResModels;
 					result.Message = "Get sale order detail successful.";
 					return result;
-				
+				}
+				else
+				{
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Id invalid.";
+                        return result;
+                }
 
 			}
 			catch (Exception e)
