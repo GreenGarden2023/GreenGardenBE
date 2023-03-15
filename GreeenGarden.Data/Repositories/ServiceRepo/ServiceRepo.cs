@@ -190,5 +190,10 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         {
             return await _context.TblServiceUserTrees.Where(x => x.Id.Equals(SerUtID)).FirstOrDefaultAsync();
         }
+
+        public async Task<TblUserTree> getUserTreeByID(Guid userTreeID)
+        {
+            return await _context.TblUserTrees.Where(x => x.Id.Equals(userTreeID)).FirstOrDefaultAsync();
+        }
     }
 }
