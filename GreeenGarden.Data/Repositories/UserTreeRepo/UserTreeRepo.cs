@@ -118,7 +118,7 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
 
         public async Task<bool> UpdateUserTreeByCustomer(UserTreeUpdateModel model)
         {
-            var ut = await _context.TblUserTrees.Where(x => x.Id.Equals(model.UserTreeId)).FirstOrDefaultAsync();
+            var ut = await _context.TblUserTrees.Where(x => x.Id.Equals(model.UserTreeID)).FirstOrDefaultAsync();
             ut.TreeName = model.TreeName;
             ut.Description = model.Description;
             ut.Quantity = model.Quantity;

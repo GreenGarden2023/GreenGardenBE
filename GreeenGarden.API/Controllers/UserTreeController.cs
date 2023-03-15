@@ -51,10 +51,10 @@ namespace GreeenGarden.API.Controllers
         }
 
         [HttpPatch("changeStatus")]
-        public async Task<IActionResult> changeStatus(Guid userTreeID, string status)
+        public async Task<IActionResult> changeStatus([FromBody] UserTreeChangeStatusModel model)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _service.changeStatus(token, userTreeID, status);
+            Data.Models.ResultModel.ResultModel result = await _service.changeStatus(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

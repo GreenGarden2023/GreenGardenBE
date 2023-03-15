@@ -14,6 +14,6 @@ namespace GreeenGarden.Business.Service.UserTreeService
         Task<ResultModel> getListUserTree(string token);
         Task<ResultModel> getDetailUserTree(string token, Guid userTreeID);
         Task<ResultModel> updateUserTree(string token, UserTreeUpdateModel model);
-        Task<ResultModel> changeStatus(string token, Guid userTreeID, string status);
+        Task<ResultModel> changeStatus(string token, UserTreeChangeStatusModel model);
     }
 }
