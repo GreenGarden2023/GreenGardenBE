@@ -19,9 +19,9 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string Phone { get; set; }
         public string Address { get; set; }
         public string Mail { get; set; }
-        //public List<UserTreeCreateModel> userTrees { get; set; }
+        public List<UserTreeAddModel> UserTrees { get; set; }
     }
-    public class UserTreeCreateModel
+    public class UserTreeAddModel
     {
         public Guid UserTreeID { get; set; }
         public int Quantity { get; set; }

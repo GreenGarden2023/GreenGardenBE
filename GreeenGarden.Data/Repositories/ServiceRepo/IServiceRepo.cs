@@ -20,6 +20,9 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         //tblServiceUserTree
         Task<bool> insertServiceUserTree(TblServiceUserTree entities);
 
+        //tblUserTree
+        Task<TblUserTree> getUserTreeByID(Guid userTreeID);
+
         //tblService
         Task<ListServiceByCustomerResModel> GetListServiceByCustomer(TblUser user);
         Task<DetailServiceByCustomerResModel> GetDetailServiceByCustomer(Guid serviceID);

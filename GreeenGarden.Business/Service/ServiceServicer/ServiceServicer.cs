@@ -43,31 +43,64 @@ namespace GreeenGarden.Business.Service.ServiceServicer
             return result;
         }
 
-        public async Task<ResultModel> createService(string token/*, ServiceCreateModel model*/)
+        public async Task<ResultModel> createService(string token, ServiceCreateModel model)
         {
             var result = new ResultModel();
             try
             {
-                /*var tblUser = await _serRepo.getTblUserByUsername(_decodeToken.Decode(token, "username"));
+                var tblUser = await _serRepo.getTblUserByUsername(_decodeToken.Decode(token, "username"));
                 DateTime StartDate = Utilities.Convert.ConvertUtil.convertStringToDateTime(model.StartDate);
                 DateTime EndDate = Utilities.Convert.ConvertUtil.convertStringToDateTime(model.EndDate);
 
+                //-Check condidtion
+                //--Dồn số cây
+                for (int i = 0; i < model.UserTrees.Count; i++)
+                {
+                    for (int j = 1; j < model.UserTrees.Count; j++)
+                    {
+                        if (model.UserTrees[i].UserTreeID.Equals(model.UserTrees[j].UserTreeID) && i != j)
+                        {
+                            model.UserTrees[i].Quantity += model.UserTrees[j].Quantity;
+                            model.UserTrees.Remove(model.UserTrees[j]);
+                        }
+                    }
+
+                }
+
+                //--CheckQuantity
+                foreach (var i in model.UserTrees)
+                {
+                    var utCheck = await _serRepo.getUserTreeByID(i.UserTreeID); 
+                    if (utCheck == null)
+                    {
+                        result.Code = 102;
+                        result.IsSuccess = false;
+                        return result;
+                    }
+                    if (i.Quantity > utCheck.Quantity)
+                    {
+                        result.Code = 101;
+                        result.IsSuccess = false;
+                        return result;
+                    }
+                }
+                //--Add table
 
                 var newService = new TblService()
                 {
                     Id = Guid.NewGuid(),
                     StartDate = StartDate,
-                    EndDate= EndDate,
+                    EndDate = EndDate,
                     Mail = model.Mail,
                     Phone = model.Phone,
-                    Address= model.Address,
+                    Address = model.Address,
                     Status = Status.READY,
-                    Name= model.Name,
+                    Name = model.Name,
                     UserId = tblUser.Id,
                 };
                 await _serRepo.Insert(newService);
 
-                foreach (var ut in model.userTrees)
+                foreach (var ut in model.UserTrees)
                 {
                     var newServiceUt = new TblServiceUserTree()
                     {
@@ -78,11 +111,11 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                         Price = 0
                     };
                     await _serRepo.insertServiceUserTree(newServiceUt);
-                }*/
+                }
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Data = await _serRepo.GetDetailServiceByCustomer(newService.Id); ;
             }
             catch (Exception e)
             {
@@ -150,6 +183,38 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                 DateTime StartDate = Utilities.Convert.ConvertUtil.convertStringToDateTime(model.service.StartDate);
                 DateTime EndDate = Utilities.Convert.ConvertUtil.convertStringToDateTime(model.service.EndDate);
 
+                //check điều kiện
+                for (int i = 0; i < model.service.UserTrees.Count; i++)
+                {
+                    for (int j = 1; j < model.service.UserTrees.Count; j++)
+                    {
+                        if (model.service.UserTrees[i].UserTreeID.Equals(model.service.UserTrees[j].UserTreeID) && i != j)
+                        {
+                            model.service.UserTrees[i].Quantity += model.service.UserTrees[j].Quantity;
+                            model.service.UserTrees.Remove(model.service.UserTrees[j]);
+                        }
+                    }
+
+                }
+
+                //--CheckQuantity
+                foreach (var i in model.service.UserTrees)
+                {
+                    var utCheck = await _serRepo.getUserTreeByID(i.UserTreeID);
+                    if (utCheck == null)
+                    {
+                        result.Code = 102;
+                        result.IsSuccess = false;
+                        return result;
+                    }
+                    if (i.Quantity > utCheck.Quantity)
+                    {
+                        result.Code = 101;
+                        result.IsSuccess = false;
+                        return result;
+                    }
+                }
+
                 // updateService
 
                 var ser = await _serRepo.GetTblService(model.serviceID);
@@ -165,16 +230,16 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                 var serUtRemove = await _serRepo.GetListTblServiceUserTree(model.serviceID);
                 foreach (var sut in listSerUt)
                 {
-                    /*foreach (var sutModel in model.service.userTrees)
+                    foreach (var sutModel in model.service.UserTrees)
                     {
                         if (sut.UserTreeId == sutModel.UserTreeID)
                         {
                             var tblSerUt = await _serRepo.GetTblServiceUserTree(sut.Id);
-                            tblSerUt.Quantity= sutModel.Quantity;
+                            tblSerUt.Quantity = sutModel.Quantity;
                             await _serRepo.UpdateServiceUserTree(tblSerUt);
                             serUtRemove.Remove(sut);
                         }
-                    }*/
+                    }
                 }
                 foreach (var sr in serUtRemove)
                 {
