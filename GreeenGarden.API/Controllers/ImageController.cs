@@ -101,13 +101,13 @@ namespace GreeenGarden.API.Controllers
         }
 
         [HttpPost("re-upload-image")]
-        public async Task<ActionResult<ResultModel>> ReUpload(string oldImageURL)
+        public async Task<ActionResult<string>> ReUpload(string oldImageURL)
         {
 
             try
             {
-                ResultModel result = await _imageService.ReUpload(oldImageURL);
-                return result.IsSuccess == false ? (ActionResult<ResultModel>)BadRequest(result) : (ActionResult<ResultModel>)Ok(result);
+                string result = await _imageService.ReUpload(oldImageURL);
+                return result;
             }
             catch (Exception ex)
             {
