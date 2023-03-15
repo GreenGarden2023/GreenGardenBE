@@ -29,7 +29,13 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
 			List<RentOrderDetailResModel> resultList = new List<RentOrderDetailResModel>();
 			foreach(TblRentOrderDetail detail in list)
 			{
-				RentOrderDetailResModel model = new RentOrderDetailResModel
+				TblImage image = await _imageRepo.GetImgUrlRentOrderDetail(detail.Id);
+				string imageURl = "";
+				if(image != null)
+				{
+					imageURl = image.ImageUrl;
+				} 
+                RentOrderDetailResModel model = new RentOrderDetailResModel
 				{
 					ID = detail.Id,
 					Quantity = detail.Quantity ?? null,
@@ -37,7 +43,8 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
 					RentPricePerUnit = detail.RentPricePerUnit ?? null,
 					SizeName = "" + detail.SizeName,
 					ProductItemName = "" + detail.ProductItemName,
-				};
+					ImgURL = imageURl
+                };
 				resultList.Add(model);
             }
 			return resultList;

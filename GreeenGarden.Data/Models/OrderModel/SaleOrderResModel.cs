@@ -41,6 +41,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public double? SalePricePerUnit { get; set; }
         public string? SizeName { get; set; }
         public string? ProductItemName { get; set; }
+        public string? ImgURL { get; set; }
     }
 }
 

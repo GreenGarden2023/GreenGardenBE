@@ -1,6 +1,7 @@
 ﻿using System;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Repositories.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -10,9 +11,11 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
 	public class SaleOrderDetailRepo : Repository<TblSaleOrderDetail>, ISaleOrderDetailRepo
     {
         private readonly GreenGardenDbContext _context;
-        public SaleOrderDetailRepo(GreenGardenDbContext context) : base(context)
+        private readonly IImageRepo _imageRepo;
+        public SaleOrderDetailRepo(GreenGardenDbContext context, IImageRepo imageRepo) : base(context)
         {
             _context = context;
+            _imageRepo = imageRepo;
         }
 
         public async Task<List<SaleOrderDetailResModel>> GetSaleOrderDetails(Guid saleOrderId)
@@ -21,6 +24,12 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
             List<SaleOrderDetailResModel> resultList = new List<SaleOrderDetailResModel>();
             foreach (TblSaleOrderDetail detail in list)
             {
+                TblImage image = await _imageRepo.GetImgUrlSaleOrderDetail(detail.Id);
+                string imageURl = "";
+                if (image != null)
+                {
+                    imageURl = image.ImageUrl;
+                }
                 SaleOrderDetailResModel model = new SaleOrderDetailResModel
                 {
                     ID = detail.Id,
@@ -28,7 +37,8 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
                     TotalPrice = detail.TotalPrice ?? null,
                     SalePricePerUnit = detail.SalePricePerUnit ?? null,
                     SizeName = "" + detail.SizeName,
-                    ProductItemName = "" + detail.ProductItemName
+                    ProductItemName = "" + detail.ProductItemName,
+                    ImgURL = imageURl
                 };
                 resultList.Add(model);
             }

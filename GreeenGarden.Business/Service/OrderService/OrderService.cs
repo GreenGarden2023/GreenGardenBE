@@ -17,6 +17,7 @@ using GreeenGarden.Business.Service.CartService;
 using System;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
+using GreeenGarden.Data.Repositories.ImageRepo;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -33,6 +34,7 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly IRewardRepo _rewardRepo;
 		private readonly ISizeRepo _sizeRepo;
 		private readonly ICartService _cartService;
+		private readonly IImageRepo _imageRepo;
 		public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
 			ISaleOrderRepo saleOrderRepo,
 			ISaleOrderDetailRepo saleOrderDetailRepo,
@@ -42,7 +44,8 @@ namespace GreeenGarden.Business.Service.OrderService
 			IProductItemDetailRepo sizeProductItemRepo,
 			ICartService cartService,
 			ISizeRepo sizeRepo,
-			IProductItemRepo productItemRepo)
+			IProductItemRepo productItemRepo,
+			IImageRepo imageRepo)
 		{
 			_decodeToken = new DecodeToken();
 			_rentOrderRepo = rentOrderRepo;
@@ -55,6 +58,7 @@ namespace GreeenGarden.Business.Service.OrderService
 			_cartService = cartService;
 			_sizeRepo = sizeRepo;
 			_productItemRepo = productItemRepo;
+			_imageRepo = imageRepo;
 		}
 
 		public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -395,6 +399,7 @@ namespace GreeenGarden.Business.Service.OrderService
 						{
 							TblRentOrderDetail tblRentOrderDetail = new TblRentOrderDetail
 							{
+								Id = Guid.NewGuid(),
 								RentOrderId = tblRentOrder.Id,
 								Quantity = item.Quantity,
 								TotalPrice = item.Quantity * itemDetail.RentPrice,
@@ -402,7 +407,14 @@ namespace GreeenGarden.Business.Service.OrderService
 								SizeName = tblSize.Name,
 								ProductItemName = tblProductItem.Name
 							};
-							await _rentOrderDetailRepo.Insert(tblRentOrderDetail);
+							_ = await _rentOrderDetailRepo.Insert(tblRentOrderDetail);
+							List<string> itemDetailImages = await _imageRepo.GetImgUrlProductItemDetail(itemDetail.Id);
+							TblImage rentOrderDetailImage = new TblImage
+							{
+								RentOrderDetailId = tblRentOrderDetail.Id,
+								ImageUrl = "" + itemDetailImages[0]
+							};
+							_ = await _imageRepo.Insert(rentOrderDetailImage);
                             _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);
                         }
                     }
@@ -595,6 +607,7 @@ namespace GreeenGarden.Business.Service.OrderService
 						{
 							TblSaleOrderDetail tblSaleOrderDetail = new TblSaleOrderDetail
 							{
+								Id = Guid.NewGuid(),
 								SaleOderId = tblSaleOrder.Id,
 								Quantity = item.Quantity,
 								TotalPrice = item.Quantity * itemDetail.SalePrice,
@@ -602,7 +615,14 @@ namespace GreeenGarden.Business.Service.OrderService
 								SizeName = tblSize.Name,
 								ProductItemName = tblProductItem.Name
 							};
-							await _saleOrderDetailRepo.Insert(tblSaleOrderDetail);
+                            _ = await _saleOrderDetailRepo.Insert(tblSaleOrderDetail);
+                            List<string> itemDetailImages = await _imageRepo.GetImgUrlProductItemDetail(itemDetail.Id);
+                            TblImage rentOrderDetailImage = new TblImage
+                            {
+                                SaleOrderDetailId = tblSaleOrderDetail.Id,
+                                ImageUrl = "" + itemDetailImages[0]
+                            };
+                            _ = await _imageRepo.Insert(rentOrderDetailImage);
                             _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);
                         }
                     }
