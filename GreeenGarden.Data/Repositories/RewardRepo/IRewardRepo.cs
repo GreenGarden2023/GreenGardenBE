@@ -8,6 +8,7 @@ namespace GreeenGarden.Data.Repositories.RewardRepo
 	public interface IRewardRepo : IRepository<TblReward>
 	{
 		Task<ResultModel> UpdateUserRewardPoint(string userName, int pointGain, int pointUsed);
+		Task<int> GetUserRewardPoint(Guid userID);
 	}
 }
 

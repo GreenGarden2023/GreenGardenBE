@@ -4,6 +4,7 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,11 +19,13 @@ namespace GreeenGarden.Business.Service.UserService
         private readonly IUserRepo _userRepo;
         private readonly DecodeToken _decodeToken;
         private readonly IEMailService _eMailService;
-        public UserService(IUserRepo userRepo, IEMailService eMailService)
+        private readonly IRewardRepo _rewardRepo;
+        public UserService(IUserRepo userRepo, IEMailService eMailService, IRewardRepo rewardRepo)
         {
             _userRepo = userRepo;
             _decodeToken = new DecodeToken();
             _eMailService = eMailService;
+            _rewardRepo = rewardRepo;
         }
 
         public async Task<ResultModel> Login(UserLoginReqModel userLoginReqModel)
@@ -50,7 +53,8 @@ namespace GreeenGarden.Business.Service.UserService
 
                 UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userLoginReqModel.Username);
                 userCurrResModel.Token = CreateToken(userModel);
-
+                int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
+                userCurrResModel.CurrentPoint = rewardPoint;
                 return new ResultModel()
                 {
                     IsSuccess = true,
@@ -175,6 +179,8 @@ namespace GreeenGarden.Business.Service.UserService
             {
                 string userName = _decodeToken.Decode(token, "username");
                 UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userName);
+                int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
+                userCurrResModel.CurrentPoint = rewardPoint;
                 return new ResultModel()
                 {
                     IsSuccess = true,

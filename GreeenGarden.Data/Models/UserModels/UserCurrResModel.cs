@@ -20,6 +20,7 @@
 
         public string? Token { get; set; }
 
+        public int? CurrentPoint { get; set; }
     }
 }
 

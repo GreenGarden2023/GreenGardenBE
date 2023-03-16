@@ -1,6 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.UserRepo
@@ -8,6 +9,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
     public class UserRepo : Repository<TblUser>, IUserRepo
     {
         private readonly GreenGardenDbContext _context;
+        
         public UserRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;
@@ -39,6 +41,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         on u.RoleId equals ur.Id
                         where u.UserName.Equals(userName)
                         select new { u, ur };
+
             UserCurrResModel? userModel = await query.Select(x => new UserCurrResModel()
             {
                 Id = x.u.Id,
