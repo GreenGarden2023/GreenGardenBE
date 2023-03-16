@@ -630,7 +630,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             }
         }
 
-        public async Task<ResultModel> WholeOrderPaymentMoMo(MoMoWholeOrderModel moMoWholeOrderModel)
+        public async Task<ResultModel> WholeOrderPaymentMoMo(MoMoPaymentModel moMoWholeOrderModel)
         {
             ResultModel resultModel = new ResultModel();
             long amount = 0;
@@ -774,7 +774,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             return resultModel;
         }
 
-        public async Task<ResultModel> WholeOrderPaymentCash(MoMoWholeOrderModel moMoWholeOrderModel)
+        public async Task<ResultModel> WholeOrderPaymentCash(MoMoPaymentModel moMoWholeOrderModel)
         {
             ResultModel result = new ResultModel();
             try

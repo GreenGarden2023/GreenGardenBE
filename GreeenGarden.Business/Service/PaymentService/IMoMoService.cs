@@ -11,12 +11,12 @@ namespace GreeenGarden.Business.Service.PaymentService
         Task<ResultModel> OrderPaymentMoMo(MoMoPaymentModel moMoPaymentModel);
         Task<bool> ProcessOrderPaymentMoMo(MoMoResponseModel moMoResponseModel);
 
-        Task<ResultModel> WholeOrderPaymentMoMo(MoMoWholeOrderModel moMoWholeOrderModel);
+        Task<ResultModel> WholeOrderPaymentMoMo(MoMoPaymentModel moMoPaymentModel);
 
         Task<ResultModel> DepositPaymentCash(MoMoDepositModel moMoDepositModel);
 
         Task<ResultModel> OrderPaymentCash(MoMoPaymentModel moMoPaymentModel);
 
-        Task<ResultModel> WholeOrderPaymentCash(MoMoWholeOrderModel moMoWholeOrderModel);
+        Task<ResultModel> WholeOrderPaymentCash(MoMoPaymentModel moMoPaymentModel);
     }
 }
