@@ -49,8 +49,16 @@ namespace GreeenGarden.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> PaymentCash(MoMoPaymentModel moMoPaymentModel)
         {
-            Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(moMoPaymentModel);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            if (moMoPaymentModel.PaymentType.Trim().ToLower().Equals("whole"))
+            {
+                Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(moMoPaymentModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            else
+            {
+                Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentCash(moMoPaymentModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
         }
         [HttpPost("payment-momo")]
         [AllowAnonymous]
