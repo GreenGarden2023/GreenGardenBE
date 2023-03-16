@@ -24,7 +24,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         public async Task<ResultModel> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
         {
             ResultModel resultModel = new ResultModel();
-            double amount = 0;
+            long amount = 0;
             string base64OrderString = "";
             MoMoOrderModel moMoOrderModel = new();
             moMoOrderModel.OrderId = moMoDepositModel.OrderId;
@@ -32,7 +32,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             if (moMoDepositModel.OrderType.ToLower().Trim().Equals("rent"))
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoDepositModel.OrderId);
-                 amount = (double)tblRentOrder.Deposit;
+                 amount = (long)tblRentOrder.Deposit;
                 if (tblRentOrder == null)
                 {
                     resultModel.Code = 400;
@@ -61,7 +61,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             else if (moMoDepositModel.OrderType.ToLower().Trim().Equals("sale"))
             {
                 TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoDepositModel.OrderId);
-                amount = (double)tblSaleOrder.Deposit;
+                amount = (long)tblSaleOrder.Deposit;
                 if (tblSaleOrder == null)
                 {
                     resultModel.Code = 400;
@@ -429,7 +429,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         public async Task<ResultModel> OrderPaymentMoMo(MoMoPaymentModel moMoPaymentModel)
         {
             ResultModel resultModel = new ResultModel();
-            double amount = moMoPaymentModel.Amount;
+            long amount = (long)moMoPaymentModel.Amount;
             string base64OrderString = "";
             MoMoOrderModel moMoOrderModel = new();
             moMoOrderModel.OrderId = moMoPaymentModel.OrderId;
@@ -633,7 +633,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         public async Task<ResultModel> WholeOrderPaymentMoMo(MoMoWholeOrderModel moMoWholeOrderModel)
         {
             ResultModel resultModel = new ResultModel();
-            double amount = 0;
+            long amount = 0;
             string base64OrderString = "";
             MoMoOrderModel moMoOrderModel = new();
             moMoOrderModel.OrderId = moMoWholeOrderModel.OrderId;
@@ -641,7 +641,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("rent"))
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                amount = (double)tblRentOrder.RemainMoney;
+                amount = (long)tblRentOrder.RemainMoney;
                 if (tblRentOrder == null)
                 {
                     resultModel.Code = 400;

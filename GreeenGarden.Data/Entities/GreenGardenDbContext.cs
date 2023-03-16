@@ -478,11 +478,17 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.ServiceEndDate).HasColumnType("datetime");
             entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
             entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.Service).WithMany(p => p.TblServiceOrders)
+                .HasForeignKey(d => d.ServiceId)
+                .HasConstraintName("FK_tblServiceOrder_tblService");
         });
 
         modelBuilder.Entity<TblServiceUserTree>(entity =>
