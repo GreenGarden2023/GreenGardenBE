@@ -661,7 +661,7 @@ namespace GreeenGarden.Business.Service.OrderService
 				result.IsSuccess = true;
 				result.Code = 200;
 				result.Data = saleOrderResModel;
-				result.Message = "Create rent order successful.";
+				result.Message = "Create sale order successful.";
 				return result;
 			}
 			catch (Exception e)
