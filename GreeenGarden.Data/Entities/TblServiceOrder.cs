@@ -35,5 +35,7 @@ public partial class TblServiceOrder
 
     public virtual TblService? Service { get; set; }
 
+    public virtual ICollection<TblReport> TblReports { get; } = new List<TblReport>();
+
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }

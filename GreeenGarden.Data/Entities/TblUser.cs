@@ -35,8 +35,6 @@ public partial class TblUser
 
     public virtual ICollection<TblRentOrder> TblRentOrders { get; } = new List<TblRentOrder>();
 
-    public virtual ICollection<TblReport> TblReports { get; } = new List<TblReport>();
-
     public virtual ICollection<TblReward> TblRewards { get; } = new List<TblReward>();
 
     public virtual ICollection<TblSaleOrder> TblSaleOrders { get; } = new List<TblSaleOrder>();

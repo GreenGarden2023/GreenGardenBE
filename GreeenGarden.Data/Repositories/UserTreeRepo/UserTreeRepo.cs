@@ -103,6 +103,12 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
             return result;
         }
 
+        public async Task<TblRole> GetTblRoleByUserID(Guid roleID)
+        {
+            return await _context.TblRoles.Where(x => x.Id.Equals(roleID)).FirstOrDefaultAsync();
+
+        }
+
         public async Task<TblUser> GetTblUserByUsername(string username)
         {
             return await _context.TblUsers.Where(x => x.UserName.Equals(username)).FirstOrDefaultAsync();

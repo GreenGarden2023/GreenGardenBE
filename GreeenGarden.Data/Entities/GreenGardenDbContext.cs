@@ -380,12 +380,13 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(250);
+            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
             entity.Property(e => e.Sumary).HasMaxLength(500);
 
-            entity.HasOne(d => d.CreateByNavigation).WithMany(p => p.TblReports)
-                .HasForeignKey(d => d.CreateBy)
+            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblReports)
+                .HasForeignKey(d => d.ServiceOrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblReport_tblUser");
+                .HasConstraintName("FK_tblReport_tblServiceOrder");
         });
 
         modelBuilder.Entity<TblReward>(entity =>
