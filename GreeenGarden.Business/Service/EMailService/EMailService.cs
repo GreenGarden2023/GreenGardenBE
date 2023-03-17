@@ -33,8 +33,8 @@ namespace GreeenGarden.Business.Service.EMailService
                 return result;
             }
 
-            string from = "ggarden.shop2023@gmail.com";
-            string password = "wwgnydlcgvvdfhyq";
+            string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+            string password = SecretService.SecretService.GetEmailCred().EmailPassword;
 
             MimeMessage message = new();
             message.From.Add(MailboxAddress.Parse(from));

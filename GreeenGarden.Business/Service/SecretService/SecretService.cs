@@ -154,6 +154,42 @@ namespace GreeenGarden.Business.Service.SecretService
 
             return secrets;
         }
+        public static EmailSecrets GetEmailCred()
+        {
+            EmailSecrets emailSecrets = new EmailSecrets();
+            try
+            {
+                SecretClientOptions options = new()
+                {
+                    Retry =
+                    {
+                        Delay= TimeSpan.FromSeconds(2),
+                        MaxDelay = TimeSpan.FromSeconds(16),
+                        MaxRetries = 5,
+                        Mode = RetryMode.Exponential
+                    }
+                };
+                SecretClient client = new(new Uri(URI), new DefaultAzureCredential(), options);
+                KeyVaultSecret address = client.GetSecret("EmailAddress");
+                KeyVaultSecret password = client.GetSecret("EmailPassword");
+
+                emailSecrets.EmailAddress = address.Value;
+                emailSecrets.EmailPassword = password.Value;
+
+            }
+            catch (Exception ex)
+            {
+                _ = ex.ToString();
+            }
+
+            return emailSecrets;
+        }
     }
+    public  class EmailSecrets
+    {
+        public string EmailAddress { get; set; }
+        public string EmailPassword { get; set; }
+    }
+
 }
 
