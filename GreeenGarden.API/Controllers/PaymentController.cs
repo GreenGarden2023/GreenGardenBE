@@ -47,32 +47,35 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("payment-cash")]
         [AllowAnonymous]
-        public async Task<IActionResult> PaymentCash(MoMoPaymentModel MoMoPaymentModel)
+        public async Task<IActionResult> PaymentCash(MoMoPaymentModel moMoPaymentModel)
         {
-            Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(MoMoPaymentModel);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
-        [HttpPost("whole-payment-cash")]
-        [AllowAnonymous]
-        public async Task<IActionResult> WholePaymentCash(MoMoWholeOrderModel moMoWholeOrderModel)
-        {
-            Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentCash(moMoWholeOrderModel);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            if (moMoPaymentModel.PaymentType.Trim().ToLower().Equals("whole"))
+            {
+                Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(moMoPaymentModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            else
+            {
+                Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentCash(moMoPaymentModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
         }
         [HttpPost("payment-momo")]
         [AllowAnonymous]
-        public async Task<IActionResult> PaymentMoMo(MoMoPaymentModel MoMoPaymentModel)
+        public async Task<IActionResult> PaymentMoMo(MoMoPaymentModel moMoPaymentModel)
         {
-            Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentMoMo(MoMoPaymentModel);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            if (moMoPaymentModel.PaymentType.Trim().ToLower().Equals("whole"))
+            {
+                Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentMoMo(moMoPaymentModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            else
+            {
+                Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentMoMo(moMoPaymentModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
         }
-        [HttpPost("whole-payment-momo")]
-        [AllowAnonymous]
-        public async Task<IActionResult> WholePaymentMoMo(MoMoWholeOrderModel moMoWholeOrderModel)
-        {
-            Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentMoMo(moMoWholeOrderModel);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
+
     }
 }
 

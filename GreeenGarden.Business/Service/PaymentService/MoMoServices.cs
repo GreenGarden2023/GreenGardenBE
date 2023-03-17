@@ -24,7 +24,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         public async Task<ResultModel> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
         {
             ResultModel resultModel = new ResultModel();
-            double amount = 0;
+            long amount = 0;
             string base64OrderString = "";
             MoMoOrderModel moMoOrderModel = new();
             moMoOrderModel.OrderId = moMoDepositModel.OrderId;
@@ -32,7 +32,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             if (moMoDepositModel.OrderType.ToLower().Trim().Equals("rent"))
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoDepositModel.OrderId);
-                 amount = (double)tblRentOrder.Deposit;
+                 amount = (long)tblRentOrder.Deposit;
                 if (tblRentOrder == null)
                 {
                     resultModel.Code = 400;
@@ -61,7 +61,7 @@ namespace GreeenGarden.Business.Service.PaymentService
             else if (moMoDepositModel.OrderType.ToLower().Trim().Equals("sale"))
             {
                 TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoDepositModel.OrderId);
-                amount = (double)tblSaleOrder.Deposit;
+                amount = (long)tblSaleOrder.Deposit;
                 if (tblSaleOrder == null)
                 {
                     resultModel.Code = 400;
@@ -429,7 +429,7 @@ namespace GreeenGarden.Business.Service.PaymentService
         public async Task<ResultModel> OrderPaymentMoMo(MoMoPaymentModel moMoPaymentModel)
         {
             ResultModel resultModel = new ResultModel();
-            double amount = moMoPaymentModel.Amount;
+            long amount = (long)moMoPaymentModel.Amount;
             string base64OrderString = "";
             MoMoOrderModel moMoOrderModel = new();
             moMoOrderModel.OrderId = moMoPaymentModel.OrderId;
@@ -630,123 +630,126 @@ namespace GreeenGarden.Business.Service.PaymentService
             }
         }
 
-        public async Task<ResultModel> WholeOrderPaymentMoMo(MoMoWholeOrderModel moMoWholeOrderModel)
+        public async Task<ResultModel> WholeOrderPaymentMoMo(MoMoPaymentModel moMoWholeOrderModel)
         {
-            ResultModel resultModel = new ResultModel();
-            double amount = 0;
-            string base64OrderString = "";
-            MoMoOrderModel moMoOrderModel = new();
-            moMoOrderModel.OrderId = moMoWholeOrderModel.OrderId;
-            moMoOrderModel.OrderType = moMoWholeOrderModel.OrderType;
-            if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("rent"))
+            try
             {
-                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                amount = (double)tblRentOrder.RemainMoney;
-                if (tblRentOrder == null)
+                ResultModel resultModel = new ResultModel();
+                long amount = 0;
+                string base64OrderString = "";
+                MoMoOrderModel moMoOrderModel = new();
+                moMoOrderModel.OrderId = moMoWholeOrderModel.OrderId;
+                moMoOrderModel.OrderType = moMoWholeOrderModel.OrderType;
+                if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("rent"))
+                {
+                    TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoWholeOrderModel.OrderId);
+                    amount = (long)tblRentOrder.RemainMoney;
+                    if (tblRentOrder == null)
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "Rent order Id invalid.";
+                        return resultModel;
+                    }
+                    if (!tblRentOrder.Status.Equals(Status.UNPAID))
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "You can only whole pay a new order.";
+                        return resultModel;
+                    }
+                    if (tblRentOrder.RemainMoney == 0)
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "Rent order is fully paid.";
+                        return resultModel;
+                    }
+                    JsonSerializerSettings jsonSerializerSettings = new()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    };
+                    moMoOrderModel.PayAmount = amount;
+                    var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                        jsonSerializerSettings);
+                    var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                    base64OrderString = Convert.ToBase64String(orderTextBytes);
+                }
+                else if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("sale"))
+                {
+                    TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoWholeOrderModel.OrderId);
+                    amount = (long)tblSaleOrder.RemainMoney;
+                    if (tblSaleOrder == null)
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "Sale order Id invalid.";
+                        return resultModel;
+                    }
+                    if (!tblSaleOrder.Status.Equals(Status.UNPAID))
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "You can only whole pay a new order.";
+                        return resultModel;
+                    }
+                    if (tblSaleOrder.RemainMoney == 0)
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "Sale order is fully paid.";
+                        return resultModel;
+                    }
+                    JsonSerializerSettings jsonSerializerSettings = new()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    };
+                    moMoOrderModel.PayAmount = amount;
+                    var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                        jsonSerializerSettings);
+                    var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                    base64OrderString = Convert.ToBase64String(orderTextBytes);
+                }
+                else
                 {
                     resultModel.Code = 400;
                     resultModel.IsSuccess = false;
-                    resultModel.Message = "Rent order Id invalid.";
+                    resultModel.Message = "service order not yet available.";
                     return resultModel;
                 }
-                if (!tblRentOrder.Status.Equals(Status.UNPAID))
-                {
-                    resultModel.Code = 400;
-                    resultModel.IsSuccess = false;
-                    resultModel.Message = "You can only whole pay a new order.";
-                    return resultModel;
-                }
-                if (tblRentOrder.RemainMoney == 0)
-                {
-                    resultModel.Code = 400;
-                    resultModel.IsSuccess = false;
-                    resultModel.Message = "Rent order is fully paid.";
-                    return resultModel;
-                }
-                JsonSerializerSettings jsonSerializerSettings = new()
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                };
-                moMoOrderModel.PayAmount = amount;
-                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
-                    jsonSerializerSettings);
-                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
-                base64OrderString = Convert.ToBase64String(orderTextBytes);
-            }
-            else if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("sale"))
-            {
-                TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                if (tblSaleOrder == null)
-                {
-                    resultModel.Code = 400;
-                    resultModel.IsSuccess = false;
-                    resultModel.Message = "Sale order Id invalid.";
-                    return resultModel;
-                }
-                if (!tblSaleOrder.Status.Equals(Status.UNPAID))
-                {
-                    resultModel.Code = 400;
-                    resultModel.IsSuccess = false;
-                    resultModel.Message = "You can only whole pay a new order.";
-                    return resultModel;
-                }
-                if (tblSaleOrder.RemainMoney == 0)
-                {
-                    resultModel.Code = 400;
-                    resultModel.IsSuccess = false;
-                    resultModel.Message = "Sale order is fully paid.";
-                    return resultModel;
-                }
-                JsonSerializerSettings jsonSerializerSettings = new()
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                };
-                moMoOrderModel.PayAmount = amount;
-                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
-                    jsonSerializerSettings);
-                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
-                base64OrderString = Convert.ToBase64String(orderTextBytes);
-            }
-            else
-            {
-                resultModel.Code = 400;
-                resultModel.IsSuccess = false;
-                resultModel.Message = "service order not yet available.";
-                return resultModel;
-            }
 
-            List<string> secrets = SecretService.SecretService.GetPaymentSecrets();
-            string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
-            string partnerCode = secrets[0];
-            string accessKey = secrets[1];
-            string serectkey = secrets[2];
-            string orderInfo = "GreenGarden Payment";
-            string redirectUrl = "https://ggarden.shop/thanks";
-            string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-order-payment-momo";
-            string requestType = "captureWallet";
-            string orderId = Guid.NewGuid().ToString();
-            string requestId = Guid.NewGuid().ToString();
-            string extraData = base64OrderString;
+                List<string> secrets = SecretService.SecretService.GetPaymentSecrets();
+                string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+                string partnerCode = secrets[0];
+                string accessKey = secrets[1];
+                string serectkey = secrets[2];
+                string orderInfo = "GreenGarden Payment";
+                string redirectUrl = "https://ggarden.shop/thanks";
+                string ipnUrl = "https://greengarden2023.azurewebsites.net/payment/receive-order-payment-momo";
+                string requestType = "captureWallet";
+                string orderId = Guid.NewGuid().ToString();
+                string requestId = Guid.NewGuid().ToString();
+                string extraData = base64OrderString;
 
-            string rawHash = "accessKey=" + accessKey +
-                "&amount=" + amount +
-                "&extraData=" + extraData +
-                "&ipnUrl=" + ipnUrl +
-                "&orderId=" + orderId +
-                "&orderInfo=" + orderInfo +
-                "&partnerCode=" + partnerCode +
-                "&redirectUrl=" + redirectUrl +
-                "&requestId=" + requestId +
-                "&requestType=" + requestType
-                ;
+                string rawHash = "accessKey=" + accessKey +
+                    "&amount=" + amount +
+                    "&extraData=" + extraData +
+                    "&ipnUrl=" + ipnUrl +
+                    "&orderId=" + orderId +
+                    "&orderInfo=" + orderInfo +
+                    "&partnerCode=" + partnerCode +
+                    "&redirectUrl=" + redirectUrl +
+                    "&requestId=" + requestId +
+                    "&requestType=" + requestType
+                    ;
 
-            Console.WriteLine("rawHash = " + rawHash);
+                Console.WriteLine("rawHash = " + rawHash);
 
-            MoMoSecurity crypto = new MoMoSecurity();
-            string signature = crypto.signSHA256(rawHash, serectkey);
-            Console.WriteLine("Signature = " + signature);
+                MoMoSecurity crypto = new MoMoSecurity();
+                string signature = crypto.signSHA256(rawHash, serectkey);
+                Console.WriteLine("Signature = " + signature);
 
-            JObject message = new JObject
+                JObject message = new JObject
             {
                 { "partnerCode", partnerCode },
                 { "partnerName", "Test" },
@@ -763,18 +766,28 @@ namespace GreeenGarden.Business.Service.PaymentService
                 { "signature", signature }
 
             };
-            Console.WriteLine("Json request to MoMo: " + message.ToString());
-            string responseFromMomo = await Task.FromResult(PaymentRequest.sendPaymentRequest(endpoint, message.ToString()));
-            Console.WriteLine("Response from MoMo: " + responseFromMomo.ToString());
-            JObject resJSON = JObject.Parse(responseFromMomo);
-            resultModel.Code = 200;
-            resultModel.IsSuccess = true;
-            resultModel.Message = "Create sale payment success.";
-            resultModel.Data = resJSON;
-            return resultModel;
+                Console.WriteLine("Json request to MoMo: " + message.ToString());
+                string responseFromMomo = await Task.FromResult(PaymentRequest.sendPaymentRequest(endpoint, message.ToString()));
+                Console.WriteLine("Response from MoMo: " + responseFromMomo.ToString());
+                JObject resJSON = JObject.Parse(responseFromMomo);
+                resultModel.Code = 200;
+                resultModel.IsSuccess = true;
+                resultModel.Message = "Create sale payment success.";
+                resultModel.Data = resJSON;
+                return resultModel;
+            }
+            catch (Exception e)
+            {
+                ResultModel resultModel = new ResultModel();
+                resultModel.Code = 400;
+                resultModel.IsSuccess = false;
+                resultModel.Message = e.ToString();
+                return resultModel;
+            }
+
         }
 
-        public async Task<ResultModel> WholeOrderPaymentCash(MoMoWholeOrderModel moMoWholeOrderModel)
+        public async Task<ResultModel> WholeOrderPaymentCash(MoMoPaymentModel moMoWholeOrderModel)
         {
             ResultModel result = new ResultModel();
             try

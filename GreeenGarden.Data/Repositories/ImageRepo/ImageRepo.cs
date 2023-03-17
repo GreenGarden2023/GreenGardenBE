@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Repositories.Repository;
 using Microsoft.EntityFrameworkCore;
 
@@ -91,6 +92,34 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
                 }
             }
             return urls;
+        }
+
+        public async Task<TblImage> GetImgUrlRentOrderDetail(Guid rentOrderDetailID)
+        {
+            var query = from c in context.TblImages
+                        where c.RentOrderDetailId.Equals(rentOrderDetailID)
+                        select new { c };
+            TblImage? result = await query.Select(x => new TblImage()
+            {
+                Id = x.c.Id,
+                ProductId = x.c.ProductId,
+                ImageUrl = x.c.ImageUrl
+            }).FirstOrDefaultAsync();
+            return result;
+        }
+
+        public async Task<TblImage> GetImgUrlSaleOrderDetail(Guid saleOrderDetailID)
+        {
+            var query = from c in context.TblImages
+                        where c.SaleOrderDetailId.Equals(saleOrderDetailID)
+                        select new { c };
+            TblImage? result = await query.Select(x => new TblImage()
+            {
+                Id = x.c.Id,
+                ProductId = x.c.ProductId,
+                ImageUrl = x.c.ImageUrl
+            }).FirstOrDefaultAsync();
+            return result;
         }
 
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)

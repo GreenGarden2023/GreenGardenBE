@@ -14,6 +14,19 @@ namespace GreeenGarden.Data.Repositories.RewardRepo
             _context = context;
 		}
 
+        public async Task<int> GetUserRewardPoint(Guid userID)
+        {
+            TblReward user = await _context.TblRewards.Where(x => x.UserId.Equals(userID)).FirstOrDefaultAsync();
+            if(user != null)
+            {
+                return (int)user.CurrentPoint;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
         public async Task<ResultModel> UpdateUserRewardPoint(string userName, int pointGain, int pointUsed)
         {
             ResultModel? result = new ResultModel();

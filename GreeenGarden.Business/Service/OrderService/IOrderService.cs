@@ -7,8 +7,10 @@ namespace GreeenGarden.Business.Service.OrderService
 	public interface IOrderService
 	{
 		Task<ResultModel> CreateRentOrder(string token, OrderCreateModel  rentOrderModel);
+        Task<ResultModel> CalculateRentOrder( OrderCreateModel rentOrderModel);
 
         Task<ResultModel> CreateSaleOrder(string token, OrderCreateModel saleOrderModel);
+        Task<ResultModel> CalculateSaleOrder( OrderCreateModel saleOrderModel);
 
         Task<ResultModel> GetRentOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetAllRentOrders(string token, PaginationRequestModel pagingModel);

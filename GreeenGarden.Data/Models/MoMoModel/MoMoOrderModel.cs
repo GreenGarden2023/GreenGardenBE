@@ -16,11 +16,7 @@
         public Guid OrderId { get; set; }
         public double Amount { get; set; }
         public string OrderType { get; set; }
-    }
-    public class MoMoWholeOrderModel
-    {
-        public Guid OrderId { get; set; }
-        public string OrderType { get; set; }
+        public string PaymentType { get; set; }
     }
 }
 

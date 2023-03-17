@@ -105,6 +105,21 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.UpdateSaleOrderStatus(token, orderUpdateModel.orderID, orderUpdateModel.status);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("calculate-order")]
+        [AllowAnonymous]
+        public async Task<IActionResult> CalculateRentOrder(OrderCreateModel orderModel)
+        {
+            if (orderModel.StartDateRent != DateTime.MinValue && orderModel.EndDateRent != DateTime.MinValue)
+            {
+                ResultModel result = await _orderService.CalculateRentOrder(orderModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            else
+            {
+                ResultModel result = await _orderService.CalculateSaleOrder(orderModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+        }
     }
 }
 

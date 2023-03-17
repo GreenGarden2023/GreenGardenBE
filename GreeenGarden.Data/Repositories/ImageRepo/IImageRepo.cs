@@ -12,6 +12,8 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         Task<TblImage> GetImgUrlCategory(Guid categoryId);
         Task<TblImage> GetImgUrlProduct(Guid productId);
         Task<TblImage> GetImgUrlProductItem(Guid productItemID);
+        Task<TblImage> GetImgUrlRentOrderDetail(Guid rentOrderDetailID);
+        Task<TblImage> GetImgUrlSaleOrderDetail(Guid saleOrderDetailID);
         Task<List<string>> GetImgUrlProductItemDetail(Guid productitemDetailID);
         Task<bool> DeleteImage(string imgURL);
     }

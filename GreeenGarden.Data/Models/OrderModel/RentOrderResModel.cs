@@ -7,6 +7,8 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public double? TransportFee { get; set; }
 
+        public DateTime? CreateDate { get; set; }
+
         public DateTime StartDateRent { get; set; }
 
         public DateTime EndDateRent { get; set; }
@@ -45,6 +47,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public double? RentPricePerUnit { get; set; }
         public string? SizeName { get; set; }
         public string? ProductItemName { get; set; }
+        public string? ImgURL { get; set; }
     }
 }
 
