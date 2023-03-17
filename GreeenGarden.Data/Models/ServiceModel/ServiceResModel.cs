@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Models.ServiceModel
 {
-    public class ServiceResModel
-    {
-    }
     public class UserResModel
     {
         public Guid Id { get; set; }
@@ -26,10 +23,10 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string Description { get; set; }
         public int? Quantity { get; set; }
         public string Status { get; set; }
-        public List<string> ImageUrl { get; set; }
+        public List<string> ImageUrl { get; set; } 
     }
     public class ServiceUserTreeRespModel {
-        public Guid ID { get; set; }
+        public Guid Id { get; set; }
         public UserTreeResModel UserTree { get; set; }
         public int? Quantity { get; set; }
         public double? Price { get; set; }
@@ -52,7 +49,18 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string Address { get; set; }
         public string Status { get; set; }
         public List<ServiceUserTreeRespModel> UserTrees { get; set; }
-        //  tiếp tục làm getList
+    }
+    public class ServiceByManagerResModel
+    {
+        public Guid Id { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string Mail { get; set; }
+        public string Phone { get; set; }
+        public string Address { get; set; }
+        public string Status { get; set; }
+        public UserResModel User { get; set; }
+        public List<ServiceUserTreeRespModel> UserTrees { get; set; }
     }
 
     //getDetail

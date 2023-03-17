@@ -37,6 +37,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using AutoMapper;
+using GreeenGarden.Data.Utilities;
+using GreeenGarden.Business.Service.ServiceOrderService;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Database
@@ -53,14 +57,12 @@ builder.Services.AddScoped<ISizeService, SizeService>();
 builder.Services.AddScoped<IEMailService, EMailService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IServiceServicer, ServiceServicer>();
-
 builder.Services.AddScoped<IOrderService, OrderService>();
-
 builder.Services.AddScoped<IMoMoService, MoMoServices>();
-
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IUserTreeService, UserTreeService>();
+builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<IRentOrderRepo, RentOrderRepo>();
@@ -80,6 +82,7 @@ builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
 builder.Services.AddTransient<ICartRepo, CartRepo>();
 builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
 builder.Services.AddTransient<IServiceRepo, ServiceRepo>();
+builder.Services.AddTransient<IServiceOrderRepo, ServiceOrderRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
@@ -130,6 +133,16 @@ builder.Services.AddApiVersioning(opt =>
                                                     new HeaderApiVersionReader("greengarden-api-version"),
                                                     new MediaTypeApiVersionReader("greengarden-api-version"));
 });
+
+//Mapper
+var mappingConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+IMapper mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
+//end.
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
