@@ -56,7 +56,7 @@ namespace GreeenGarden.API.Controllers
             }
             else
             {
-                Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentCash(moMoPaymentModel);
+                Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(moMoPaymentModel);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
         }
