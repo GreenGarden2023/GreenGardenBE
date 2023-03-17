@@ -23,6 +23,10 @@ public partial class TblImage
 
     public Guid? UserTreeId { get; set; }
 
+    public Guid? RentOrderDetailId { get; set; }
+
+    public Guid? SaleOrderDetailId { get; set; }
+
     public virtual TblCategory? Category { get; set; }
 
     public virtual TblFeedBack? Feedback { get; set; }
@@ -33,5 +37,9 @@ public partial class TblImage
 
     public virtual TblProductItemDetail? ProductItemDetail { get; set; }
 
+    public virtual TblRentOrderDetail? RentOrderDetail { get; set; }
+
     public virtual TblReport? Report { get; set; }
+
+    public virtual TblSaleOrderDetail? SaleOrderDetail { get; set; }
 }

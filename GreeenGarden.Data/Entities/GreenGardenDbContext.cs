@@ -198,7 +198,9 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ImageURL");
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            entity.Property(e => e.RentOrderDetailId).HasColumnName("RentOrderDetailID");
             entity.Property(e => e.ReportId).HasColumnName("ReportID");
+            entity.Property(e => e.SaleOrderDetailId).HasColumnName("SaleOrderDetailID");
             entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
 
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
@@ -221,9 +223,17 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.ProductItemId)
                 .HasConstraintName("FK_tblImages_tblProductItems");
 
+            entity.HasOne(d => d.RentOrderDetail).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.RentOrderDetailId)
+                .HasConstraintName("FK_tblImage_tblRentOrderDetail");
+
             entity.HasOne(d => d.Report).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ReportId)
                 .HasConstraintName("FK_tblImages_tblReport");
+
+            entity.HasOne(d => d.SaleOrderDetail).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.SaleOrderDetailId)
+                .HasConstraintName("FK_tblImage_tblSaleOrderDetail");
         });
 
         modelBuilder.Entity<TblPayment>(entity =>
@@ -311,6 +321,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.OrderCode).HasMaxLength(20);
             entity.Property(e => e.RecipientAddress).HasMaxLength(500);
             entity.Property(e => e.RecipientName).HasMaxLength(200);
@@ -369,12 +380,13 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(250);
+            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
             entity.Property(e => e.Sumary).HasMaxLength(500);
 
-            entity.HasOne(d => d.CreateByNavigation).WithMany(p => p.TblReports)
-                .HasForeignKey(d => d.CreateBy)
+            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblReports)
+                .HasForeignKey(d => d.ServiceOrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblReport_tblUser");
+                .HasConstraintName("FK_tblReport_tblServiceOrder");
         });
 
         modelBuilder.Entity<TblReward>(entity =>
@@ -450,9 +462,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
-            entity.Property(e => e.Address)
-                .HasMaxLength(200)
-                .IsFixedLength();
+            entity.Property(e => e.Address).HasMaxLength(200);
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Mail).HasMaxLength(50);
             entity.Property(e => e.Name).HasMaxLength(200);
@@ -469,11 +479,13 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.ServiceEndDate).HasColumnType("datetime");
             entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
             entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.Service).WithMany(p => p.TblServiceOrders)
                 .HasForeignKey(d => d.ServiceId)

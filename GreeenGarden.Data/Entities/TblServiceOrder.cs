@@ -27,7 +27,15 @@ public partial class TblServiceOrder
 
     public Guid? ServiceId { get; set; }
 
+    public double? Incurred { get; set; }
+
+    public string? Description { get; set; }
+
+    public Guid UserId { get; set; }
+
     public virtual TblService? Service { get; set; }
+
+    public virtual ICollection<TblReport> TblReports { get; } = new List<TblReport>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }

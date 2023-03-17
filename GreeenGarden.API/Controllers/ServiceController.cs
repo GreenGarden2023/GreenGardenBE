@@ -52,6 +52,13 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.updateService(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-list-service-by-manager")]
+        public async Task<IActionResult> getListServiceByManager()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.getListServiceByManager(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
 
         
     }

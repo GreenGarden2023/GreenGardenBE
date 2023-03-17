@@ -13,9 +13,9 @@ public partial class TblReport
 
     public string? Sumary { get; set; }
 
-    public Guid CreateBy { get; set; }
+    public Guid ServiceOrderId { get; set; }
 
-    public virtual TblUser CreateByNavigation { get; set; } = null!;
+    public virtual TblServiceOrder ServiceOrder { get; set; } = null!;
 
     public virtual ICollection<TblFile> TblFiles { get; } = new List<TblFile>();
 

@@ -106,13 +106,17 @@ namespace GreeenGarden.Business.Service.UserTreeService
             try
             {
                 var tblUser = await _utRepo.GetTblUserByUsername(_decodeToken.Decode(token, "username"));
+                var role = await _utRepo.GetTblRoleByUserID(tblUser.RoleId);
 
                 var res = await _utRepo.GetDetailUserTreeByCustomer(userTreeID);
-                if (tblUser.Id != res.User.Id)
+                if (role.RoleName != "Manager")
                 {
-                    result.IsSuccess = false;
-                    result.Message = "Cây này k thuộc user";
-                    return result;
+                    if (tblUser.Id != res.User.Id)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Cây này k thuộc user";
+                        return result;
+                    }
                 }
 
                 result.Code = 200;

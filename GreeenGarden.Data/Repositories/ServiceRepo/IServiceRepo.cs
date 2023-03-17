@@ -25,6 +25,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
 
         //tblService
         Task<ListServiceByCustomerResModel> GetListServiceByCustomer(TblUser user);
+        Task<List<ServiceByManagerResModel>> GetListServiceByManager();
         Task<DetailServiceByCustomerResModel> GetDetailServiceByCustomer(Guid serviceID);
         Task<TblService> GetTblService(Guid serviceID);
         Task<List<TblServiceUserTree>> GetListTblServiceUserTree(Guid serviceID);

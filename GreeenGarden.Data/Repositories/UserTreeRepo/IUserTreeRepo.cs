@@ -12,7 +12,8 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
     public interface IUserTreeRepo : IRepository<TblUserTree>
     {
         //User
-        Task<TblUser> GetTblUserByUsername(string username);
+        Task<TblUser> GetTblUserByUsername(string roleID);
+        Task<TblRole> GetTblRoleByUserID(Guid userID);
 
         //Img
         Task<bool> InsertImg(TblImage entities);

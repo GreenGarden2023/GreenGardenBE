@@ -7,16 +7,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace GreeenGarden.Data.Repositories.ServiceRepo
 {
     public class ServiceRepo : Repository<TblService>, IServiceRepo
     {
-        //private readonly IMapper _mapper;
+        private readonly IMapper _mapper;
         private readonly GreenGardenDbContext _context;
-        public ServiceRepo(/*IMapper mapper,*/ GreenGardenDbContext context) : base(context)
+        public ServiceRepo(IMapper mapper, GreenGardenDbContext context) : base(context)
         {
-            //_mapper = mapper;
+            _mapper = mapper;
             _context = context;
         }
 
@@ -77,7 +78,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
 
                 var sutRecord = new ServiceUserTreeRespModel()
                 {
-                    ID = sut.Id,
+                    Id = sut.Id,
                     UserTree = utRecord,
                     Quantity = sut.Quantity,
                     Price = sut.Price
@@ -101,16 +102,9 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         public async Task<ListServiceByCustomerResModel> GetListServiceByCustomer(TblUser user)
         {
             var result = new ListServiceByCustomerResModel();
-            var userRecord = new UserResModel()
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                FullName = user.FullName,
-                Address = user.Address,
-                Phone = user.Phone,
-                Mail = user.Mail,                
-            };
-            result.User = userRecord;
+            
+            result.User = _mapper.Map<UserResModel>(user);
+            //result.User = userRecord;
             result.Services = new List<ServiceForListResModel>();
             var listService = await _context.TblServices.Where(x => x.UserId.Equals(user.Id)).ToListAsync();
             foreach (var s in listService)
@@ -138,7 +132,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     utRecord.ImageUrl = await getImgUrlByUserTreeID(ut.Id);
 
                     var sutRecord = new ServiceUserTreeRespModel();
-                    sutRecord.ID= sut.Id;
+                    sutRecord.Id= sut.Id;
                     sutRecord.Quantity = sut.Quantity;
                     sutRecord.Price = sut.Price;
                     sutRecord.UserTree = utRecord;
@@ -194,6 +188,34 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         public async Task<TblUserTree> getUserTreeByID(Guid userTreeID)
         {
             return await _context.TblUserTrees.Where(x => x.Id.Equals(userTreeID)).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<ServiceByManagerResModel>> GetListServiceByManager()
+        {
+            var result = new List<ServiceByManagerResModel>();
+            var listSer = await _context.TblServices.ToListAsync();
+            foreach (var s in listSer)
+            {
+                var sRecord = _mapper.Map<ServiceByManagerResModel>(s);
+                var user = await _context.TblUsers.Where(x => x.Id.Equals(s.UserId)).FirstOrDefaultAsync();
+                sRecord.User = _mapper.Map<UserResModel>(user);
+
+                sRecord.UserTrees = new List<ServiceUserTreeRespModel>();
+                var listUut = await _context.TblServiceUserTrees.Where(x => x.ServiceId.Equals(s.Id)).ToListAsync();
+                foreach (var sut in listUut)
+                {
+                    var sutRecord = new ServiceUserTreeRespModel();
+                    sutRecord = _mapper.Map<ServiceUserTreeRespModel>(sut);
+                    var ut = await _context.TblUserTrees.Where(x => x.Id.Equals(sut.UserTreeId)).FirstOrDefaultAsync();
+                    sutRecord.UserTree = _mapper.Map<UserTreeResModel>(ut);
+                    sutRecord.UserTree.ImageUrl = new List<string>();
+                    sutRecord.UserTree.ImageUrl = await getImgUrlByUserTreeID(ut.Id);
+
+                    sRecord.UserTrees.Add(sutRecord);
+                }
+                result.Add(sRecord);                
+            }
+            return result;
         }
     }
 }

@@ -20,4 +20,6 @@ public partial class TblSaleOrderDetail
     public string? ProductItemName { get; set; }
 
     public virtual TblSaleOrder SaleOder { get; set; } = null!;
+
+    public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 }

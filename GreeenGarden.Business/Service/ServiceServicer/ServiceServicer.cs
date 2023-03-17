@@ -8,6 +8,7 @@ using GreeenGarden.Data.Repositories.ServiceRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -53,6 +54,13 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                 DateTime EndDate = Utilities.Convert.ConvertUtil.convertStringToDateTime(model.EndDate);
 
                 //-Check condidtion
+                if (StartDate < DateTime.Now || EndDate < StartDate) // check ngày
+                {
+                    result.Code = 103;
+                    result.IsSuccess = true;
+                    result.Message = "Lỗi ngày";
+                    return result;
+                }
                 //--Dồn số cây
                 for (int i = 0; i < model.UserTrees.Count; i++)
                 {
@@ -64,7 +72,6 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                             model.UserTrees.Remove(model.UserTrees[j]);
                         }
                     }
-
                 }
 
                 //--CheckQuantity
@@ -94,7 +101,7 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                     Mail = model.Mail,
                     Phone = model.Phone,
                     Address = model.Address,
-                    Status = Status.READY,
+                    Status = Status.PROCESSING,
                     Name = model.Name,
                     UserId = tblUser.Id,
                 };
@@ -174,6 +181,35 @@ namespace GreeenGarden.Business.Service.ServiceServicer
             return result;
         }
 
+        public async Task<ResultModel> getListServiceByManager(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+                var listSer = await _serRepo.GetListServiceByManager();
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = listSer;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> updateService(string token, ServiceUpdateModel model)
         {
             var result = new ResultModel();
@@ -218,6 +254,13 @@ namespace GreeenGarden.Business.Service.ServiceServicer
                 // updateService
 
                 var ser = await _serRepo.GetTblService(model.serviceID);
+                if (ser.Status == Status.ACCEPT)
+                {
+                    result.Code = 105;
+                    result.IsSuccess = false;
+                    result.Message = "Trạng thái đã hoàn tất, không thể update";
+                    return result;
+                }
                 ser.StartDate = StartDate; 
                 ser.EndDate = EndDate;
                 ser.Name = model.service.Name;
