@@ -1364,5 +1364,259 @@ namespace GreeenGarden.Business.Service.OrderService
             }
 
         }
+
+		public async Task<ResultModel> CalculateRentOrder( OrderCreateModel rentOrderModel)
+		{
+
+			ResultModel result = new();
+			try
+			{
+			
+				double totalAmountPerDay = 0;
+				int totalQuantity = 0;
+				double numberRentDays = 0;
+				double totalOrderAmount = 0;
+				double transportFee = 0;
+				double deposit = 0;
+				int rewardPointGain = 0;
+				double discountAmount = 0;
+				numberRentDays = Math.Ceiling((rentOrderModel.EndDateRent - rentOrderModel.StartDateRent).TotalDays);
+				if (numberRentDays < 1)
+				{
+					result.IsSuccess = false;
+					result.Code = 400;
+					result.Message = "Please rent for atleast 1 day.";
+					return result;
+				}
+				foreach (OrderDetailModel item in rentOrderModel.ItemList)
+				{
+					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+					if (itemDetail.Quantity < item.Quantity)
+					{
+						result.IsSuccess = false;
+						result.Code = 400;
+						result.Message = "Item does not have enough quantity left.";
+						return result;
+					}
+					if (itemDetail == null)
+					{
+						result.IsSuccess = false;
+						result.Code = 400;
+						result.Message = "Atleast 1 product item is invalid.";
+						return result;
+					}
+					else
+					{
+						totalAmountPerDay = (double)(totalAmountPerDay + (item.Quantity * itemDetail.RentPrice));
+						totalQuantity = totalQuantity + item.Quantity;
+					}
+				}
+
+				if (totalQuantity <= 10 && totalAmountPerDay <= 1000000)
+				{
+					transportFee = ShipFee.L_10QUAN_L_1MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 1000000)
+				{
+					transportFee = ShipFee.L_30QUAN_L_1MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 30 && totalAmountPerDay <= 1000000)
+				{
+					transportFee = ShipFee.M_30QUAN_L_1MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity <= 10 && totalAmountPerDay <= 10000000)
+				{
+					transportFee = ShipFee.L_10QUAN_L_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 10000000)
+				{
+					transportFee = ShipFee.L_30QUAN_L_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 30 && totalAmountPerDay <= 10000000)
+				{
+					transportFee = ShipFee.M_30QUAN_L_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity <= 10 && totalAmountPerDay > 10000000)
+				{
+					transportFee = ShipFee.L_10QUAN_M_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay > 10000000)
+				{
+					transportFee = ShipFee.L_30QUAN_M_10MIL * totalAmountPerDay;
+				}
+				else
+				{
+					transportFee = ShipFee.M_30QUAN_M_10MIL * totalAmountPerDay;
+				}
+
+				discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
+				totalOrderAmount = (numberRentDays * totalAmountPerDay) + transportFee - discountAmount;
+
+				deposit = totalOrderAmount * 0.2;
+				rewardPointGain = (int)Math.Ceiling((totalOrderAmount * 0.01) / 1000);
+
+				TblRentOrder tblRentOrder = new TblRentOrder
+				{
+					TransportFee = Math.Ceiling(transportFee),
+					StartDateRent = rentOrderModel.StartDateRent,
+					EndDateRent = rentOrderModel.EndDateRent,
+					Deposit = Math.Ceiling(deposit),
+					TotalPrice = Math.Ceiling(totalOrderAmount),
+					Status = Status.UNPAID,
+					RemainMoney = Math.Ceiling(totalOrderAmount),
+					RewardPointGain = rewardPointGain,
+					RewardPointUsed = rentOrderModel.RewardPointUsed,
+					DiscountAmount = discountAmount,
+					RentOrderGroupId = rentOrderModel.RentOrderGroupID,
+					RecipientAddress = "" + rentOrderModel.RecipientAddress,
+					RecipientPhone = "" + rentOrderModel.RecipientPhone,
+					RecipientName = "" + rentOrderModel.RecipientName,
+				};
+				OrderCalculateModel orderCalculateModel = new OrderCalculateModel
+				{
+					TransportFee = tblRentOrder.TransportFee,
+                    Deposit = tblRentOrder.Deposit,
+					TotalPrice = tblRentOrder.TotalPrice,
+					RemainMoney = tblRentOrder.RemainMoney,
+					RewardPointGain = tblRentOrder .RewardPointGain,
+					RewardPointUsed = tblRentOrder.RewardPointUsed,
+					DiscountAmount = tblRentOrder.DiscountAmount
+                };
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = orderCalculateModel;
+                result.Message = "Calculate rent order successful.";
+                return result;
+            }
+			catch (Exception e)
+			{
+				result.IsSuccess = false;
+				result.Code = 400;
+				result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+				return result;
+
+			}
+		}
+
+        public async Task<ResultModel> CalculateSaleOrder( OrderCreateModel saleOrderModel)
+        {
+
+            ResultModel result = new();
+			try
+			{
+				double totalAmountPerDay = 0;
+				int totalQuantity = 0;
+				double totalOrderAmount = 0;
+				double transportFee = 0;
+				double deposit = 0;
+				int rewardPointGain = 0;
+				double discountAmount = 0;
+
+				foreach (OrderDetailModel item in saleOrderModel.ItemList)
+				{
+					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+					if (itemDetail.Quantity < item.Quantity)
+					{
+						result.IsSuccess = false;
+						result.Code = 400;
+						result.Message = "Item does not have enough quantity left.";
+						return result;
+					}
+					if (itemDetail == null)
+					{
+						result.IsSuccess = false;
+						result.Code = 400;
+						result.Message = "Atleast 1 product item is invalid.";
+						return result;
+					}
+					else
+					{
+						totalAmountPerDay = (double)(item.Quantity * itemDetail.SalePrice);
+						totalQuantity = totalQuantity + item.Quantity;
+					}
+				}
+				if (totalQuantity <= 10 && totalAmountPerDay <= 1000000)
+				{
+					transportFee = ShipFee.L_10QUAN_L_1MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 1000000)
+				{
+					transportFee = ShipFee.L_30QUAN_L_1MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 30 && totalAmountPerDay <= 1000000)
+				{
+					transportFee = ShipFee.M_30QUAN_L_1MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity <= 10 && totalAmountPerDay <= 10000000)
+				{
+					transportFee = ShipFee.L_10QUAN_L_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 10000000)
+				{
+					transportFee = ShipFee.L_30QUAN_L_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 30 && totalAmountPerDay <= 10000000)
+				{
+					transportFee = ShipFee.M_30QUAN_L_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity <= 10 && totalAmountPerDay > 10000000)
+				{
+					transportFee = ShipFee.L_10QUAN_M_10MIL * totalAmountPerDay;
+				}
+				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay > 10000000)
+				{
+					transportFee = ShipFee.L_30QUAN_M_10MIL * totalAmountPerDay;
+				}
+				else
+				{
+					transportFee = ShipFee.M_30QUAN_M_10MIL * totalAmountPerDay;
+				}
+				discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
+				totalOrderAmount = totalAmountPerDay + transportFee - discountAmount;
+
+				deposit = totalOrderAmount * 0.2;
+				rewardPointGain = (int)Math.Ceiling((totalOrderAmount * 0.01) / 1000);
+				DateTime createDate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+
+				TblSaleOrder tblSaleOrder = new TblSaleOrder
+				{
+
+					TransportFee = Math.Ceiling(transportFee),
+					CreateDate = createDate,
+					Deposit = Math.Ceiling(deposit),
+					TotalPrice = Math.Ceiling(totalOrderAmount),
+					Status = Status.UNPAID,
+					RemainMoney = Math.Ceiling(totalOrderAmount),
+					RewardPointGain = rewardPointGain,
+					RewardPointUsed = saleOrderModel.RewardPointUsed,
+                    DiscountAmount = discountAmount,
+
+				};
+				OrderCalculateModel orderCalculateModel = new OrderCalculateModel
+				{
+                    TransportFee = tblSaleOrder.TransportFee,
+                    Deposit = tblSaleOrder.Deposit,
+                    TotalPrice = tblSaleOrder.TotalPrice,
+                    RemainMoney = tblSaleOrder.RemainMoney,
+                    RewardPointGain = tblSaleOrder.RewardPointGain,
+                    RewardPointUsed = tblSaleOrder.RewardPointUsed,
+                    DiscountAmount = tblSaleOrder.DiscountAmount
+                };
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = orderCalculateModel;
+                result.Message = "Calculate sale order successful.";
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
     }
 }
