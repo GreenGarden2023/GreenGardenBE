@@ -18,6 +18,7 @@ using System;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -35,6 +36,7 @@ namespace GreeenGarden.Business.Service.OrderService
 		private readonly ISizeRepo _sizeRepo;
 		private readonly ICartService _cartService;
 		private readonly IImageRepo _imageRepo;
+		private readonly IShippingFeeRepo _shippingFeeRepo;
 		public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
 			ISaleOrderRepo saleOrderRepo,
 			ISaleOrderDetailRepo saleOrderDetailRepo,
@@ -45,7 +47,8 @@ namespace GreeenGarden.Business.Service.OrderService
 			ICartService cartService,
 			ISizeRepo sizeRepo,
 			IProductItemRepo productItemRepo,
-			IImageRepo imageRepo)
+			IImageRepo imageRepo,
+			IShippingFeeRepo shippingFeeRepo )
 		{
 			_decodeToken = new DecodeToken();
 			_rentOrderRepo = rentOrderRepo;
@@ -59,6 +62,7 @@ namespace GreeenGarden.Business.Service.OrderService
 			_sizeRepo = sizeRepo;
 			_productItemRepo = productItemRepo;
 			_imageRepo = imageRepo;
+			_shippingFeeRepo = shippingFeeRepo;
 		}
 
 		public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -254,7 +258,24 @@ namespace GreeenGarden.Business.Service.OrderService
 				double deposit = 0;
 				int rewardPointGain = 0;
 				double discountAmount = 0;
-				numberRentDays = Math.Ceiling((rentOrderModel.EndDateRent - rentOrderModel.StartDateRent).TotalDays);
+
+                bool shippingIDCheck = false;
+                for (int i = 1; i <= 19; i++)
+                {
+                    if (rentOrderModel.ShippingID == i)
+                    {
+                        shippingIDCheck = true;
+                    }
+                }
+                if (shippingIDCheck == false)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Shipping ID invalid.";
+                    return result;
+                }
+
+                numberRentDays = Math.Ceiling((rentOrderModel.EndDateRent - rentOrderModel.StartDateRent).TotalDays);
 				if (numberRentDays <1)
 				{
 					result.IsSuccess = false;
@@ -265,63 +286,31 @@ namespace GreeenGarden.Business.Service.OrderService
 				foreach (OrderDetailModel item in rentOrderModel.ItemList)
 				{
 					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
-					if (itemDetail.Quantity <item.Quantity)
+                    if (itemDetail == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Atleast 1 product item is invalid.";
+                        return result;
+                    }
+                    if (itemDetail.Quantity <item.Quantity)
 					{
                         result.IsSuccess = false;
                         result.Code = 400;
                         result.Message = "Item does not have enough quantity left.";
                         return result;
                     }
-					if(itemDetail == null)
-					{
-						result.IsSuccess = false;
-						result.Code = 400;
-						result.Message = "Atleast 1 product item is invalid.";
-						return result;
-					}
 					else
 					{
 						totalAmountPerDay = (double)(totalAmountPerDay + (item.Quantity * itemDetail.RentPrice));
 						totalQuantity = totalQuantity + item.Quantity;
-					}
+
+						TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(rentOrderModel.ShippingID);
+						transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                    }
 				}
 
-				if (totalQuantity <= 10 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if(totalQuantity >10 && totalQuantity <= 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <= 10 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <=30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <=10 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity >10 && totalQuantity <= 30 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else
-				{
-					transportFee = ShipFee.M_30QUAN_M_10MIL * totalAmountPerDay;
-				}
+				
 				
 				discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
 				totalOrderAmount = (numberRentDays * totalAmountPerDay) + transportFee - discountAmount;
@@ -506,9 +495,33 @@ namespace GreeenGarden.Business.Service.OrderService
 				int rewardPointGain = 0;
 				double discountAmount = 0;
 
-				foreach (OrderDetailModel item in saleOrderModel.ItemList)
+                bool shippingIDCheck = false;
+                for (int i = 1; i <= 19; i++)
+                {
+                    if (saleOrderModel.ShippingID == i)
+                    {
+                        shippingIDCheck = true;
+                    }
+                }
+                if (shippingIDCheck == false)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Shipping ID invalid.";
+                    return result;
+                }
+
+
+                foreach (OrderDetailModel item in saleOrderModel.ItemList)
 				{
 					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
+                    if (itemDetail == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Atleast 1 product item is invalid.";
+                        return result;
+                    }
                     if (itemDetail.Quantity < item.Quantity)
                     {
                         result.IsSuccess = false;
@@ -516,55 +529,15 @@ namespace GreeenGarden.Business.Service.OrderService
                         result.Message = "Item does not have enough quantity left.";
                         return result;
                     }
-                    if (itemDetail == null)
-					{
-						result.IsSuccess = false;
-						result.Code = 400;
-						result.Message = "Atleast 1 product item is invalid.";
-						return result;
-					}
 					else
 					{
 						totalAmountPerDay = (double) (item.Quantity * itemDetail.SalePrice);
 						totalQuantity = totalQuantity + item.Quantity;
-					}
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(saleOrderModel.ShippingID);
+                        transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                    }
 				}
-				if (totalQuantity <= 10 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <= 10 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <= 10 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else
-				{
-					transportFee = ShipFee.M_30QUAN_M_10MIL * totalAmountPerDay;
-				}
+				
 				discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
 				totalOrderAmount =  totalAmountPerDay + transportFee - discountAmount;
 
@@ -1380,7 +1353,24 @@ namespace GreeenGarden.Business.Service.OrderService
 				double deposit = 0;
 				int rewardPointGain = 0;
 				double discountAmount = 0;
-				numberRentDays = Math.Ceiling((rentOrderModel.EndDateRent - rentOrderModel.StartDateRent).TotalDays);
+
+                bool shippingIDCheck = false;
+                for (int i = 1; i <= 19; i++)
+                {
+                    if (rentOrderModel.ShippingID == i)
+                    {
+                        shippingIDCheck = true;
+                    }
+                }
+                if (shippingIDCheck == false)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Shipping ID invalid.";
+                    return result;
+                }
+
+                numberRentDays = Math.Ceiling((rentOrderModel.EndDateRent - rentOrderModel.StartDateRent).TotalDays);
 				if (numberRentDays < 1)
 				{
 					result.IsSuccess = false;
@@ -1391,62 +1381,27 @@ namespace GreeenGarden.Business.Service.OrderService
 				foreach (OrderDetailModel item in rentOrderModel.ItemList)
 				{
 					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
-					if (itemDetail.Quantity < item.Quantity)
+                    if (itemDetail == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Atleast 1 product item is invalid.";
+                        return result;
+                    }
+                    if (itemDetail.Quantity < item.Quantity)
 					{
 						result.IsSuccess = false;
 						result.Code = 400;
 						result.Message = "Item does not have enough quantity left.";
 						return result;
 					}
-					if (itemDetail == null)
-					{
-						result.IsSuccess = false;
-						result.Code = 400;
-						result.Message = "Atleast 1 product item is invalid.";
-						return result;
-					}
 					else
 					{
 						totalAmountPerDay = (double)(totalAmountPerDay + (item.Quantity * itemDetail.RentPrice));
 						totalQuantity = totalQuantity + item.Quantity;
-					}
-				}
-
-				if (totalQuantity <= 10 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <= 10 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <= 10 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else
-				{
-					transportFee = ShipFee.M_30QUAN_M_10MIL * totalAmountPerDay;
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(rentOrderModel.ShippingID);
+                        transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                    }
 				}
 
 				discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
@@ -1512,16 +1467,25 @@ namespace GreeenGarden.Business.Service.OrderService
 				int rewardPointGain = 0;
 				double discountAmount = 0;
 
+				bool shippingIDCheck = false;
+				for(int i = 1; i<=19; i++)
+				{
+					if(saleOrderModel.ShippingID == i)
+					{
+						shippingIDCheck = true;
+					}
+				}
+				if(shippingIDCheck == false)
+				{
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Shipping ID invalid.";
+                    return result;
+                }
 				foreach (OrderDetailModel item in saleOrderModel.ItemList)
 				{
 					TblProductItemDetail itemDetail = await _productItemDetailRepo.Get(item.ProductItemDetailID);
-					if (itemDetail.Quantity < item.Quantity)
-					{
-						result.IsSuccess = false;
-						result.Code = 400;
-						result.Message = "Item does not have enough quantity left.";
-						return result;
-					}
+					
 					if (itemDetail == null)
 					{
 						result.IsSuccess = false;
@@ -1529,48 +1493,22 @@ namespace GreeenGarden.Business.Service.OrderService
 						result.Message = "Atleast 1 product item is invalid.";
 						return result;
 					}
-					else
+					if (itemDetail.Quantity < item.Quantity)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Item does not have enough quantity left.";
+                        return result;
+                    }
+                    else
 					{
 						totalAmountPerDay = (double)(item.Quantity * itemDetail.SalePrice);
 						totalQuantity = totalQuantity + item.Quantity;
-					}
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(saleOrderModel.ShippingID);
+                        transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                    }
 				}
-				if (totalQuantity <= 10 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 1000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_1MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <= 10 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 30 && totalAmountPerDay <= 10000000)
-				{
-					transportFee = ShipFee.M_30QUAN_L_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity <= 10 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_10QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else if (totalQuantity > 10 && totalQuantity <= 30 && totalAmountPerDay > 10000000)
-				{
-					transportFee = ShipFee.L_30QUAN_M_10MIL * totalAmountPerDay;
-				}
-				else
-				{
-					transportFee = ShipFee.M_30QUAN_M_10MIL * totalAmountPerDay;
-				}
+				
 				discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
 				totalOrderAmount = totalAmountPerDay + transportFee - discountAmount;
 

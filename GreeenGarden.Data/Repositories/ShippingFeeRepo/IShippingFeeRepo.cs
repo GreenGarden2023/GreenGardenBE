@@ -11,6 +11,6 @@ namespace GreeenGarden.Data.Repositories.ShippingFeeRepo
 		Task<ResultModel> UpdateShippingFee(ShippingFeeInsertModel shippingFeeInsertModel);
 		Task<List<TblShippingFee>> GetListShipingFee();
 		Task<TblShippingFee> GetAShippingFee(int id);
-	}
+    }
 }
 

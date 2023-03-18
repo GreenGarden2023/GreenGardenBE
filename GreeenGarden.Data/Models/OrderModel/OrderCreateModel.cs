@@ -7,6 +7,8 @@
 
         public DateTime EndDateRent { get; set; }
 
+        public int ShippingID { get; set; }
+
         public int? RewardPointUsed { get; set; }
 
         public string? RecipientAddress { get; set; }
