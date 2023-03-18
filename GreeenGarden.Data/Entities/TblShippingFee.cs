@@ -5,9 +5,9 @@ namespace GreeenGarden.Data.Entities;
 
 public partial class TblShippingFee
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
-    public string District { get; set; } = null!;
+    public int DistrictId { get; set; }
 
     public double FeeAmount { get; set; }
 }

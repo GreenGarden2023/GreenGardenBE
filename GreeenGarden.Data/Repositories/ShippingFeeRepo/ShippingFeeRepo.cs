@@ -14,17 +14,16 @@ namespace GreeenGarden.Data.Repositories.ShippingFeeRepo
 		{
 			_context = context;
 		}
-
-        public async Task<TblShippingFee> GetAShippingFee(int id)
-        {
-            TblShippingFee tblShippingFees = await _context.TblShippingFees.Where(x => x.Id.Equals(id)).FirstOrDefaultAsync();
-            return tblShippingFees;
-        }
-
         public async Task<List<TblShippingFee>> GetListShipingFee()
         {
 			List<TblShippingFee> tblShippingFees = await _context.TblShippingFees.ToListAsync();
 			return tblShippingFees;
+        }
+
+        public async Task<TblShippingFee> GetShippingFeeByDistrict(int districtID)
+        {
+            TblShippingFee tblShippingFees = await _context.TblShippingFees.Where(x => x.DistrictId.Equals(districtID)).FirstOrDefaultAsync();
+            return tblShippingFees;
         }
 
         public async Task<ResultModel> UpdateShippingFee(ShippingFeeInsertModel shippingFeeInsertModel)
@@ -32,7 +31,7 @@ namespace GreeenGarden.Data.Repositories.ShippingFeeRepo
 			ResultModel result = new ResultModel();
 			try
 			{
-				TblShippingFee tblShippingFee = await _context.TblShippingFees.Where(x => x.Id.Equals(shippingFeeInsertModel.ID)).FirstOrDefaultAsync();
+				TblShippingFee tblShippingFee = await _context.TblShippingFees.Where(x => x.DistrictId.Equals(shippingFeeInsertModel.DistrictID)).FirstOrDefaultAsync();
 				if(tblShippingFee != null)
 				{
 					tblShippingFee.FeeAmount = shippingFeeInsertModel.FeeAmount;
@@ -47,7 +46,7 @@ namespace GreeenGarden.Data.Repositories.ShippingFeeRepo
 				{
                     result.Code = 400;
                     result.IsSuccess = false;
-					result.Message = "Update shipping fee for " + shippingFeeInsertModel.ID + " failed.";
+					result.Message = "Update shipping fee for " + shippingFeeInsertModel.DistrictID + " failed.";
                     return result;
                 }
 			}catch(Exception e)

@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ShippingFeeModel;
+using GreeenGarden.Data.Repositories.DistrictRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 
 namespace GreeenGarden.Business.Service.ShippingFeeService
@@ -9,9 +10,11 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
 	public class ShippingFeeService : IShippingFeeService
 	{
         private readonly IShippingFeeRepo _shippingFeeRepo;
-		public ShippingFeeService(IShippingFeeRepo shippingFeeRepo )
+        private readonly IDistrictRepo _districtRepo;
+		public ShippingFeeService(IShippingFeeRepo shippingFeeRepo, IDistrictRepo districtRepo)
 		{
             _shippingFeeRepo = shippingFeeRepo;
+            _districtRepo = districtRepo;
 		}
 
         public async Task<ResultModel> GetListShipingFee()
@@ -20,19 +23,21 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
             try
             {
                 List<ShippingFeeResModel> resList = new List<ShippingFeeResModel>();
-                List<TblShippingFee> getList = await _shippingFeeRepo.GetListShipingFee();
-                if (getList != null && getList.Any())
+                List<TblDistrict> districtList = await _districtRepo.GetDistrictList();
+                if (districtList != null && districtList.Any())
                 {
-                    foreach(TblShippingFee shippingFee in getList)
+                    foreach(TblDistrict district in districtList)
                     {
+                        TblShippingFee fee = await _shippingFeeRepo.GetShippingFeeByDistrict(district.Id);
                         ShippingFeeResModel resModel = new ShippingFeeResModel
                         {
-                            ID = shippingFee.Id,
-                            District = shippingFee.District,
-                            FeeAmount = shippingFee.FeeAmount
+                            DistrictID = district.Id,
+                            District = district.DistrictName,
+                            FeeAmount = fee.FeeAmount
                         };
                         resList.Add(resModel);
                     }
+                    resList.Sort((x, y) => x.DistrictID.CompareTo(y.DistrictID));
                     result.Code = 200;
                     result.IsSuccess = true;
                     result.Data = resList;
@@ -66,11 +71,11 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                 {
                     List<ShippingFeeResModel> resList = new List<ShippingFeeResModel>();
 
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(shippingFeeInsertModels.ID);
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(shippingFeeInsertModels.DistrictID);
                         ShippingFeeResModel resModel = new ShippingFeeResModel
                         {
-                            ID = tblShippingFee.Id,
-                            District = tblShippingFee.District,
+                            DistrictID = tblShippingFee.DistrictId,
+                            District = "" + await _districtRepo.GetADistrict(shippingFeeInsertModels.DistrictID),
                             FeeAmount = tblShippingFee.FeeAmount
                         };
                     
@@ -120,11 +125,11 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                     List<ShippingFeeResModel> resList = new List<ShippingFeeResModel>();
                     foreach (ShippingFeeInsertModel shippingFee in shippingFeeInsertModels)
                     {
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(shippingFee.ID);
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(shippingFee.DistrictID);
                         ShippingFeeResModel resModel = new ShippingFeeResModel
                         {
-                            ID = tblShippingFee.Id,
-                            District = tblShippingFee.District,
+                            DistrictID = tblShippingFee.DistrictId,
+                            District = "" + await _districtRepo.GetADistrict(shippingFee.DistrictID),
                             FeeAmount = tblShippingFee.FeeAmount
                         };
                         resList.Add(resModel);

@@ -35,6 +35,7 @@
     <Folder Include="Repositories\RentOrderGroupRepo\" />
     <Folder Include="Repositories\ShippingFeeRepo\" />
     <Folder Include="Models\ShippingFeeModel\" />
+    <Folder Include="Repositories\DistrictRepo\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -81,5 +82,6 @@
     <None Remove="Repositories\RentOrderGroupRepo\" />
     <None Remove="Repositories\ShippingFeeRepo\" />
     <None Remove="Models\ShippingFeeModel\" />
+    <None Remove="Repositories\DistrictRepo\" />
   </ItemGroup>
 </Project>

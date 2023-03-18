@@ -43,6 +43,7 @@ using GreeenGarden.Business.Service.ServiceOrderService;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Business.Service.ShippingFeeService;
+using GreeenGarden.Data.Repositories.DistrictRepo;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Database
@@ -68,6 +69,7 @@ builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
 builder.Services.AddScoped<IShippingFeeService, ShippingFeeService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
+builder.Services.AddTransient<IDistrictRepo, DistrictRepo>();
 builder.Services.AddTransient<IShippingFeeRepo, ShippingFeeRepo>();
 builder.Services.AddTransient<IRentOrderRepo, RentOrderRepo>();
 builder.Services.AddTransient<IRentOrderGroupRepo, RentOrderGroupRepo>();

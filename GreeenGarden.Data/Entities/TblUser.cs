@@ -17,6 +17,8 @@ public partial class TblUser
 
     public string? Address { get; set; }
 
+    public int? DistrictId { get; set; }
+
     public string? Phone { get; set; }
 
     public string Favorite { get; set; } = null!;
@@ -24,6 +26,8 @@ public partial class TblUser
     public string Mail { get; set; } = null!;
 
     public Guid RoleId { get; set; }
+
+    public virtual TblDistrict? District { get; set; }
 
     public virtual TblRole Role { get; set; } = null!;
 

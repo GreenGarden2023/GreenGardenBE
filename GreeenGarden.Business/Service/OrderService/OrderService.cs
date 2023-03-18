@@ -305,7 +305,7 @@ namespace GreeenGarden.Business.Service.OrderService
 						totalAmountPerDay = (double)(totalAmountPerDay + (item.Quantity * itemDetail.RentPrice));
 						totalQuantity = totalQuantity + item.Quantity;
 
-						TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(rentOrderModel.ShippingID);
+						TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
 						transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
                     }
 				}
@@ -533,7 +533,7 @@ namespace GreeenGarden.Business.Service.OrderService
 					{
 						totalAmountPerDay = (double) (item.Quantity * itemDetail.SalePrice);
 						totalQuantity = totalQuantity + item.Quantity;
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(saleOrderModel.ShippingID);
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
                         transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
                     }
 				}
@@ -1399,7 +1399,7 @@ namespace GreeenGarden.Business.Service.OrderService
 					{
 						totalAmountPerDay = (double)(totalAmountPerDay + (item.Quantity * itemDetail.RentPrice));
 						totalQuantity = totalQuantity + item.Quantity;
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(rentOrderModel.ShippingID);
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
                         transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
                     }
 				}
@@ -1504,7 +1504,7 @@ namespace GreeenGarden.Business.Service.OrderService
 					{
 						totalAmountPerDay = (double)(item.Quantity * itemDetail.SalePrice);
 						totalQuantity = totalQuantity + item.Quantity;
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(saleOrderModel.ShippingID);
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
                         transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
                     }
 				}

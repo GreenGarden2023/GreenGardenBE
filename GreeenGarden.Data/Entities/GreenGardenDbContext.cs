@@ -11,13 +11,17 @@ public partial class GreenGardenDbContext : DbContext
     {
     }
 
-    public virtual DbSet<TblCalender> TblCalenders { get; set; }
+    public virtual DbSet<TblCalendar> TblCalendars { get; set; }
+
+    public virtual DbSet<TblCalendarDetial> TblCalendarDetials { get; set; }
 
     public virtual DbSet<TblCart> TblCarts { get; set; }
 
     public virtual DbSet<TblCartDetail> TblCartDetails { get; set; }
 
     public virtual DbSet<TblCategory> TblCategories { get; set; }
+
+    public virtual DbSet<TblDistrict> TblDistricts { get; set; }
 
     public virtual DbSet<TblEmailOtpcode> TblEmailOtpcodes { get; set; }
 
@@ -69,16 +73,37 @@ public partial class GreenGardenDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TblCalender>(entity =>
+        modelBuilder.Entity<TblCalendar>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("tblCalender");
+            entity.ToTable("tblCalendar");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
             entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblCalendars)
+                .HasForeignKey(d => d.ServiceOrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblCalendar_tblServiceOrder");
+        });
+
+        modelBuilder.Entity<TblCalendarDetial>(entity =>
+        {
+            entity.ToTable("tblCalendarDetial");
+
+            entity.Property(e => e.Id)
+                .ValueGeneratedNever()
+                .HasColumnName("ID");
+            entity.Property(e => e.CalendarId).HasColumnName("CalendarID");
+            entity.Property(e => e.DateReport).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Calendar).WithMany(p => p.TblCalendarDetials)
+                .HasForeignKey(d => d.CalendarId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblCalendarDetial_tblCalendar");
         });
 
         modelBuilder.Entity<TblCart>(entity =>
@@ -132,6 +157,14 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Status).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<TblDistrict>(entity =>
+        {
+            entity.ToTable("tblDistrict");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DistrictName).HasMaxLength(200);
         });
 
         modelBuilder.Entity<TblEmailOtpcode>(entity =>
@@ -532,8 +565,10 @@ public partial class GreenGardenDbContext : DbContext
         {
             entity.ToTable("tblShippingFee");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.District).HasMaxLength(200);
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
         });
 
         modelBuilder.Entity<TblSize>(entity =>
@@ -597,6 +632,7 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.Address).HasMaxLength(500);
+            entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
             entity.Property(e => e.Favorite).HasMaxLength(500);
             entity.Property(e => e.FullName).HasMaxLength(200);
             entity.Property(e => e.Mail).HasMaxLength(200);
@@ -605,6 +641,10 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("('c98b8768-5827-4e5d-bf3c-3ba67b913d70')")
                 .HasColumnName("RoleID");
             entity.Property(e => e.UserName).HasMaxLength(200);
+
+            entity.HasOne(d => d.District).WithMany(p => p.TblUsers)
+                .HasForeignKey(d => d.DistrictId)
+                .HasConstraintName("FK_tblUser_tblDistrict");
 
             entity.HasOne(d => d.Role).WithMany(p => p.TblUsers)
                 .HasForeignKey(d => d.RoleId)
