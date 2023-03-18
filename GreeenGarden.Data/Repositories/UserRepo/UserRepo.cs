@@ -80,6 +80,10 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             {
                 user.Address = userUpdateModel.Address;
             }
+            if ((userUpdateModel.DistrictID != null) && !userUpdateModel.Address.Equals(user.DistrictId))
+            {
+                user.DistrictId = userUpdateModel.DistrictID;
+            }
             if (!string.IsNullOrEmpty(userUpdateModel.Phone) && !userUpdateModel.Phone.Equals(user.Phone))
             {
                 user.Phone = userUpdateModel.Phone;

@@ -105,6 +105,7 @@ namespace GreeenGarden.Business.Service.UserService
                     PasswordSalt = passwordSalt,
                     FullName = userInsertModel.FullName,
                     Address = userInsertModel.Address,
+                    DistrictId = userInsertModel.DistrictId,
                     Phone = userInsertModel.Phone,
                     Favorite = userInsertModel.Favorite,
                     Mail = userInsertModel.Mail,

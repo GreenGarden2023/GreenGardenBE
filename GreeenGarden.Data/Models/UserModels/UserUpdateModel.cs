@@ -6,6 +6,8 @@
 
         public string? Address { get; set; }
 
+        public int? DistrictID { get; set; }
+
         public string? Phone { get; set; }
 
         public string? Favorite { get; set; }
