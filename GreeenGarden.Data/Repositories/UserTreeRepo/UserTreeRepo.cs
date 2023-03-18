@@ -122,6 +122,33 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
 
         }
 
+        public async Task<bool> updateImgUrlByUTID(Guid utID, List<string> urlImg)
+        {
+            var result = await _context.TblImages.Where(x => x.UserTreeId.Equals(utID)).ToListAsync();
+            if (urlImg.Any() == false)
+            {
+                return true;
+            }
+
+            foreach (var i in result)
+            {
+                _context.TblImages.Remove(i);
+                await _context.SaveChangesAsync();
+            }
+            foreach (var u in urlImg)
+            {
+                var newImg = new TblImage()
+                {
+                    Id = Guid.NewGuid(),
+                    UserTreeId = utID,
+                    ImageUrl = u
+                };
+                _context.TblImages.Add(newImg);
+                await _context.SaveChangesAsync();
+            }
+            return true;
+        }
+
         public async Task<bool> UpdateUserTreeByCustomer(UserTreeUpdateModel model)
         {
             var ut = await _context.TblUserTrees.Where(x => x.Id.Equals(model.UserTreeID)).FirstOrDefaultAsync();

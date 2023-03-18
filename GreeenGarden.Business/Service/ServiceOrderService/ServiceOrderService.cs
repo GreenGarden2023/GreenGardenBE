@@ -123,7 +123,7 @@ namespace GreeenGarden.Business.Service.ServiceOrderService
                 // tính các khoàn tiền
                 TotalPrice = TotalPrice * dateRange;
                 Deposit = TotalPrice / 2;
-                TotalPrice += model.Incurred;
+                TotalPrice += model.Incurred + model.TransportFee;
 
                 // addTable
                 #region Region: UpdateServiceUserTree
@@ -165,6 +165,7 @@ namespace GreeenGarden.Business.Service.ServiceOrderService
                     ServiceId = model.ServiceId,
                     Incurred= model.Incurred,
                     Description= model.Description,
+                    TransportFee = model.TransportFee,
                     CreateDate = DateTime.Now,                   
                     UserId = tblUser.Id,
                 };
