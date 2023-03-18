@@ -16,6 +16,7 @@ namespace GreeenGarden.Data.Models.ServiceOrderModel
         public string? ServiceStartDate { get; set; }
         public string? ServiceEndDate { get; set; }
         public double Incurred { get; set; }
+        public double TransportFee { get; set; }
         public string? Description { get; set; }
         public List<ServiceUserTreeCreateModel> UserTrees { get; set; }
     }

@@ -18,6 +18,7 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
         //Img
         Task<bool> InsertImg(TblImage entities);
         Task<List<string>> getImgUrlByUTID(Guid UTID);
+        Task<bool> updateImgUrlByUTID(Guid utID, List<string> urlImg);
 
         //UserTree
         Task<ListUserTreeResModel> GetListUserTreeByCustomer(TblUser user);

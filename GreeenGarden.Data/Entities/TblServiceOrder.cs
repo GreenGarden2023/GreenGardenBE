@@ -7,7 +7,7 @@ public partial class TblServiceOrder
 {
     public Guid Id { get; set; }
 
-    public DateTime? CreateDate { get; set; }
+    public DateTime CreateDate { get; set; }
 
     public DateTime? ServiceStartDate { get; set; }
 
@@ -17,7 +17,7 @@ public partial class TblServiceOrder
 
     public double? TotalPrice { get; set; }
 
-    public string? Status { get; set; }
+    public string Status { get; set; } = null!;
 
     public int? RewardPointGain { get; set; }
 
@@ -25,7 +25,7 @@ public partial class TblServiceOrder
 
     public Guid TechnicianId { get; set; }
 
-    public Guid? ServiceId { get; set; }
+    public Guid ServiceId { get; set; }
 
     public double? Incurred { get; set; }
 
@@ -33,7 +33,9 @@ public partial class TblServiceOrder
 
     public Guid UserId { get; set; }
 
-    public virtual TblService? Service { get; set; }
+    public double? TransportFee { get; set; }
+
+    public virtual TblService Service { get; set; } = null!;
 
     public virtual ICollection<TblReport> TblReports { get; } = new List<TblReport>();
 
