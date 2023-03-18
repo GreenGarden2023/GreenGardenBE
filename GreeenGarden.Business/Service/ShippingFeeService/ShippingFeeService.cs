@@ -55,7 +55,49 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
             }
         }
 
-        public async Task<ResultModel> UpdateShippingFee(List<ShippingFeeInsertModel> shippingFeeInsertModels)
+        public async Task<ResultModel> UpdateAnShippingFee(ShippingFeeInsertModel shippingFeeInsertModels)
+        {
+            ResultModel result = new ResultModel();
+            try
+            {
+
+                ResultModel update = await _shippingFeeRepo.UpdateShippingFee(shippingFeeInsertModels);
+                if (update.IsSuccess)
+                {
+                    List<ShippingFeeResModel> resList = new List<ShippingFeeResModel>();
+
+                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetAShippingFee(shippingFeeInsertModels.ID);
+                        ShippingFeeResModel resModel = new ShippingFeeResModel
+                        {
+                            ID = tblShippingFee.Id,
+                            District = tblShippingFee.District,
+                            FeeAmount = tblShippingFee.FeeAmount
+                        };
+                    
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = resModel;
+                    result.Message = "Update shipping fee success";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Update shipping fee failed"; ;
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = e.ToString();
+                return result;
+            }
+        }
+
+    public async Task<ResultModel> UpdateShippingFee(List<ShippingFeeInsertModel> shippingFeeInsertModels)
         {
             ResultModel result = new ResultModel();
             try

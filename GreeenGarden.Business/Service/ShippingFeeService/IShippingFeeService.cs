@@ -9,6 +9,7 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
 	{
         Task<ResultModel> GetListShipingFee();
         Task<ResultModel> UpdateShippingFee(List<ShippingFeeInsertModel> shippingFeeInsertModels);
+        Task<ResultModel> UpdateAnShippingFee(ShippingFeeInsertModel shippingFeeInsertModels);
     }
 }
 

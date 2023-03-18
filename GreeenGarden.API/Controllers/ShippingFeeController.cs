@@ -22,11 +22,18 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _shippingFeeService.GetListShipingFee();
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
-        [HttpPost("update-shipping-fee")]
+        [HttpPost("update-shipping-fee-list")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> UpdateShippingFee(List<ShippingFeeInsertModel> shippingFeeInsertModels)
+        public async Task<IActionResult> UpdateShippingFeeList(List<ShippingFeeInsertModel> shippingFeeInsertModels)
         {
             Data.Models.ResultModel.ResultModel result = await _shippingFeeService.UpdateShippingFee(shippingFeeInsertModels);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("update-shipping-fee")]
+        [Authorize(Roles = "Staff, Manager, Admin")]
+        public async Task<IActionResult> UpdateShippingFee(ShippingFeeInsertModel shippingFeeInsertModels)
+        {
+            Data.Models.ResultModel.ResultModel result = await _shippingFeeService.UpdateAnShippingFee(shippingFeeInsertModels);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
