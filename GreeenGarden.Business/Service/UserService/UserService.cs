@@ -3,6 +3,7 @@ using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.ShippingFeeModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
@@ -91,15 +92,36 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 400,
                     Message = "Username Duplicated"
                 };
 
             }
+            bool shippingIDCheck = false;
+            for (int i = 1; i <= 19; i++)
+            {
+                if (userInsertModel.DistrictId == i)
+                {
+                    shippingIDCheck = true;
+                }
+            }
+            if (shippingIDCheck == false)
+            {
+                
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "District ID invalid.",
+                };
+            }
+
             try
             {
                 CreatePasswordHash(userInsertModel.Password, out byte[] passwordHash, out byte[] passwordSalt);
                 TblUser userModel = new()
                 {
+                    Id = Guid.NewGuid(),
                     UserName = userInsertModel.UserName,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
@@ -111,12 +133,22 @@ namespace GreeenGarden.Business.Service.UserService
                     Mail = userInsertModel.Mail,
                 };
                 _ = await _userRepo.Insert(userModel);
-                userModel.PasswordHash = null;
-                userModel.PasswordSalt = null;
+                TblReward tblReward = new TblReward
+                {
+                    CurrentPoint = 0,
+                    Total = 0,
+                    UserId = userModel.Id
+                };
+                _ = await _rewardRepo.Insert(tblReward);
+
+                UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userModel.UserName);
+                int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
+                userCurrResModel.CurrentPoint = rewardPoint;
                 return new ResultModel()
                 {
                     IsSuccess = true,
-                    Data = userModel,
+                    Code = 200,
+                    Data = userCurrResModel,
                     Message = "User Registered"
                 };
 
@@ -126,6 +158,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 400,
                     ResponseFailed = ex.ToString()
                 };
             }
@@ -230,6 +263,21 @@ namespace GreeenGarden.Business.Service.UserService
                     Message = "User not allowed."
                 };
             }
+            bool shippingIDCheck = false;
+            for (int i = 1; i <= 19; i++)
+            {
+                if (userUpdateModel.DistrictID == i)
+                {
+                    shippingIDCheck = true;
+                }
+            }
+            if (userUpdateModel.DistrictID != null && shippingIDCheck == false)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "District ID invalid.";
+                return result;
+            }
             try
             {
                 TblUser updateUser = await _userRepo.UpdateUser(userName, userUpdateModel);
@@ -242,9 +290,13 @@ namespace GreeenGarden.Business.Service.UserService
                 }
                 else
                 {
+                    UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userName);
+                    int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
+                    userCurrResModel.CurrentPoint = rewardPoint;
+
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = userUpdateModel;
+                    result.Data = userCurrResModel;
                     result.Message = "Update user successful.";
                     return result;
                 }
@@ -311,6 +363,7 @@ namespace GreeenGarden.Business.Service.UserService
                 if (!tblUser.UserName.Equals(Commons.MANAGER))
                 {
                     result.IsSuccess = false;
+                    result.Code = 200;
                     result.Message = "user role invalid!";
                     return result;
                 }

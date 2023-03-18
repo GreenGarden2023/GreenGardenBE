@@ -63,6 +63,21 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
         public async Task<ResultModel> UpdateAnShippingFee(ShippingFeeInsertModel shippingFeeInsertModels)
         {
             ResultModel result = new ResultModel();
+            bool shippingIDCheck = false;
+            for (int i = 1; i <= 19; i++)
+            {
+                if (shippingFeeInsertModels.DistrictID == i)
+                {
+                    shippingIDCheck = true;
+                }
+            }
+            if (shippingIDCheck == false)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "District ID invalid.";
+                return result;
+            }
             try
             {
 
@@ -102,7 +117,7 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
             }
         }
 
-    public async Task<ResultModel> UpdateShippingFee(List<ShippingFeeInsertModel> shippingFeeInsertModels)
+        public async Task<ResultModel> UpdateShippingFee(List<ShippingFeeInsertModel> shippingFeeInsertModels)
         {
             ResultModel result = new ResultModel();
             try
@@ -110,6 +125,21 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                 bool successAll = false;
                 foreach (ShippingFeeInsertModel model in shippingFeeInsertModels)
                 {
+                    bool shippingIDCheck = false;
+                    for (int i = 1; i <= 19; i++)
+                    {
+                        if (model.DistrictID == i)
+                        {
+                            shippingIDCheck = true;
+                        }
+                    }
+                    if (shippingIDCheck == false)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "District ID invalid.";
+                        return result;
+                    }
                     ResultModel update = await _shippingFeeRepo.UpdateShippingFee(model);
                     if (update.IsSuccess)
                     {

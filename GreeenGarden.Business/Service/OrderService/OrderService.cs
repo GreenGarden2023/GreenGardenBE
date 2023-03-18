@@ -271,7 +271,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Shipping ID invalid.";
+                    result.Message = "District ID invalid.";
                     return result;
                 }
 
@@ -507,7 +507,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Shipping ID invalid.";
+                    result.Message = "District ID invalid.";
                     return result;
                 }
 
@@ -1366,7 +1366,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Shipping ID invalid.";
+                    result.Message = "District ID invalid.";
                     return result;
                 }
 
@@ -1479,7 +1479,7 @@ namespace GreeenGarden.Business.Service.OrderService
 				{
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Shipping ID invalid.";
+                    result.Message = "District ID invalid.";
                     return result;
                 }
 				foreach (OrderDetailModel item in saleOrderModel.ItemList)

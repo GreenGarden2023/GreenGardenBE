@@ -9,9 +9,7 @@ public partial class TblReward
 
     public int? CurrentPoint { get; set; }
 
-    public double? Total { get; set; }
-
-    public string? Status { get; set; }
+    public int? Total { get; set; }
 
     public Guid? UserId { get; set; }
 
