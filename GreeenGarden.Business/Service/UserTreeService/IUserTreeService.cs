@@ -10,7 +10,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
 {
     public interface IUserTreeService
     {
-        Task<ResultModel> createUserTree(string token, List<UserTreeCreateModel> model);
+        Task<ResultModel> createUserTree(string token, UserTreeCreateModel model);
         Task<ResultModel> getListUserTree(string token);
         Task<ResultModel> getDetailUserTree(string token, Guid userTreeID);
         Task<ResultModel> updateUserTree(string token, UserTreeUpdateModel model);

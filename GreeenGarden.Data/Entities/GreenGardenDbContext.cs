@@ -505,6 +505,7 @@ public partial class GreenGardenDbContext : DbContext
 
             entity.HasOne(d => d.Service).WithMany(p => p.TblServiceOrders)
                 .HasForeignKey(d => d.ServiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblServiceOrder_tblService");
         });
 

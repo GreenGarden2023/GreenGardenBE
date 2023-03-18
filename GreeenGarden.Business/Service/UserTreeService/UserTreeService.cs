@@ -54,42 +54,40 @@ namespace GreeenGarden.Business.Service.UserTreeService
             return result;
         }
 
-        public async Task<ResultModel> createUserTree(string token, List<UserTreeCreateModel> model)
+        public async Task<ResultModel> createUserTree(string token, UserTreeCreateModel model)
         {
             var result = new ResultModel();
             try
             {
                 var tblUser = await _utRepo.GetTblUserByUsername(_decodeToken.Decode(token, "username"));
-                foreach (var modelItem in model)
+                var ut = new TblUserTree()
                 {
-                    var ut = new TblUserTree()
+                    Id = Guid.NewGuid(),
+                    TreeName = model.TreeName,
+                    UserId = tblUser.Id,
+                    Description = model.Description,
+                    Quantity = model.Quantity,
+                    Status = Status.ACTIVE
+                };
+                await _utRepo.Insert(ut);
+
+                foreach (var i in model.ImageUrl)
+                {
+                    var img = new TblImage()
                     {
                         Id = Guid.NewGuid(),
-                        TreeName = modelItem.TreeName,
-                        UserId = tblUser.Id,
-                        Description = modelItem.Description,
-                        Quantity = modelItem.Quantity,
-                        Status = Status.ACTIVE
+                        UserTreeId = ut.Id,
+                        ImageUrl = i
                     };
-                    await _utRepo.Insert(ut);
-
-                    foreach (var i in modelItem.ImageUrl)
-                    {
-                        var img = new TblImage()
-                        {
-                            Id = Guid.NewGuid(),
-                            UserTreeId = ut.Id,
-                            ImageUrl = i
-                        };
-                        await _utRepo.InsertImg(img);
-                    }
-
+                    await _utRepo.InsertImg(img);
                 }
-                
+
+
+
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Data = await _utRepo.GetDetailUserTreeByCustomer(ut.Id);
             }
             catch (Exception e)
             {
@@ -161,13 +159,20 @@ namespace GreeenGarden.Business.Service.UserTreeService
             {
                 var tblUser = await _utRepo.GetTblUserByUsername(_decodeToken.Decode(token, "username"));
                 var detailUt = await _utRepo.GetDetailUserTreeByCustomer(model.UserTreeID);
+                await _utRepo.UpdateUserTreeByCustomer(model);
+                if (model.ImageUrl.Count != 0)
+                {
+                    await _utRepo.updateImgUrlByUTID(model.UserTreeID, model.ImageUrl);
+                }
+
                 if (detailUt.User.Id != tblUser.Id)
                 {
                     result.IsSuccess = false;
                     result.Data = "Cây này k thuộc sở hữu của user";
                     return result;
                 }
-                result.IsSuccess = await _utRepo.UpdateUserTreeByCustomer(model);
+                result.IsSuccess = true;
+                result.Data = await _utRepo.GetDetailUserTreeByCustomer(model.UserTreeID);
             }
             catch (Exception e)
             {
