@@ -71,7 +71,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
                 };
                 await _utRepo.Insert(ut);
 
-                foreach (var i in model.ImageUrl)
+                foreach (var i in model.imgUrl)
                 {
                     var img = new TblImage()
                     {
@@ -160,9 +160,9 @@ namespace GreeenGarden.Business.Service.UserTreeService
                 var tblUser = await _utRepo.GetTblUserByUsername(_decodeToken.Decode(token, "username"));
                 var detailUt = await _utRepo.GetDetailUserTreeByCustomer(model.UserTreeID);
                 await _utRepo.UpdateUserTreeByCustomer(model);
-                if (model.ImageUrl.Count != 0)
+                if (model.imgUrl.Count != 0)
                 {
-                    await _utRepo.updateImgUrlByUTID(model.UserTreeID, model.ImageUrl);
+                    await _utRepo.updateImgUrlByUTID(model.UserTreeID, model.imgUrl);
                 }
 
                 if (detailUt.User.Id != tblUser.Id)
