@@ -19,5 +19,6 @@ namespace GreeenGarden.Business.Service.ServiceOrderService
         Task<ResultModel> getDetailServiceOrder(string token, Guid SerOrderID);
         Task<ResultModel> getTechnician(string token);
         Task<ResultModel> cleanServiceOrder(string token);
+        Task<ResultModel> getListServiceOrderByTechnician(string token);
     }
 }

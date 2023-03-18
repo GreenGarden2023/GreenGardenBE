@@ -40,7 +40,9 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
         Task<ListServiceOrderResModel> GetListServiceOrder(TblUser user);
         Task<List<ServiceOrderResManagerModel>> GetListServiceOrderByManager();
         Task<DetailServiceOrderResModel> GetDetailServiceOrder(Guid SerOrderID);
+        Task<List<DetailServiceOrderResModel>> GetListServiceOrderByTechnician(Guid techID);
         Task<bool> removeAll(Guid userID);
+        Task<bool> changeStatusServiceOrder(ServiceOrderChangeStatusModel model);
 
 
     }

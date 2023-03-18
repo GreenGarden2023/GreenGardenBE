@@ -32,11 +32,7 @@ namespace GreeenGarden.Business.Service.ServiceOrderService
             var result = new ResultModel();
             try
             {
-
-
-                result.Code = 200;
-                result.IsSuccess = true;
-                result.Data = "";
+                result.IsSuccess = await _serOrRepo.changeStatusServiceOrder(model);
             }
             catch (Exception e)
             {
@@ -416,6 +412,37 @@ namespace GreeenGarden.Business.Service.ServiceOrderService
                 }
                 var res = await _serOrRepo.GetListServiceOrderByManager();
 
+                result.IsSuccess = true;
+                result.Data = res;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> getListServiceOrderByTechnician(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+                var tblUser = await _serOrRepo.getTblUserByUsername(_decodeToken.Decode(token, "username"));
+
+                var res = await _serOrRepo.GetListServiceOrderByTechnician(tblUser.Id);
+
+                result.Code = 200;
                 result.IsSuccess = true;
                 result.Data = res;
             }

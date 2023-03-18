@@ -35,6 +35,7 @@ namespace GreeenGarden.Data.Utilities
             CreateMap<TblService, ServiceByManagerResModel>();
 
             CreateMap<TblUserTree, UserTreeResModel>();
+            
         }
     }
 }
