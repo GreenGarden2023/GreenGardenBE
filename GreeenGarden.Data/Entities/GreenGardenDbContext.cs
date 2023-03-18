@@ -11,6 +11,8 @@ public partial class GreenGardenDbContext : DbContext
     {
     }
 
+    public virtual DbSet<TblCalender> TblCalenders { get; set; }
+
     public virtual DbSet<TblCart> TblCarts { get; set; }
 
     public virtual DbSet<TblCartDetail> TblCartDetails { get; set; }
@@ -55,6 +57,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblServiceUserTree> TblServiceUserTrees { get; set; }
 
+    public virtual DbSet<TblShippingFee> TblShippingFees { get; set; }
+
     public virtual DbSet<TblSize> TblSizes { get; set; }
 
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
@@ -65,6 +69,18 @@ public partial class GreenGardenDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<TblCalender>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToTable("tblCalender");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+        });
+
         modelBuilder.Entity<TblCart>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_tblCarts");
@@ -509,6 +525,14 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.UserTree).WithMany(p => p.TblServiceUserTrees)
                 .HasForeignKey(d => d.UserTreeId)
                 .HasConstraintName("FK_tblServiceUserTree_tblUserTree");
+        });
+
+        modelBuilder.Entity<TblShippingFee>(entity =>
+        {
+            entity.ToTable("tblShippingFee");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.District).HasMaxLength(200);
         });
 
         modelBuilder.Entity<TblSize>(entity =>

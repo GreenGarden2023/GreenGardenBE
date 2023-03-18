@@ -19,6 +19,8 @@ public partial class TblProductItemDetail
 
     public string Status { get; set; } = null!;
 
+    public double? TransportFee { get; set; }
+
     public virtual TblProductItem ProductItem { get; set; } = null!;
 
     public virtual TblSize Size { get; set; } = null!;
