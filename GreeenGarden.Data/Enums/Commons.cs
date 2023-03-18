@@ -7,6 +7,7 @@
         public static readonly string MANAGER = "Manager";
         public static readonly string STAFF = "Staff";
         public static readonly string DELIVERER = "Deliverer";
+        public static readonly string TECHNICIAN = "Technician";
     }
 }
 

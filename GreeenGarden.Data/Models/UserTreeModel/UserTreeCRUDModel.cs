@@ -14,7 +14,7 @@ namespace GreeenGarden.Data.Models.UserTreeModel
         public string TreeName { get; set; }
         public string Description { get; set; }
         public int Quantity { get; set; }
-        public List<string> ImageUrl { get; set; }
+        public List<string> imgUrl { get; set; }
     }
     public class UserTreeUpdateModel
     {
@@ -22,7 +22,7 @@ namespace GreeenGarden.Data.Models.UserTreeModel
         public string TreeName { get; set; }
         public string Description { get; set; }
         public int Quantity { get; set; }
-        public List<string> ImageUrl { get; set; }
+        public List<string> imgUrl { get; set; }
     }
     public class UserTreeChangeStatusModel
     {

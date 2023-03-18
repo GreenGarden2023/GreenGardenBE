@@ -22,6 +22,14 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
             _context = context;
         }
 
+        public async Task<bool> changeStatusServiceOrder(ServiceOrderChangeStatusModel model)
+        {
+           var result = await _context.TblServiceOrders.Where(x => x.Id.Equals(model.ServiceOrderId)).FirstOrDefaultAsync();
+            result.Status = model.Status;
+            return true;
+
+        }
+
         public async Task<bool> createServiceOrder(TblServiceOrder entity)
         {
             await _context.AddAsync(entity);
@@ -132,6 +140,49 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
             }
             return result;
 
+        }
+
+        public async Task<List<DetailServiceOrderResModel>> GetListServiceOrderByTechnician(Guid techID)
+        {
+            var listResult = new List<DetailServiceOrderResModel>();
+
+            var listSO = await _context.TblServiceOrders.Where(x => x.TechnicianId.Equals(techID)).ToListAsync();
+            foreach (var so in listSO)
+            {
+                var result = new DetailServiceOrderResModel();
+                var user = await _context.TblUsers.Where(x => x.Id.Equals(so.UserId)).FirstOrDefaultAsync();
+
+                result.User = _mapper.Map<UserResModel>(user);
+                var soRecord = new ServiceOrderResModel();
+                soRecord = _mapper.Map<ServiceOrderResModel>(so);
+
+                var serviceRecord = new ServiceResModel();
+                var s = await _context.TblServices.Where(x => x.Id.Equals(so.ServiceId)).FirstOrDefaultAsync();
+                serviceRecord = _mapper.Map<ServiceResModel>(s);
+                serviceRecord.ServiceUserTrees = new List<ServiceUserTreeRespModel>();
+
+                var listSut = await _context.TblServiceUserTrees.Where(x => x.ServiceId.Equals(s.Id)).ToListAsync();
+                foreach (var sut in listSut)
+                {
+                    var sutRecord = new ServiceUserTreeRespModel();
+                    sutRecord = _mapper.Map<ServiceUserTreeRespModel>(sut);
+
+                    var ut = await _context.TblUserTrees.Where(x => x.Id.Equals(sut.UserTreeId)).FirstOrDefaultAsync();
+                    var utRecord = new UserTreeResModel();
+                    utRecord = _mapper.Map<UserTreeResModel>(ut);
+                    utRecord.ImageUrl = await getImgUrlByUserTreeID(ut.Id);
+                    sutRecord.UserTree = utRecord;
+
+                    serviceRecord.ServiceUserTrees.Add(sutRecord);
+                }
+                soRecord.Service = serviceRecord;
+
+                result.ServiceOrder = soRecord;
+                listResult.Add(result);
+            }
+
+
+            return listResult;
         }
 
         public async Task<List<TblServiceUserTree>> GetListTblServiceUserTreeByServiceID(Guid serviceID)
