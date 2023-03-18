@@ -41,6 +41,8 @@ using AutoMapper;
 using GreeenGarden.Data.Utilities;
 using GreeenGarden.Business.Service.ServiceOrderService;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
+using GreeenGarden.Data.Repositories.ShippingFeeRepo;
+using GreeenGarden.Business.Service.ShippingFeeService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Database
@@ -63,8 +65,10 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IUserTreeService, UserTreeService>();
 builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
+builder.Services.AddScoped<IShippingFeeService, ShippingFeeService>();
 //
 builder.Services.AddTransient<IUserRepo, UserRepo>();
+builder.Services.AddTransient<IShippingFeeRepo, ShippingFeeRepo>();
 builder.Services.AddTransient<IRentOrderRepo, RentOrderRepo>();
 builder.Services.AddTransient<IRentOrderGroupRepo, RentOrderGroupRepo>();
 builder.Services.AddTransient<IRentOrderDetailRepo, RentOrderDetailRepo>();
