@@ -10,6 +10,8 @@
 
         public string? Address { get; set; }
 
+        public int? DistrictID { get; set; }
+
         public string? Phone { get; set; }
 
         public string? Favorite { get; set; }
@@ -18,9 +20,14 @@
 
         public string? RoleName { get; set; }
 
-        public string? Token { get; set; }
 
         public int? CurrentPoint { get; set; }
+    }
+    public class LoginResposneModel
+    {
+        public UserCurrResModel User { get; set; }
+        public string? Token { get; set; }
+        
     }
 }
 

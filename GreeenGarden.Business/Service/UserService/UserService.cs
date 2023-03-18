@@ -38,6 +38,7 @@ namespace GreeenGarden.Business.Service.UserService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 400,
                         Message = "User not found"
                     };
 
@@ -47,18 +48,26 @@ namespace GreeenGarden.Business.Service.UserService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 400,
                         Message = "Wrong password"
                     };
                 }
 
                 UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userLoginReqModel.Username);
-                userCurrResModel.Token = CreateToken(userModel);
                 int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
                 userCurrResModel.CurrentPoint = rewardPoint;
+                string token = CreateToken(userModel);
+
+                LoginResposneModel loginResposneModel = new LoginResposneModel
+                {
+                    Token = token,
+                    User = userCurrResModel,
+                };
                 return new ResultModel()
                 {
                     IsSuccess = true,
-                    Data = userCurrResModel,
+                    Code = 200,
+                    Data = loginResposneModel,
                     Message = "Login Successful"
 
                 };
@@ -68,6 +77,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 400,
                     ResponseFailed = ex.ToString()
                 };
             }
@@ -172,6 +182,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 400,
                     Message = "User not allowed"
                 };
             }
@@ -184,6 +195,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = true,
+                    Code = 200,
                     Data = userCurrResModel,
                     Message = "Get user successful"
                 };
@@ -193,6 +205,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 400,
                     ResponseFailed = ex.ToString()
                 };
             }

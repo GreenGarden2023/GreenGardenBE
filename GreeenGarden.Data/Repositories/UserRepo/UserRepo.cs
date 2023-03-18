@@ -48,6 +48,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 UserName = x.u.UserName,
                 FullName = x.u.FullName,
                 Address = x.u.Address,
+                DistrictID = x.u.DistrictId,
                 Phone = x.u.Phone,
                 Favorite = x.u.Favorite,
                 Mail = x.u.Mail,
