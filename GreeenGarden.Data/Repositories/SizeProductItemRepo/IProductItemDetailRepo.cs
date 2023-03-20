@@ -1,8 +1,8 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 
-namespace GreeenGarden.Data.Repositories.ProductItemDetailRepo
+namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
     public interface IProductItemDetailRepo : IRepository<TblProductItemDetail>
     {

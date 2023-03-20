@@ -13,7 +13,7 @@ using GreeenGarden.Data.Repositories.CategoryRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ProductRepo;
-using GreeenGarden.Data.Repositories.ProductItemDetailRepo;
+using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using System.Security.Claims;
 
@@ -43,7 +43,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
 
         public async Task<ResultModel> ChangeStatusProductItemDetial(string token, ProductItemDetailUpdateStatusModel model)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -136,7 +136,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Type = productItemModel.Type,
                         ImageURL = prodItemImgURL,
                     };
-                    
+
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = responseProdItem;
@@ -214,7 +214,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Quantity = productItemDetailModel.Quantity,
                     Status = productItemDetailModel.Status,
                 };
-                
+
                 Guid insertSizeProdItem = await _productItemDetailRepo.Insert(tblProductItemDetail);
                 if (insertSizeProdItem == Guid.Empty)
                 {
@@ -238,17 +238,17 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 TblProductItem? prodItem = await _proItemRepo.Get(productItemDetailModel.ProductItemID);
                 if (prodItem != null)
                 {
-                ProductItemDetailModel resModel = new ProductItemDetailModel
-                {
-                    Id = tblProductItemDetail.Id,
-                    SizeId = tblProductItemDetail.SizeId,
-                    ProductItemID = tblProductItemDetail.ProductItemId,
-                    RentPrice = tblProductItemDetail.RentPrice,
-                    SalePrice = tblProductItemDetail.SalePrice,
-                    Quantity = tblProductItemDetail.Quantity,
-                    Status = tblProductItemDetail.Status,
-                    ImagesUrls = productItemDetailModel.ImagesUrls
-                };
+                    ProductItemDetailModel resModel = new()
+                    {
+                        Id = tblProductItemDetail.Id,
+                        SizeId = tblProductItemDetail.SizeId,
+                        ProductItemID = tblProductItemDetail.ProductItemId,
+                        RentPrice = tblProductItemDetail.RentPrice,
+                        SalePrice = tblProductItemDetail.SalePrice,
+                        Quantity = tblProductItemDetail.Quantity,
+                        Status = tblProductItemDetail.Status,
+                        ImagesUrls = productItemDetailModel.ImagesUrls
+                    };
                     result.Message = "Create Product Item Detail successful.";
                     result.IsSuccess = true;
                     result.Data = resModel;

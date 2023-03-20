@@ -2,7 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CategoryModel;
 using GreeenGarden.Data.Models.PaginationModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.CategoryRepo
@@ -83,10 +83,10 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
 
         public async Task<bool> updateStatus(CategoryUpdateStatusModel model)
         {
-            var result = await _context.TblCategories.Where(x=>x.Id.Equals(model.CategoryID)).FirstOrDefaultAsync();
+            TblCategory? result = await _context.TblCategories.Where(x => x.Id.Equals(model.CategoryID)).FirstOrDefaultAsync();
             result.Status = model.status;
-            _context.TblCategories.Update(result);
-            await _context.SaveChangesAsync();
+            _ = _context.TblCategories.Update(result);
+            _ = await _context.SaveChangesAsync();
             return true;
         }
     }

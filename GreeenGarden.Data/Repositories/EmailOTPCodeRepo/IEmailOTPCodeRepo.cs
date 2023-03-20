@@ -1,5 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.EmailOTPCodeRepo
 {

@@ -1,15 +1,8 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.UserTreeModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Repositories.UserTreeRepo
 {
@@ -35,7 +28,7 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
                         _ = await _context.SaveChangesAsync();
                         return true;
                     }
-                    else if(userTreeStatusModel.Status.Trim().ToLower().Equals("disable"))
+                    else if (userTreeStatusModel.Status.Trim().ToLower().Equals("disable"))
                     {
                         tblUserTree.Status = TreeStatus.DISABLE;
                         _ = _context.Update(tblUserTree);
@@ -61,14 +54,7 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
         public async Task<List<TblUserTree>> GetUserTrees(Guid userID)
         {
             List<TblUserTree> tblUserTrees = await _context.TblUserTrees.Where(x => x.UserId.Equals(userID)).ToListAsync();
-            if (tblUserTrees.Any())
-            {
-                return tblUserTrees;
-            }
-            else
-            {
-                return null;
-            }
+            return tblUserTrees.Any() ? tblUserTrees : null;
         }
 
         public async Task<bool> UpdateUserTree(UserTreeUpdateModel userTreeUpdateModel)

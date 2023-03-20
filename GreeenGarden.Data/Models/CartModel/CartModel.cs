@@ -1,6 +1,4 @@
-﻿using GreeenGarden.Data.Entities;
-
-namespace GreeenGarden.Data.Models.CartModel
+﻿namespace GreeenGarden.Data.Models.CartModel
 {
     public class CartModel
     {
@@ -23,9 +21,9 @@ namespace GreeenGarden.Data.Models.CartModel
     public class productItem
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } 
+        public string Name { get; set; }
         public string? Description { get; set; }
-        public string Type { get; set; } 
+        public string Type { get; set; }
         public string? Content { get; set; }
     }
 
@@ -53,7 +51,7 @@ namespace GreeenGarden.Data.Models.CartModel
     public class AddToCartModel
     {
         public List<ItemResponse> rentItems { get; set; }
-        public List<ItemResponse> saleItems { get; set; } 
+        public List<ItemResponse> saleItems { get; set; }
     }
     public class ItemResponse
     {

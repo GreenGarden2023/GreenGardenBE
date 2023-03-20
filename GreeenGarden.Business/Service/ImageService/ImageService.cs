@@ -268,13 +268,13 @@ namespace GreeenGarden.Business.Service.ImageService
                 BlobContainerClient blobContainerClient = new(SecretService.SecretService.GetIMGConn(), "greengardensimages");
                 BlobClient sourceBlobClient = blobContainerClient.GetBlobClient(sourceBlobName);
 
-                MemoryStream memoryStream = new MemoryStream();
-                await sourceBlobClient.DownloadToAsync(memoryStream);
+                MemoryStream memoryStream = new();
+                _ = await sourceBlobClient.DownloadToAsync(memoryStream);
 
-                memoryStream.Seek(0, SeekOrigin.Begin);
+                _ = memoryStream.Seek(0, SeekOrigin.Begin);
 
                 BlobClient destinationBlobClient = blobContainerClient.GetBlobClient(destinationBlobName);
-                await destinationBlobClient.UploadAsync(memoryStream);
+                _ = await destinationBlobClient.UploadAsync(memoryStream);
 
                 // Close the memory stream
                 memoryStream.Close();

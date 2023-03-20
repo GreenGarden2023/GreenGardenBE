@@ -1,11 +1,10 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.OrderModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
 {
-	public interface ISaleOrderDetailRepo : IRepository<TblSaleOrderDetail>
+    public interface ISaleOrderDetailRepo : IRepository<TblSaleOrderDetail>
     {
         Task<List<SaleOrderDetailResModel>> GetSaleOrderDetails(Guid saleOrderId);
     }

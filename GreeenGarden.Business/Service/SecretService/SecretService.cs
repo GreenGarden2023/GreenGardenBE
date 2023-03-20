@@ -156,7 +156,7 @@ namespace GreeenGarden.Business.Service.SecretService
         }
         public static EmailSecrets GetEmailCred()
         {
-            EmailSecrets emailSecrets = new EmailSecrets();
+            EmailSecrets emailSecrets = new();
             try
             {
                 SecretClientOptions options = new()
@@ -185,7 +185,7 @@ namespace GreeenGarden.Business.Service.SecretService
             return emailSecrets;
         }
     }
-    public  class EmailSecrets
+    public class EmailSecrets
     {
         public string EmailAddress { get; set; }
         public string EmailPassword { get; set; }

@@ -1,17 +1,15 @@
-﻿using System;
-using GreeenGarden.Business.Utilities.TokenService;
-using System.Security.Claims;
+﻿using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserTreeModel;
-using GreeenGarden.Data.Repositories.Repository;
-using GreeenGarden.Data.Repositories.UserTreeRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.UserTreeRepo;
+using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.UserTreeService
 {
-	public class UserTreeService : IUserTreeService
+    public class UserTreeService : IUserTreeService
     {
         private readonly DecodeToken _decodeToken;
         private readonly IUserTreeRepo _userTreeRepo;
@@ -48,11 +46,11 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     Message = "User not allowed"
                 };
             }
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userID = _decodeToken.Decode(token, "userid");
-                TblUserTree tblUserTree = new TblUserTree
+                TblUserTree tblUserTree = new()
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.Parse(userID),
@@ -62,12 +60,12 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     Status = TreeStatus.ACTIVE
                 };
                 Guid insert = await _userTreeRepo.Insert(tblUserTree);
-                
-                if(insert != Guid.Empty)
+
+                if (insert != Guid.Empty)
                 {
                     foreach (string url in userTreeInsertModel.ImgUrls)
                     {
-                        TblImage tblImage = new TblImage
+                        TblImage tblImage = new()
                         {
                             UserTreeId = insert,
                             ImageUrl = url
@@ -77,7 +75,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
 
                     TblUserTree res = await _userTreeRepo.Get(insert);
                     List<string> imgs = await _imageRepo.GetImgUrlUserTree(insert);
-                    UserTreeResModel userTreeResModel = new UserTreeResModel
+                    UserTreeResModel userTreeResModel = new()
                     {
                         Id = res.Id,
                         TreeName = res.TreeName,
@@ -136,18 +134,18 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     Message = "User not allowed"
                 };
             }
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userID = _decodeToken.Decode(token, "userid");
                 List<TblUserTree> tblUserTree = await _userTreeRepo.GetUserTrees(Guid.Parse(userID));
-                if (tblUserTree!=null)
+                if (tblUserTree != null)
                 {
-                    List<UserTreeResModel> resList = new List<UserTreeResModel>();
+                    List<UserTreeResModel> resList = new();
                     foreach (TblUserTree tree in tblUserTree)
                     {
                         List<string> imgs = await _imageRepo.GetImgUrlUserTree(tree.Id);
-                        UserTreeResModel userTreeResModel = new UserTreeResModel
+                        UserTreeResModel userTreeResModel = new()
                         {
                             Id = tree.Id,
                             TreeName = tree.TreeName,
@@ -207,7 +205,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     Message = "User not allowed"
                 };
             }
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 TblUserTree tblUserTree = await _userTreeRepo.Get(userTreeUpdateModel.Id);
@@ -222,7 +220,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     {
                         TblUserTree tblUserTreeRes = await _userTreeRepo.Get(userTreeUpdateModel.Id);
                         List<string> imgs = await _imageRepo.GetImgUrlUserTree(tblUserTreeRes.Id);
-                        UserTreeResModel userTreeResModel = new UserTreeResModel
+                        UserTreeResModel userTreeResModel = new()
                         {
                             Id = tblUserTreeRes.Id,
                             TreeName = tblUserTreeRes.TreeName,
@@ -288,7 +286,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     Message = "User not allowed"
                 };
             }
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 TblUserTree tblUserTree = await _userTreeRepo.Get(userTreeStatusModel.Id);
@@ -299,7 +297,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     {
                         TblUserTree tblUserTreeRes = await _userTreeRepo.Get(userTreeStatusModel.Id);
                         List<string> imgs = await _imageRepo.GetImgUrlUserTree(tblUserTreeRes.Id);
-                        UserTreeResModel userTreeResModel = new UserTreeResModel
+                        UserTreeResModel userTreeResModel = new()
                         {
                             Id = tblUserTreeRes.Id,
                             TreeName = tblUserTreeRes.TreeName,

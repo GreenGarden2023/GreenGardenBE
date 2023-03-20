@@ -1,14 +1,12 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.SizeModel;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
-using GreeenGarden.Data.Repositories.Repository;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace GreeenGarden.Data.Repositories.ProductItemDetailRepo
+namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 {
     public class ProductItemDetailRepo : Repository<TblProductItemDetail>, IProductItemDetailRepo
     {
@@ -109,19 +107,19 @@ namespace GreeenGarden.Data.Repositories.ProductItemDetailRepo
                 {
                     return false;
                 }
-                
-                    productItemDetail.SizeId = productItemDetailModel.SizeId;
-                
-                    productItemDetail.ProductItemId = productItemDetailModel.ProductItemID;
-                
-                    productItemDetail.Status = productItemDetailModel.Status;
-                
-                    productItemDetail.RentPrice = productItemDetailModel.RentPrice;
-                
-                    productItemDetail.SalePrice = productItemDetailModel.SalePrice;
-                
-                    productItemDetail.Quantity = productItemDetailModel.Quantity;
-                
+
+                productItemDetail.SizeId = productItemDetailModel.SizeId;
+
+                productItemDetail.ProductItemId = productItemDetailModel.ProductItemID;
+
+                productItemDetail.Status = productItemDetailModel.Status;
+
+                productItemDetail.RentPrice = productItemDetailModel.RentPrice;
+
+                productItemDetail.SalePrice = productItemDetailModel.SalePrice;
+
+                productItemDetail.Quantity = productItemDetailModel.Quantity;
+
                 _ = _context.Update(productItemDetail);
                 _ = await _context.SaveChangesAsync();
                 return true;

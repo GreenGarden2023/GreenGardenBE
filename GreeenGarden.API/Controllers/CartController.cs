@@ -19,28 +19,25 @@ namespace GreeenGarden.API.Controllers
         [HttpGet("get-cart")]
         public async Task<IActionResult> GetCart()
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.GetCart(token);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.GetCart(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
         [HttpPost("add-to-cart")]
         public async Task<IActionResult> AddToCart([FromBody] AddToCartModel model)
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.AddToCart(token, model);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.AddToCart(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
         [HttpDelete("clean-cart")]
         public async Task<IActionResult> CleanCart()
         {
-            string token = (Request.Headers)["Authorization"].ToString().Split(" ")[1];
-            var result = await _service.CleanCart(token);
-            if (result.IsSuccess) return Ok(result);
-            return BadRequest(result);
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.CleanCart(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }

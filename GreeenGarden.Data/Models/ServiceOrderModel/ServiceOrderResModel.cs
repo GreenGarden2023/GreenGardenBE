@@ -1,16 +1,10 @@
-﻿using GreeenGarden.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GreeenGarden.Data.Models.ServiceModel;
+﻿using GreeenGarden.Data.Models.ServiceModel;
 
 namespace GreeenGarden.Data.Models.ServiceOrderModel
 {
     public class DetailServiceOrderResModel
     {
-        public ServiceOrderResModel ServiceOrder { get; set; }  
+        public ServiceOrderResModel ServiceOrder { get; set; }
         public UserResModel User { get; set; }
     }
     public class ServiceUserTreeResModel

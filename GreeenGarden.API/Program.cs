@@ -1,3 +1,4 @@
+using AutoMapper;
 using GreeenGarden.Business.Service.CartService;
 using GreeenGarden.Business.Service.CategogyService;
 using GreeenGarden.Business.Service.EMailService;
@@ -7,11 +8,14 @@ using GreeenGarden.Business.Service.PaymentService;
 using GreeenGarden.Business.Service.ProductItemService;
 using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Business.Service.SecretService;
+using GreeenGarden.Business.Service.ShippingFeeService;
 using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Business.Service.UserService;
+using GreeenGarden.Business.Service.UserTreeService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.CategoryRepo;
+using GreeenGarden.Data.Repositories.DistrictRepo;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
@@ -22,12 +26,15 @@ using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
-using GreeenGarden.Data.Repositories.ProductItemDetailRepo;
+using GreeenGarden.Data.Repositories.ShippingFeeRepo;
+using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
+using GreeenGarden.Data.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -35,13 +42,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using AutoMapper;
-using GreeenGarden.Data.Utilities;
-using GreeenGarden.Data.Repositories.ServiceOrderRepo;
-using GreeenGarden.Data.Repositories.ShippingFeeRepo;
-using GreeenGarden.Business.Service.ShippingFeeService;
-using GreeenGarden.Data.Repositories.DistrictRepo;
-using GreeenGarden.Business.Service.UserTreeService;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Database
@@ -138,7 +138,7 @@ builder.Services.AddApiVersioning(opt =>
 });
 
 //Mapper
-var mappingConfig = new MapperConfiguration(mc =>
+MapperConfiguration mappingConfig = new(mc =>
 {
     mc.AddProfile(new MappingProfile());
 });

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.ServiceOrderModel
+﻿namespace GreeenGarden.Data.Models.ServiceOrderModel
 {
     public class ServiceOrderCRUDModel
     {
@@ -38,7 +32,7 @@ namespace GreeenGarden.Data.Models.ServiceOrderModel
     }
     public class ServiceOrderChangeStatusModel
     {
-        public Guid ServiceOrderId { get; set;}
+        public Guid ServiceOrderId { get; set; }
         public string Status { get; set; }
     }
 }

@@ -1,12 +1,4 @@
-﻿using GreeenGarden.Data.Models.CartModel;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.ServiceModel
+﻿namespace GreeenGarden.Data.Models.ServiceModel
 {
     public class ServiceCRUDModel
     {

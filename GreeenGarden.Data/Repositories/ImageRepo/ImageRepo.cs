@@ -1,6 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Models.CartModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ImageRepo

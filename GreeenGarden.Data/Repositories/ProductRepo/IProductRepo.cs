@@ -2,7 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.ProductRepo
 {

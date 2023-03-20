@@ -1,6 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CartModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.CartRepo
@@ -26,9 +26,9 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         public async Task<productItemDetail> GetProductItemDetail(Guid? productItemDetailID)
         {
-            var proItemDetail = await _context.TblProductItemDetails.Where(x => x.Id.Equals(productItemDetailID)).FirstOrDefaultAsync();
-            var size = await _context.TblSizes.Where(x=>x.Id.Equals(proItemDetail.SizeId)).FirstOrDefaultAsync();
-            var sizeTemp = new size()
+            TblProductItemDetail? proItemDetail = await _context.TblProductItemDetails.Where(x => x.Id.Equals(productItemDetailID)).FirstOrDefaultAsync();
+            TblSize? size = await _context.TblSizes.Where(x => x.Id.Equals(proItemDetail.SizeId)).FirstOrDefaultAsync();
+            size sizeTemp = new()
             {
                 id = size.Id,
                 sizeName = size.Name,
@@ -50,8 +50,8 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         public async Task<TblCartDetail> AddProductItemToCart(TblCartDetail model)
         {
-            await _context.AddAsync(model);
-            await _context.SaveChangesAsync();
+            _ = await _context.AddAsync(model);
+            _ = await _context.SaveChangesAsync();
             return model;
         }
 
@@ -62,8 +62,8 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         public async Task<bool> RemoveCartDetail(TblCartDetail model)
         {
-            _context.TblCartDetails.Remove(model);
-            await _context.SaveChangesAsync();
+            _ = _context.TblCartDetails.Remove(model);
+            _ = await _context.SaveChangesAsync();
             return true;
         }
 
@@ -79,9 +79,9 @@ namespace GreeenGarden.Data.Repositories.CartRepo
 
         public async Task<List<string>> GetListImgBySizeProItem(Guid proItemDetailID)
         {
-            var img = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(proItemDetailID)).ToListAsync();
-            var result = new List<string>();
-            foreach (var imgItem in img)
+            List<TblImage> img = await _context.TblImages.Where(x => x.ProductItemDetailId.Equals(proItemDetailID)).ToListAsync();
+            List<string> result = new();
+            foreach (TblImage? imgItem in img)
             {
                 result.Add(imgItem.ImageUrl);
             }

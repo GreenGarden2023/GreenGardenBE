@@ -1,5 +1,4 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ShippingFeeModel;
 using GreeenGarden.Data.Repositories.DistrictRepo;
@@ -7,29 +6,29 @@ using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 
 namespace GreeenGarden.Business.Service.ShippingFeeService
 {
-	public class ShippingFeeService : IShippingFeeService
-	{
+    public class ShippingFeeService : IShippingFeeService
+    {
         private readonly IShippingFeeRepo _shippingFeeRepo;
         private readonly IDistrictRepo _districtRepo;
-		public ShippingFeeService(IShippingFeeRepo shippingFeeRepo, IDistrictRepo districtRepo)
-		{
+        public ShippingFeeService(IShippingFeeRepo shippingFeeRepo, IDistrictRepo districtRepo)
+        {
             _shippingFeeRepo = shippingFeeRepo;
             _districtRepo = districtRepo;
-		}
+        }
 
         public async Task<ResultModel> GetListShipingFee()
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                List<ShippingFeeResModel> resList = new List<ShippingFeeResModel>();
+                List<ShippingFeeResModel> resList = new();
                 List<TblDistrict> districtList = await _districtRepo.GetDistrictList();
                 if (districtList != null && districtList.Any())
                 {
-                    foreach(TblDistrict district in districtList)
+                    foreach (TblDistrict district in districtList)
                     {
                         TblShippingFee fee = await _shippingFeeRepo.GetShippingFeeByDistrict(district.Id);
-                        ShippingFeeResModel resModel = new ShippingFeeResModel
+                        ShippingFeeResModel resModel = new()
                         {
                             DistrictID = district.Id,
                             District = district.DistrictName,
@@ -51,7 +50,8 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                     result.Message = "List Empty.";
                     return result;
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 result.Code = 400;
                 result.IsSuccess = false;
@@ -62,7 +62,7 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
 
         public async Task<ResultModel> UpdateAnShippingFee(ShippingFeeInsertModel shippingFeeInsertModels)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             bool shippingIDCheck = false;
             for (int i = 1; i <= 19; i++)
             {
@@ -84,16 +84,16 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                 ResultModel update = await _shippingFeeRepo.UpdateShippingFee(shippingFeeInsertModels);
                 if (update.IsSuccess)
                 {
-                    List<ShippingFeeResModel> resList = new List<ShippingFeeResModel>();
+                    List<ShippingFeeResModel> resList = new();
 
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(shippingFeeInsertModels.DistrictID);
-                        ShippingFeeResModel resModel = new ShippingFeeResModel
-                        {
-                            DistrictID = tblShippingFee.DistrictId,
-                            District = "" + await _districtRepo.GetADistrict(shippingFeeInsertModels.DistrictID),
-                            FeeAmount = tblShippingFee.FeeAmount
-                        };
-                    
+                    TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(shippingFeeInsertModels.DistrictID);
+                    ShippingFeeResModel resModel = new()
+                    {
+                        DistrictID = tblShippingFee.DistrictId,
+                        District = "" + await _districtRepo.GetADistrict(shippingFeeInsertModels.DistrictID),
+                        FeeAmount = tblShippingFee.FeeAmount
+                    };
+
                     result.Code = 200;
                     result.IsSuccess = true;
                     result.Data = resModel;
@@ -119,7 +119,7 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
 
         public async Task<ResultModel> UpdateShippingFee(List<ShippingFeeInsertModel> shippingFeeInsertModels)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 bool successAll = false;
@@ -141,22 +141,15 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                         return result;
                     }
                     ResultModel update = await _shippingFeeRepo.UpdateShippingFee(model);
-                    if (update.IsSuccess)
-                    {
-                        successAll = true;
-                    }
-                    else
-                    {
-                        successAll = false;
-                    }
+                    successAll = update.IsSuccess;
                 }
-                if(successAll == true)
+                if (successAll == true)
                 {
-                    List<ShippingFeeResModel> resList = new List<ShippingFeeResModel>();
+                    List<ShippingFeeResModel> resList = new();
                     foreach (ShippingFeeInsertModel shippingFee in shippingFeeInsertModels)
                     {
                         TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(shippingFee.DistrictID);
-                        ShippingFeeResModel resModel = new ShippingFeeResModel
+                        ShippingFeeResModel resModel = new()
                         {
                             DistrictID = tblShippingFee.DistrictId,
                             District = "" + await _districtRepo.GetADistrict(shippingFee.DistrictID),
@@ -170,7 +163,8 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                     result.Message = "Update shipping fee success";
                     return result;
                 }
-                else{
+                else
+                {
                     result.Code = 400;
                     result.IsSuccess = false;
                     result.Message = "Update shipping fee failed"; ;

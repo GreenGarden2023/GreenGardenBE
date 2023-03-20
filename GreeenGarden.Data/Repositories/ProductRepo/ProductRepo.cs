@@ -2,7 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ProductRepo
@@ -20,15 +20,11 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
 
         public async Task<Page<TblProduct>> queryAllProductByCategoryAndStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale)
         {
-            if (!string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && !string.IsNullOrEmpty(status))
-            {
-                return await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
+            return !string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("sale") && !string.IsNullOrEmpty(status)
+                ? await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                 && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())
-                && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-            }
-            else
-            {
-                return !string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && !string.IsNullOrEmpty(status)
+                && x.IsForSale == true).PaginateAsync(pagingModel.curPage, pagingModel.pageSize)
+                : !string.IsNullOrEmpty(rentSale) && rentSale.Trim().ToLower().Equals("rent") && !string.IsNullOrEmpty(status)
                     ? await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                                 && x.IsForRent == true
                                 && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize)
@@ -44,7 +40,6 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
                                                                                 && x.Status.Trim().ToLower().Equals(status)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize)
                                                                     : await _context.TblProducts.Where(x => x.CategoryId.Equals(categoryID)
                                                                                ).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-            }
         }
 
 
@@ -104,11 +99,11 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
 
         public async Task<bool> changeStatus(ProductUpdateStatusModel model)
         {
-            var res = false;
-            var result = await _context.TblProducts.Where(x => x.Id.Equals(model.ID)).FirstOrDefaultAsync();
+            bool res = false;
+            TblProduct? result = await _context.TblProducts.Where(x => x.Id.Equals(model.ID)).FirstOrDefaultAsync();
             result.Status = model.Status;
-            _context.TblProducts.Update(result);
-            await _context.SaveChangesAsync();
+            _ = _context.TblProducts.Update(result);
+            _ = await _context.SaveChangesAsync();
             res = true;
             return res;
         }

@@ -4,7 +4,6 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CartRepo;
-using System.Collections.Generic;
 
 namespace GreeenGarden.Business.Service.CartService
 {
@@ -21,10 +20,10 @@ namespace GreeenGarden.Business.Service.CartService
 
         public async Task<ResultModel> AddToCart(string token, AddToCartModel model)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                if (model.rentItems.Count>1)
+                if (model.rentItems.Count > 1)
                 {
                     for (int i = 0; i < model.rentItems.Count; i++)
                     {
@@ -54,13 +53,13 @@ namespace GreeenGarden.Business.Service.CartService
                     }
                 }
                 // check sale + rent
-                foreach (var i in model.saleItems)
+                foreach (ItemResponse i in model.saleItems)
                 {
-                    foreach (var j in model.rentItems)
+                    foreach (ItemResponse j in model.rentItems)
                     {
                         if (i.productItemDetailID == j.productItemDetailID)
                         {
-                            var proItemDetial = await _cartRepo.GetProductItemDetails((Guid)i.productItemDetailID);
+                            TblProductItemDetail proItemDetial = await _cartRepo.GetProductItemDetails((Guid)i.productItemDetailID);
                             if (proItemDetial == null)
                             {
                                 result.Code = 102;
@@ -83,22 +82,22 @@ namespace GreeenGarden.Business.Service.CartService
 
                 double? totalRentPriceCart = 0;
                 double? totalSalePriceCart = 0;
-                var modelResponse = new CartShowModel();
-                var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                CartShowModel modelResponse = new();
+                TblUser user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
                 if (await _cartRepo.GetCart(user.Id) == null)
                 {
-                    var cartTemp = new TblCart()
+                    TblCart cartTemp = new()
                     {
                         Id = Guid.NewGuid(),
                         UserId = user.Id,
                         Status = Status.ACTIVE,
                     };
-                    await _cartRepo.Insert(cartTemp);
+                    _ = await _cartRepo.Insert(cartTemp);
                 }
 
 
 
-                var cart = await _cartRepo.GetCart(user.Id);
+                TblCart cart = await _cartRepo.GetCart(user.Id);
                 if (cart == null)
                 {
                     result.IsSuccess = false;
@@ -106,10 +105,10 @@ namespace GreeenGarden.Business.Service.CartService
                     return result;
 
                 }
-                var cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
-                foreach (var item in cartDetail)
+                List<TblCartDetail> cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
+                foreach (TblCartDetail item in cartDetail)
                 {
-                    await _cartRepo.RemoveCartDetail(item);
+                    _ = await _cartRepo.RemoveCartDetail(item);
                 }
 
                 modelResponse.rentItems = new List<ItemRequest>();
@@ -119,11 +118,11 @@ namespace GreeenGarden.Business.Service.CartService
                 {
                     if (model.rentItems.Count != 0)
                     {
-                        foreach (var item in model.rentItems)
+                        foreach (ItemResponse item in model.rentItems)
                         {
                             if (item.productItemDetailID != null)
                             {
-                                var productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
+                                productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
                                 if (item.quantity > productItemDetail.Quantity)
                                 {
                                     result.Code = 101;
@@ -138,7 +137,7 @@ namespace GreeenGarden.Business.Service.CartService
                                     result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
                                     return result;
                                 }
-                                var newCartDetail = new TblCartDetail()
+                                TblCartDetail newCartDetail = new()
                                 {
                                     Id = Guid.NewGuid(),
                                     SizeProductItemId = item.productItemDetailID,
@@ -146,10 +145,10 @@ namespace GreeenGarden.Business.Service.CartService
                                     CartId = cart.Id,
                                     IsForRent = true
                                 };
-                                await _cartRepo.AddProductItemToCart(newCartDetail);
+                                _ = await _cartRepo.AddProductItemToCart(newCartDetail);
                                 //show
-                                var productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
-                                var productItemRecord = new productItem()
+                                TblProductItem productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
+                                productItem productItemRecord = new()
                                 {
                                     Content = productItem.Content,
                                     Description = productItem.Description,
@@ -159,7 +158,7 @@ namespace GreeenGarden.Business.Service.CartService
                                 };
 
 
-                                var ItemRequest = new ItemRequest()
+                                ItemRequest ItemRequest = new()
                                 {
                                     productItemDetail = productItemDetail,
                                     quantity = item.quantity,
@@ -178,11 +177,11 @@ namespace GreeenGarden.Business.Service.CartService
                 {
                     if (model.saleItems.Count != 0)
                     {
-                        foreach (var item in model.saleItems)
+                        foreach (ItemResponse item in model.saleItems)
                         {
                             if (item.productItemDetailID != null)
                             {
-                                var productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
+                                productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
 
                                 if (item.quantity > productItemDetail.Quantity)
                                 {
@@ -198,7 +197,7 @@ namespace GreeenGarden.Business.Service.CartService
                                     result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
                                     return result;
                                 }
-                                var newCartDetail = new TblCartDetail()
+                                TblCartDetail newCartDetail = new()
                                 {
                                     Id = Guid.NewGuid(),
                                     SizeProductItemId = item.productItemDetailID,
@@ -206,10 +205,10 @@ namespace GreeenGarden.Business.Service.CartService
                                     CartId = cart.Id,
                                     IsForRent = false
                                 };
-                                await _cartRepo.AddProductItemToCart(newCartDetail);
+                                _ = await _cartRepo.AddProductItemToCart(newCartDetail);
                                 //show
-                                var productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
-                                var productItemRecord = new productItem()
+                                TblProductItem productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
+                                productItem productItemRecord = new()
                                 {
                                     Content = productItem.Content,
                                     Description = productItem.Description,
@@ -217,7 +216,7 @@ namespace GreeenGarden.Business.Service.CartService
                                     Name = productItem.Name,
                                     Type = productItem.Type
                                 };
-                                var ItemRequest = new ItemRequest()
+                                ItemRequest ItemRequest = new()
                                 {
                                     productItemDetail = productItemDetail,
                                     quantity = item.quantity,
@@ -250,19 +249,19 @@ namespace GreeenGarden.Business.Service.CartService
 
         public async Task<ResultModel> CleanCart(string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var tblUser = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-                var cart = await _cartRepo.GetCart(tblUser.Id);
-                if (cart==null)
+                TblUser tblUser = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                TblCart cart = await _cartRepo.GetCart(tblUser.Id);
+                if (cart == null)
                 {
-                    result.Code=201;
+                    result.Code = 201;
                     result.IsSuccess = true;
                     result.Data = "Xóa thành công";
                     return result;
                 }
-                var cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
+                List<TblCartDetail> cartDetail = await _cartRepo.GetListCartDetail(cart.Id);
                 if (cartDetail == null || cartDetail.Count == 0)
                 {
                     result.Code = 201;
@@ -271,9 +270,9 @@ namespace GreeenGarden.Business.Service.CartService
                     return result;
                 }
 
-                foreach (var i in cartDetail)
+                foreach (TblCartDetail i in cartDetail)
                 {
-                    await _cartRepo.RemoveCartDetail(i);
+                    _ = await _cartRepo.RemoveCartDetail(i);
                 }
 
 
@@ -293,16 +292,18 @@ namespace GreeenGarden.Business.Service.CartService
 
         public async Task<ResultModel> GetCart(string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var modelResponse = new CartShowModel();
-                modelResponse.rentItems = new List<ItemRequest>();
-                modelResponse.saleItems = new List<ItemRequest>();
+                CartShowModel modelResponse = new()
+                {
+                    rentItems = new List<ItemRequest>(),
+                    saleItems = new List<ItemRequest>()
+                };
                 double? totalRentPriceCart = 0;
                 double? totalSalePriceCart = 0;
-                var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
-                var cart = await _cartRepo.GetCart(user.Id);
+                TblUser user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                TblCart cart = await _cartRepo.GetCart(user.Id);
                 if (cart == null)
                 {
                     result.Code = 200;
@@ -310,7 +311,7 @@ namespace GreeenGarden.Business.Service.CartService
                     result.Data = null;
                     return result;
                 }
-                var listCartDetail = await _cartRepo.GetListCartDetail(cart.Id);
+                List<TblCartDetail> listCartDetail = await _cartRepo.GetListCartDetail(cart.Id);
                 if (listCartDetail.Count == 0)
                 {
                     result.Code = 200;
@@ -318,13 +319,13 @@ namespace GreeenGarden.Business.Service.CartService
                     result.Data = null;
                     return result;
                 }
-                foreach (var item in listCartDetail)
+                foreach (TblCartDetail item in listCartDetail)
                 {
                     if (item.IsForRent == true)
                     {
-                        var productItemDetail = await _cartRepo.GetProductItemDetail(item.SizeProductItemId);
-                        var productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
-                        var productItemRecord = new productItem()
+                        productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.SizeProductItemId);
+                        TblProductItem productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
+                        productItem productItemRecord = new()
                         {
                             Content = productItem.Content,
                             Description = productItem.Description,
@@ -332,7 +333,7 @@ namespace GreeenGarden.Business.Service.CartService
                             Name = productItem.Name,
                             Type = productItem.Type
                         };
-                        var ItemRequest = new ItemRequest()
+                        ItemRequest ItemRequest = new()
                         {
                             productItemDetail = productItemDetail,
                             quantity = item.Quantity,
@@ -344,9 +345,9 @@ namespace GreeenGarden.Business.Service.CartService
                     }
                     if (item.IsForRent == false)
                     {
-                        var productItemDetail = await _cartRepo.GetProductItemDetail(item.SizeProductItemId);
-                        var productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
-                        var productItemRecord = new productItem()
+                        productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.SizeProductItemId);
+                        TblProductItem productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
+                        productItem productItemRecord = new()
                         {
                             Content = productItem.Content,
                             Description = productItem.Description,
@@ -354,7 +355,7 @@ namespace GreeenGarden.Business.Service.CartService
                             Name = productItem.Name,
                             Type = productItem.Type
                         };
-                        var ItemRequest = new ItemRequest()
+                        ItemRequest ItemRequest = new()
                         {
                             productItemDetail = productItemDetail,
                             quantity = item.Quantity,

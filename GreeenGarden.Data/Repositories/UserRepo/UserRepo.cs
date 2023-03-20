@@ -1,7 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.UserModels;
-using GreeenGarden.Data.Repositories.Repository;
-using GreeenGarden.Data.Repositories.RewardRepo;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.UserRepo
@@ -9,7 +8,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
     public class UserRepo : Repository<TblUser>, IUserRepo
     {
         private readonly GreenGardenDbContext _context;
-        
+
         public UserRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;

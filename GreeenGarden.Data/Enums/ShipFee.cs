@@ -1,8 +1,8 @@
 ﻿namespace GreeenGarden.Data.Enums
 {
-	public class ShipFee
-	{
-		public static double L_10QUAN_L_1MIL = 0.1;
+    public class ShipFee
+    {
+        public static double L_10QUAN_L_1MIL = 0.1;
         public static double L_30QUAN_L_1MIL = 0.15;
         public static double M_30QUAN_L_1MIL = 0.20;
 

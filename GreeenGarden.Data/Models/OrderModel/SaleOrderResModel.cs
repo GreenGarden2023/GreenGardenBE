@@ -1,9 +1,8 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.OrderModel
+﻿namespace GreeenGarden.Data.Models.OrderModel
 {
-	public class SaleOrderResModel
-	{
-         public Guid Id { get; set; }
+    public class SaleOrderResModel
+    {
+        public Guid Id { get; set; }
 
         public double? TransportFee { get; set; }
 

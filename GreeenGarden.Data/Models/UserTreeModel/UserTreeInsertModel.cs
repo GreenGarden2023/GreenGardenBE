@@ -1,8 +1,7 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.UserTreeModel
+﻿namespace GreeenGarden.Data.Models.UserTreeModel
 {
-	public class UserTreeInsertModel
-	{
+    public class UserTreeInsertModel
+    {
         public string TreeName { get; set; }
 
         public string Description { get; set; }

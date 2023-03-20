@@ -2,7 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ProductItemRepo
@@ -17,10 +17,10 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 
         public async Task<bool> ChangeStatus(ProductItemDetailUpdateStatusModel model)
         {
-            var result = await _context.TblProductItemDetails.Where(x => x.Id.Equals(model.ProductItemDetailId)).FirstOrDefaultAsync();
+            TblProductItemDetail? result = await _context.TblProductItemDetails.Where(x => x.Id.Equals(model.ProductItemDetailId)).FirstOrDefaultAsync();
             result.Status = model.Status;
-            _context.TblProductItemDetails.Update(result);
-            await _context.SaveChangesAsync();
+            _ = _context.TblProductItemDetails.Update(result);
+            _ = await _context.SaveChangesAsync();
             return true;
         }
 

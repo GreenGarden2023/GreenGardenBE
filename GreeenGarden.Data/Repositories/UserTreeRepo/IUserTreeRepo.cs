@@ -1,11 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.UserTreeModel;
-using GreeenGarden.Data.Repositories.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.UserTreeRepo
 {

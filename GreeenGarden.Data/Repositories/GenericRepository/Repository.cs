@@ -1,7 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace GreeenGarden.Data.Repositories.Repository
+namespace GreeenGarden.Data.Repositories.GenericRepository
 {
     public class Repository<T> : IRepository<T> where T : class
     {

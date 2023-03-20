@@ -1,18 +1,14 @@
 ﻿using AutoMapper;
 using GreeenGarden.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GreeenGarden.Data.Models.ServiceOrderModel;
 using GreeenGarden.Data.Models.ServiceModel;
+using GreeenGarden.Data.Models.ServiceOrderModel;
 
 namespace GreeenGarden.Data.Utilities
 {
     public class MappingProfile : Profile
     {
-        public MappingProfile() {
+        public MappingProfile()
+        {
             #region Nullable type
             CreateMap<int?, int>().ConvertUsing((src, des) => src ?? des);
             CreateMap<bool?, bool>().ConvertUsing((src, des) => src ?? des);
@@ -20,22 +16,22 @@ namespace GreeenGarden.Data.Utilities
             CreateMap<DateTime?, DateTime>().ConvertUsing((src, des) => src ?? des);
             #endregion
 
-            CreateMap<TblServiceOrder, DetailServiceOrderResModel>();
+            _ = CreateMap<TblServiceOrder, DetailServiceOrderResModel>();
 
-            CreateMap<TblServiceOrder, ServiceOrderResModel>();
-            CreateMap<TblServiceOrder, ServiceOrderResManagerModel>();
+            _ = CreateMap<TblServiceOrder, ServiceOrderResModel>();
+            _ = CreateMap<TblServiceOrder, ServiceOrderResManagerModel>();
 
-            CreateMap<TblUser, UserResModel>();
+            _ = CreateMap<TblUser, UserResModel>();
 
-            CreateMap<TblServiceUserTree, ServiceUserTreeResModel>(); 
-            CreateMap<TblServiceUserTree, ServiceUserTreeRespModel>(); 
+            _ = CreateMap<TblServiceUserTree, ServiceUserTreeResModel>();
+            _ = CreateMap<TblServiceUserTree, ServiceUserTreeRespModel>();
 
 
-            CreateMap<TblService, ServiceResModel>();
-            CreateMap<TblService, ServiceByManagerResModel>();
+            _ = CreateMap<TblService, ServiceResModel>();
+            _ = CreateMap<TblService, ServiceByManagerResModel>();
 
-            CreateMap<TblUserTree, UserTreeResModel>();
-            
+            _ = CreateMap<TblUserTree, UserTreeResModel>();
+
         }
     }
 }

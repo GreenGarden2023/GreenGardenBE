@@ -3,7 +3,6 @@ using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
-using GreeenGarden.Data.Models.ShippingFeeModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
@@ -59,7 +58,7 @@ namespace GreeenGarden.Business.Service.UserService
                 userCurrResModel.CurrentPoint = rewardPoint;
                 string token = CreateToken(userModel);
 
-                LoginResposneModel loginResposneModel = new LoginResposneModel
+                LoginResposneModel loginResposneModel = new()
                 {
                     Token = token,
                     User = userCurrResModel,
@@ -107,7 +106,7 @@ namespace GreeenGarden.Business.Service.UserService
             }
             if (shippingIDCheck == false)
             {
-                
+
                 return new ResultModel()
                 {
                     IsSuccess = false,
@@ -133,7 +132,7 @@ namespace GreeenGarden.Business.Service.UserService
                     Mail = userInsertModel.Mail,
                 };
                 _ = await _userRepo.Insert(userModel);
-                TblReward tblReward = new TblReward
+                TblReward tblReward = new()
                 {
                     CurrentPoint = 0,
                     Total = 0,

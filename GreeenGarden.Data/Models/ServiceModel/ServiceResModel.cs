@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.ServiceModel
+﻿namespace GreeenGarden.Data.Models.ServiceModel
 {
     public class UserResModel
     {
@@ -23,9 +17,10 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string Description { get; set; }
         public int? Quantity { get; set; }
         public string Status { get; set; }
-        public List<string> ImageUrl { get; set; } 
+        public List<string> ImageUrl { get; set; }
     }
-    public class ServiceUserTreeRespModel {
+    public class ServiceUserTreeRespModel
+    {
         public Guid Id { get; set; }
         public UserTreeResModel UserTree { get; set; }
         public int? Quantity { get; set; }

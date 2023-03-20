@@ -1,4 +1,4 @@
-﻿namespace GreeenGarden.Data.Repositories.Repository
+﻿namespace GreeenGarden.Data.Repositories.GenericRepository
 {
     public interface IRepository<T> where T : class
     {

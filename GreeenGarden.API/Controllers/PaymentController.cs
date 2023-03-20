@@ -1,8 +1,5 @@
-﻿using System;
-using System.Data;
-using GreeenGarden.Business.Service.PaymentService;
+﻿using GreeenGarden.Business.Service.PaymentService;
 using GreeenGarden.Data.Models.MoMoModel;
-using GreeenGarden.Data.Models.ProductModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +10,10 @@ namespace GreeenGarden.API.Controllers
     public class PaymentController : Controller
     {
         private readonly IMoMoService _moMoService;
-		public PaymentController(IMoMoService moMoService)
-		{
+        public PaymentController(IMoMoService moMoService)
+        {
             _moMoService = moMoService;
-		}
+        }
         [HttpPost("deposit-payment-momo")]
         [AllowAnonymous]
         public async Task<IActionResult> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
@@ -28,8 +25,8 @@ namespace GreeenGarden.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ReceiveDepositPaymentMoMo(MoMoResponseModel moMoResponseModel)
         {
-             _ = await _moMoService.ProcessDepositPaymentMoMo(moMoResponseModel);
-            return  NoContent();
+            _ = await _moMoService.ProcessDepositPaymentMoMo(moMoResponseModel);
+            return NoContent();
         }
         [HttpPost("receive-order-payment-momo")]
         [AllowAnonymous]

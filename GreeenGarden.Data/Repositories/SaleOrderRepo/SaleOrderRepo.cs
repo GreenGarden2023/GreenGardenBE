@@ -1,26 +1,24 @@
-﻿using System;
-using System.Net.NetworkInformation;
-using EntityFrameworkPaginateCore;
+﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
-using GreeenGarden.Data.Repositories.Repository;
+using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.SaleOrderRepo
 {
-	public class SaleOrderRepo : Repository<TblSaleOrder>, ISaleOrderRepo
+    public class SaleOrderRepo : Repository<TblSaleOrder>, ISaleOrderRepo
     {
         private readonly GreenGardenDbContext _context;
         public SaleOrderRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;
-		}
+        }
 
         public async Task<ResultModel> UpdateSaleOrderStatus(Guid SaleOrderID, string status)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.Id.Equals(SaleOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
@@ -55,7 +53,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
 
         public async Task<ResultModel> UpdateSaleOrderDeposit(Guid SaleOrderID)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.Id.Equals(SaleOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
@@ -79,12 +77,12 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
 
         public async Task<ResultModel> UpdateSaleOrderRemain(Guid saleOrderID, double amount)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.Id.Equals(saleOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
                 order.RemainMoney -= amount;
-                if(order.RemainMoney == 0)
+                if (order.RemainMoney == 0)
                 {
                     order.Status = Status.COMPLETED;
                 }
@@ -107,14 +105,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
         public async Task<bool> CheckOrderCode(string code)
         {
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.OrderCode.Equals(code)).FirstOrDefaultAsync();
-            if (order != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return order != null;
         }
     }
 }

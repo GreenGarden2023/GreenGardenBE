@@ -338,7 +338,7 @@ namespace GreeenGarden.Business.Service.ProductService
 
         public async Task<ResultModel> ChangeStatus(string token, ProductUpdateStatusModel model)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 result.IsSuccess = await _productRepo.changeStatus(model);

@@ -14,8 +14,8 @@ namespace GreeenGarden.Business.Service.PaymentService
     {
         private readonly IRentOrderRepo _rentOrderRepo;
         private readonly ISaleOrderRepo _saleOrderRepo;
-        private readonly ITransactionRepo _transactionRepo; 
-        public MoMoServices( ITransactionRepo transactionRepo, IRentOrderRepo rentOrderRepo, ISaleOrderRepo saleOrderRepo)
+        private readonly ITransactionRepo _transactionRepo;
+        public MoMoServices(ITransactionRepo transactionRepo, IRentOrderRepo rentOrderRepo, ISaleOrderRepo saleOrderRepo)
         {
             _rentOrderRepo = rentOrderRepo;
             _saleOrderRepo = saleOrderRepo;
@@ -23,16 +23,18 @@ namespace GreeenGarden.Business.Service.PaymentService
         }
         public async Task<ResultModel> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
         {
-            ResultModel resultModel = new ResultModel();
-            long amount = 0;
-            string base64OrderString = "";
-            MoMoOrderModel moMoOrderModel = new();
-            moMoOrderModel.OrderId = moMoDepositModel.OrderId;
-            moMoOrderModel.OrderType = moMoDepositModel.OrderType;
+            ResultModel resultModel = new();
+            MoMoOrderModel moMoOrderModel = new()
+            {
+                OrderId = moMoDepositModel.OrderId,
+                OrderType = moMoDepositModel.OrderType
+            };
+            long amount;
+            string base64OrderString;
             if (moMoDepositModel.OrderType.ToLower().Trim().Equals("rent"))
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoDepositModel.OrderId);
-                 amount = (long)tblRentOrder.Deposit;
+                amount = (long)tblRentOrder.Deposit;
                 if (tblRentOrder == null)
                 {
                     resultModel.Code = 400;
@@ -53,10 +55,10 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
                 moMoOrderModel.PayAmount = amount;
-                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
-                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
-                 base64OrderString = Convert.ToBase64String(orderTextBytes);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
             }
             else if (moMoDepositModel.OrderType.ToLower().Trim().Equals("sale"))
             {
@@ -82,9 +84,9 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
                 moMoOrderModel.PayAmount = amount;
-                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
-                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
                 base64OrderString = Convert.ToBase64String(orderTextBytes);
             }
             else
@@ -122,11 +124,11 @@ namespace GreeenGarden.Business.Service.PaymentService
 
             Console.WriteLine("rawHash = " + rawHash);
 
-            MoMoSecurity crypto = new MoMoSecurity();
+            MoMoSecurity crypto = new();
             string signature = crypto.signSHA256(rawHash, serectkey);
             Console.WriteLine("Signature = " + signature);
 
-            JObject message = new JObject
+            JObject message = new()
             {
                 { "partnerCode", partnerCode },
                 { "partnerName", "Test" },
@@ -156,7 +158,7 @@ namespace GreeenGarden.Business.Service.PaymentService
 
         public async Task<ResultModel> DepositPaymentCash(MoMoDepositModel moMoDepositModel)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 if (moMoDepositModel.OrderType.Trim().ToLower().Equals("rent"))
@@ -170,11 +172,11 @@ namespace GreeenGarden.Business.Service.PaymentService
                         return result;
                     }
                     ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(moMoDepositModel.OrderId);
-                    if(updateDeposit.IsSuccess == true)
+                    if (updateDeposit.IsSuccess == true)
                     {
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             RentOrderId = tblRentOrder.Id,
                             Amount = tblRentOrder.Deposit,
@@ -196,7 +198,8 @@ namespace GreeenGarden.Business.Service.PaymentService
                         result.Message = "Update order deposit failed.";
                         return result;
                     }
-                }else if (moMoDepositModel.OrderType.Trim().ToLower().Equals("sale"))
+                }
+                else if (moMoDepositModel.OrderType.Trim().ToLower().Equals("sale"))
                 {
                     TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoDepositModel.OrderId);
                     if (tblSaleOrder.Status.Equals(Status.READY))
@@ -208,10 +211,10 @@ namespace GreeenGarden.Business.Service.PaymentService
                     }
                     ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(moMoDepositModel.OrderId);
                     if (updateDeposit.IsSuccess == true)
-                    { 
+                    {
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             SaleOrderId = tblSaleOrder.Id,
                             Amount = tblSaleOrder.Deposit,
@@ -255,7 +258,7 @@ namespace GreeenGarden.Business.Service.PaymentService
 
         public async Task<ResultModel> OrderPaymentCash(MoMoPaymentModel moMoPaymentModel)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("rent"))
@@ -280,7 +283,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ResultModel updateRemain = await _rentOrderRepo.UpdateRentOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
                     if (updateRemain.IsSuccess == true)
                     {
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             RentOrderId = tblRentOrder.Id,
                             Amount = moMoPaymentModel.Amount,
@@ -325,7 +328,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     {
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             SaleOrderId = tblSaleOrder.Id,
                             Amount = moMoPaymentModel.Amount,
@@ -371,9 +374,9 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             try
             {
-                var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
-                var orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
-                var orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
+                byte[] base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
+                string orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
+                MoMoOrderModel? orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
                 if (orderModel != null && moMoResponseModel.resultCode == 0)
                 {
                     if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
@@ -381,7 +384,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         ResultModel updateDeposit = await _rentOrderRepo.UpdateRentOrderDeposit(orderModel.OrderId);
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             RentOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
@@ -398,7 +401,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         ResultModel updateDeposit = await _saleOrderRepo.UpdateSaleOrderDeposit(orderModel.OrderId);
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             SaleOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
@@ -428,12 +431,14 @@ namespace GreeenGarden.Business.Service.PaymentService
 
         public async Task<ResultModel> OrderPaymentMoMo(MoMoPaymentModel moMoPaymentModel)
         {
-            ResultModel resultModel = new ResultModel();
+            ResultModel resultModel = new();
             long amount = (long)moMoPaymentModel.Amount;
-            string base64OrderString = "";
-            MoMoOrderModel moMoOrderModel = new();
-            moMoOrderModel.OrderId = moMoPaymentModel.OrderId;
-            moMoOrderModel.OrderType = moMoPaymentModel.OrderType;
+            MoMoOrderModel moMoOrderModel = new()
+            {
+                OrderId = moMoPaymentModel.OrderId,
+                OrderType = moMoPaymentModel.OrderType
+            };
+            string base64OrderString;
             if (moMoPaymentModel.OrderType.ToLower().Trim().Equals("rent"))
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoPaymentModel.OrderId);
@@ -464,9 +469,9 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
                 moMoOrderModel.PayAmount = amount;
-                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
-                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
                 base64OrderString = Convert.ToBase64String(orderTextBytes);
             }
             else if (moMoPaymentModel.OrderType.ToLower().Trim().Equals("sale"))
@@ -499,9 +504,9 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
                 moMoOrderModel.PayAmount = amount;
-                var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                     jsonSerializerSettings);
-                var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
                 base64OrderString = Convert.ToBase64String(orderTextBytes);
             }
             else
@@ -539,11 +544,11 @@ namespace GreeenGarden.Business.Service.PaymentService
 
             Console.WriteLine("rawHash = " + rawHash);
 
-            MoMoSecurity crypto = new MoMoSecurity();
+            MoMoSecurity crypto = new();
             string signature = crypto.signSHA256(rawHash, serectkey);
             Console.WriteLine("Signature = " + signature);
 
-            JObject message = new JObject
+            JObject message = new()
             {
                 { "partnerCode", partnerCode },
                 { "partnerName", "Test" },
@@ -575,9 +580,9 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             try
             {
-                var base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
-                var orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
-                var orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
+                byte[] base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
+                string orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
+                MoMoOrderModel? orderModel = JsonConvert.DeserializeObject<MoMoOrderModel>(orderJson);
                 if (orderModel != null && moMoResponseModel.resultCode == 0)
                 {
                     if (orderModel.OrderType.Trim().ToLower().Equals("rent"))
@@ -585,7 +590,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         ResultModel updateRemain = await _rentOrderRepo.UpdateRentOrderRemain(orderModel.OrderId, orderModel.PayAmount);
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             RentOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
@@ -602,7 +607,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         ResultModel updateRemain = await _saleOrderRepo.UpdateSaleOrderRemain(orderModel.OrderId, orderModel.PayAmount);
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             SaleOrderId = orderModel.OrderId,
                             Amount = orderModel.PayAmount,
@@ -634,12 +639,14 @@ namespace GreeenGarden.Business.Service.PaymentService
         {
             try
             {
-                ResultModel resultModel = new ResultModel();
+                ResultModel resultModel = new();
                 long amount = 0;
                 string base64OrderString = "";
-                MoMoOrderModel moMoOrderModel = new();
-                moMoOrderModel.OrderId = moMoWholeOrderModel.OrderId;
-                moMoOrderModel.OrderType = moMoWholeOrderModel.OrderType;
+                MoMoOrderModel moMoOrderModel = new()
+                {
+                    OrderId = moMoWholeOrderModel.OrderId,
+                    OrderType = moMoWholeOrderModel.OrderType
+                };
                 if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("rent"))
                 {
                     TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoWholeOrderModel.OrderId);
@@ -670,9 +677,9 @@ namespace GreeenGarden.Business.Service.PaymentService
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     };
                     moMoOrderModel.PayAmount = amount;
-                    var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                    string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                         jsonSerializerSettings);
-                    var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                    byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
                     base64OrderString = Convert.ToBase64String(orderTextBytes);
                 }
                 else if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("sale"))
@@ -705,9 +712,9 @@ namespace GreeenGarden.Business.Service.PaymentService
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     };
                     moMoOrderModel.PayAmount = amount;
-                    var orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                    string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
                         jsonSerializerSettings);
-                    var orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                    byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
                     base64OrderString = Convert.ToBase64String(orderTextBytes);
                 }
                 else
@@ -745,12 +752,12 @@ namespace GreeenGarden.Business.Service.PaymentService
 
                 Console.WriteLine("rawHash = " + rawHash);
 
-                MoMoSecurity crypto = new MoMoSecurity();
+                MoMoSecurity crypto = new();
                 string signature = crypto.signSHA256(rawHash, serectkey);
                 Console.WriteLine("Signature = " + signature);
 
-                JObject message = new JObject
-            {
+                JObject message = new()
+                {
                 { "partnerCode", partnerCode },
                 { "partnerName", "Test" },
                 { "storeId", "MomoTestStore" },
@@ -778,10 +785,12 @@ namespace GreeenGarden.Business.Service.PaymentService
             }
             catch (Exception e)
             {
-                ResultModel resultModel = new ResultModel();
-                resultModel.Code = 400;
-                resultModel.IsSuccess = false;
-                resultModel.Message = e.ToString();
+                ResultModel resultModel = new()
+                {
+                    Code = 400,
+                    IsSuccess = false,
+                    Message = e.ToString()
+                };
                 return resultModel;
             }
 
@@ -789,7 +798,7 @@ namespace GreeenGarden.Business.Service.PaymentService
 
         public async Task<ResultModel> WholeOrderPaymentCash(MoMoPaymentModel moMoWholeOrderModel)
         {
-            ResultModel result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 if (moMoWholeOrderModel.OrderType.Trim().ToLower().Equals("rent"))
@@ -808,7 +817,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     ResultModel updateRemain = await _rentOrderRepo.UpdateRentOrderRemain(moMoWholeOrderModel.OrderId, amount);
                     if (updateRemain.IsSuccess == true)
                     {
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             RentOrderId = tblRentOrder.Id,
                             Amount = amount,
@@ -847,7 +856,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     {
                         TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                         DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                        TblTransaction tblTransaction = new TblTransaction
+                        TblTransaction tblTransaction = new()
                         {
                             SaleOrderId = tblSaleOrder.Id,
                             Amount = amount,

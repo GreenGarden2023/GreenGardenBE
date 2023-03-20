@@ -29,7 +29,7 @@ namespace GreeenGarden.Business.Service.CategogyService
 
         public async Task<ResultModel> changeStatus(string token, CategoryUpdateStatusModel model)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);

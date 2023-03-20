@@ -1,9 +1,9 @@
 ﻿namespace GreeenGarden.Data.Models.OrderModel
 {
-	public class OrderCreateModel
-	{
+    public class OrderCreateModel
+    {
 
-		public DateTime StartDateRent { get; set; }
+        public DateTime StartDateRent { get; set; }
 
         public DateTime EndDateRent { get; set; }
 
