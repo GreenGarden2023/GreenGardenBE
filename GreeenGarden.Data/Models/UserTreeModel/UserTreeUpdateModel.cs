@@ -12,6 +12,8 @@ namespace GreeenGarden.Data.Models.UserTreeModel
         public int? Quantity { get; set; }
 
         public string? Status { get; set; }
+
+        public List<string> ImgUrls { get; set; }
     }
 }
 

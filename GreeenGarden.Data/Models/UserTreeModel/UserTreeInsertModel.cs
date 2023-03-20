@@ -11,5 +11,12 @@ namespace GreeenGarden.Data.Models.UserTreeModel
 
         public List<string> ImgUrls { get; set; }
     }
+
+    public class UserTreeStatusModel
+    {
+        public Guid Id { get; set; }
+
+        public string Status { get; set; }
+    }
 }
 

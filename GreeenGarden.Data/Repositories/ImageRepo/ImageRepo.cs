@@ -244,5 +244,45 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             }
             return success;
         }
+
+        public async Task<bool> UpdateImgForUserTree(Guid userTreeID, List<string> ImgUrls)
+        {
+            bool success = false;
+            List<TblImage> oldImgList = await _context.TblImages.Where(x => x.UserTreeId.Equals(userTreeID)).ToListAsync();
+            foreach (TblImage tblImage in oldImgList)
+            {
+                try
+                {
+                    _ = _context.Remove(tblImage);
+                    _ = await _context.SaveChangesAsync();
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            foreach (string url in ImgUrls)
+            {
+                try
+                {
+                    TblImage newProdIMG = new()
+                    {
+                        ImageUrl = url,
+                        UserTreeId = userTreeID
+                    };
+                    _ = _context.Add(newProdIMG);
+                    _ = await _context.SaveChangesAsync();
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            return success;
+        }
     }
 }
