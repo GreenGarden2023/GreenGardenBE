@@ -38,6 +38,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                 RentOrderDetailResModel model = new RentOrderDetailResModel
 				{
 					ID = detail.Id,
+					ProductItemDetailID = (Guid)detail.ProductItemDetailId,
 					Quantity = detail.Quantity ?? null,
 					TotalPrice = detail.TotalPrice ?? null,
 					RentPricePerUnit = detail.RentPricePerUnit ?? null,

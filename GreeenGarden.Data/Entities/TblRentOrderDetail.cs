@@ -19,6 +19,10 @@ public partial class TblRentOrderDetail
 
     public string? ProductItemName { get; set; }
 
+    public Guid? ProductItemDetailId { get; set; }
+
+    public virtual TblProductItemDetail? ProductItemDetail { get; set; }
+
     public virtual TblRentOrder RentOrder { get; set; } = null!;
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();

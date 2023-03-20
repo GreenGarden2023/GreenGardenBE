@@ -20,6 +20,9 @@ using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using System.Text.RegularExpressions;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
+using static System.Net.Mime.MediaTypeNames;
+using GreeenGarden.Data.Models.SizeModel;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -1612,9 +1615,37 @@ namespace GreeenGarden.Business.Service.OrderService
                             CreateDate = tblRentOrder.CreateDate,
                             RentOrderDetailList = rentOrderDetailResModels
                         };
+					List<ProductItemDetailResModel> productItems = new List<ProductItemDetailResModel>();
+					foreach(RentOrderDetailResModel model in rentOrderDetailResModels)
+					{
+						TblProductItemDetail detail = await _productItemDetailRepo.Get(model.ProductItemDetailID);
+                        TblSize? sizeGet = await _sizeRepo.Get(detail.SizeId);
+                        List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(detail.Id);
+                        SizeResModel size = new()
+                        {
+                            Id = sizeGet.Id,
+                            SizeName = sizeGet.Name
+                        };
+                        ProductItemDetailResModel sizeProd = new()
+                        {
+                            Id = detail.Id,
+                            Size = size,
+                            RentPrice = detail.RentPrice,
+                            SalePrice = detail.SalePrice,
+                            Quantity = detail.Quantity,
+                            Status = detail.Status,
+                            ImagesURL = imgGet
+                        };
+                        productItems.Add(sizeProd);
+                    }
+					GetARentOrderRes getARentOrderRes = new GetARentOrderRes
+					{
+						RentOrder = rentOrderResModel,
+						ProductItemDetailList = productItems
+					};
 
                     result.Message = "Get rent order success";
-                    result.Data = rentOrderResModel;
+                    result.Data = getARentOrderRes;
                     result.IsSuccess = true;
                     result.Code = 200;
                     return result;

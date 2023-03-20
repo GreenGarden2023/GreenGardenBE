@@ -14,4 +14,9 @@
         public static readonly string PROCESSING = "Đang xử lí"; //Service mới tạo
         public static readonly string ACCEPT = "Chấp nhận"; //Service mới tạo
     }
+    public class TreeStatus
+    {
+        public static readonly string ACTIVE = "active";
+        public static readonly string DISABLE = "disable";
+    }
 }

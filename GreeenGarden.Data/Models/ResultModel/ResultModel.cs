@@ -55,4 +55,10 @@
         public object? Paging { get; set; }
         public object? SaleOrderList { get; set; }
     }
+
+    public class GetARentOrderRes
+    {
+        public object? RentOrder { get; set; }
+        public object? ProductItemDetailList { get; set; }
+    }
 }
