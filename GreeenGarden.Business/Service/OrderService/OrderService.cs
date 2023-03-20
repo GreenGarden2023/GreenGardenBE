@@ -19,6 +19,7 @@ using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
+using System.Text.RegularExpressions;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -1546,6 +1547,87 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.Message = "Calculate sale order successful.";
                 return result;
 
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
+        public async Task<ResultModel> GetARentOrder(string token, Guid rentOrderID)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(rentOrderID);
+                if (tblRentOrder != null)
+                {
+
+                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
+                        RentOrderResModel rentOrderResModel = new RentOrderResModel
+                        {
+                            Id = tblRentOrder.Id,
+                            TransportFee = tblRentOrder.TransportFee,
+                            StartDateRent = tblRentOrder.StartDateRent,
+                            EndDateRent = tblRentOrder.EndDateRent,
+                            Deposit = tblRentOrder.Deposit,
+                            TotalPrice = tblRentOrder.TotalPrice,
+                            Status = tblRentOrder.Status,
+                            RemainMoney = tblRentOrder.RemainMoney,
+                            RewardPointGain = tblRentOrder.RewardPointGain,
+                            RewardPointUsed = tblRentOrder.RewardPointUsed,
+                            RentOrderGroupID = tblRentOrder.RentOrderGroupId,
+                            DiscountAmount = tblRentOrder.DiscountAmount,
+                            RecipientAddress = tblRentOrder.RecipientAddress,
+                            RecipientName = tblRentOrder.RecipientName,
+                            RecipientPhone = tblRentOrder.RecipientPhone,
+                            OrderCode = tblRentOrder.OrderCode,
+                            CreateDate = tblRentOrder.CreateDate,
+                            RentOrderDetailList = rentOrderDetailResModels
+                        };
+
+                    result.Message = "Get rent order success";
+                    result.Data = rentOrderResModel;
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    return result;
+				}
+				else
+				{
+                    result.Message = "Get rent order failed.";
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    return result;
+                }
+
+                
             }
             catch (Exception e)
             {

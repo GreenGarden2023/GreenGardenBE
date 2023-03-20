@@ -25,6 +25,8 @@ namespace GreeenGarden.Business.Service.OrderService
 
         Task<ResultModel> GetSaleOrderDetail(string token, Guid saleOrderID);
 
+        Task<ResultModel> GetARentOrder(string token, Guid rentOrderID);
+
         Task<ResultModel> UpdateSaleOrderStatus(string token, Guid saleOrderID, string status);
     }
 }
