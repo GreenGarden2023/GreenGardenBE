@@ -299,7 +299,6 @@ namespace GreeenGarden.Business.Service.CartService
                 var modelResponse = new CartShowModel();
                 modelResponse.rentItems = new List<ItemRequest>();
                 modelResponse.saleItems = new List<ItemRequest>();
-                double? totalPrice = 0;
                 double? totalRentPriceCart = 0;
                 double? totalSalePriceCart = 0;
                 var user = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
