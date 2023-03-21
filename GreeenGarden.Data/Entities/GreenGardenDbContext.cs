@@ -528,6 +528,8 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Phone).HasMaxLength(50);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
+            entity.Property(e => e.TechnicianName).HasMaxLength(200);
 
             entity.HasOne(d => d.User).WithMany(p => p.TblServices)
                 .HasForeignKey(d => d.UserId)
@@ -545,7 +547,9 @@ public partial class GreenGardenDbContext : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
             entity.Property(e => e.Desciption).HasMaxLength(500);
+            entity.Property(e => e.ManagerDescription).HasMaxLength(500);
             entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
+            entity.Property(e => e.ServicePrice).HasDefaultValueSql("((0))");
             entity.Property(e => e.TreeName).HasMaxLength(200);
             entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
 

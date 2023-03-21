@@ -8,6 +8,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
 	public interface IServiceDetailRepo : IRepository<TblServiceDetail>
     {
 		Task<List<ServiceDetailResModel>> GetServiceDetailByServiceID(Guid serviceID);
+		Task<bool> UpdateServiceDetailManager(ServiceDetailManagerUpdateModel serviceDetail);
 	}
 }
 

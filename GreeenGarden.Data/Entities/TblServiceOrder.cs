@@ -27,13 +27,13 @@ public partial class TblServiceOrder
 
     public Guid ServiceId { get; set; }
 
-    public double? Incurred { get; set; }
-
     public string? Description { get; set; }
 
     public Guid UserId { get; set; }
 
     public double? TransportFee { get; set; }
+
+    public bool? IsTransport { get; set; }
 
     public virtual TblService Service { get; set; } = null!;
 

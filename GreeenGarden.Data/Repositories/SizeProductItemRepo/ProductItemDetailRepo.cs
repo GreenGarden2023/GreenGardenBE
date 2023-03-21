@@ -35,7 +35,8 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                         SizeResModel size = new()
                         {
                             Id = sizeGet.Id,
-                            SizeName = sizeGet.Name
+                            SizeName = sizeGet.Name,
+                            SizeType = sizeGet.Type
                         };
                         ProductItemDetailResModel sizeProd = new()
                         {
@@ -44,6 +45,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             RentPrice = item.RentPrice,
                             SalePrice = item.SalePrice,
                             Quantity = item.Quantity,
+                            TransportFee = item.TransportFee,
                             Status = item.Status,
                             ImagesURL = imgGet
                         };
@@ -66,7 +68,8 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                         SizeResModel size = new()
                         {
                             Id = sizeGet.Id,
-                            SizeName = sizeGet.Name
+                            SizeName = sizeGet.Name,
+                            SizeType = sizeGet.Type
                         };
                         ProductItemDetailResModel sizeProd = new()
                         {
@@ -76,6 +79,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             SalePrice = item.SalePrice,
                             Quantity = item.Quantity,
                             Status = item.Status,
+                            TransportFee = item.TransportFee,
                             ImagesURL = imgGet,
                         };
                         listSizeProd.Add(sizeProd);
@@ -119,6 +123,8 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 productItemDetail.SalePrice = productItemDetailModel.SalePrice;
 
                 productItemDetail.Quantity = productItemDetailModel.Quantity;
+
+                productItemDetail.TransportFee = productItemDetailModel.TransportFee;
 
                 _ = _context.Update(productItemDetail);
                 _ = await _context.SaveChangesAsync();

@@ -25,6 +25,10 @@ public partial class TblService
 
     public DateTime? CreateDate { get; set; }
 
+    public Guid? TechnicianId { get; set; }
+
+    public string? TechnicianName { get; set; }
+
     public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 
     public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();

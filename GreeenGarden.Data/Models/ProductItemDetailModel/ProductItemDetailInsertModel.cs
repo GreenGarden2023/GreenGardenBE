@@ -5,8 +5,7 @@ namespace GreeenGarden.Data.Models.ProductItemDetailModel
     public class ProductItemDetailModel
     {
 
-        [Required]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         [Required]
         public Guid SizeId { get; set; }
@@ -20,9 +19,11 @@ namespace GreeenGarden.Data.Models.ProductItemDetailModel
 
         public int? Quantity { get; set; }
 
-        public string Status { get; set; } = null!;
+        public string? Status { get; set; }
 
-        public List<string> ImagesUrls { get; set; } = null!;
+        public double? TransportFee { get; set; }
+
+        public List<string>? ImagesUrls { get; set; }
     }
 }
 

@@ -23,6 +23,10 @@ namespace GreeenGarden.Data.Models.ServiceModel
 
         public string? Status { get; set; }
 
+        public Guid? TechnicianID { get; set; }
+
+        public string? TechnicianName { get; set; }
+
         public List<ServiceDetailResModel> ServiceDetailList { get; set; }
 
     }
@@ -40,6 +44,10 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string? Description { get; set; }
 
         public int? Quantity { get; set; }
+
+        public double? ServicePrice { get; set; }
+
+        public string? ManagerDescription { get; set; }
 
         public List<string> ImgUrls { get; set; }
     }

@@ -38,6 +38,8 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                             TreeName = detail.TreeName ?? "",
                             Description = detail.Desciption ?? "",
                             Quantity = detail.Quantity ?? 0,
+                            ServicePrice = detail.ServicePrice ?? 0,
+                            ManagerDescription = detail.ManagerDescription,
                             ImgUrls = imgs
                         };
                         resList.Add(serviceDetail);
@@ -54,6 +56,41 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                 return null;
             }
 
+        }
+
+        public async Task<bool> UpdateServiceDetailManager(ServiceDetailManagerUpdateModel serviceDetail)
+        {
+            try
+            {
+                TblServiceDetail tblServiceDetail = await _context.TblServiceDetails.Where(x => x.Id.Equals(serviceDetail.ServiceDetailID)).FirstOrDefaultAsync();
+                if(tblServiceDetail != null)
+                {
+                    if(serviceDetail.Quantity != null && serviceDetail.Quantity != tblServiceDetail.Quantity)
+                    {
+                        tblServiceDetail.Quantity = serviceDetail.Quantity;
+                    }
+                    if (serviceDetail.ServicePrice != null && serviceDetail.ServicePrice != tblServiceDetail.ServicePrice)
+                    {
+                        tblServiceDetail.ServicePrice = serviceDetail.ServicePrice;
+                    }
+                    if (serviceDetail.ManagerDescription != null && serviceDetail.ManagerDescription != tblServiceDetail.ManagerDescription)
+                    {
+                        tblServiceDetail.ManagerDescription = serviceDetail.ManagerDescription;
+                    }
+                    _ = _context.Update(tblServiceDetail);
+                    _ = await _context.SaveChangesAsync();
+                    return true;
+
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

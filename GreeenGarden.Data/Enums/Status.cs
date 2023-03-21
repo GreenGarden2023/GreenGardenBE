@@ -22,5 +22,7 @@
         public static readonly string PROCESSING = "processing";
         public static readonly string ACCEPTED = "accepted";
         public static readonly string REJECTED = "rejected";
+        public static readonly string CONFIRMED = "confirmed";
+        public static readonly string REPROCESS = "reprocess";
     }
 }

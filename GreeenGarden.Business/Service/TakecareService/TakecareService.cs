@@ -112,6 +112,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                             TreeName = tblUserTree.TreeName,
                             Desciption = tblUserTree.Description,
                             Quantity = tblUserTree.Quantity,
+                            ServicePrice = 0
                         };
                         Guid insertServiceDetail = await _serviceDetailRepo.Insert(tblServiceDetail);
                         if (insertServiceDetail != Guid.Empty)
@@ -148,6 +149,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = resService.Email,
                         Address = resService.Address,
                         Status = resService.Status,
+                        TechnicianID = resService.TechnicianId,
+                        TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
                     result.IsSuccess = true;
@@ -219,6 +222,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = service.Email,
                         Address = service.Address,
                         Status = service.Status,
+                        TechnicianID = service.TechnicianId,
+                        TechnicianName = service.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
                     resModels.Add(serviceResModel);
@@ -286,6 +291,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = service.Email,
                         Address = service.Address,
                         Status = service.Status,
+                        TechnicianID = service.TechnicianId,
+                        TechnicianName = service.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
                     resModels.Add(serviceResModel);
@@ -358,6 +365,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Phone = resService.Phone,
                         Address = resService.Address,
                         Status = resService.Status,
+                        TechnicianID = resService.TechnicianId,
+                        TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
                     result.IsSuccess = true;

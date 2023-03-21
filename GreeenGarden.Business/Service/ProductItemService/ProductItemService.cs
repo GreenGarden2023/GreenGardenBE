@@ -41,7 +41,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
             _productItemDetailRepo = sizeProductItemRepo;
         }
 
-        public async Task<ResultModel> ChangeStatusProductItemDetial(string token, ProductItemDetailUpdateStatusModel model)
+        public async Task<ResultModel> ChangeStatusProductItemDetail(string token, ProductItemDetailUpdateStatusModel model)
         {
             ResultModel result = new();
             try
@@ -212,6 +212,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     RentPrice = productItemDetailModel.RentPrice,
                     SalePrice = productItemDetailModel.SalePrice,
                     Quantity = productItemDetailModel.Quantity,
+                    TransportFee = productItemDetailModel.TransportFee,
                     Status = productItemDetailModel.Status,
                 };
 
@@ -247,6 +248,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         SalePrice = tblProductItemDetail.SalePrice,
                         Quantity = tblProductItemDetail.Quantity,
                         Status = tblProductItemDetail.Status,
+                        TransportFee = tblProductItemDetail.TransportFee,
                         ImagesUrls = productItemDetailModel.ImagesUrls
                     };
                     result.Message = "Create Product Item Detail successful.";
@@ -533,11 +535,14 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 bool updateProItem = await _productItemDetailRepo.UpdateSizeProductItem(productItemDetailModel);
                 if (updateProItem == true)
                 {
-                    foreach (string url in productItemDetailModel.ImagesUrls)
+                    if (productItemDetailModel.ImagesUrls != null)
                     {
-                        bool updateImg = await _imageRepo.UpdateImgForProductItemDetail(productItemDetailModel.Id, productItemDetailModel.ImagesUrls);
+                        foreach (string url in productItemDetailModel.ImagesUrls)
+                        {
+                            bool updateImg = await _imageRepo.UpdateImgForProductItemDetail((Guid)productItemDetailModel.Id, productItemDetailModel.ImagesUrls);
+                        }
                     }
-                    TblProductItemDetail? updateResult = await _productItemDetailRepo.Get(productItemDetailModel.Id);
+                    TblProductItemDetail? updateResult = await _productItemDetailRepo.Get((Guid)productItemDetailModel.Id);
                     TblSize? sizeGet = await _sizeRepo.Get(updateResult.SizeId);
                     List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(updateResult.Id);
                     SizeResModel size = new()

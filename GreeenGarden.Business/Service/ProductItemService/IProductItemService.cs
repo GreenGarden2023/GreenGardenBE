@@ -13,7 +13,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
         Task<ResultModel> GetDetailProductItem(Guid productItemID, string? sizeProductItemStatus);
         Task<ResultModel> UpdateProductItem(string token, ProductItemModel productItemModel);
         Task<ResultModel> UpdateProductItemDetail(string token, ProductItemDetailModel productItemDetailModel);
-        Task<ResultModel> ChangeStatusProductItemDetial(string token, ProductItemDetailUpdateStatusModel model);
+        Task<ResultModel> ChangeStatusProductItemDetail(string token, ProductItemDetailUpdateStatusModel model);
         //Task<ResultModel> ChangeStatusProductItemDetail(string token, );
     }
 }

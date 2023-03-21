@@ -17,6 +17,10 @@ public partial class TblServiceDetail
 
     public int? Quantity { get; set; }
 
+    public double? ServicePrice { get; set; }
+
+    public string? ManagerDescription { get; set; }
+
     public virtual TblService? Service { get; set; }
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
