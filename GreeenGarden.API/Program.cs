@@ -10,6 +10,7 @@ using GreeenGarden.Business.Service.ProductService;
 using GreeenGarden.Business.Service.SecretService;
 using GreeenGarden.Business.Service.ShippingFeeService;
 using GreeenGarden.Business.Service.SizeService;
+using GreeenGarden.Business.Service.TakecareService;
 using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Business.Service.UserTreeService;
 using GreeenGarden.Data.Entities;
@@ -26,13 +27,14 @@ using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
+using GreeenGarden.Data.Repositories.ServiceDetailRepo;
+using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
-using GreeenGarden.Data.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -61,6 +63,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IShippingFeeService, ShippingFeeService>();
 builder.Services.AddScoped<IUserTreeService, UserTreeService>();
+builder.Services.AddScoped<ITakecareService, TakecareService>();
 //
 builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
 builder.Services.AddTransient<IUserRepo, UserRepo>();
@@ -82,7 +85,8 @@ builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
 builder.Services.AddTransient<ICartRepo, CartRepo>();
 builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
-
+builder.Services.AddTransient<IServiceRepo, ServiceRepo>();
+builder.Services.AddTransient<IServiceDetailRepo, ServiceDetailRepo>();
 //Swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -133,15 +137,6 @@ builder.Services.AddApiVersioning(opt =>
                                                     new MediaTypeApiVersionReader("greengarden-api-version"));
 });
 
-//Mapper
-MapperConfiguration mappingConfig = new(mc =>
-{
-    mc.AddProfile(new MappingProfile());
-});
-IMapper mapper = mappingConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
-
-//end.
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

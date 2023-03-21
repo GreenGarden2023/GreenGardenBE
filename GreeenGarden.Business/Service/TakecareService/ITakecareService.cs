@@ -1,0 +1,13 @@
+﻿using System;
+using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.ServiceModel;
+
+namespace GreeenGarden.Business.Service.TakecareService
+{
+	public interface ITakecareService
+	{
+		Task<ResultModel> CreateRequest(string token, ServiceInsertModel serviceInsertModel);
+        Task<ResultModel> UpdateRequestStatus(string token, ServiceStatusModel serviceStatusModel);
+    }
+}
+

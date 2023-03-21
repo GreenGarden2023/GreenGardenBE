@@ -37,6 +37,9 @@
     <Folder Include="Models\ShippingFeeModel\" />
     <Folder Include="Repositories\DistrictRepo\" />
     <Folder Include="Models\UserTreeModel\" />
+    <Folder Include="Repositories\ServiceRepo\" />
+    <Folder Include="Repositories\ServiceDetailRepo\" />
+    <Folder Include="Models\ServiceModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -85,5 +88,8 @@
     <None Remove="Models\ShippingFeeModel\" />
     <None Remove="Repositories\DistrictRepo\" />
     <None Remove="Models\UserTreeModel\" />
+    <None Remove="Repositories\ServiceRepo\" />
+    <None Remove="Repositories\ServiceDetailRepo\" />
+    <None Remove="Models\ServiceModel\" />
   </ItemGroup>
 </Project>

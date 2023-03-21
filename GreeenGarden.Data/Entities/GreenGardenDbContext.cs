@@ -526,6 +526,11 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Phone).HasMaxLength(50);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
+
+            entity.HasOne(d => d.User).WithMany(p => p.TblServices)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblService_tblUser");
         });
 
         modelBuilder.Entity<TblServiceDetail>(entity =>

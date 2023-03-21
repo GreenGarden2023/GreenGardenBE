@@ -11,17 +11,19 @@ public partial class TblService
 
     public DateTime? EndDate { get; set; }
 
+    public string? Name { get; set; }
+
     public string? Phone { get; set; }
 
     public string? Address { get; set; }
 
     public string? Status { get; set; }
 
-    public string? Name { get; set; }
-
     public Guid UserId { get; set; }
 
     public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 
     public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();
+
+    public virtual TblUser User { get; set; } = null!;
 }
