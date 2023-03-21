@@ -35,6 +35,24 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _takecareService.UpdateRequestStatus(token, serviceStatusModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-all-service-request")]
+        [SwaggerOperation(Summary = "Get all service request")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetAllServiceRequest()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.GetAllRequest(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-user-service-request")]
+        [SwaggerOperation(Summary = "Get current user's service request")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetUserServiceRequest()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.GetUserRequest(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
 

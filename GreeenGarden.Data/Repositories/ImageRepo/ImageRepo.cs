@@ -121,6 +121,28 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             return result;
         }
 
+        public async Task<List<string>> GetImgUrlServiceDetail(Guid serviceDetailId)
+        {
+            List<string> urls = new();
+            if (serviceDetailId != Guid.Empty)
+            {
+                List<TblImage> result = await _context.TblImages.Where(x => x.ServiceDetailId.Equals(serviceDetailId)).ToListAsync();
+                if (result != null)
+                {
+
+                    foreach (TblImage image in result)
+                    {
+                        if (!string.IsNullOrEmpty(image.ImageUrl))
+                        {
+                            urls.Add(image.ImageUrl);
+                        }
+                    }
+
+                }
+            }
+            return urls;
+        }
+
         public async Task<List<string>> GetImgUrlUserTree(Guid userTreeID)
         {
             List<string> urls = new();

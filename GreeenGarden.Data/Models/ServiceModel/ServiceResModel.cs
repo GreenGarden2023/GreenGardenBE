@@ -5,6 +5,10 @@ namespace GreeenGarden.Data.Models.ServiceModel
 	{
         public Guid ID { get; set; }
 
+        public Guid UserID { get; set; }
+
+        public DateTime CreateDate { get; set; }
+
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
@@ -12,6 +16,8 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string? Name { get; set; }
 
         public string? Phone { get; set; }
+
+        public string? Email { get; set; }
 
         public string? Address { get; set; }
 
@@ -34,6 +40,8 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string? Description { get; set; }
 
         public int? Quantity { get; set; }
+
+        public List<string> ImgUrls { get; set; }
     }
 }
 

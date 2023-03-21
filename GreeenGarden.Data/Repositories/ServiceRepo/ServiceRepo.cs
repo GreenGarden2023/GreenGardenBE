@@ -49,6 +49,18 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
 				return false;
 			}
         }
+
+        public async Task<List<TblService>> GetAllRequest()
+        {
+			List<TblService> tblServices = await _context.TblServices.ToListAsync();
+			return tblServices;
+        }
+
+        public async Task<List<TblService>> GetRequestByUser(Guid userId)
+        {
+            List<TblService> tblServices = await _context.TblServices.Where(x => x.UserId.Equals(userId)).ToListAsync();
+            return tblServices;
+        }
     }
 }
 

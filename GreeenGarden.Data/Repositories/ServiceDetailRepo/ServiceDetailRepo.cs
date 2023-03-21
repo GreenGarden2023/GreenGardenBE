@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,9 +11,11 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
 	public class ServiceDetailRepo : Repository<TblServiceDetail>, IServiceDetailRepo
     {
         private readonly GreenGardenDbContext _context;
-        public ServiceDetailRepo(GreenGardenDbContext context) : base(context)
+        private readonly IImageRepo _imageRepo; 
+        public ServiceDetailRepo(GreenGardenDbContext context, IImageRepo imageRepo) : base(context)
         {
             _context = context;
+            _imageRepo = imageRepo;
         }
 
         public async Task<List<ServiceDetailResModel>> GetServiceDetailByServiceID(Guid serviceID)
@@ -23,8 +26,10 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                 if (tblServiceDetails.Any())
                 {
                     List<ServiceDetailResModel> resList = new List<ServiceDetailResModel>();
+                    
                     foreach (TblServiceDetail detail in tblServiceDetails)
                     {
+                        List<string> imgs = await _imageRepo.GetImgUrlServiceDetail(detail.Id);
                         ServiceDetailResModel serviceDetail = new ServiceDetailResModel
                         {
                             ID = detail.Id,
@@ -32,7 +37,8 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                             ServiceID = detail.ServiceId ?? Guid.Empty,
                             TreeName = detail.TreeName ?? "",
                             Description = detail.Desciption ?? "",
-                            Quantity = detail.Quantity ?? 0
+                            Quantity = detail.Quantity ?? 0,
+                            ImgUrls = imgs
                         };
                         resList.Add(serviceDetail);
                     }

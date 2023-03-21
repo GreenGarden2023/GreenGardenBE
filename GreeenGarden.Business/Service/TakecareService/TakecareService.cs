@@ -82,15 +82,18 @@ namespace GreeenGarden.Business.Service.TakecareService
                     result.Message = "A user tree ID is invalid.";
                     return result;
                 }
-
+                TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                 TblService tblService = new TblService
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.Parse(userID),
+                    CreateDate = currentTime,
                     StartDate = serviceInsertModel.StartDate,
                     EndDate = serviceInsertModel.EndDate,
                     Name = serviceInsertModel.Name,
                     Phone = serviceInsertModel.Phone,
+                    Email = serviceInsertModel.Email,
                     Address = serviceInsertModel.Address,
                     Status = ServiceStatus.PROCESSING,
                 };
@@ -136,10 +139,13 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        UserID = resService.UserId,
+                        CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
                         Name = resService.Name,
                         Phone = resService.Phone,
+                        Email = resService.Email,
                         Address = resService.Address,
                         Status = resService.Status,
                         ServiceDetailList = resServiceDetail
@@ -158,6 +164,139 @@ namespace GreeenGarden.Business.Service.TakecareService
                     result.Message = "Create request failed.";
                     return result;
                 }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> GetAllRequest(string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                List<TblService> tblServices = await _serviceRepo.GetAllRequest();
+                List<ServiceResModel> resModels = new List<ServiceResModel>();
+                foreach (TblService service in tblServices)
+                {
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
+                    ServiceResModel serviceResModel = new ServiceResModel
+                    {
+                        ID = service.Id,
+                        UserID = service.UserId,
+                        CreateDate = service.CreateDate ?? DateTime.MinValue,
+                        StartDate = service.StartDate,
+                        EndDate = service.EndDate,
+                        Name = service.Name,
+                        Phone = service.Phone,
+                        Email = service.Email,
+                        Address = service.Address,
+                        Status = service.Status,
+                        ServiceDetailList = resServiceDetail
+                    };
+                    resModels.Add(serviceResModel);
+                }
+                resModels.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = resModels;
+                result.Message = "Get request success.";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> GetUserRequest(string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                string userID = _decodeToken.Decode(token, "userid");
+                List<TblService> tblServices = await _serviceRepo.GetRequestByUser(Guid.Parse(userID));
+                List<ServiceResModel> resModels = new List<ServiceResModel>();
+                foreach (TblService service in tblServices)
+                {
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
+                    ServiceResModel serviceResModel = new ServiceResModel
+                    {
+                        ID = service.Id,
+                        UserID = service.UserId,
+                        CreateDate = service.CreateDate ?? DateTime.MinValue,
+                        StartDate = service.StartDate,
+                        EndDate = service.EndDate,
+                        Name = service.Name,
+                        Phone = service.Phone,
+                        Email = service.Email,
+                        Address = service.Address,
+                        Status = service.Status,
+                        ServiceDetailList = resServiceDetail
+                    };
+                    resModels.Add(serviceResModel);
+                }
+                resModels.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = resModels;
+                result.Message = "Get request success.";
+                return result;
             }
             catch (Exception e)
             {
@@ -212,6 +351,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        UserID = resService.UserId,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
                         Name = resService.Name,
