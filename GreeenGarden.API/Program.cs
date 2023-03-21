@@ -26,8 +26,6 @@ using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
-using GreeenGarden.Data.Repositories.ServiceOrderRepo;
-using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
@@ -84,8 +82,6 @@ builder.Services.AddTransient<IImageRepo, ImageRepo>();
 builder.Services.AddTransient<ITransactionRepo, TransactionRepo>();
 builder.Services.AddTransient<ICartRepo, CartRepo>();
 builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
-builder.Services.AddTransient<IServiceRepo, ServiceRepo>();
-builder.Services.AddTransient<IServiceOrderRepo, ServiceOrderRepo>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>

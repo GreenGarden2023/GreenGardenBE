@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblUserTree
 {
@@ -14,5 +17,5 @@ public partial class TblUserTree
 
     public string? Status { get; set; }
 
-    public virtual ICollection<TblServiceUserTree> TblServiceUserTrees { get; } = new List<TblServiceUserTree>();
+    public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 }

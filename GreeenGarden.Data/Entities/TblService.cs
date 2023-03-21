@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblService
 {
@@ -7,8 +10,6 @@ public partial class TblService
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
-
-    public string? Mail { get; set; }
 
     public string? Phone { get; set; }
 
@@ -20,7 +21,7 @@ public partial class TblService
 
     public Guid UserId { get; set; }
 
-    public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();
+    public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 
-    public virtual ICollection<TblServiceUserTree> TblServiceUserTrees { get; } = new List<TblServiceUserTree>();
+    public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();
 }

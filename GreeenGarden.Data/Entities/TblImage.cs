@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblImage
 {
@@ -24,6 +27,8 @@ public partial class TblImage
 
     public Guid? SaleOrderDetailId { get; set; }
 
+    public Guid? ServiceDetailId { get; set; }
+
     public virtual TblCategory? Category { get; set; }
 
     public virtual TblFeedBack? Feedback { get; set; }
@@ -39,4 +44,6 @@ public partial class TblImage
     public virtual TblReport? Report { get; set; }
 
     public virtual TblSaleOrderDetail? SaleOrderDetail { get; set; }
+
+    public virtual TblServiceDetail? ServiceDetail { get; set; }
 }
