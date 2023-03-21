@@ -11,6 +11,7 @@ using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
 using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Data.Repositories.UserRepo;
 
 namespace GreeenGarden.Business.Service.TakecareService
 {
@@ -22,7 +23,8 @@ namespace GreeenGarden.Business.Service.TakecareService
         private readonly IImageRepo _imageRepo;
         private readonly IImageService _imageService;
         private readonly IUserTreeRepo _userTreeRepo;
-        public TakecareService(IImageService imageService, IUserTreeRepo userTreeRepo,  IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
+        private readonly IUserRepo _userRepo;
+        public TakecareService(IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo,  IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -30,6 +32,88 @@ namespace GreeenGarden.Business.Service.TakecareService
             _imageRepo = imageRepo;
             _userTreeRepo = userTreeRepo;
             _imageService = imageService;
+            _userRepo = userRepo;
+        }
+         
+        public async Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                TblUser tblUser = await _userRepo.Get(serviceAssignModelManager.TechnicianID);
+                if (tblUser == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Technician ID is invalid.";
+                    return result;
+                }
+                bool assign = await _serviceRepo.AssignTechnician(serviceAssignModelManager);
+                if (assign == true)
+                {
+                    TblService resService = await _serviceRepo.Get(serviceAssignModelManager.ServiceID);
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
+                    ServiceResModel serviceResModel = new ServiceResModel
+                    {
+                        ID = resService.Id,
+                        UserID = resService.UserId,
+                        CreateDate = resService.CreateDate ?? DateTime.MinValue,
+                        StartDate = resService.StartDate,
+                        EndDate = resService.EndDate,
+                        Name = resService.Name,
+                        Phone = resService.Phone,
+                        Email = resService.Email,
+                        Address = resService.Address,
+                        Status = resService.Status,
+                        TechnicianID = resService.TechnicianId,
+                        TechnicianName = resService.TechnicianName,
+                        ServiceDetailList = resServiceDetail
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = serviceResModel;
+                    result.Message = "Assign technician success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Assign technician failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+
         }
 
         public async Task<ResultModel> CreateRequest(string token, ServiceInsertModel serviceInsertModel)
@@ -383,6 +467,69 @@ namespace GreeenGarden.Business.Service.TakecareService
                     return result;
                 }
 
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> UpdateServicePrice(string token, ServiceUpdateModelManager serviceUpdateModelManagers)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                TblServiceDetail tblServiceDetail = await _serviceDetailRepo.Get(serviceUpdateModelManagers.ServiceDetailID);
+                if(tblServiceDetail == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Service detail Id invalid.";
+                    return result;
+                }
+                bool update = await _serviceDetailRepo.UpdateServiceDetailManager(serviceUpdateModelManagers);
+                if (update == true)
+                {
+                    ServiceDetailResModel resModel = await _serviceDetailRepo.GetServiceDetailByID(serviceUpdateModelManagers.ServiceDetailID);
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = resModel;
+                    result.Message = "Update service detail success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Update service detail failed.";
+                    return result;
+                }
             }
             catch (Exception e)
             {

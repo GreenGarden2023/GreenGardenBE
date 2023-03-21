@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ServiceRepo
@@ -9,10 +12,36 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
 	public class ServiceRepo : Repository<TblService>, IServiceRepo
 	{
 		private readonly GreenGardenDbContext _context;
-		public ServiceRepo(GreenGardenDbContext context) : base(context)
+		private readonly IUserRepo _userRepo;
+		public ServiceRepo(GreenGardenDbContext context, IUserRepo userRepo) : base(context)
 		{
 			_context = context;
+			_userRepo = userRepo;
 		}
+
+        public async Task<bool> AssignTechnician(ServiceAssignModelManager serviceAssignModelManager)
+        {
+			try { 
+            TblService tblService = await _context.TblServices.Where(x => x.Id.Equals(serviceAssignModelManager.ServiceID)).FirstOrDefaultAsync();
+            if (tblService != null)
+            {
+					TblUser tblUser = await _userRepo.Get(serviceAssignModelManager.TechnicianID);
+					tblService.TechnicianId = serviceAssignModelManager.TechnicianID;
+					tblService.TechnicianName = tblUser.FullName;
+					_ = _context.Update(tblService);
+					_ = await _context.SaveChangesAsync();
+					return true;
+            }
+            else
+            {
+                return false;
+            }
+			}
+			catch
+			{
+				return false;
+			}
+        }
 
         public async Task<bool> ChangeServiceStatus(Guid serviceId, string status)
         {

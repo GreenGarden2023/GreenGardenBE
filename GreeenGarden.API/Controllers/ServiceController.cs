@@ -37,7 +37,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-all-service-request")]
         [SwaggerOperation(Summary = "Get all service request")]
-        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        [Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> GetAllServiceRequest()
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -51,6 +51,24 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             Data.Models.ResultModel.ResultModel result = await _takecareService.GetUserRequest(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("assign-service-technician")]
+        [SwaggerOperation(Summary = "Assign a technician to a service request")]
+        [Authorize(Roles = "Staff, Manager, Admin")]
+        public async Task<IActionResult> AssignTechnician(ServiceAssignModelManager serviceAssignModelManager)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.AssignTechnician(token, serviceAssignModelManager);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("update-service-detail")]
+        [SwaggerOperation(Summary = "Update service detail price for manager")]
+        [Authorize(Roles = "Staff, Manager, Admin")]
+        public async Task<IActionResult> UpdateServiceDetail(ServiceUpdateModelManager serviceUpdateModelManager)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.UpdateServicePrice(token, serviceUpdateModelManager);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

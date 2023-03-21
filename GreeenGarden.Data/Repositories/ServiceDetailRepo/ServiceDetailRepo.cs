@@ -18,6 +18,38 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
             _imageRepo = imageRepo;
         }
 
+        public async Task<ServiceDetailResModel> GetServiceDetailByID(Guid serviceDetailID)
+        {
+            try
+            {
+                TblServiceDetail tblServiceDetail = await _context.TblServiceDetails.Where(x => x.Id.Equals(serviceDetailID)).FirstOrDefaultAsync();
+                if (tblServiceDetail != null) { 
+                        List<string> imgs = await _imageRepo.GetImgUrlServiceDetail(tblServiceDetail.Id);
+                        ServiceDetailResModel serviceDetail = new ServiceDetailResModel
+                        {
+                            ID = tblServiceDetail.Id,
+                            UserTreeID = tblServiceDetail.UserTreeId ?? Guid.Empty,
+                            ServiceID = tblServiceDetail.ServiceId ?? Guid.Empty,
+                            TreeName = tblServiceDetail.TreeName ?? "",
+                            Description = tblServiceDetail.Desciption ?? "",
+                            Quantity = tblServiceDetail.Quantity ?? 0,
+                            ServicePrice = tblServiceDetail.ServicePrice ?? 0,
+                            ManagerDescription = tblServiceDetail.ManagerDescription,
+                            ImgUrls = imgs
+                        };
+                    return serviceDetail;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public async Task<List<ServiceDetailResModel>> GetServiceDetailByServiceID(Guid serviceID)
         {
             try
@@ -58,7 +90,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
 
         }
 
-        public async Task<bool> UpdateServiceDetailManager(ServiceDetailManagerUpdateModel serviceDetail)
+        public async Task<bool> UpdateServiceDetailManager(ServiceUpdateModelManager serviceDetail)
         {
             try
             {

@@ -8,7 +8,9 @@ namespace GreeenGarden.Business.Service.TakecareService
 	{
 		Task<ResultModel> CreateRequest(string token, ServiceInsertModel serviceInsertModel);
         Task<ResultModel> UpdateRequestStatus(string token, ServiceStatusModel serviceStatusModel);
-		Task<ResultModel> GetUserRequest(string token);
+		Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager);
+        Task<ResultModel> UpdateServicePrice(string token, ServiceUpdateModelManager serviceUpdateModelManagers );
+        Task<ResultModel> GetUserRequest(string token);
         Task<ResultModel> GetAllRequest(string token);
     }
 }

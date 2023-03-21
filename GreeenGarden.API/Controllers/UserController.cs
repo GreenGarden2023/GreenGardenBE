@@ -4,6 +4,7 @@ using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GreeenGarden.API.Controllers
 {
@@ -55,6 +56,23 @@ namespace GreeenGarden.API.Controllers
             {
                 string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
                 ResultModel result = await _userService.GetCurrentUser(token);
+                return result;
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+        }
+        [HttpGet("get-user-list-by-role")]
+        [SwaggerOperation(Summary = "admin/technician/customer/manager")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<ActionResult<ResultModel>> GetUserListByRole(string role)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.GetUsersByRole(token, role);
                 return result;
             }
             catch (Exception e)

@@ -11,6 +11,8 @@ namespace GreeenGarden.Business.Service.UserService
         public Task<ResultModel> UpdateUser(string token, UserUpdateModel userUpdateModel);
         public Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel);
         public Task<ResultModel> GetListUserByFullName(string token, string fullName);
+        public Task<ResultModel> GetUsersByRole(string token, string role);
+
     }
 }
 
