@@ -7,6 +7,8 @@ public partial class TblServiceOrder
 {
     public Guid Id { get; set; }
 
+    public string? OrderCode { get; set; }
+
     public DateTime CreateDate { get; set; }
 
     public DateTime? ServiceStartDate { get; set; }
@@ -17,7 +19,9 @@ public partial class TblServiceOrder
 
     public double? TotalPrice { get; set; }
 
-    public string Status { get; set; } = null!;
+    public double? DiscountAmount { get; set; }
+
+    public double? RemainAmount { get; set; }
 
     public int? RewardPointGain { get; set; }
 
@@ -27,13 +31,13 @@ public partial class TblServiceOrder
 
     public Guid ServiceId { get; set; }
 
-    public string? Description { get; set; }
-
     public Guid UserId { get; set; }
 
     public double? TransportFee { get; set; }
 
     public bool? IsTransport { get; set; }
+
+    public string Status { get; set; } = null!;
 
     public virtual TblService Service { get; set; } = null!;
 

@@ -28,6 +28,8 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetARentOrder(string token, Guid rentOrderID);
 
         Task<ResultModel> UpdateSaleOrderStatus(string token, Guid saleOrderID, string status);
+
+        Task<ResultModel> CreateServiceOrder(string token, ServiceOrderCreateModel serviceOrderCreateModel);
     }
 }
 

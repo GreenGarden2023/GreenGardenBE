@@ -19,7 +19,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("create-order")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
-        public async Task<IActionResult> CreateRentOrder(OrderCreateModel orderModel)
+        public async Task<IActionResult> CreateOrder(OrderCreateModel orderModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             if (orderModel.StartDateRent != DateTime.MinValue && orderModel.EndDateRent != DateTime.MinValue)
@@ -32,6 +32,14 @@ namespace GreeenGarden.API.Controllers
                 ResultModel result = await _orderService.CreateSaleOrder(token, orderModel);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
+        }
+        [HttpPost("create-service-order")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> CreateServiceOrder(ServiceOrderCreateModel orderModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.CreateServiceOrder(token, orderModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-rent-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]

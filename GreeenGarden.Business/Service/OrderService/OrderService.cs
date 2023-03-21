@@ -7,6 +7,7 @@ using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Models.SizeModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
@@ -16,6 +17,8 @@ using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
+using GreeenGarden.Data.Repositories.ServiceDetailRepo;
+using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
@@ -38,7 +41,11 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly ICartService _cartService;
         private readonly IImageRepo _imageRepo;
         private readonly IShippingFeeRepo _shippingFeeRepo;
+        private readonly IServiceRepo _serviceRepo;
+        private readonly IServiceDetailRepo _serviceDetailRepo;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
+            IServiceRepo serviceRepo,
+            IServiceDetailRepo serviceDetailRepo,
             ISaleOrderRepo saleOrderRepo,
             ISaleOrderDetailRepo saleOrderDetailRepo,
             IRewardRepo rewardRepo,
@@ -52,6 +59,8 @@ namespace GreeenGarden.Business.Service.OrderService
             IShippingFeeRepo shippingFeeRepo)
         {
             _decodeToken = new DecodeToken();
+            _serviceRepo = serviceRepo;
+            _serviceDetailRepo = serviceDetailRepo;
             _rentOrderRepo = rentOrderRepo;
             _rentOrderDetailRepo = rentOrderDetailRepo;
             _productItemDetailRepo = sizeProductItemRepo;
@@ -644,7 +653,6 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
-
             }
         }
 
@@ -1658,6 +1666,93 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
 
+            }
+        }
+
+        public async Task<ResultModel> CreateServiceOrder(string token, ServiceOrderCreateModel serviceOrderCreateModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                string userId = _decodeToken.Decode(token, "userid");
+                TblService tblService = await _serviceRepo.Get(serviceOrderCreateModel.ServiceId);
+                if (tblService == null)
+                {
+                    result.Message = "Service Id invalid";
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    return result;
+                }
+                List<ServiceDetailResModel> serviceDetailResModels = await _serviceDetailRepo.GetServiceDetailByServiceID(tblService.Id);
+
+                double serviceDetailTotal = 0;
+                foreach (ServiceDetailResModel serviceDetail in serviceDetailResModels)
+                {
+                    serviceDetailTotal += serviceDetail.ServicePrice ?? 0;
+                }
+
+                double finalTotal = serviceDetailTotal - (serviceOrderCreateModel.RewardPointUsed * 1000) + serviceOrderCreateModel.TransportFee;
+                int rewardPointGain = (int)Math.Ceiling(finalTotal * 0.01 / 1000);
+                double deposit = Math.Ceiling(finalTotal / 2);
+
+                DateTime createDate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
+                TblServiceOrder tblServiceOrder = new TblServiceOrder
+                {
+                    Id = Guid.NewGuid(),
+                    OrderCode = await GenerateOrderCode(),
+                    CreateDate = createDate,
+                    ServiceStartDate = tblService.StartDate,
+                    ServiceEndDate = tblService.EndDate,
+                    Deposit = deposit,
+                    TotalPrice = finalTotal,
+                    RemainAmount = finalTotal,
+                    Status = ServiceOrderStatus.UNPAID,
+                    RewardPointGain = rewardPointGain,
+                    RewardPointUsed = serviceOrderCreateModel.RewardPointUsed,
+                    DiscountAmount = serviceOrderCreateModel.RewardPointUsed * 1000,
+                    TechnicianId = (Guid)tblService.TechnicianId,
+                    ServiceId = serviceOrderCreateModel.ServiceId,
+                    UserId = Guid.Parse(userId),
+                    TransportFee = serviceOrderCreateModel.TransportFee,
+                    IsTransport = serviceOrderCreateModel.IsTransport
+                };
+
+
+                result.Message = "Create service order success.";
+                result.Data = tblServiceOrder;
+                result.IsSuccess = true;
+                result.Code = 200;
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
             }
         }
     }
