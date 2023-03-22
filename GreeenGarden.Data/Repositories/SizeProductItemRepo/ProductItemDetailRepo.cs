@@ -92,14 +92,6 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 
         public async Task<bool> UpdateSizeProductItem(ProductItemDetailModel productItemDetailModel)
         {
-            if (productItemDetailModel.SizeId == null)
-            {
-                productItemDetailModel.SizeId = Guid.Empty;
-            }
-            if (productItemDetailModel.ProductItemID == null)
-            {
-                productItemDetailModel.ProductItemID = Guid.Empty;
-            }
             if (productItemDetailModel != null)
             {
                 var query = from sizeProdItem in context.TblProductItemDetails
