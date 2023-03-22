@@ -29,6 +29,12 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
             return listTblOrder;
         }
 
+        public async Task<Page<TblServiceOrder>> GetServiceOrderByTechnician(PaginationRequestModel paginationRequestModel, Guid technicianID)
+        {
+            Page<TblServiceOrder> listTblOrder = await _context.TblServiceOrders.Where(x => x.TechnicianId.Equals(technicianID)).OrderByDescending(y => y.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            return listTblOrder;
+        }
+
         public async Task<Page<TblServiceOrder>> GetServiceOrders(PaginationRequestModel paginationRequestModel, Guid userID)
         {
             Page<TblServiceOrder> listTblOrder = await _context.TblServiceOrders.Where(x => x.UserId.Equals(userID)).OrderByDescending(y => y.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
@@ -47,14 +53,14 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
                 _ = await _context.SaveChangesAsync();
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Message = "Cancel rent order sucess.";
+                result.Message = "Update service order sucess.";
                 return result;
             }
             else
             {
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Cancel rent order failed.";
+                result.Message = "Update service order failed.";
                 return result;
             }
         }

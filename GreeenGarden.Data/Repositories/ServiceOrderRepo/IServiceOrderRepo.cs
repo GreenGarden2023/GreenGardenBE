@@ -16,6 +16,7 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
         Task<ResultModel> UpdateServiceOrderRemain(Guid serviceOrderID, double amount);
         Task<Page<TblServiceOrder>> GetAllServiceOrders(PaginationRequestModel paginationRequestModel);
         Task<Page<TblServiceOrder>> GetServiceOrders(PaginationRequestModel paginationRequestModel, Guid userID);
+        Task<Page<TblServiceOrder>> GetServiceOrderByTechnician(PaginationRequestModel paginationRequestModel, Guid technicianID);
     }
 }
 

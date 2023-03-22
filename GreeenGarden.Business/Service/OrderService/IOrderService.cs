@@ -32,6 +32,8 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> CreateServiceOrder(string token, ServiceOrderCreateModel serviceOrderCreateModel);
         Task<ResultModel> GetServiceOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetAllServiceOrders(string token, PaginationRequestModel pagingModel);
+        Task<ResultModel> GetServiceOrderByTechnician(string token, PaginationRequestModel pagingModel, Guid technicianID);
+
     }
 }
 
