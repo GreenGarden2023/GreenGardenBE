@@ -1438,7 +1438,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     RecipientPhone = "" + rentOrderModel.RecipientPhone,
                     RecipientName = "" + rentOrderModel.RecipientName,
                 };
-                int maxPoint = (int)Math.Floor(((numberRentDays * totalAmountPerDay) + transportFee)/ 1000);
+                int maxPoint = (int)Math.Floor(((numberRentDays * totalAmountPerDay) + transportFee)/ 1000) - 50;
+                if (maxPoint<0)
+                {
+                    maxPoint = 0;
+                }
                 OrderCalculateModel orderCalculateModel = new()
                 {
                     TransportFee = tblRentOrder.TransportFee,
@@ -1543,7 +1547,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     DiscountAmount = discountAmount,
 
                 };
-                double maxPoint = (int)Math.Floor((totalAmountPerDay + transportFee)/ 1000);
+                double maxPoint = (int)Math.Floor((totalAmountPerDay + transportFee)/ 1000) - 50;
+                if (maxPoint < 0)
+                {
+                    maxPoint = 0;
+                }
                 OrderCalculateModel orderCalculateModel = new()
                 {
                     TransportFee = tblSaleOrder.TransportFee,
