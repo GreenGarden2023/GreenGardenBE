@@ -35,8 +35,6 @@ public partial class TblServiceOrder
 
     public double? TransportFee { get; set; }
 
-    public bool? IsTransport { get; set; }
-
     public string Status { get; set; } = null!;
 
     public virtual TblService Service { get; set; } = null!;

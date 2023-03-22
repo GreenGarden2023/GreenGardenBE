@@ -63,12 +63,12 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpPost("update-service-detail")]
-        [SwaggerOperation(Summary = "Update service detail price for manager")]
+        [SwaggerOperation(Summary = "Update service and service detail for manager")]
         [Authorize(Roles = "Staff, Manager, Admin")]
-        public async Task<IActionResult> UpdateServiceDetail(ServiceUpdateModelManager serviceUpdateModelManager)
+        public async Task<IActionResult> UpdateServiceDetail(UpdateService updateService)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _takecareService.UpdateServicePrice(token, serviceUpdateModelManager);
+            Data.Models.ResultModel.ResultModel result = await _takecareService.UpdateServicePrice(token, updateService.ServiceUpdate, updateService.ServiceDetailUpdate);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

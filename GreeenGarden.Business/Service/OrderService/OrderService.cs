@@ -1737,7 +1737,6 @@ namespace GreeenGarden.Business.Service.OrderService
                     ServiceId = serviceOrderCreateModel.ServiceId,
                     UserId = Guid.Parse(userId),
                     TransportFee = serviceOrderCreateModel.TransportFee,
-                    IsTransport = serviceOrderCreateModel.IsTransport
                 };
 
 

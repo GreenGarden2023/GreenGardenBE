@@ -90,7 +90,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
 
         }
 
-        public async Task<bool> UpdateServiceDetailManager(ServiceUpdateModelManager serviceDetail)
+        public async Task<bool> UpdateServiceDetailManager(ServiceDetailUpdateModelManager serviceDetail)
         {
             try
             {

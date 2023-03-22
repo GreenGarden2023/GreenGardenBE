@@ -3,6 +3,19 @@ namespace GreeenGarden.Data.Models.ServiceModel
 {
     public class ServiceUpdateModelManager
     {
+        public Guid ServiceID { get; set; }
+
+        public string? Name { get; set; }
+
+        public string? Phone { get; set; }
+
+        public string? Email { get; set; }
+
+        public string? Address { get; set; }
+
+    }
+    public class ServiceDetailUpdateModelManager
+    {
         public Guid ServiceDetailID { get; set; }
 
         public int? Quantity { get; set; }
@@ -11,6 +24,12 @@ namespace GreeenGarden.Data.Models.ServiceModel
 
         public string? ManagerDescription { get; set; }
     }
+    public class UpdateService
+    {
+        public ServiceUpdateModelManager? ServiceUpdate { get; set; }
+        public List<ServiceDetailUpdateModelManager>? ServiceDetailUpdate { get; set; }
+    }
+
     public class ServiceAssignModelManager
     {
         public Guid ServiceID { get; set; }

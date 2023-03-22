@@ -1,21 +1,22 @@
-﻿using System;
-using GreeenGarden.Business.Utilities.TokenService;
-using GreeenGarden.Data.Enums;
-using System.Security.Claims;
-using GreeenGarden.Data.Models.ResultModel;
-using GreeenGarden.Data.Models.ServiceModel;
-using Newtonsoft.Json.Linq;
-using GreeenGarden.Data.Repositories.ServiceRepo;
-using GreeenGarden.Data.Repositories.ServiceDetailRepo;
-using GreeenGarden.Data.Repositories.ImageRepo;
-using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Repositories.UserTreeRepo;
-using GreeenGarden.Business.Service.ImageService;
-using GreeenGarden.Data.Repositories.UserRepo;
+﻿    using System;
+    using GreeenGarden.Business.Utilities.TokenService;
+    using GreeenGarden.Data.Enums;
+    using System.Security.Claims;
+    using GreeenGarden.Data.Models.ResultModel;
+    using GreeenGarden.Data.Models.ServiceModel;
+    using Newtonsoft.Json.Linq;
+    using GreeenGarden.Data.Repositories.ServiceRepo;
+    using GreeenGarden.Data.Repositories.ServiceDetailRepo;
+    using GreeenGarden.Data.Repositories.ImageRepo;
+    using GreeenGarden.Data.Entities;
+    using GreeenGarden.Data.Repositories.UserTreeRepo;
+    using GreeenGarden.Business.Service.ImageService;
+    using GreeenGarden.Data.Repositories.UserRepo;
+    using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace GreeenGarden.Business.Service.TakecareService
-{
-	public class TakecareService : ITakecareService
+    namespace GreeenGarden.Business.Service.TakecareService
+    {
+    public class TakecareService : ITakecareService
     {
         private readonly DecodeToken _decodeToken;
         private readonly IServiceRepo _serviceRepo;
@@ -179,6 +180,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     Phone = serviceInsertModel.Phone,
                     Email = serviceInsertModel.Email,
                     Address = serviceInsertModel.Address,
+                    IsTransport = serviceInsertModel.IsTransport,
                     Status = ServiceStatus.PROCESSING,
                 };
                 Guid insert = await _serviceRepo.Insert(tblService);
@@ -233,6 +235,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = resService.Email,
                         Address = resService.Address,
                         Status = resService.Status,
+                        IsTransport = resService.IsTransport,
                         TechnicianID = resService.TechnicianId,
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -305,6 +308,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Phone = service.Phone,
                         Email = service.Email,
                         Address = service.Address,
+                        IsTransport = service.IsTransport,
                         Status = service.Status,
                         TechnicianID = service.TechnicianId,
                         TechnicianName = service.TechnicianName,
@@ -375,6 +379,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = service.Email,
                         Address = service.Address,
                         Status = service.Status,
+                        IsTransport = service.IsTransport,
                         TechnicianID = service.TechnicianId,
                         TechnicianName = service.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -477,7 +482,7 @@ namespace GreeenGarden.Business.Service.TakecareService
             }
         }
 
-        public async Task<ResultModel> UpdateServicePrice(string token, ServiceUpdateModelManager serviceUpdateModelManagers)
+        public async Task<ResultModel> UpdateServicePrice(string token, ServiceUpdateModelManager? serviceUpdateModelManager, List<ServiceDetailUpdateModelManager>? serviceDetailUpdateModelManagers)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -505,32 +510,97 @@ namespace GreeenGarden.Business.Service.TakecareService
             ResultModel result = new();
             try
             {
-                TblServiceDetail tblServiceDetail = await _serviceDetailRepo.Get(serviceUpdateModelManagers.ServiceDetailID);
-                if(tblServiceDetail == null)
+                if (serviceUpdateModelManager != null)
                 {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Service detail Id invalid.";
-                    return result;
-                }
-                bool update = await _serviceDetailRepo.UpdateServiceDetailManager(serviceUpdateModelManagers);
-                if (update == true)
+                    bool updateService = await _serviceRepo.UpdateServiceUserInfo(serviceUpdateModelManager);
+                if (updateService == false)
                 {
-                    ServiceDetailResModel resModel = await _serviceDetailRepo.GetServiceDetailByID(serviceUpdateModelManagers.ServiceDetailID);
-                    result.IsSuccess = true;
-                    result.Code = 200;
-                    result.Data = resModel;
-                    result.Message = "Update service detail success.";
-                    return result;
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update service failed.";
+                        return result;
                 }
-                else
+
+                }
+                if (serviceDetailUpdateModelManagers != null)
                 {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Update service detail failed.";
-                    return result;
-                }
+                    Guid serviceID = Guid.NewGuid();
+                    foreach (ServiceDetailUpdateModelManager serviceDetail in serviceDetailUpdateModelManagers)
+                        {
+                            TblServiceDetail tblServiceDetail = await _serviceDetailRepo.Get(serviceDetail.ServiceDetailID);
+                            if (tblServiceDetail == null)
+                            {
+                                result.IsSuccess = false;
+                                result.Code = 400;
+                                result.Message = "Service detail Id invalid.";
+                                return result;
+                            }
+                            bool update = await _serviceDetailRepo.UpdateServiceDetailManager(serviceDetail);
+                            serviceID = (Guid)tblServiceDetail.ServiceId;
+                            if (update == false)
+                            {
+                                result.IsSuccess = false;
+                                result.Code = 400;
+                                result.Message = "Update service detail failed.";
+                                return result;
+                            }
+                        }
+
+                            TblService getResService = await _serviceRepo.Get(serviceID);
+                            List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
+                            ServiceResModel serviceResModel = new ServiceResModel
+                            {
+                                ID = getResService.Id,
+                                UserID = getResService.UserId,
+                                CreateDate = getResService.CreateDate ?? DateTime.MinValue,
+                                StartDate = getResService.StartDate,
+                                EndDate = getResService.EndDate,
+                                Name = getResService.Name,
+                                Phone = getResService.Phone,
+                                Email = getResService.Email,
+                                Address = getResService.Address,
+                                Status = getResService.Status,
+                                IsTransport = getResService.IsTransport,
+                                TechnicianID = getResService.TechnicianId,
+                                TechnicianName = getResService.TechnicianName,
+                                ServiceDetailList = resServiceDetail
+                            };
+                            result.IsSuccess = true;
+                            result.Code = 200;
+                            result.Data = serviceResModel;
+                            result.Message = "Updated service with service detail changed.";
+                    }
+                    else
+                    {
+                        TblService getResService = await _serviceRepo.Get(serviceUpdateModelManager.ServiceID);
+                        List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
+                        ServiceResModel serviceResModel = new ServiceResModel
+                        {
+                            ID = getResService.Id,
+                            UserID = getResService.UserId,
+                            CreateDate = getResService.CreateDate ?? DateTime.MinValue,
+                            StartDate = getResService.StartDate,
+                            EndDate = getResService.EndDate,
+                            Name = getResService.Name,
+                            Phone = getResService.Phone,
+                            Email = getResService.Email,
+                            Address = getResService.Address,
+                            Status = getResService.Status,
+                            IsTransport = getResService.IsTransport,
+                            TechnicianID = getResService.TechnicianId,
+                            TechnicianName = getResService.TechnicianName,
+                            ServiceDetailList = resServiceDetail
+                        };
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = serviceResModel;
+                        result.Message = "Updated service with out service detail change.";
+                        return result;
+                    }
+
+            return result;
             }
+            
             catch (Exception e)
             {
                 result.IsSuccess = false;
@@ -540,5 +610,5 @@ namespace GreeenGarden.Business.Service.TakecareService
             }
         }
     }
-}
+    }
 

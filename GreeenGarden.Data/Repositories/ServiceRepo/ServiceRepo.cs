@@ -6,6 +6,7 @@ using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GreeenGarden.Data.Repositories.ServiceRepo
 {
@@ -89,6 +90,44 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         {
             List<TblService> tblServices = await _context.TblServices.Where(x => x.UserId.Equals(userId)).ToListAsync();
             return tblServices;
+        }
+
+        public async Task<bool> UpdateServiceUserInfo(ServiceUpdateModelManager serviceUpdateModelManager)
+        {
+            try
+            {
+                TblService tblService = await _context.TblServices.Where(x => x.Id.Equals(serviceUpdateModelManager.ServiceID)).FirstOrDefaultAsync();
+                if (tblService != null)
+                {
+                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Name) && !serviceUpdateModelManager.Name.Equals(tblService.Name))
+                    {
+                        tblService.Name = serviceUpdateModelManager.Name;
+                    }
+                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Phone) && !serviceUpdateModelManager.Phone.Equals(tblService.Phone))
+                    {
+                        tblService.Phone = serviceUpdateModelManager.Phone;
+                    }
+                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Email) && !serviceUpdateModelManager.Email.Equals(tblService.Email))
+                    {
+                        tblService.Email = serviceUpdateModelManager.Email;
+                    }
+                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Address) && !serviceUpdateModelManager.Address.Equals(tblService.Address))
+                    {
+                        tblService.Address = serviceUpdateModelManager.Address;
+                    }
+                    _ = _context.Update(tblService);
+                    _ = await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

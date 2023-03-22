@@ -29,6 +29,8 @@ public partial class TblService
 
     public string? TechnicianName { get; set; }
 
+    public bool? IsTransport { get; set; }
+
     public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 
     public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();

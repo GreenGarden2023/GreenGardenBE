@@ -9,7 +9,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
     {
 		Task<List<ServiceDetailResModel>> GetServiceDetailByServiceID(Guid serviceID);
         Task<ServiceDetailResModel> GetServiceDetailByID(Guid serviceDetailID);
-        Task<bool> UpdateServiceDetailManager(ServiceUpdateModelManager serviceDetail);
+        Task<bool> UpdateServiceDetailManager(ServiceDetailUpdateModelManager serviceDetail);
         
     }
 }

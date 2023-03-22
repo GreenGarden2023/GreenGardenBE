@@ -15,6 +15,8 @@ namespace GreeenGarden.Data.Models.ServiceModel
 
         public string? Address { get; set; }
 
+        public bool? IsTransport { get; set; }
+
         public List<Guid> UserTreeIDList { get; set; }
     }
     public class ServiceStatusModel
