@@ -1,16 +1,15 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
 {
-	public interface IServiceDetailRepo : IRepository<TblServiceDetail>
+    public interface IServiceDetailRepo : IRepository<TblServiceDetail>
     {
-		Task<List<ServiceDetailResModel>> GetServiceDetailByServiceID(Guid serviceID);
+        Task<List<ServiceDetailResModel>> GetServiceDetailByServiceID(Guid serviceID);
         Task<ServiceDetailResModel> GetServiceDetailByID(Guid serviceDetailID);
         Task<bool> UpdateServiceDetailManager(ServiceDetailUpdateModelManager serviceDetail);
-        
+
     }
 }
 

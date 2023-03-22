@@ -133,7 +133,8 @@ namespace GreeenGarden.Data.Repositories.UserRepo
         {
             List<UserByRoleResModel> userList = new List<UserByRoleResModel>();
             List<TblUser> userGetList = new List<TblUser>();
-            if (role.Equals("admin")) {
+            if (role.Equals("admin"))
+            {
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("a56b469d-0f7e-4c3b-bba5-17037581596a"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
@@ -147,7 +148,9 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                     };
                     userList.Add(resModel);
                 }
-            } else if (role.Equals("technician")) {
+            }
+            else if (role.Equals("technician"))
+            {
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("56d4606a-08d0-4589-bd51-3a195d253ec5"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
@@ -161,7 +164,9 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                     };
                     userList.Add(resModel);
                 }
-            } else if (role.Equals("customer")) {
+            }
+            else if (role.Equals("customer"))
+            {
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("c98b8768-5827-4e5d-bf3c-3ba67b913d70"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
@@ -175,7 +180,9 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                     };
                     userList.Add(resModel);
                 }
-            } else if (role.Equals("manager")) {
+            }
+            else if (role.Equals("manager"))
+            {
 
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("7fb830b9-81c9-4d6e-984c-dfe9a779cf20"))).ToListAsync();
                 foreach (TblUser user in userGetList)

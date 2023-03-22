@@ -1,8 +1,7 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.ServiceModel
+﻿namespace GreeenGarden.Data.Models.ServiceModel
 {
-	public class ServiceResModel
-	{
+    public class ServiceResModel
+    {
         public Guid ID { get; set; }
 
         public Guid UserID { get; set; }

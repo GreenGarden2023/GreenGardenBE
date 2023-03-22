@@ -1,17 +1,15 @@
-﻿using System;
-using GreeenGarden.Data.Entities;
+﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
-using GreeenGarden.Data.Repositories.ServiceRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
 {
-	public class ServiceDetailRepo : Repository<TblServiceDetail>, IServiceDetailRepo
+    public class ServiceDetailRepo : Repository<TblServiceDetail>, IServiceDetailRepo
     {
         private readonly GreenGardenDbContext _context;
-        private readonly IImageRepo _imageRepo; 
+        private readonly IImageRepo _imageRepo;
         public ServiceDetailRepo(GreenGardenDbContext context, IImageRepo imageRepo) : base(context)
         {
             _context = context;
@@ -23,20 +21,21 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
             try
             {
                 TblServiceDetail tblServiceDetail = await _context.TblServiceDetails.Where(x => x.Id.Equals(serviceDetailID)).FirstOrDefaultAsync();
-                if (tblServiceDetail != null) { 
-                        List<string> imgs = await _imageRepo.GetImgUrlServiceDetail(tblServiceDetail.Id);
-                        ServiceDetailResModel serviceDetail = new ServiceDetailResModel
-                        {
-                            ID = tblServiceDetail.Id,
-                            UserTreeID = tblServiceDetail.UserTreeId ?? Guid.Empty,
-                            ServiceID = tblServiceDetail.ServiceId ?? Guid.Empty,
-                            TreeName = tblServiceDetail.TreeName ?? "",
-                            Description = tblServiceDetail.Desciption ?? "",
-                            Quantity = tblServiceDetail.Quantity ?? 0,
-                            ServicePrice = tblServiceDetail.ServicePrice ?? 0,
-                            ManagerDescription = tblServiceDetail.ManagerDescription,
-                            ImgUrls = imgs
-                        };
+                if (tblServiceDetail != null)
+                {
+                    List<string> imgs = await _imageRepo.GetImgUrlServiceDetail(tblServiceDetail.Id);
+                    ServiceDetailResModel serviceDetail = new ServiceDetailResModel
+                    {
+                        ID = tblServiceDetail.Id,
+                        UserTreeID = tblServiceDetail.UserTreeId ?? Guid.Empty,
+                        ServiceID = tblServiceDetail.ServiceId ?? Guid.Empty,
+                        TreeName = tblServiceDetail.TreeName ?? "",
+                        Description = tblServiceDetail.Desciption ?? "",
+                        Quantity = tblServiceDetail.Quantity ?? 0,
+                        ServicePrice = tblServiceDetail.ServicePrice ?? 0,
+                        ManagerDescription = tblServiceDetail.ManagerDescription,
+                        ImgUrls = imgs
+                    };
                     return serviceDetail;
                 }
                 else
@@ -58,7 +57,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                 if (tblServiceDetails.Any())
                 {
                     List<ServiceDetailResModel> resList = new List<ServiceDetailResModel>();
-                    
+
                     foreach (TblServiceDetail detail in tblServiceDetails)
                     {
                         List<string> imgs = await _imageRepo.GetImgUrlServiceDetail(detail.Id);
@@ -95,9 +94,9 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
             try
             {
                 TblServiceDetail tblServiceDetail = await _context.TblServiceDetails.Where(x => x.Id.Equals(serviceDetail.ServiceDetailID)).FirstOrDefaultAsync();
-                if(tblServiceDetail != null)
+                if (tblServiceDetail != null)
                 {
-                    if(serviceDetail.Quantity != null && serviceDetail.Quantity != tblServiceDetail.Quantity)
+                    if (serviceDetail.Quantity != null && serviceDetail.Quantity != tblServiceDetail.Quantity)
                     {
                         tblServiceDetail.Quantity = serviceDetail.Quantity;
                     }

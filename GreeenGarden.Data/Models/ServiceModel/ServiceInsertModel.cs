@@ -1,8 +1,7 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.ServiceModel
+﻿namespace GreeenGarden.Data.Models.ServiceModel
 {
-	public class ServiceInsertModel
-	{
+    public class ServiceInsertModel
+    {
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }

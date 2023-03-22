@@ -1,5 +1,4 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.ServiceModel
+﻿namespace GreeenGarden.Data.Models.ServiceModel
 {
     public class ServiceUpdateModelManager
     {

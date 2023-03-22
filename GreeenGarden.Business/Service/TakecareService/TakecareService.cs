@@ -1,21 +1,18 @@
-﻿    using System;
-    using GreeenGarden.Business.Utilities.TokenService;
-    using GreeenGarden.Data.Enums;
-    using System.Security.Claims;
-    using GreeenGarden.Data.Models.ResultModel;
-    using GreeenGarden.Data.Models.ServiceModel;
-    using Newtonsoft.Json.Linq;
-    using GreeenGarden.Data.Repositories.ServiceRepo;
-    using GreeenGarden.Data.Repositories.ServiceDetailRepo;
-    using GreeenGarden.Data.Repositories.ImageRepo;
-    using GreeenGarden.Data.Entities;
-    using GreeenGarden.Data.Repositories.UserTreeRepo;
-    using GreeenGarden.Business.Service.ImageService;
-    using GreeenGarden.Data.Repositories.UserRepo;
-    using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+﻿using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Business.Utilities.TokenService;
+using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.ServiceModel;
+using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.ServiceDetailRepo;
+using GreeenGarden.Data.Repositories.ServiceRepo;
+using GreeenGarden.Data.Repositories.UserRepo;
+using GreeenGarden.Data.Repositories.UserTreeRepo;
+using System.Security.Claims;
 
-    namespace GreeenGarden.Business.Service.TakecareService
-    {
+namespace GreeenGarden.Business.Service.TakecareService
+{
     public class TakecareService : ITakecareService
     {
         private readonly DecodeToken _decodeToken;
@@ -25,7 +22,7 @@
         private readonly IImageService _imageService;
         private readonly IUserTreeRepo _userTreeRepo;
         private readonly IUserRepo _userRepo;
-        public TakecareService(IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo,  IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
+        public TakecareService(IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -35,7 +32,7 @@
             _imageService = imageService;
             _userRepo = userRepo;
         }
-         
+
         public async Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager)
         {
             if (!string.IsNullOrEmpty(token))
@@ -147,7 +144,7 @@
             {
                 string userID = _decodeToken.Decode(token, "userid");
                 bool checkUserTree = false;
-                foreach(Guid id in serviceInsertModel.UserTreeIDList)
+                foreach (Guid id in serviceInsertModel.UserTreeIDList)
                 {
                     TblUserTree tblUserTree = await _userTreeRepo.Get(id);
                     if (tblUserTree != null)
@@ -513,94 +510,94 @@
                 if (serviceUpdateModelManager != null)
                 {
                     bool updateService = await _serviceRepo.UpdateServiceUserInfo(serviceUpdateModelManager);
-                if (updateService == false)
-                {
+                    if (updateService == false)
+                    {
                         result.IsSuccess = false;
                         result.Code = 400;
                         result.Message = "Update service failed.";
                         return result;
-                }
+                    }
 
                 }
                 if (serviceDetailUpdateModelManagers != null)
                 {
                     Guid serviceID = Guid.NewGuid();
                     foreach (ServiceDetailUpdateModelManager serviceDetail in serviceDetailUpdateModelManagers)
-                        {
-                            TblServiceDetail tblServiceDetail = await _serviceDetailRepo.Get(serviceDetail.ServiceDetailID);
-                            if (tblServiceDetail == null)
-                            {
-                                result.IsSuccess = false;
-                                result.Code = 400;
-                                result.Message = "Service detail Id invalid.";
-                                return result;
-                            }
-                            bool update = await _serviceDetailRepo.UpdateServiceDetailManager(serviceDetail);
-                            serviceID = (Guid)tblServiceDetail.ServiceId;
-                            if (update == false)
-                            {
-                                result.IsSuccess = false;
-                                result.Code = 400;
-                                result.Message = "Update service detail failed.";
-                                return result;
-                            }
-                        }
-
-                            TblService getResService = await _serviceRepo.Get(serviceID);
-                            List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
-                            ServiceResModel serviceResModel = new ServiceResModel
-                            {
-                                ID = getResService.Id,
-                                UserID = getResService.UserId,
-                                CreateDate = getResService.CreateDate ?? DateTime.MinValue,
-                                StartDate = getResService.StartDate,
-                                EndDate = getResService.EndDate,
-                                Name = getResService.Name,
-                                Phone = getResService.Phone,
-                                Email = getResService.Email,
-                                Address = getResService.Address,
-                                Status = getResService.Status,
-                                IsTransport = getResService.IsTransport,
-                                TechnicianID = getResService.TechnicianId,
-                                TechnicianName = getResService.TechnicianName,
-                                ServiceDetailList = resServiceDetail
-                            };
-                            result.IsSuccess = true;
-                            result.Code = 200;
-                            result.Data = serviceResModel;
-                            result.Message = "Updated service with service detail changed.";
-                    }
-                    else
                     {
-                        TblService getResService = await _serviceRepo.Get(serviceUpdateModelManager.ServiceID);
-                        List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
-                        ServiceResModel serviceResModel = new ServiceResModel
+                        TblServiceDetail tblServiceDetail = await _serviceDetailRepo.Get(serviceDetail.ServiceDetailID);
+                        if (tblServiceDetail == null)
                         {
-                            ID = getResService.Id,
-                            UserID = getResService.UserId,
-                            CreateDate = getResService.CreateDate ?? DateTime.MinValue,
-                            StartDate = getResService.StartDate,
-                            EndDate = getResService.EndDate,
-                            Name = getResService.Name,
-                            Phone = getResService.Phone,
-                            Email = getResService.Email,
-                            Address = getResService.Address,
-                            Status = getResService.Status,
-                            IsTransport = getResService.IsTransport,
-                            TechnicianID = getResService.TechnicianId,
-                            TechnicianName = getResService.TechnicianName,
-                            ServiceDetailList = resServiceDetail
-                        };
-                        result.IsSuccess = true;
-                        result.Code = 200;
-                        result.Data = serviceResModel;
-                        result.Message = "Updated service with out service detail change.";
-                        return result;
+                            result.IsSuccess = false;
+                            result.Code = 400;
+                            result.Message = "Service detail Id invalid.";
+                            return result;
+                        }
+                        bool update = await _serviceDetailRepo.UpdateServiceDetailManager(serviceDetail);
+                        serviceID = (Guid)tblServiceDetail.ServiceId;
+                        if (update == false)
+                        {
+                            result.IsSuccess = false;
+                            result.Code = 400;
+                            result.Message = "Update service detail failed.";
+                            return result;
+                        }
                     }
 
-            return result;
+                    TblService getResService = await _serviceRepo.Get(serviceID);
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
+                    ServiceResModel serviceResModel = new ServiceResModel
+                    {
+                        ID = getResService.Id,
+                        UserID = getResService.UserId,
+                        CreateDate = getResService.CreateDate ?? DateTime.MinValue,
+                        StartDate = getResService.StartDate,
+                        EndDate = getResService.EndDate,
+                        Name = getResService.Name,
+                        Phone = getResService.Phone,
+                        Email = getResService.Email,
+                        Address = getResService.Address,
+                        Status = getResService.Status,
+                        IsTransport = getResService.IsTransport,
+                        TechnicianID = getResService.TechnicianId,
+                        TechnicianName = getResService.TechnicianName,
+                        ServiceDetailList = resServiceDetail
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = serviceResModel;
+                    result.Message = "Updated service with service detail changed.";
+                }
+                else
+                {
+                    TblService getResService = await _serviceRepo.Get(serviceUpdateModelManager.ServiceID);
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
+                    ServiceResModel serviceResModel = new ServiceResModel
+                    {
+                        ID = getResService.Id,
+                        UserID = getResService.UserId,
+                        CreateDate = getResService.CreateDate ?? DateTime.MinValue,
+                        StartDate = getResService.StartDate,
+                        EndDate = getResService.EndDate,
+                        Name = getResService.Name,
+                        Phone = getResService.Phone,
+                        Email = getResService.Email,
+                        Address = getResService.Address,
+                        Status = getResService.Status,
+                        IsTransport = getResService.IsTransport,
+                        TechnicianID = getResService.TechnicianId,
+                        TechnicianName = getResService.TechnicianName,
+                        ServiceDetailList = resServiceDetail
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = serviceResModel;
+                    result.Message = "Updated service with out service detail change.";
+                    return result;
+                }
+
+                return result;
             }
-            
+
             catch (Exception e)
             {
                 result.IsSuccess = false;
@@ -610,5 +607,5 @@
             }
         }
     }
-    }
+}
 

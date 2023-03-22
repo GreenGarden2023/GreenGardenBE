@@ -1,10 +1,7 @@
-﻿using System;
-using GreeenGarden.Data.Models.ProductItemModel;
-using Microsoft.AspNetCore.Authorization;
-using System.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using GreeenGarden.Business.Service.TakecareService;
 using GreeenGarden.Data.Models.ServiceModel;
-using GreeenGarden.Business.Service.TakecareService;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GreeenGarden.API.Controllers
@@ -14,10 +11,10 @@ namespace GreeenGarden.API.Controllers
     public class ServiceController : Controller
     {
         private readonly ITakecareService _takecareService;
-		public ServiceController(ITakecareService takecareService)
-		{
+        public ServiceController(ITakecareService takecareService)
+        {
             _takecareService = takecareService;
-		}
+        }
         [HttpPost("create-service-request")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
         public async Task<IActionResult> CreateServiceRequest(ServiceInsertModel serviceInsertModel)
