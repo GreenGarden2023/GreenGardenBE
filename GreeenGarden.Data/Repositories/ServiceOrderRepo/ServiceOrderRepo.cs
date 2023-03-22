@@ -1,7 +1,9 @@
 ﻿using System;
 using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +33,58 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
         {
             Page<TblServiceOrder> listTblOrder = await _context.TblServiceOrders.Where(x => x.UserId.Equals(userID)).OrderByDescending(y => y.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             return listTblOrder;
+        }
+
+        public async Task<ResultModel> UpdateServiceOrderDeposit(Guid serviceOrderID)
+        {
+            ResultModel result = new();
+            TblServiceOrder order = await _context.TblServiceOrders.Where(x => x.Id.Equals(serviceOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                order.Status = Status.READY;
+                order.RemainAmount -= order.Deposit;
+                _ = _context.Update(order);
+                _ = await _context.SaveChangesAsync();
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Cancel rent order sucess.";
+                return result;
+            }
+            else
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Cancel rent order failed.";
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> UpdateServiceOrderRemain(Guid serviceOrderID, double amount)
+        {
+            ResultModel result = new();
+            TblServiceOrder order = await _context.TblServiceOrders.Where(x => x.Id.Equals(serviceOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+
+                order.RemainAmount -= amount;
+                if (order.RemainAmount == 0)
+                {
+                    order.Status = Status.PAID;
+                }
+                _ = _context.Update(order);
+                _ = await _context.SaveChangesAsync();
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Update service order success.";
+                return result;
+            }
+            else
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Update service order failed.";
+                return result;
+            }
         }
     }
 }

@@ -63,14 +63,14 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
                 _ = await _context.SaveChangesAsync();
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Message = "Cancel rent order sucess.";
+                result.Message = "Update deposit sucess.";
                 return result;
             }
             else
             {
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Cancel rent order failed.";
+                result.Message = "Update deposit sucess.";
                 return result;
             }
         }

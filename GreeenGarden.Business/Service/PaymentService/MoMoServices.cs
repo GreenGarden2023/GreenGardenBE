@@ -4,6 +4,7 @@ using GreeenGarden.Data.Models.MoMoModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,12 +15,14 @@ namespace GreeenGarden.Business.Service.PaymentService
     {
         private readonly IRentOrderRepo _rentOrderRepo;
         private readonly ISaleOrderRepo _saleOrderRepo;
+        private readonly IServiceOrderRepo _serviceOrderRepo;
         private readonly ITransactionRepo _transactionRepo;
-        public MoMoServices(ITransactionRepo transactionRepo, IRentOrderRepo rentOrderRepo, ISaleOrderRepo saleOrderRepo)
+        public MoMoServices(IServiceOrderRepo serviceOrderRepo, ITransactionRepo transactionRepo, IRentOrderRepo rentOrderRepo, ISaleOrderRepo saleOrderRepo)
         {
             _rentOrderRepo = rentOrderRepo;
             _saleOrderRepo = saleOrderRepo;
             _transactionRepo = transactionRepo;
+            _serviceOrderRepo = serviceOrderRepo;
         }
         public async Task<ResultModel> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
         {
@@ -34,7 +37,6 @@ namespace GreeenGarden.Business.Service.PaymentService
             if (moMoDepositModel.OrderType.ToLower().Trim().Equals("rent"))
             {
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoDepositModel.OrderId);
-                amount = (long)tblRentOrder.Deposit;
                 if (tblRentOrder == null)
                 {
                     resultModel.Code = 400;
@@ -49,7 +51,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     resultModel.Message = "Rent order deposit is paid.";
                     return resultModel;
                 }
-
+                amount = (long)tblRentOrder.Deposit;
                 JsonSerializerSettings jsonSerializerSettings = new()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -63,7 +65,6 @@ namespace GreeenGarden.Business.Service.PaymentService
             else if (moMoDepositModel.OrderType.ToLower().Trim().Equals("sale"))
             {
                 TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoDepositModel.OrderId);
-                amount = (long)tblSaleOrder.Deposit;
                 if (tblSaleOrder == null)
                 {
                     resultModel.Code = 400;
@@ -78,7 +79,35 @@ namespace GreeenGarden.Business.Service.PaymentService
                     resultModel.Message = "Sale order deposit is paid.";
                     return resultModel;
                 }
-
+                amount = (long)tblSaleOrder.Deposit;
+                JsonSerializerSettings jsonSerializerSettings = new()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                moMoOrderModel.PayAmount = amount;
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                    jsonSerializerSettings);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
+            }
+            else if (moMoDepositModel.OrderType.ToLower().Trim().Equals("service"))
+            {
+                TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoDepositModel.OrderId);
+                if (tblServiceOrder == null)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Sale order Id invalid.";
+                    return resultModel;
+                }
+                if (tblServiceOrder.Status.Equals(Status.READY))
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Sale order deposit is paid.";
+                    return resultModel;
+                }
+                amount = (long)tblServiceOrder.Deposit;
                 JsonSerializerSettings jsonSerializerSettings = new()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -237,6 +266,44 @@ namespace GreeenGarden.Business.Service.PaymentService
                         return result;
                     }
                 }
+                else if (moMoDepositModel.OrderType.Trim().ToLower().Equals("service"))
+                {
+                    TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoDepositModel.OrderId);
+                    if (tblServiceOrder.Status.Equals(Status.READY))
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Order deposit has been paid.";
+                        return result;
+                    }
+                    ResultModel updateDeposit = await _serviceOrderRepo.UpdateServiceOrderDeposit(moMoDepositModel.OrderId);
+                    if (updateDeposit.IsSuccess == true)
+                    {
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                        TblTransaction tblTransaction = new()
+                        {
+                            ServiceOrderId = tblServiceOrder.Id,
+                            Amount = tblServiceOrder.Deposit,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
+                            PaymentId = PaymentMethod.CASH,
+                            Type = TransactionType.SERVICE_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Update order deposit success.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update order deposit failed.";
+                        return result;
+                    }
+                }
                 else
                 {
                     result.IsSuccess = false;
@@ -351,6 +418,51 @@ namespace GreeenGarden.Business.Service.PaymentService
                         return result;
                     }
                 }
+                else if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("serive"))
+                {
+                    TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoPaymentModel.OrderId);
+                    if (tblServiceOrder.Status.Equals(Status.COMPLETED))
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Order is fully paid.";
+                        return result;
+                    }
+                    if (moMoPaymentModel.Amount < 1000 || moMoPaymentModel.Amount > tblServiceOrder.RemainAmount)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
+                        return result;
+                    }
+                    ResultModel updateRemain = await _serviceOrderRepo.UpdateServiceOrderRemain(moMoPaymentModel.OrderId, moMoPaymentModel.Amount);
+                    if (updateRemain.IsSuccess == true)
+                    {
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                        TblTransaction tblTransaction = new()
+                        {
+                            ServiceOrderId = tblServiceOrder.Id,
+                            Amount = moMoPaymentModel.Amount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
+                            PaymentId = PaymentMethod.CASH,
+                            Type = TransactionType.SERVICE_ORDER
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Update order payment success.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update order payment failed.";
+                        return result;
+                    }
+                }
                 else
                 {
                     result.IsSuccess = false;
@@ -409,6 +521,23 @@ namespace GreeenGarden.Business.Service.PaymentService
                             Status = TransactionStatus.RECEIVED,
                             PaymentId = PaymentMethod.MOMO,
                             Type = TransactionType.SALE_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
+                        return updateDeposit.IsSuccess;
+                    }
+                    else if (orderModel.OrderType.Trim().ToLower().Equals("service"))
+                    {
+                        ResultModel updateDeposit = await _serviceOrderRepo.UpdateServiceOrderDeposit(orderModel.OrderId);
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                        TblTransaction tblTransaction = new()
+                        {
+                            ServiceOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
+                            PaymentId = PaymentMethod.MOMO,
+                            Type = TransactionType.SERVICE_DEPOSIT
                         };
                         _ = await _transactionRepo.Insert(tblTransaction);
                         return updateDeposit.IsSuccess;
@@ -509,11 +638,46 @@ namespace GreeenGarden.Business.Service.PaymentService
                 byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
                 base64OrderString = Convert.ToBase64String(orderTextBytes);
             }
+            else if (moMoPaymentModel.OrderType.ToLower().Trim().Equals("service"))
+            {
+                TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoPaymentModel.OrderId);
+                if (tblServiceOrder == null)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Sale order Id invalid.";
+                    return resultModel;
+                }
+                if (tblServiceOrder.RemainAmount < amount || amount < 1000)
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Payment amount must be greater than 1000 and less than Remain amount.";
+                    return resultModel;
+                }
+                if (!tblServiceOrder.Status.Equals(Status.READY))
+                {
+                    resultModel.Code = 400;
+                    resultModel.IsSuccess = false;
+                    resultModel.Message = "Sale order deposit is not paid.";
+                    return resultModel;
+                }
+
+                JsonSerializerSettings jsonSerializerSettings = new()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                moMoOrderModel.PayAmount = amount;
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                    jsonSerializerSettings);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
+            }
             else
             {
                 resultModel.Code = 400;
                 resultModel.IsSuccess = false;
-                resultModel.Message = "service order not yet available.";
+                resultModel.Message = "Other order not yet available.";
                 return resultModel;
             }
 
@@ -619,6 +783,23 @@ namespace GreeenGarden.Business.Service.PaymentService
                         _ = await _transactionRepo.Insert(tblTransaction);
                         return updateRemain.IsSuccess;
                     }
+                    else if (orderModel.OrderType.Trim().ToLower().Equals("service"))
+                    {
+                        ResultModel updateRemain = await _serviceOrderRepo.UpdateServiceOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                        TblTransaction tblTransaction = new()
+                        {
+                            ServiceOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
+                            PaymentId = PaymentMethod.MOMO,
+                            Type = TransactionType.SERVICE_ORDER
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
+                        return updateRemain.IsSuccess;
+                    }
                     else
                     {
                         return false;
@@ -650,7 +831,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("rent"))
                 {
                     TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    amount = (long)tblRentOrder.RemainMoney;
+                    
                     if (tblRentOrder == null)
                     {
                         resultModel.Code = 400;
@@ -672,6 +853,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         resultModel.Message = "Rent order is fully paid.";
                         return resultModel;
                     }
+                    amount = (long)tblRentOrder.RemainMoney;
                     JsonSerializerSettings jsonSerializerSettings = new()
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -685,7 +867,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 else if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("sale"))
                 {
                     TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    amount = (long)tblSaleOrder.RemainMoney;
+                    
                     if (tblSaleOrder == null)
                     {
                         resultModel.Code = 400;
@@ -707,6 +889,43 @@ namespace GreeenGarden.Business.Service.PaymentService
                         resultModel.Message = "Sale order is fully paid.";
                         return resultModel;
                     }
+                    amount = (long)tblSaleOrder.RemainMoney;
+                    JsonSerializerSettings jsonSerializerSettings = new()
+                    {
+                        ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                    };
+                    moMoOrderModel.PayAmount = amount;
+                    string orderJsonStringRaw = JsonConvert.SerializeObject(moMoOrderModel, Formatting.Indented,
+                        jsonSerializerSettings);
+                    byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                    base64OrderString = Convert.ToBase64String(orderTextBytes);
+                }
+                else if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("service"))
+                {
+                    TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoWholeOrderModel.OrderId);
+                    
+                    if (tblServiceOrder == null)
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "Sale order Id invalid.";
+                        return resultModel;
+                    }
+                    if (!tblServiceOrder.Status.Equals(Status.UNPAID))
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "You can only whole pay a new order.";
+                        return resultModel;
+                    }
+                    if (tblServiceOrder.RemainAmount == 0)
+                    {
+                        resultModel.Code = 400;
+                        resultModel.IsSuccess = false;
+                        resultModel.Message = "Sale order is fully paid.";
+                        return resultModel;
+                    }
+                    amount = (long)tblServiceOrder.RemainAmount;
                     JsonSerializerSettings jsonSerializerSettings = new()
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -721,7 +940,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 {
                     resultModel.Code = 400;
                     resultModel.IsSuccess = false;
-                    resultModel.Message = "service order not yet available.";
+                    resultModel.Message = "Other order not yet available.";
                     return resultModel;
                 }
 
@@ -859,6 +1078,45 @@ namespace GreeenGarden.Business.Service.PaymentService
                         TblTransaction tblTransaction = new()
                         {
                             SaleOrderId = tblSaleOrder.Id,
+                            Amount = amount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
+                            PaymentId = PaymentMethod.CASH,
+                            Type = TransactionType.SALE_ORDER
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Message = "Update order payment success.";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Update order payment failed.";
+                        return result;
+                    }
+                }
+                else if (moMoWholeOrderModel.OrderType.Trim().ToLower().Equals("service"))
+                {
+                    TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoWholeOrderModel.OrderId);
+                    double amount = (double)tblServiceOrder.RemainAmount;
+                    if (tblServiceOrder.Status.Equals(Status.COMPLETED))
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Order is fully paid.";
+                        return result;
+                    }
+                    ResultModel updateRemain = await _serviceOrderRepo.UpdateServiceOrderRemain(moMoWholeOrderModel.OrderId, amount);
+                    if (updateRemain.IsSuccess == true)
+                    {
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                        TblTransaction tblTransaction = new()
+                        {
+                            ServiceOrderId = tblServiceOrder.Id,
                             Amount = amount,
                             DatetimePaid = currentTime,
                             Status = TransactionStatus.RECEIVED,

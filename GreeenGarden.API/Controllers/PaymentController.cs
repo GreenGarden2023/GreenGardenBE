@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Models.MoMoModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GreeenGarden.API.Controllers
 {
@@ -15,6 +16,7 @@ namespace GreeenGarden.API.Controllers
             _moMoService = moMoService;
         }
         [HttpPost("deposit-payment-momo")]
+        [SwaggerOperation(Summary = "rent/sale/service")]
         [AllowAnonymous]
         public async Task<IActionResult> DepositPaymentMoMo(MoMoDepositModel moMoDepositModel)
         {
@@ -36,6 +38,7 @@ namespace GreeenGarden.API.Controllers
             return NoContent();
         }
         [HttpPost("deposit-payment-cash")]
+        [SwaggerOperation(Summary = "rent/sale/service")]
         [AllowAnonymous]
         public async Task<IActionResult> DepositPaymentCash(MoMoDepositModel moMoDepositModel)
         {
@@ -43,6 +46,7 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpPost("payment-cash")]
+        [SwaggerOperation(Summary = "rent/sale/service")]
         [AllowAnonymous]
         public async Task<IActionResult> PaymentCash(MoMoPaymentModel moMoPaymentModel)
         {
@@ -58,6 +62,7 @@ namespace GreeenGarden.API.Controllers
             }
         }
         [HttpPost("payment-momo")]
+        [SwaggerOperation(Summary = "rent/sale/service")]
         [AllowAnonymous]
         public async Task<IActionResult> PaymentMoMo(MoMoPaymentModel moMoPaymentModel)
         {

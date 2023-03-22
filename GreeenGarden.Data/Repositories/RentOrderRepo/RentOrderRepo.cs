@@ -62,14 +62,14 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Data = order.Deposit;
-                result.Message = "Update rent order status success.";
+                result.Message = "Update deposit success.";
                 return result;
             }
             else
             {
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Update rent order status failed.";
+                result.Message = "Update deposit failed.";
                 return result;
             }
         }
@@ -90,14 +90,14 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 _ = await _context.SaveChangesAsync();
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Message = "Update rent order status success.";
+                result.Message = "Update rent order success.";
                 return result;
             }
             else
             {
                 result.Code = 400;
                 result.IsSuccess = false;
-                result.Message = "Update rent order status failed.";
+                result.Message = "Update rent order failed.";
                 return result;
             }
         }
