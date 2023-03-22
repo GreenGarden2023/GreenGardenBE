@@ -18,10 +18,12 @@ using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceDetailRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
+using GreeenGarden.Data.Repositories.UserRepo;
 using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.OrderService
@@ -43,6 +45,8 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly IShippingFeeRepo _shippingFeeRepo;
         private readonly IServiceRepo _serviceRepo;
         private readonly IServiceDetailRepo _serviceDetailRepo;
+        private readonly IServiceOrderRepo _serviceOrderRepo;
+        private readonly IUserRepo _userRepo;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             IServiceRepo serviceRepo,
             IServiceDetailRepo serviceDetailRepo,
@@ -56,7 +60,9 @@ namespace GreeenGarden.Business.Service.OrderService
             ISizeRepo sizeRepo,
             IProductItemRepo productItemRepo,
             IImageRepo imageRepo,
-            IShippingFeeRepo shippingFeeRepo)
+            IShippingFeeRepo shippingFeeRepo,
+            IServiceOrderRepo serviceOrderRepo,
+            IUserRepo userRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -73,6 +79,8 @@ namespace GreeenGarden.Business.Service.OrderService
             _productItemRepo = productItemRepo;
             _imageRepo = imageRepo;
             _shippingFeeRepo = shippingFeeRepo;
+            _serviceOrderRepo = serviceOrderRepo;
+            _userRepo = userRepo;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -1248,9 +1256,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 orderCode = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10).Select(s => s[random.Next(s.Length)]).ToArray());
                 bool checkRentOrder = await _rentOrderRepo.CheckOrderCode(orderCode);
                 bool checkSaleOrder = await _saleOrderRepo.CheckOrderCode(orderCode);
-                dup = checkRentOrder != false || checkSaleOrder != false;
+                bool checkServiceOrder = await _serviceOrderRepo.CheckOrderCode(orderCode);
+                dup = checkRentOrder != false || checkSaleOrder != false || checkServiceOrder != false;
             }
-
 
             return orderCode;
         }
@@ -1738,13 +1746,43 @@ namespace GreeenGarden.Business.Service.OrderService
                     UserId = Guid.Parse(userId),
                     TransportFee = serviceOrderCreateModel.TransportFee,
                 };
+                Guid insert = await _serviceOrderRepo.Insert(tblServiceOrder);
 
-
-                result.Message = "Create service order success.";
-                result.Data = tblServiceOrder;
-                result.IsSuccess = true;
-                result.Code = 200;
-                return result;
+                if (insert != Guid.Empty)
+                {
+                    TblServiceOrder tblServiceOrderGet = await _serviceOrderRepo.Get(tblServiceOrder.Id);
+                    ServiceOrderCreateResModel resModel = new ServiceOrderCreateResModel
+                    {
+                        Id = tblServiceOrderGet.Id,
+                        CreateDate = tblServiceOrderGet.CreateDate,
+                        ServiceStartDate = (DateTime)tblServiceOrderGet.ServiceStartDate,
+                        ServiceEndDate = (DateTime)tblServiceOrderGet.ServiceEndDate,
+                        Deposit = (double)tblServiceOrderGet.Deposit,
+                        TotalPrice = (double)tblServiceOrderGet.TotalPrice,
+                        DiscountAmount = (double)tblServiceOrderGet.DiscountAmount,
+                        RemainAmount = (double)tblServiceOrderGet.RemainAmount,
+                        RewardPointGain = (int)tblServiceOrderGet.RewardPointGain,
+                        RewardPointUsed = (int)tblServiceOrderGet.RewardPointUsed,
+                        TechnicianID = tblServiceOrderGet.TechnicianId,
+                        ServiceID = tblServiceOrderGet.ServiceId,
+                        UserID = tblServiceOrderGet.UserId,
+                        TransportFee = (double)tblServiceOrderGet.TransportFee,
+                        Status = tblServiceOrderGet.Status
+                    };
+                    result.Message = "Create service order success.";
+                    result.Data = resModel;
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    return result;
+                }
+                else
+                {
+                    result.Message = "Create service order failed.";
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    return result;
+                }
+                
             }
             catch (Exception e)
             {
@@ -1752,6 +1790,242 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
+            }
+        }
+
+        public async Task<ResultModel> GetServiceOrders(string token, PaginationRequestModel pagingModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
+                Page<TblServiceOrder> listTblServiceOrders = await _serviceOrderRepo.GetServiceOrders(pagingModel, userID);
+                List<ServiceOrderGetResModel> resList = new();
+                if (listTblServiceOrders != null)
+                {
+                    foreach (TblServiceOrder order in listTblServiceOrders.Results)
+                    {
+                        TblService resService = await _serviceRepo.Get(order.ServiceId);
+                        List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
+                        ServiceResModel serviceResModel = new ServiceResModel
+                        {
+                            ID = resService.Id,
+                            UserID = resService.UserId,
+                            CreateDate = resService.CreateDate ?? DateTime.MinValue,
+                            StartDate = resService.StartDate,
+                            EndDate = resService.EndDate,
+                            Name = resService.Name,
+                            Phone = resService.Phone,
+                            Email = resService.Email,
+                            Address = resService.Address,
+                            Status = resService.Status,
+                            TechnicianID = resService.TechnicianId,
+                            TechnicianName = resService.TechnicianName,
+                            ServiceDetailList = resServiceDetail
+                        };
+
+                        TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
+                        ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                        {
+                            TechnicianID = technicianGet.Id,
+                            TechnicianName = technicianGet.FullName
+                        };
+                        ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                        {
+                            Id = order.Id,
+                            CreateDate = order.CreateDate,
+                            ServiceStartDate = (DateTime)order.ServiceStartDate,
+                            ServiceEndDate = (DateTime)order.ServiceEndDate,
+                            Deposit = (double)order.Deposit,
+                            TotalPrice = (double)order.TotalPrice,
+                            DiscountAmount = (double)order.DiscountAmount,
+                            RemainAmount = (double)order.RemainAmount,
+                            RewardPointGain = (int)order.RewardPointGain,
+                            RewardPointUsed = (int)order.RewardPointUsed,
+                            Technician = technicianRes,
+                            UserID = order.UserId,
+                            TransportFee = (double)order.TransportFee,
+                            Status = order.Status,
+                            Service = serviceResModel
+                        };
+                        resList.Add(serviceOrderGetResModel);
+                    }
+                    PaginationResponseModel paging = new PaginationResponseModel()
+                        .PageSize(listTblServiceOrders.PageSize)
+                        .CurPage(listTblServiceOrders.CurrentPage)
+                        .RecordCount(listTblServiceOrders.RecordCount)
+                        .PageCount(listTblServiceOrders.PageCount);
+
+                    resList.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
+
+                    ServiceOrderListRes serviceOrderListRes = new ServiceOrderListRes
+                    {
+                        Paging = paging,
+                        ServiceOrderList = resList
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = serviceOrderListRes;
+                    result.Message = "Get service orders success.";
+                    return result;
+
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Get service orders failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+
+        }
+
+        public async Task<ResultModel> GetAllServiceOrders(string token, PaginationRequestModel pagingModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                Page<TblServiceOrder> listTblServiceOrders = await _serviceOrderRepo.GetAllServiceOrders(pagingModel);
+                List<ServiceOrderGetResModel> resList = new();
+                if (listTblServiceOrders != null)
+                {
+                    foreach (TblServiceOrder order in listTblServiceOrders.Results)
+                    {
+                        TblService resService = await _serviceRepo.Get(order.ServiceId);
+                        List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
+                        ServiceResModel serviceResModel = new ServiceResModel
+                        {
+                            ID = resService.Id,
+                            UserID = resService.UserId,
+                            CreateDate = resService.CreateDate ?? DateTime.MinValue,
+                            StartDate = resService.StartDate,
+                            EndDate = resService.EndDate,
+                            Name = resService.Name,
+                            Phone = resService.Phone,
+                            Email = resService.Email,
+                            Address = resService.Address,
+                            Status = resService.Status,
+                            TechnicianID = resService.TechnicianId,
+                            TechnicianName = resService.TechnicianName,
+                            ServiceDetailList = resServiceDetail
+                        };
+
+                        TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
+                        ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                        {
+                            TechnicianID = technicianGet.Id,
+                            TechnicianName = technicianGet.FullName
+                        };
+                        ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                        {
+                            Id = order.Id,
+                            CreateDate = order.CreateDate,
+                            ServiceStartDate = (DateTime)order.ServiceStartDate,
+                            ServiceEndDate = (DateTime)order.ServiceEndDate,
+                            Deposit = (double)order.Deposit,
+                            TotalPrice = (double)order.TotalPrice,
+                            DiscountAmount = (double)order.DiscountAmount,
+                            RemainAmount = (double)order.RemainAmount,
+                            RewardPointGain = (int)order.RewardPointGain,
+                            RewardPointUsed = (int)order.RewardPointUsed,
+                            Technician = technicianRes,
+                            UserID = order.UserId,
+                            TransportFee = (double)order.TransportFee,
+                            Status = order.Status,
+                            Service = serviceResModel
+                        };
+                        resList.Add(serviceOrderGetResModel);
+                    }
+                    PaginationResponseModel paging = new PaginationResponseModel()
+                        .PageSize(listTblServiceOrders.PageSize)
+                        .CurPage(listTblServiceOrders.CurrentPage)
+                        .RecordCount(listTblServiceOrders.RecordCount)
+                        .PageCount(listTblServiceOrders.PageCount);
+
+                    resList.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
+
+                    ServiceOrderListRes serviceOrderListRes = new ServiceOrderListRes
+                    {
+                        Paging = paging,
+                        ServiceOrderList = resList
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = serviceOrderListRes;
+                    result.Message = "Get service orders success.";
+                    return result;
+
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Get service orders failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
             }
         }
     }

@@ -113,6 +113,22 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.GetSaleOrderDetail(token, saleOrderDetailID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-service-orders")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetServiceOrders([FromQuery] PaginationRequestModel pagingModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetServiceOrders(token, pagingModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-all-service-orders")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> GetAllServiceOrders([FromQuery] PaginationRequestModel pagingModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetAllServiceOrders(token, pagingModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpPost("update-sale-order-status")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]
         public async Task<IActionResult> UpdateSaleOrderStatus(OrderUpdateModel orderUpdateModel)

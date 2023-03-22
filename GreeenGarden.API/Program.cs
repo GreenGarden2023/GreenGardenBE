@@ -27,6 +27,7 @@ using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceDetailRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
@@ -65,6 +66,7 @@ builder.Services.AddScoped<IUserTreeService, UserTreeService>();
 builder.Services.AddScoped<ITakecareService, TakecareService>();
 //
 builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
+builder.Services.AddTransient<IServiceOrderRepo, ServiceOrderRepo>();
 builder.Services.AddTransient<IUserRepo, UserRepo>();
 builder.Services.AddTransient<IDistrictRepo, DistrictRepo>();
 builder.Services.AddTransient<IShippingFeeRepo, ShippingFeeRepo>();

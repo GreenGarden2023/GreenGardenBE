@@ -1,18 +1,15 @@
-﻿namespace GreeenGarden.Data.Models.OrderModel
+﻿using System;
+using GreeenGarden.Data.Models.ServiceModel;
+
+namespace GreeenGarden.Data.Models.OrderModel
 {
-    public class ServiceOrderCreateModel
-    {
-        public Guid ServiceId { get; set; }
-
-        public int RewardPointUsed { get; set; }
-
-        public double TransportFee { get; set; }
-
-    }
-
-    public class ServiceOrderCreateResModel
+    public class ServiceOrderGetResModel
     {
         public Guid Id { get; set; }
+
+        public Guid UserID { get; set; }
+
+        public ServiceOrderTechnician Technician { get; set; }
 
         public DateTime CreateDate { get; set; }
 
@@ -32,16 +29,18 @@
 
         public int RewardPointUsed { get; set; }
 
-        public Guid TechnicianID { get; set; }
-
-        public Guid ServiceID { get; set; }
-
-        public Guid UserID { get; set; }
-
         public double TransportFee { get; set; }
 
         public string Status { get; set; }
 
+        public ServiceResModel Service { get; set; }
+    }
+
+    public class ServiceOrderTechnician
+    {
+        public Guid TechnicianID { get; set; }
+
+        public string TechnicianName { get; set; }
     }
 }
 

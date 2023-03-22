@@ -61,4 +61,10 @@
         public object? RentOrder { get; set; }
         public object? ProductItemDetailList { get; set; }
     }
+
+    public class ServiceOrderListRes
+    {
+        public object? Paging { get; set; }
+        public object? ServiceOrderList { get; set; }
+    }
 }
