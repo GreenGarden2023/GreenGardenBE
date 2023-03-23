@@ -23,7 +23,9 @@ namespace GreeenGarden.Data.Repositories.GenericRepository
         {
             _ = await _entities.AddAsync(entity);
             await Update();
+#pragma warning disable CS8605 // Unboxing a possibly null value.
             return (Guid)entity.GetType().GetProperty("Id").GetValue(entity);
+#pragma warning restore CS8605 // Unboxing a possibly null value.
         }
 
 

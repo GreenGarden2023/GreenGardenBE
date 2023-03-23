@@ -43,6 +43,7 @@
     <Folder Include="Service\ShippingFeeService\" />
     <Folder Include="Service\UserTreeService\" />
     <Folder Include="Service\TakecareService\" />
+    <Folder Include="Service\TransactionService\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,5 +61,6 @@
     <None Remove="Service\ShippingFeeService\" />
     <None Remove="Service\UserTreeService\" />
     <None Remove="Service\TakecareService\" />
+    <None Remove="Service\TransactionService\" />
   </ItemGroup>
 </Project>

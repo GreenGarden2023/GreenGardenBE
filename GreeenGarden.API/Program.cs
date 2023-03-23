@@ -10,6 +10,7 @@ using GreeenGarden.Business.Service.SecretService;
 using GreeenGarden.Business.Service.ShippingFeeService;
 using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Business.Service.TakecareService;
+using GreeenGarden.Business.Service.TransactionService;
 using GreeenGarden.Business.Service.UserService;
 using GreeenGarden.Business.Service.UserTreeService;
 using GreeenGarden.Data.Entities;
@@ -64,6 +65,7 @@ builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IShippingFeeService, ShippingFeeService>();
 builder.Services.AddScoped<IUserTreeService, UserTreeService>();
 builder.Services.AddScoped<ITakecareService, TakecareService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 //
 builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
 builder.Services.AddTransient<IServiceOrderRepo, ServiceOrderRepo>();

@@ -41,6 +41,7 @@
     <Folder Include="Repositories\ServiceDetailRepo\" />
     <Folder Include="Models\ServiceModel\" />
     <Folder Include="Repositories\ServiceOrderRepo\" />
+    <Folder Include="Models\TransactionModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -93,5 +94,6 @@
     <None Remove="Repositories\ServiceDetailRepo\" />
     <None Remove="Models\ServiceModel\" />
     <None Remove="Repositories\ServiceOrderRepo\" />
+    <None Remove="Models\TransactionModel\" />
   </ItemGroup>
 </Project>
