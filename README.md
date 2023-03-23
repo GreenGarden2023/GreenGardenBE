@@ -1,2 +1,2 @@
 # GreenGarden BE
- Test
+GreenGarden Capstone project spring 2023
