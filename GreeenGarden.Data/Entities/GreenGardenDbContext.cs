@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Entities;
 
@@ -8,10 +10,6 @@ public partial class GreenGardenDbContext : DbContext
         : base(options)
     {
     }
-
-    public virtual DbSet<TblCalendar> TblCalendars { get; set; }
-
-    public virtual DbSet<TblCalendarDetial> TblCalendarDetials { get; set; }
 
     public virtual DbSet<TblCart> TblCarts { get; set; }
 
@@ -24,8 +22,6 @@ public partial class GreenGardenDbContext : DbContext
     public virtual DbSet<TblEmailOtpcode> TblEmailOtpcodes { get; set; }
 
     public virtual DbSet<TblFeedBack> TblFeedBacks { get; set; }
-
-    public virtual DbSet<TblFile> TblFiles { get; set; }
 
     public virtual DbSet<TblImage> TblImages { get; set; }
 
@@ -43,8 +39,6 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblRentOrderGroup> TblRentOrderGroups { get; set; }
 
-    public virtual DbSet<TblReport> TblReports { get; set; }
-
     public virtual DbSet<TblReward> TblRewards { get; set; }
 
     public virtual DbSet<TblRole> TblRoles { get; set; }
@@ -54,6 +48,8 @@ public partial class GreenGardenDbContext : DbContext
     public virtual DbSet<TblSaleOrderDetail> TblSaleOrderDetails { get; set; }
 
     public virtual DbSet<TblService> TblServices { get; set; }
+
+    public virtual DbSet<TblServiceCalendar> TblServiceCalendars { get; set; }
 
     public virtual DbSet<TblServiceDetail> TblServiceDetails { get; set; }
 
@@ -71,39 +67,6 @@ public partial class GreenGardenDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TblCalendar>(entity =>
-        {
-            entity.ToTable("tblCalendar");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("ID");
-            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
-
-            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblCalendars)
-                .HasForeignKey(d => d.ServiceOrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblCalendar_tblServiceOrder");
-        });
-
-        modelBuilder.Entity<TblCalendarDetial>(entity =>
-        {
-            entity.ToTable("tblCalendarDetial");
-
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("ID");
-            entity.Property(e => e.CalendarId).HasColumnName("CalendarID");
-            entity.Property(e => e.DateReport).HasColumnType("datetime");
-
-            entity.HasOne(d => d.Calendar).WithMany(p => p.TblCalendarDetials)
-                .HasForeignKey(d => d.CalendarId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblCalendarDetial_tblCalendar");
-        });
-
         modelBuilder.Entity<TblCart>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_tblCarts");
@@ -213,22 +176,6 @@ public partial class GreenGardenDbContext : DbContext
                 .HasConstraintName("FK_tblFeedBacks_tblUsers");
         });
 
-        modelBuilder.Entity<TblFile>(entity =>
-        {
-            entity.ToTable("tblFile");
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("ID");
-            entity.Property(e => e.FileUrl).HasMaxLength(2048);
-            entity.Property(e => e.ReportId).HasColumnName("ReportID");
-
-            entity.HasOne(d => d.Report).WithMany(p => p.TblFiles)
-                .HasForeignKey(d => d.ReportId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblFile_tblReport");
-        });
-
         modelBuilder.Entity<TblImage>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK_tblImages");
@@ -246,7 +193,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ProductId).HasColumnName("ProductID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.RentOrderDetailId).HasColumnName("RentOrderDetailID");
-            entity.Property(e => e.ReportId).HasColumnName("ReportID");
             entity.Property(e => e.SaleOrderDetailId).HasColumnName("SaleOrderDetailID");
             entity.Property(e => e.ServiceDetailId).HasColumnName("ServiceDetailID");
             entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
@@ -274,10 +220,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.RentOrderDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.RentOrderDetailId)
                 .HasConstraintName("FK_tblImage_tblRentOrderDetail");
-
-            entity.HasOne(d => d.Report).WithMany(p => p.TblImages)
-                .HasForeignKey(d => d.ReportId)
-                .HasConstraintName("FK_tblImages_tblReport");
 
             entity.HasOne(d => d.SaleOrderDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.SaleOrderDetailId)
@@ -428,24 +370,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.UserId).HasColumnName("UserID");
         });
 
-        modelBuilder.Entity<TblReport>(entity =>
-        {
-            entity.ToTable("tblReport");
-
-            entity.Property(e => e.Id)
-                .HasDefaultValueSql("(newid())")
-                .HasColumnName("ID");
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.Name).HasMaxLength(250);
-            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
-            entity.Property(e => e.Sumary).HasMaxLength(500);
-
-            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblReports)
-                .HasForeignKey(d => d.ServiceOrderId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblReport_tblServiceOrder");
-        });
-
         modelBuilder.Entity<TblReward>(entity =>
         {
             entity.ToTable("tblReward");
@@ -533,6 +457,30 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblService_tblUser");
+        });
+
+        modelBuilder.Entity<TblServiceCalendar>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK_tblCalendar");
+
+            entity.ToTable("tblServiceCalendar");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.NextServiceDate).HasColumnType("date");
+            entity.Property(e => e.ReportFileUrl)
+                .HasMaxLength(2048)
+                .HasColumnName("ReportFileURL");
+            entity.Property(e => e.ServiceDate).HasColumnType("date");
+            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.Sumary).HasMaxLength(500);
+
+            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblServiceCalendars)
+                .HasForeignKey(d => d.ServiceOrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblCalendar_tblServiceOrder");
         });
 
         modelBuilder.Entity<TblServiceDetail>(entity =>

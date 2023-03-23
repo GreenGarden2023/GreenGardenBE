@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblServiceOrder
 {
@@ -36,9 +39,7 @@ public partial class TblServiceOrder
 
     public virtual TblService Service { get; set; } = null!;
 
-    public virtual ICollection<TblCalendar> TblCalendars { get; } = new List<TblCalendar>();
-
-    public virtual ICollection<TblReport> TblReports { get; } = new List<TblReport>();
+    public virtual ICollection<TblServiceCalendar> TblServiceCalendars { get; } = new List<TblServiceCalendar>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
 }
