@@ -35,4 +35,10 @@
         public static readonly string CANCEL = "cancel"; //Order, addendum: bị hủy
 
     }
+    public class ServiceCalendarStatus
+    {
+        public static readonly string PENDING = "pending"; 
+        public static readonly string DONE = "done";
+
+    }
 }

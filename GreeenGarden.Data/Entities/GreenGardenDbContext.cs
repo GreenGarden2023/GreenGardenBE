@@ -468,11 +468,11 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.NextServiceDate).HasColumnType("date");
+            entity.Property(e => e.NextServiceDate).HasColumnType("datetime");
             entity.Property(e => e.ReportFileUrl)
                 .HasMaxLength(2048)
                 .HasColumnName("ReportFileURL");
-            entity.Property(e => e.ServiceDate).HasColumnType("date");
+            entity.Property(e => e.ServiceDate).HasColumnType("datetime");
             entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.Sumary).HasMaxLength(500);

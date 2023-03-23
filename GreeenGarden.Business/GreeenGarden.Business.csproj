@@ -44,6 +44,7 @@
     <Folder Include="Service\UserTreeService\" />
     <Folder Include="Service\TakecareService\" />
     <Folder Include="Service\TransactionService\" />
+    <Folder Include="Service\ServiceCalendarService\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,5 +63,6 @@
     <None Remove="Service\UserTreeService\" />
     <None Remove="Service\TakecareService\" />
     <None Remove="Service\TransactionService\" />
+    <None Remove="Service\ServiceCalendarService\" />
   </ItemGroup>
 </Project>
