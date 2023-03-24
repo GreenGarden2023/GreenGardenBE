@@ -42,6 +42,7 @@ namespace GreeenGarden.Business.Service.ProductService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
