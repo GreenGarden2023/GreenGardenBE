@@ -1873,6 +1873,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceResModel serviceResModel = new ServiceResModel
                         {
                             ID = resService.Id,
+                            ServiceCode = resService.ServiceCode,
                             UserID = resService.UserId,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
@@ -1994,6 +1995,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceResModel serviceResModel = new ServiceResModel
                         {
                             ID = resService.Id,
+                            ServiceCode = resService.ServiceCode,
                             UserID = resService.UserId,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
@@ -2114,6 +2116,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceResModel serviceResModel = new ServiceResModel
                         {
                             ID = resService.Id,
+                            ServiceCode = resService.ServiceCode,
                             UserID = resService.UserId,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
