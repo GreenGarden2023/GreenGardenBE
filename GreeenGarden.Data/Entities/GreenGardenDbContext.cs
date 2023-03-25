@@ -448,6 +448,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Phone).HasMaxLength(50);
+            entity.Property(e => e.ServiceCode).HasMaxLength(20);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");

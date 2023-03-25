@@ -79,6 +79,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        ServiceCode = resService.ServiceCode,
                         UserID = resService.UserId,
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
@@ -173,6 +174,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 TblService tblService = new TblService
                 {
                     Id = Guid.NewGuid(),
+                    ServiceCode = "SERVICE_" + await GenerateServiceCode(),
                     UserId = Guid.Parse(userID),
                     CreateDate = currentTime,
                     StartDate = serviceInsertModel.StartDate,
@@ -227,6 +229,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        ServiceCode = resService.ServiceCode,
                         UserID = resService.UserId,
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
@@ -303,6 +306,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = service.Id,
+                        ServiceCode = service.ServiceCode,
                         UserID = service.UserId,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
@@ -375,6 +379,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = service.Id,
+                        ServiceCode = service.ServiceCode,
                         UserID = service.UserId,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
@@ -454,6 +459,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        ServiceCode = resService.ServiceCode,
                         UserID = resService.UserId,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
@@ -560,6 +566,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = getResService.Id,
+                        ServiceCode = getResService.ServiceCode,
                         UserID = getResService.UserId,
                         CreateDate = getResService.CreateDate ?? DateTime.MinValue,
                         StartDate = getResService.StartDate,
@@ -617,6 +624,21 @@ namespace GreeenGarden.Business.Service.TakecareService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
             }
+        }
+
+        private async Task<string> GenerateServiceCode()
+        {
+            string serviceCode = "";
+            bool dup = true;
+            while (dup == true)
+            {
+                Random random = new();
+                serviceCode = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10).Select(s => s[random.Next(s.Length)]).ToArray());
+                bool checkServiceCode = await _serviceRepo.CheckServiceCode(serviceCode);
+                dup = checkServiceCode != false;
+            }
+
+            return serviceCode;
         }
     }
 }

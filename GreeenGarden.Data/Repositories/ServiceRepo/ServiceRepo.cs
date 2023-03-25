@@ -79,6 +79,19 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
             }
         }
 
+        public async Task<bool> CheckServiceCode(string serviceCode)
+        {
+            TblService tblService = await _context.TblServices.Where(x => x.ServiceCode.Equals(serviceCode)).FirstOrDefaultAsync();
+            if (tblService != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public async Task<List<TblService>> GetAllRequest()
         {
             List<TblService> tblServices = await _context.TblServices.ToListAsync();

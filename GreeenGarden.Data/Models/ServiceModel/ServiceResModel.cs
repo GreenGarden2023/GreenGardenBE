@@ -4,6 +4,8 @@
     {
         public Guid ID { get; set; }
 
+        public string ServiceCode { get; set; }
+
         public Guid UserID { get; set; }
 
         public DateTime CreateDate { get; set; }

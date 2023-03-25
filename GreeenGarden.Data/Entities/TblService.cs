@@ -7,6 +7,8 @@ public partial class TblService
 {
     public Guid Id { get; set; }
 
+    public string? ServiceCode { get; set; }
+
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
