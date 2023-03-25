@@ -1896,6 +1896,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
                             Id = order.Id,
+                            OrderCode = order.OrderCode,
                             CreateDate = order.CreateDate,
                             ServiceStartDate = (DateTime)order.ServiceStartDate,
                             ServiceEndDate = (DateTime)order.ServiceEndDate,
@@ -2016,6 +2017,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
                             Id = order.Id,
+                            OrderCode = order.OrderCode,
                             CreateDate = order.CreateDate,
                             ServiceStartDate = (DateTime)order.ServiceStartDate,
                             ServiceEndDate = (DateTime)order.ServiceEndDate,
@@ -2135,6 +2137,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
                             Id = order.Id,
+                            OrderCode = order.OrderCode,
                             CreateDate = order.CreateDate,
                             ServiceStartDate = (DateTime)order.ServiceStartDate,
                             ServiceEndDate = (DateTime)order.ServiceEndDate,

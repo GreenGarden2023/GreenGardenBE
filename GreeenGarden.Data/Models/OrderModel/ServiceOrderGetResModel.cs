@@ -7,6 +7,8 @@ namespace GreeenGarden.Data.Models.OrderModel
     {
         public Guid Id { get; set; }
 
+        public string OrderCode { get; set; }
+
         public Guid UserID { get; set; }
 
         public ServiceOrderTechnician Technician { get; set; }
