@@ -45,8 +45,9 @@ namespace GreeenGarden.Business.Service.ShippingFeeService
                 }
                 else
                 {
-                    result.Code = 400;
-                    result.IsSuccess = false;
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = districtList;
                     result.Message = "List Empty.";
                     return result;
                 }
