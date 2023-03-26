@@ -1760,7 +1760,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     serviceDetailTotal += serviceDetail.ServicePrice ?? 0;
                 }
 
-                double finalTotal = serviceDetailTotal - (serviceOrderCreateModel.RewardPointUsed * 1000) + serviceOrderCreateModel.TransportFee;
+                double finalTotal = (double)(serviceDetailTotal - (tblService.RewardPointUsed * 1000) + tblService.TransportFee);
                 int rewardPointGain = (int)Math.Ceiling(finalTotal * 0.01 / 1000);
                 double deposit = Math.Ceiling(finalTotal / 2);
 
@@ -1777,12 +1777,12 @@ namespace GreeenGarden.Business.Service.OrderService
                     RemainAmount = finalTotal,
                     Status = ServiceOrderStatus.UNPAID,
                     RewardPointGain = rewardPointGain,
-                    RewardPointUsed = serviceOrderCreateModel.RewardPointUsed,
-                    DiscountAmount = serviceOrderCreateModel.RewardPointUsed * 1000,
+                    RewardPointUsed = tblService.RewardPointUsed,
+                    DiscountAmount = tblService.RewardPointUsed * 1000,
                     TechnicianId = (Guid)tblService.TechnicianId,
                     ServiceId = serviceOrderCreateModel.ServiceId,
                     UserId = Guid.Parse(userId),
-                    TransportFee = serviceOrderCreateModel.TransportFee,
+                    TransportFee = tblService.TransportFee,
                 };
                 Guid insert = await _serviceOrderRepo.Insert(tblServiceOrder);
 

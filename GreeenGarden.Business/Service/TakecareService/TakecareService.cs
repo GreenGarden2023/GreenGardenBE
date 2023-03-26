@@ -89,6 +89,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = resService.Email,
                         Address = resService.Address,
                         Status = resService.Status,
+                        IsTransport = resService.IsTransport,
+                        TransportFee = resService.TransportFee,
+                        RewardPointUsed = resService.RewardPointUsed,
                         TechnicianID = resService.TechnicianId,
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -184,6 +187,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     Email = serviceInsertModel.Email,
                     Address = serviceInsertModel.Address,
                     IsTransport = serviceInsertModel.IsTransport,
+                    TransportFee = 0,
+                    RewardPointUsed = serviceInsertModel.RewardPointUsed,
                     Status = ServiceStatus.PROCESSING,
                 };
                 Guid insert = await _serviceRepo.Insert(tblService);
@@ -240,6 +245,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Address = resService.Address,
                         Status = resService.Status,
                         IsTransport = resService.IsTransport,
+                        TransportFee = resService.TransportFee,
+                        RewardPointUsed = resService.RewardPointUsed,
                         TechnicianID = resService.TechnicianId,
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -316,6 +323,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = service.Email,
                         Address = service.Address,
                         IsTransport = service.IsTransport,
+                        TransportFee = service.TransportFee,
+                        RewardPointUsed = service.RewardPointUsed,
                         Status = service.Status,
                         TechnicianID = service.TechnicianId,
                         TechnicianName = service.TechnicianName,
@@ -390,6 +399,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Address = service.Address,
                         Status = service.Status,
                         IsTransport = service.IsTransport,
+                        TransportFee = service.TransportFee,
+                        RewardPointUsed = service.RewardPointUsed,
                         TechnicianID = service.TechnicianId,
                         TechnicianName = service.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -467,6 +478,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Phone = resService.Phone,
                         Address = resService.Address,
                         Status = resService.Status,
+                        IsTransport = resService.IsTransport,
+                        TransportFee = resService.TransportFee,
+                        RewardPointUsed = resService.RewardPointUsed,
                         TechnicianID = resService.TechnicianId,
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -577,6 +591,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Address = getResService.Address,
                         Status = getResService.Status,
                         IsTransport = getResService.IsTransport,
+                        TransportFee = getResService.TransportFee,
+                        RewardPointUsed = getResService.RewardPointUsed,
                         TechnicianID = getResService.TechnicianId,
                         TechnicianName = getResService.TechnicianName,
                         ServiceDetailList = resServiceDetail

@@ -127,6 +127,10 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     {
                         tblService.Address = serviceUpdateModelManager.Address;
                     }
+                    if (serviceUpdateModelManager.TransportFee != null && !serviceUpdateModelManager.TransportFee.Equals(tblService.TransportFee))
+                    {
+                        tblService.TransportFee = serviceUpdateModelManager.TransportFee;
+                    }
                     _ = _context.Update(tblService);
                     _ = await _context.SaveChangesAsync();
                     return true;

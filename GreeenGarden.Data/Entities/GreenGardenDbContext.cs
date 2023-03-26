@@ -539,6 +539,11 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
+
+            entity.HasOne(d => d.District).WithMany(p => p.TblShippingFees)
+                .HasForeignKey(d => d.DistrictId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblShippingFee_tblDistrict");
         });
 
         modelBuilder.Entity<TblSize>(entity =>

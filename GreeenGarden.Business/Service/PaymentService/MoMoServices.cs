@@ -418,7 +418,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         return result;
                     }
                 }
-                else if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("servive"))
+                else if (moMoPaymentModel.OrderType.Trim().ToLower().Equals("service"))
                 {
                     TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoPaymentModel.OrderId);
                     if (tblServiceOrder.Status.Equals(Status.COMPLETED))

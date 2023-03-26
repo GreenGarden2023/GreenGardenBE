@@ -52,7 +52,7 @@ namespace GreeenGarden.API.Controllers
         {
             if (moMoPaymentModel.PaymentType.Trim().ToLower().Equals("whole"))
             {
-                Data.Models.ResultModel.ResultModel result = await _moMoService.OrderPaymentCash(moMoPaymentModel);
+                Data.Models.ResultModel.ResultModel result = await _moMoService.WholeOrderPaymentCash(moMoPaymentModel);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             else

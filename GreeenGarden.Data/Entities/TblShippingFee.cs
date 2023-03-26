@@ -10,4 +10,6 @@ public partial class TblShippingFee
     public int DistrictId { get; set; }
 
     public double FeeAmount { get; set; }
+
+    public virtual TblDistrict District { get; set; } = null!;
 }

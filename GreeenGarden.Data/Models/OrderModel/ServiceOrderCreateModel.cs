@@ -4,10 +4,6 @@
     {
         public Guid ServiceId { get; set; }
 
-        public int RewardPointUsed { get; set; }
-
-        public double TransportFee { get; set; }
-
     }
 
     public class ServiceOrderCreateResModel

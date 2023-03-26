@@ -24,6 +24,10 @@
 
         public bool? IsTransport { get; set; }
 
+        public double? TransportFee { get; set; }
+
+        public int? RewardPointUsed { get; set; }
+
         public string? Status { get; set; }
 
         public Guid? TechnicianID { get; set; }
