@@ -1893,7 +1893,11 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
                         {
                             TechnicianID = technicianGet.Id,
-                            TechnicianName = technicianGet.FullName
+                            TechnicianUserName = technicianGet.UserName,
+                            TechnicianFullName = technicianGet.FullName,
+                            TechnicianAddress = technicianGet.Address,
+                            TechnicianMail = technicianGet.Mail,
+                            TechnicianPhone = technicianGet.Phone
                         };
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
@@ -2016,7 +2020,11 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
                         {
                             TechnicianID = technicianGet.Id,
-                            TechnicianName = technicianGet.FullName
+                            TechnicianUserName = technicianGet.UserName,
+                            TechnicianFullName = technicianGet.FullName,
+                            TechnicianAddress = technicianGet.Address,
+                            TechnicianMail = technicianGet.Mail,
+                            TechnicianPhone = technicianGet.Phone
                         };
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
@@ -2138,7 +2146,11 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
                         {
                             TechnicianID = technicianGet.Id,
-                            TechnicianName = technicianGet.FullName
+                            TechnicianUserName = technicianGet.UserName,
+                            TechnicianFullName = technicianGet.FullName,
+                            TechnicianAddress = technicianGet.Address,
+                            TechnicianMail = technicianGet.Mail,
+                            TechnicianPhone = technicianGet.Phone
                         };
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
@@ -2257,7 +2269,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
                     {
                         TechnicianID = technicianGet.Id,
-                        TechnicianName = technicianGet.FullName
+                        TechnicianUserName = technicianGet.UserName,
+                        TechnicianFullName = technicianGet.FullName,
+                        TechnicianAddress = technicianGet.Address,
+                        TechnicianMail = technicianGet.Mail,
+                        TechnicianPhone = technicianGet.Phone
                     };
                     ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                     {
