@@ -8,6 +8,8 @@
 
         public Guid UserID { get; set; }
 
+        public Guid? ServiceOrderID { get; set; }
+
         public int UserCurrentPoint { get; set; }
 
         public DateTime CreateDate { get; set; }
