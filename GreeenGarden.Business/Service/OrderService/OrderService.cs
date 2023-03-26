@@ -1781,7 +1781,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     DiscountAmount = tblService.RewardPointUsed * 1000,
                     TechnicianId = (Guid)tblService.TechnicianId,
                     ServiceId = serviceOrderCreateModel.ServiceId,
-                    UserId = Guid.Parse(userId),
+                    UserId = tblService.UserId,
                     TransportFee = tblService.TransportFee,
                 };
                 Guid insert = await _serviceOrderRepo.Insert(tblServiceOrder);
