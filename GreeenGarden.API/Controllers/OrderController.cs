@@ -122,7 +122,7 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-service-orders-by-technician")]
-        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> GetServiceOrdersByTechnician([FromQuery] PaginationRequestModel pagingModel, [Required] Guid technicianID)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
