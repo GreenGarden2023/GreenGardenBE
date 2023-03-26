@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
     {
         private readonly GreenGardenDbContext _context;
         private readonly IUserRepo _userRepo;
-        public ServiceRepo(GreenGardenDbContext context, IUserRepo userRepo) : base(context)
+        private readonly IRewardRepo _rewardRepo;
+        public ServiceRepo(GreenGardenDbContext context, IUserRepo userRepo, IRewardRepo rewardRepo) : base(context)
         {
             _context = context;
             _userRepo = userRepo;
+            _rewardRepo = rewardRepo;
         }
 
         public async Task<bool> AssignTechnician(ServiceAssignModelManager serviceAssignModelManager)
@@ -111,6 +114,9 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                 TblService tblService = await _context.TblServices.Where(x => x.Id.Equals(serviceUpdateModelManager.ServiceID)).FirstOrDefaultAsync();
                 if (tblService != null)
                 {
+                    int returnPoints = (int)(tblService.RewardPointUsed - serviceUpdateModelManager.RewardPointUsed);
+                    _ = await _rewardRepo.UpdateUserRewardPointByUserID(tblService.UserId, returnPoints , 0);
+;
                     if (!String.IsNullOrEmpty(serviceUpdateModelManager.Name) && !serviceUpdateModelManager.Name.Equals(tblService.Name))
                     {
                         tblService.Name = serviceUpdateModelManager.Name;
@@ -130,6 +136,10 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     if (serviceUpdateModelManager.TransportFee != null && !serviceUpdateModelManager.TransportFee.Equals(tblService.TransportFee))
                     {
                         tblService.TransportFee = serviceUpdateModelManager.TransportFee;
+                    }
+                    if (serviceUpdateModelManager.RewardPointUsed != null && serviceUpdateModelManager.RewardPointUsed != 0 && !serviceUpdateModelManager.RewardPointUsed.Equals(tblService.RewardPointUsed))
+                    {
+                        tblService.RewardPointUsed = serviceUpdateModelManager.RewardPointUsed;
                     }
                     _ = _context.Update(tblService);
                     _ = await _context.SaveChangesAsync();

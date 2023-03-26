@@ -5,6 +5,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.ServiceDetailRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
@@ -22,7 +23,8 @@ namespace GreeenGarden.Business.Service.TakecareService
         private readonly IImageService _imageService;
         private readonly IUserTreeRepo _userTreeRepo;
         private readonly IUserRepo _userRepo;
-        public TakecareService(IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
+        private readonly IRewardRepo _rewardRepo;
+        public TakecareService(IRewardRepo rewardRepo, IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -31,6 +33,7 @@ namespace GreeenGarden.Business.Service.TakecareService
             _userTreeRepo = userTreeRepo;
             _imageService = imageService;
             _userRepo = userRepo;
+            _rewardRepo = rewardRepo;
         }
 
         public async Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager)
@@ -309,12 +312,14 @@ namespace GreeenGarden.Business.Service.TakecareService
                 List<ServiceResModel> resModels = new List<ServiceResModel>();
                 foreach (TblService service in tblServices)
                 {
+                    int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = service.Id,
                         ServiceCode = service.ServiceCode,
                         UserID = service.UserId,
+                        UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
                         EndDate = service.EndDate,
@@ -384,12 +389,14 @@ namespace GreeenGarden.Business.Service.TakecareService
                 List<ServiceResModel> resModels = new List<ServiceResModel>();
                 foreach (TblService service in tblServices)
                 {
+                    int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = service.Id,
                         ServiceCode = service.ServiceCode,
                         UserID = service.UserId,
+                        UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
                         EndDate = service.EndDate,
