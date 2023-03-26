@@ -1785,7 +1785,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     TransportFee = tblService.TransportFee,
                 };
                 Guid insert = await _serviceOrderRepo.Insert(tblServiceOrder);
-
+                _ = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.CONFIRMED);
                 if (insert != Guid.Empty)
                 {
                     TblServiceOrder tblServiceOrderGet = await _serviceOrderRepo.Get(tblServiceOrder.Id);
