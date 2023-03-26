@@ -29,6 +29,18 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
             return listTblOrder;
         }
 
+        public async Task<TblServiceOrder> GetServiceOrderByServiceID(Guid serviceId)
+        {
+            TblServiceOrder order = await _context.TblServiceOrders.Where(x => x.ServiceId.Equals(serviceId)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                return order;
+            }
+            else {
+                return null;
+            }
+        }
+
         public async Task<Page<TblServiceOrder>> GetServiceOrderByTechnician(PaginationRequestModel paginationRequestModel, Guid technicianID)
         {
             Page<TblServiceOrder> listTblOrder = await _context.TblServiceOrders.Where(x => x.TechnicianId.Equals(technicianID)).OrderByDescending(y => y.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);

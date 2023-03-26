@@ -12,6 +12,10 @@
 
         public string? Address { get; set; }
 
+        public double? TransportFee { get; set; }
+
+        public int? RewardPointUsed { get; set; }
+
     }
     public class ServiceDetailUpdateModelManager
     {

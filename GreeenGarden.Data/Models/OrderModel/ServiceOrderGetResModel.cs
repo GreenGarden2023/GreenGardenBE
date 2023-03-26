@@ -7,6 +7,8 @@ namespace GreeenGarden.Data.Models.OrderModel
     {
         public Guid Id { get; set; }
 
+        public string OrderCode { get; set; }
+
         public Guid UserID { get; set; }
 
         public ServiceOrderTechnician Technician { get; set; }
@@ -40,7 +42,15 @@ namespace GreeenGarden.Data.Models.OrderModel
     {
         public Guid TechnicianID { get; set; }
 
-        public string TechnicianName { get; set; }
+        public string TechnicianUserName { get; set; }
+
+        public string TechnicianFullName { get; set; }
+
+        public string TechnicianAddress { get; set; }
+
+        public string TechnicianPhone { get; set; }
+
+        public string TechnicianMail { get; set; }
     }
 }
 

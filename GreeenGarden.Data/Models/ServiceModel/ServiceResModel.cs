@@ -4,7 +4,13 @@
     {
         public Guid ID { get; set; }
 
+        public string ServiceCode { get; set; }
+
         public Guid UserID { get; set; }
+
+        public Guid? ServiceOrderID { get; set; }
+
+        public int UserCurrentPoint { get; set; }
 
         public DateTime CreateDate { get; set; }
 
@@ -21,6 +27,10 @@
         public string? Address { get; set; }
 
         public bool? IsTransport { get; set; }
+
+        public double? TransportFee { get; set; }
+
+        public int? RewardPointUsed { get; set; }
 
         public string? Status { get; set; }
 

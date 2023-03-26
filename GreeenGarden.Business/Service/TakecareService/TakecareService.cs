@@ -5,7 +5,9 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.ServiceDetailRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
@@ -22,7 +24,9 @@ namespace GreeenGarden.Business.Service.TakecareService
         private readonly IImageService _imageService;
         private readonly IUserTreeRepo _userTreeRepo;
         private readonly IUserRepo _userRepo;
-        public TakecareService(IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
+        private readonly IRewardRepo _rewardRepo;
+        private readonly IServiceOrderRepo _serviceOrderRepo;
+        public TakecareService(IServiceOrderRepo serviceOrderRepo, IRewardRepo rewardRepo, IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -31,6 +35,8 @@ namespace GreeenGarden.Business.Service.TakecareService
             _userTreeRepo = userTreeRepo;
             _imageService = imageService;
             _userRepo = userRepo;
+            _rewardRepo = rewardRepo;
+            _serviceOrderRepo = serviceOrderRepo;
         }
 
         public async Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager)
@@ -41,11 +47,13 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -55,6 +63,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -77,6 +86,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        ServiceCode = resService.ServiceCode,
                         UserID = resService.UserId,
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
@@ -86,6 +96,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = resService.Email,
                         Address = resService.Address,
                         Status = resService.Status,
+                        IsTransport = resService.IsTransport,
+                        TransportFee = resService.TransportFee,
+                        RewardPointUsed = resService.RewardPointUsed,
                         TechnicianID = resService.TechnicianId,
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -122,11 +135,13 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -136,6 +151,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -169,6 +185,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 TblService tblService = new TblService
                 {
                     Id = Guid.NewGuid(),
+                    ServiceCode = "SERVICE_" + await GenerateServiceCode(),
                     UserId = Guid.Parse(userID),
                     CreateDate = currentTime,
                     StartDate = serviceInsertModel.StartDate,
@@ -178,6 +195,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     Email = serviceInsertModel.Email,
                     Address = serviceInsertModel.Address,
                     IsTransport = serviceInsertModel.IsTransport,
+                    TransportFee = 0,
+                    RewardPointUsed = serviceInsertModel.RewardPointUsed,
                     Status = ServiceStatus.PROCESSING,
                 };
                 Guid insert = await _serviceRepo.Insert(tblService);
@@ -223,6 +242,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        ServiceCode = resService.ServiceCode,
                         UserID = resService.UserId,
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
@@ -233,6 +253,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Address = resService.Address,
                         Status = resService.Status,
                         IsTransport = resService.IsTransport,
+                        TransportFee = resService.TransportFee,
+                        RewardPointUsed = resService.RewardPointUsed,
                         TechnicianID = resService.TechnicianId,
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -269,11 +291,13 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -283,6 +307,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -293,11 +318,14 @@ namespace GreeenGarden.Business.Service.TakecareService
                 List<ServiceResModel> resModels = new List<ServiceResModel>();
                 foreach (TblService service in tblServices)
                 {
+                    int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = service.Id,
+                        ServiceCode = service.ServiceCode,
                         UserID = service.UserId,
+                        UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
                         EndDate = service.EndDate,
@@ -306,6 +334,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Email = service.Email,
                         Address = service.Address,
                         IsTransport = service.IsTransport,
+                        TransportFee = service.TransportFee,
+                        RewardPointUsed = service.RewardPointUsed,
                         Status = service.Status,
                         TechnicianID = service.TechnicianId,
                         TechnicianName = service.TechnicianName,
@@ -338,11 +368,13 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -352,6 +384,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -363,11 +396,16 @@ namespace GreeenGarden.Business.Service.TakecareService
                 List<ServiceResModel> resModels = new List<ServiceResModel>();
                 foreach (TblService service in tblServices)
                 {
+                    TblServiceOrder tblServiceOrder = await _serviceOrderRepo.GetServiceOrderByServiceID(service.Id);
+                    int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = service.Id,
+                        ServiceCode = service.ServiceCode,
                         UserID = service.UserId,
+                        ServiceOrderID = tblServiceOrder.Id,
+                        UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
                         EndDate = service.EndDate,
@@ -377,6 +415,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Address = service.Address,
                         Status = service.Status,
                         IsTransport = service.IsTransport,
+                        TransportFee = service.TransportFee,
+                        RewardPointUsed = service.RewardPointUsed,
                         TechnicianID = service.TechnicianId,
                         TechnicianName = service.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -408,11 +448,13 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -422,6 +464,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -444,6 +487,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,
+                        ServiceCode = resService.ServiceCode,
                         UserID = resService.UserId,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
@@ -451,6 +495,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Phone = resService.Phone,
                         Address = resService.Address,
                         Status = resService.Status,
+                        IsTransport = resService.IsTransport,
+                        TransportFee = resService.TransportFee,
+                        RewardPointUsed = resService.RewardPointUsed,
                         TechnicianID = resService.TechnicianId,
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -487,11 +534,13 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -501,6 +550,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -548,6 +598,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = getResService.Id,
+                        ServiceCode = getResService.ServiceCode,
                         UserID = getResService.UserId,
                         CreateDate = getResService.CreateDate ?? DateTime.MinValue,
                         StartDate = getResService.StartDate,
@@ -558,6 +609,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Address = getResService.Address,
                         Status = getResService.Status,
                         IsTransport = getResService.IsTransport,
+                        TransportFee = getResService.TransportFee,
+                        RewardPointUsed = getResService.RewardPointUsed,
                         TechnicianID = getResService.TechnicianId,
                         TechnicianName = getResService.TechnicianName,
                         ServiceDetailList = resServiceDetail
@@ -605,6 +658,21 @@ namespace GreeenGarden.Business.Service.TakecareService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
             }
+        }
+
+        private async Task<string> GenerateServiceCode()
+        {
+            string serviceCode = "";
+            bool dup = true;
+            while (dup == true)
+            {
+                Random random = new();
+                serviceCode = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10).Select(s => s[random.Next(s.Length)]).ToArray());
+                bool checkServiceCode = await _serviceRepo.CheckServiceCode(serviceCode);
+                dup = checkServiceCode != false;
+            }
+
+            return serviceCode;
         }
     }
 }

@@ -210,7 +210,8 @@ namespace GreeenGarden.Business.Service.UserService
                 && !userRole.Equals(Commons.CUSTOMER)
                 && !userRole.Equals(Commons.MANAGER)
                 && !userRole.Equals(Commons.STAFF)
-                && !userRole.Equals(Commons.DELIVERER))
+                && !userRole.Equals(Commons.DELIVERER)
+                && !userRole.Equals(Commons.TECHNICIAN))
             {
                 return new ResultModel()
                 {
@@ -394,6 +395,7 @@ namespace GreeenGarden.Business.Service.UserService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -403,6 +405,7 @@ namespace GreeenGarden.Business.Service.UserService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }

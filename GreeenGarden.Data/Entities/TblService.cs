@@ -7,6 +7,8 @@ public partial class TblService
 {
     public Guid Id { get; set; }
 
+    public string? ServiceCode { get; set; }
+
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
@@ -30,6 +32,10 @@ public partial class TblService
     public string? TechnicianName { get; set; }
 
     public bool? IsTransport { get; set; }
+
+    public double? TransportFee { get; set; }
+
+    public int? RewardPointUsed { get; set; }
 
     public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 

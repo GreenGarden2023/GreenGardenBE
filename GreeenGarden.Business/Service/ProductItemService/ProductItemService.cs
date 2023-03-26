@@ -79,6 +79,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -88,6 +89,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -173,6 +175,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -182,6 +185,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -471,6 +475,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -529,6 +534,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }

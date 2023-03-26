@@ -33,6 +33,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -42,6 +43,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -94,8 +96,9 @@ namespace GreeenGarden.Business.Service.TransactionService
                 }
                 else
                 {
-                    result.IsSuccess = false;
-                    result.Code = 400;
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = tblTransactions;
                     result.Message = "List empty";
                     return result;
                 }
@@ -123,6 +126,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                     return new ResultModel()
                     {
                         IsSuccess = false,
+                        Code = 403,
                         Message = "User not allowed"
                     };
                 }
@@ -132,6 +136,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+                    Code = 403,
                     Message = "User not allowed"
                 };
             }
@@ -184,8 +189,9 @@ namespace GreeenGarden.Business.Service.TransactionService
                 }
                 else
                 {
-                    result.IsSuccess = false;
-                    result.Code = 400;
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = tblTransactions;
                     result.Message = "List empty";
                     return result;
                 }

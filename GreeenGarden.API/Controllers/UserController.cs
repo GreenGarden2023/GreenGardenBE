@@ -49,7 +49,7 @@ namespace GreeenGarden.API.Controllers
 
         }
         [HttpGet("get-current-user")]
-        [Authorize(Roles = "Admin, Customer, Staff, Deliverer, Manager")]
+        [Authorize(Roles = "Admin, Customer, Staff, Deliverer, Manager, Technician")]
         public async Task<ActionResult<ResultModel>> GetCurrentUser()
         {
             try

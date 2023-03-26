@@ -16,6 +16,8 @@
 
         public bool? IsTransport { get; set; }
 
+        public int? RewardPointUsed { get; set; }
+
         public List<Guid> UserTreeIDList { get; set; }
     }
     public class ServiceStatusModel
