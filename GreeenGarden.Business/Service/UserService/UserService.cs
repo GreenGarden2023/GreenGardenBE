@@ -210,7 +210,8 @@ namespace GreeenGarden.Business.Service.UserService
                 && !userRole.Equals(Commons.CUSTOMER)
                 && !userRole.Equals(Commons.MANAGER)
                 && !userRole.Equals(Commons.STAFF)
-                && !userRole.Equals(Commons.DELIVERER))
+                && !userRole.Equals(Commons.DELIVERER)
+                && !userRole.Equals(Commons.TECHNICIAN))
             {
                 return new ResultModel()
                 {
