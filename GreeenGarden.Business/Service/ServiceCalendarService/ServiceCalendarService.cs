@@ -27,7 +27,8 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
-                    && !userRole.Equals(Commons.ADMIN))
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -179,7 +180,8 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -252,7 +254,8 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -308,7 +311,8 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {

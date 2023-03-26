@@ -34,7 +34,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-all-service-request")]
         [SwaggerOperation(Summary = "Get all service request")]
-        [Authorize(Roles = "Staff, Manager, Admin")]
+        [Authorize(Roles = "Staff, Manager, Admin, Technician")]
         public async Task<IActionResult> GetAllServiceRequest()
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -43,7 +43,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-user-service-request")]
         [SwaggerOperation(Summary = "Get current user's service request")]
-        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> GetUserServiceRequest()
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -52,7 +52,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("assign-service-technician")]
         [SwaggerOperation(Summary = "Assign a technician to a service request")]
-        [Authorize(Roles = "Staff, Manager, Admin")]
+        [Authorize(Roles = "Staff, Manager, Admin, Technician")]
         public async Task<IActionResult> AssignTechnician(ServiceAssignModelManager serviceAssignModelManager)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -61,7 +61,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("update-service-detail")]
         [SwaggerOperation(Summary = "Update service and service detail for manager")]
-        [Authorize(Roles = "Staff, Manager, Admin")]
+        [Authorize(Roles = "Staff, Manager, Admin, Technician")]
         public async Task<IActionResult> UpdateServiceDetail(UpdateService updateService)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];

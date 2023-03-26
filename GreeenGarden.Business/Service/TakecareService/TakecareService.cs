@@ -44,7 +44,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -131,7 +132,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -286,7 +288,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -362,7 +365,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -439,7 +443,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -524,7 +529,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER))
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
