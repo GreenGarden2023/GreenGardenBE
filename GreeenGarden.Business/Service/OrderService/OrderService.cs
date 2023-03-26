@@ -1635,6 +1635,63 @@ namespace GreeenGarden.Business.Service.OrderService
                 TblRentOrder tblRentOrder = await _rentOrderRepo.Get(rentOrderID);
                 if (tblRentOrder != null)
                 {
+                    TransportFee = tblSaleOrder.TransportFee,
+                    Deposit = tblSaleOrder.Deposit,
+                    TotalPrice = tblSaleOrder.TotalPrice,
+                    RemainMoney = tblSaleOrder.RemainMoney,
+                    MaxPoint = maxPoint,
+                    RewardPointGain = tblSaleOrder.RewardPointGain,
+                    RewardPointUsed = tblSaleOrder.RewardPointUsed,
+                    DiscountAmount = tblSaleOrder.DiscountAmount
+                };
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = orderCalculateModel;
+                result.Message = "Calculate sale order successful.";
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
+        public async Task<ResultModel> GetARentOrder(string token, Guid rentOrderID)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(rentOrderID);
+                if (tblRentOrder != null)
+                {
 
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
                     RentOrderResModel rentOrderResModel = new()
@@ -1759,8 +1816,8 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     serviceDetailTotal += serviceDetail.ServicePrice ?? 0;
                 }
-
                 double finalTotal = (double)(serviceDetailTotal - (tblService.RewardPointUsed * 1000) + tblService.TransportFee);
+
                 int rewardPointGain = (int)Math.Ceiling(finalTotal * 0.01 / 1000);
                 double deposit = Math.Ceiling(finalTotal / 2);
 
@@ -1786,6 +1843,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 };
                 Guid insert = await _serviceOrderRepo.Insert(tblServiceOrder);
                 _ = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.CONFIRMED);
+
                 if (insert != Guid.Empty)
                 {
                     TblServiceOrder tblServiceOrderGet = await _serviceOrderRepo.Get(tblServiceOrder.Id);
@@ -1841,11 +1899,13 @@ namespace GreeenGarden.Business.Service.OrderService
                     && !userRole.Equals(Commons.ADMIN)
                     && !userRole.Equals(Commons.CUSTOMER)
                     && !userRole.Equals(Commons.TECHNICIAN))
+
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
                         Code = 403,
+
                         Message = "User not allowed"
                     };
                 }
@@ -1856,6 +1916,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     IsSuccess = false,
                     Code = 403,
+
                     Message = "User not allowed"
                 };
             }
@@ -1875,6 +1936,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
+
                             UserID = resService.UserId,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
@@ -1898,11 +1960,13 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianAddress = technicianGet.Address,
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
+
                         };
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
                             Id = order.Id,
                             OrderCode = order.OrderCode,
+
                             CreateDate = order.CreateDate,
                             ServiceStartDate = (DateTime)order.ServiceStartDate,
                             ServiceEndDate = (DateTime)order.ServiceEndDate,
@@ -1969,11 +2033,14 @@ namespace GreeenGarden.Business.Service.OrderService
                     && !userRole.Equals(Commons.ADMIN)
                     && !userRole.Equals(Commons.CUSTOMER)
                     && !userRole.Equals(Commons.TECHNICIAN))
+
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+
                         Code = 403,
+
                         Message = "User not allowed"
                     };
                 }
@@ -1983,7 +2050,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+
                     Code = 403,
+
                     Message = "User not allowed"
                 };
             }
@@ -2001,7 +2070,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceResModel serviceResModel = new ServiceResModel
                         {
                             ID = resService.Id,
+
                             ServiceCode = resService.ServiceCode,
+
                             UserID = resService.UserId,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
@@ -2020,16 +2091,20 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
                         {
                             TechnicianID = technicianGet.Id,
+
                             TechnicianUserName = technicianGet.UserName,
                             TechnicianFullName = technicianGet.FullName,
                             TechnicianAddress = technicianGet.Address,
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
+
                         };
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
                             Id = order.Id,
+
                             OrderCode = order.OrderCode,
+
                             CreateDate = order.CreateDate,
                             ServiceStartDate = (DateTime)order.ServiceStartDate,
                             ServiceEndDate = (DateTime)order.ServiceEndDate,
@@ -2093,13 +2168,17 @@ namespace GreeenGarden.Business.Service.OrderService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
+
                     && !userRole.Equals(Commons.CUSTOMER)
                     && !userRole.Equals(Commons.TECHNICIAN))
+
                 {
                     return new ResultModel()
                     {
                         IsSuccess = false,
+
                         Code = 403,
+
                         Message = "User not allowed"
                     };
                 }
@@ -2109,7 +2188,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 return new ResultModel()
                 {
                     IsSuccess = false,
+
                     Code = 403,
+
                     Message = "User not allowed"
                 };
             }
@@ -2127,7 +2208,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceResModel serviceResModel = new ServiceResModel
                         {
                             ID = resService.Id,
+
                             ServiceCode = resService.ServiceCode,
+
                             UserID = resService.UserId,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
@@ -2146,16 +2229,20 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
                         {
                             TechnicianID = technicianGet.Id,
+
                             TechnicianUserName = technicianGet.UserName,
                             TechnicianFullName = technicianGet.FullName,
                             TechnicianAddress = technicianGet.Address,
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
+
                         };
                         ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
                         {
                             Id = order.Id,
+
                             OrderCode = order.OrderCode,
+
                             CreateDate = order.CreateDate,
                             ServiceStartDate = (DateTime)order.ServiceStartDate,
                             ServiceEndDate = (DateTime)order.ServiceEndDate,
@@ -2209,6 +2296,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 return result;
 
             }
+
         }
 
         public async Task<ResultModel> GetServiceOrderById(string token, Guid orderID)
@@ -2317,5 +2405,6 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
         }
+
     }
 }
