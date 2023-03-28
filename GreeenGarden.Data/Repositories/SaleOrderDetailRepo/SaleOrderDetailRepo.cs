@@ -36,7 +36,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
                     SalePricePerUnit = detail.SalePricePerUnit ?? null,
                     SizeName = "" + detail.SizeName,
                     ProductItemName = "" + detail.ProductItemName,
-                    ProductItemID = detail.ProductItemDetailId,
+                    ProductItemDetailID = detail.ProductItemDetailId,
                     ImgURL = imageURl
                 };
                 resultList.Add(model);

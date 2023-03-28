@@ -35,7 +35,7 @@
     public class SaleOrderDetailResModel
     {
         public Guid ID { get; set; }
-        public Guid? ProductItemID { get; set; }
+        public Guid? ProductItemDetailID { get; set; }
         public string? ProductItemName { get; set; }
         public int? Quantity { get; set; }
         public double? SalePricePerUnit { get; set; }

@@ -2332,7 +2332,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Message = "Cancel service order success.";
             }
             catch (Exception e)
             {
@@ -2348,11 +2348,27 @@ namespace GreeenGarden.Business.Service.OrderService
             var result = new ResultModel();
             try
             {
+                TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(saleOrderID);
+                if (tblSaleOrder == null) {
 
-
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Sale order Id invalid.";
+                    return result;
+                }
+                var updateStatus = await _saleOrderRepo.UpdateSaleOrderStatus(saleOrderID, Status.CANCEL);
+                if(updateStatus.IsSuccess == true) {
+                    List<SaleOrderDetailResModel> tblSaleOrderDetails = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
+                    foreach (var i in tblSaleOrderDetails)
+                    {
+                        var itemDetail = await _productItemDetailRepo.Get((Guid)i.ProductItemDetailID);
+                        itemDetail.Quantity += i.Quantity;
+                        await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
+                    }
+                }
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Message = "Cancel sale order success.";
             }
             catch (Exception e)
             {
@@ -2369,7 +2385,7 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 var rentOrder = await _rentOrderRepo.Get(rentOrderID);
-                var chaneStatus = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, ServiceOrderStatus.CANCEL);
+                var chaneStatus = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, Status.CANCEL);
                 if (chaneStatus.Code == 200)
                 {
                     var rentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
@@ -2388,6 +2404,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 }
                 result.Code = 200;
                 result.IsSuccess = true;
+                result.Message = "Cancel sale order success.";
             }
             catch (Exception e)
             {
