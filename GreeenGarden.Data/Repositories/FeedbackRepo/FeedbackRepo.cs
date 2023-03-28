@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.FeedbackModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +30,12 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
             _context.TblFeedBacks.Update(result);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<Page<TblFeedBack>> GetFeedBacks(PaginationRequestModel pagingModel, Guid productItemID)
+        {
+            return await _context.TblFeedBacks.Where(x=>x.ProductItemId.Equals(productItemID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+
         }
     }
 }

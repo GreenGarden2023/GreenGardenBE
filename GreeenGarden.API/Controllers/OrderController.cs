@@ -168,5 +168,24 @@ namespace GreeenGarden.API.Controllers
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
         }
+
+
+        [HttpPost("cancel-service-order-by-id")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> CancelServiceOrderById(Guid orderID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.CancelServiceOrderById(token, orderID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpPost("cancel-rent-order-by-id")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> CancelRentOrderById(Guid orderID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.CancelRentOrderById(token, orderID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }

@@ -53,6 +53,13 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
             return listTblOrder;
         }
 
+        public async Task<bool> UpdateServiceOrder(TblServiceOrder entity)
+        {
+            _context.TblServiceOrders.Update(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<ResultModel> UpdateServiceOrderDeposit(Guid serviceOrderID)
         {
             ResultModel result = new();

@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.FeedbackModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.FeedbackRepo;
@@ -127,15 +128,33 @@ namespace GreeenGarden.Business.Service.FeedbackService
             return result;
         }
 
-        public async Task<ResultModel> getListFeedback(string token, Guid productItemID)
+        public async Task<ResultModel> getListFeedback(string token, PaginationRequestModel pagingModel, Guid productItemID)
         {
             var result = new ResultModel();
             try
             {
+                var listFb = await _fbRepo.GetFeedBacks(pagingModel, productItemID);
+                var res = new List<ProItemFeedbackResModel>();
+
+                foreach (var i in listFb.Results)
+                {
+                    var imageURL = await _imgRepo.GetImgUrlFeedback(i.Id);
+                    var fbRecord = new ProItemFeedbackResModel()
+                    {
+                        ID = i.Id,
+                        Rating = i.Rating,
+                        Comment = i.Comment,
+                        CreateDate = i.CreateDate,
+                        Status = i.Status,
+                        ImageURL = imageURL,
+                        ProductItemID = i.ProductItemId
+                    };
+                    res.Add(fbRecord);
+                }
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Data = res;
             }
             catch (Exception e)
             {

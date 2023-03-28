@@ -19,6 +19,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetRentOrderDetail(string token, Guid rentOrderID);
 
         Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status);
+        Task<ResultModel> CancelRentOrderById(string token, Guid rentOrderID);
 
         Task<ResultModel> GetSaleOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetAllSaleOrders(string token, PaginationRequestModel pagingModel);
@@ -28,12 +29,14 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetARentOrder(string token, Guid rentOrderID);
 
         Task<ResultModel> UpdateSaleOrderStatus(string token, Guid saleOrderID, string status);
+        Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID);
 
         Task<ResultModel> CreateServiceOrder(string token, ServiceOrderCreateModel serviceOrderCreateModel);
         Task<ResultModel> GetServiceOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetAllServiceOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetServiceOrderByTechnician(string token, PaginationRequestModel pagingModel, Guid technicianID);
         Task<ResultModel> GetServiceOrderById(string token, Guid orderID);
+        Task<ResultModel> CancelServiceOrderById(string token, Guid orderID);
     }
 }
 

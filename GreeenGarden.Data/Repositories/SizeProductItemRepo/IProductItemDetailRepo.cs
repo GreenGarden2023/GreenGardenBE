@@ -9,6 +9,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
         Task<List<ProductItemDetailResModel>> GetSizeProductItems(Guid productItemId, string? status);
         Task<bool> UpdateSizeProductItem(ProductItemDetailModel productItemDetailModel);
         Task<bool> UpdateProductItemDetailQuantity(Guid productItemDetailID, int deductQuantity);
+        Task<bool> UpdateProductItemDetail(TblProductItemDetail entity);
     }
 }
 

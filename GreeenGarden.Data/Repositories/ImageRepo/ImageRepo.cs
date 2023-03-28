@@ -42,6 +42,18 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             return result;
         }
 
+        public async Task<List<string>> GetImgUrlFeedback(Guid feedbackID)
+        {
+            var result = new List<string>();
+            var tblImg =  await _context.TblImages.Where(x=>x.FeedbackId.Equals(feedbackID)).ToListAsync();
+            if (tblImg == null) result = null;
+            foreach (var img in tblImg)
+            {
+                result.Add(img.ImageUrl);
+            }
+            return result;
+        }
+
         public async Task<TblImage> GetImgUrlProduct(Guid productID)
         {
             var query = from c in context.TblImages

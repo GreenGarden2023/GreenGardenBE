@@ -1,5 +1,7 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.FeedbackModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using System;
@@ -13,5 +15,6 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
     public interface IFeedbackRepo : IRepository<TblFeedBack>
     {
         Task<bool> ChangeStatus(FeedbackChangeStatusModel model);
+        Task<Page<TblFeedBack>> GetFeedBacks(PaginationRequestModel pagingModel, Guid productItemID);
     }
 }

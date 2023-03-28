@@ -2317,5 +2317,84 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
         }
+
+        public async Task<ResultModel> CancelServiceOrderById(string token, Guid orderID)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var serviceOrder = await _serviceOrderRepo.Get(orderID);
+                serviceOrder.Status = ServiceOrderStatus.CANCEL;
+                await _serviceOrderRepo.UpdateServiceOrder(serviceOrder);
+
+                await _serviceRepo.ChangeServiceStatus(serviceOrder.ServiceId, ServiceStatus.REPROCESS);
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID)
+        {
+            var result = new ResultModel();
+            try
+            {
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> CancelRentOrderById(string token, Guid rentOrderID)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var rentOrder = await _rentOrderRepo.Get(rentOrderID);
+                var chaneStatus = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, ServiceOrderStatus.CANCEL);
+                if (chaneStatus.Code == 200)
+                {
+                    var rentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
+                    foreach (var i in rentOrderDetail)
+                    {
+                        var itemDetail = await _productItemDetailRepo.Get(i.ProductItemDetailID);
+                        itemDetail.Quantity += i.Quantity;
+                        await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
+                    }
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    return result;
+                }
+                result.Code = 200;
+                result.IsSuccess = true;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }

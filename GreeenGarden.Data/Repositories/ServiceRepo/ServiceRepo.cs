@@ -66,6 +66,13 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                         _ = await _context.SaveChangesAsync();
                         return true;
                     }
+                    else if (status.Trim().ToLower().Equals(ServiceStatus.REPROCESS))
+                    {
+                        tblService.Status = ServiceStatus.REPROCESS;
+                        _ = _context.Update(tblService);
+                        _ = await _context.SaveChangesAsync();
+                        return true;
+                    }
                     else if(status.Trim().ToLower().Equals(ServiceStatus.CONFIRMED))
                     {
                         tblService.Status = ServiceStatus.CONFIRMED;

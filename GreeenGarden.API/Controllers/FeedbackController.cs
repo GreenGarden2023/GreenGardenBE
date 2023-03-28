@@ -1,6 +1,7 @@
 ﻿using GreeenGarden.Business.Service.CartService;
 using GreeenGarden.Business.Service.FeedbackService;
 using GreeenGarden.Data.Models.FeedbackModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,14 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             Data.Models.ResultModel.ResultModel result = await _service.changeStatus(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpPost("get-list-feedback-by-product-item")]
+        public async Task<IActionResult> getListFeedback([FromQuery] PaginationRequestModel pagingModel, Guid productItemID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.getListFeedback(token, pagingModel, productItemID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
