@@ -4,8 +4,9 @@ namespace GreeenGarden.Business.Service.EMailService
 {
     public interface IEMailService
     {
-        public Task<ResultModel> SendEmailVerificationOTP(string email);
-        public Task<ResultModel> VerifyEmailVerificationOTP(string code);
+         Task<ResultModel> SendEmailVerificationOTP(string email);
+        Task<ResultModel> SendEmailServiceUpdate(string email, string serviceCode);
+        Task<ResultModel> VerifyEmailVerificationOTP(string code);
     }
 }
 

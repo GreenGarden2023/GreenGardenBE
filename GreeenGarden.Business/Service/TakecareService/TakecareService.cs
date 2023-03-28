@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Business.Service.ImageService;
+﻿using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
@@ -26,7 +27,8 @@ namespace GreeenGarden.Business.Service.TakecareService
         private readonly IUserRepo _userRepo;
         private readonly IRewardRepo _rewardRepo;
         private readonly IServiceOrderRepo _serviceOrderRepo;
-        public TakecareService(IServiceOrderRepo serviceOrderRepo, IRewardRepo rewardRepo, IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
+        private readonly IEMailService _emailService;
+        public TakecareService(IEMailService eMailService, IServiceOrderRepo serviceOrderRepo, IRewardRepo rewardRepo, IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -37,6 +39,7 @@ namespace GreeenGarden.Business.Service.TakecareService
             _userRepo = userRepo;
             _rewardRepo = rewardRepo;
             _serviceOrderRepo = serviceOrderRepo;
+            _emailService = eMailService;
         }
 
         public async Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager)
@@ -615,6 +618,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                         TechnicianName = getResService.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
+                    TblUser user = await _userRepo.Get(serviceResModel.UserID);
+                    _ = await _emailService.SendEmailServiceUpdate(user.Mail, serviceResModel.ServiceCode);
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = serviceResModel;
@@ -628,6 +633,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         ID = getResService.Id,
                         UserID = getResService.UserId,
+                        ServiceCode = getResService.ServiceCode,
                         CreateDate = getResService.CreateDate ?? DateTime.MinValue,
                         StartDate = getResService.StartDate,
                         EndDate = getResService.EndDate,
@@ -641,13 +647,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                         TechnicianName = getResService.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
+                    TblUser user = await _userRepo.Get(serviceResModel.UserID);
+                    _ = await _emailService.SendEmailServiceUpdate(user.Mail, serviceResModel.ServiceCode);
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = serviceResModel;
                     result.Message = "Updated service with out service detail change.";
                     return result;
                 }
-
+                
                 return result;
             }
 
