@@ -611,6 +611,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             {
                                 Id = Guid.NewGuid(),
                                 SaleOderId = tblSaleOrder.Id,
+                                ProductItemDetailId = itemDetail.Id,
                                 Quantity = item.Quantity,
                                 TotalPrice = item.Quantity * itemDetail.SalePrice,
                                 SalePricePerUnit = itemDetail.SalePrice,

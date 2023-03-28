@@ -9,6 +9,8 @@ public partial class TblSaleOrderDetail
 
     public Guid SaleOderId { get; set; }
 
+    public Guid? ProductItemDetailId { get; set; }
+
     public double? TotalPrice { get; set; }
 
     public int? Quantity { get; set; }

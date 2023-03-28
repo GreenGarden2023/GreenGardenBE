@@ -425,6 +425,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
             entity.Property(e => e.ProductItemName).HasMaxLength(200);
             entity.Property(e => e.SaleOderId).HasColumnName("SaleOderID");
             entity.Property(e => e.SizeName).HasMaxLength(200);

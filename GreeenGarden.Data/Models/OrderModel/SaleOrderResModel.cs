@@ -35,11 +35,12 @@
     public class SaleOrderDetailResModel
     {
         public Guid ID { get; set; }
-        public double? TotalPrice { get; set; }
+        public Guid? ProductItemID { get; set; }
+        public string? ProductItemName { get; set; }
         public int? Quantity { get; set; }
         public double? SalePricePerUnit { get; set; }
+        public double? TotalPrice { get; set; }
         public string? SizeName { get; set; }
-        public string? ProductItemName { get; set; }
         public string? ImgURL { get; set; }
     }
 }
