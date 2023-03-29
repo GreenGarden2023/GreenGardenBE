@@ -100,6 +100,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                     {
                         tblServiceDetail.Quantity = serviceDetail.Quantity;
                     }
+
                     if (serviceDetail.ServicePrice != null && serviceDetail.ServicePrice != tblServiceDetail.ServicePrice)
                     {
                         tblServiceDetail.ServicePrice = serviceDetail.ServicePrice;

@@ -20,6 +20,270 @@ namespace GreeenGarden.Business.Service.TransactionService
             _transactionRepo = transactionRepo;
         }
 
+        public async Task<ResultModel> CreateATransaction(string token, TransactionOrderCancelModel transactionOrderCancelModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try {
+                if (transactionOrderCancelModel.OrderType.Trim().ToLower().Equals("rent"))
+                {
+                    Guid paymentID = Guid.Empty;
+                    if (transactionOrderCancelModel.PaymentType.Equals("momo"))
+                    {
+                        paymentID = PaymentMethod.MOMO;
+                    }
+                    else
+                    {
+                        paymentID = PaymentMethod.CASH;
+                    }
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        Id = Guid.NewGuid(),
+                        RentOrderId = transactionOrderCancelModel.OrderID,
+                        Amount = transactionOrderCancelModel.Amount,
+                        DatetimePaid = currentTime,
+                        Description = transactionOrderCancelModel.Description,
+                        PaymentId = paymentID,
+                        Type = TransactionType.RENT_REFUND,
+                        Status = TransactionStatus.REFUND
+
+                    };
+                    Guid insert = await _transactionRepo.Insert(tblTransaction);
+                    if (insert != Guid.Empty)
+                    {
+                        TblTransaction transaction = await _transactionRepo.Get(tblTransaction.Id);
+                        PaymentType paymentType = new PaymentType
+                        {
+                            Id = transaction.PaymentId,
+                            PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
+                        };
+                        Guid orderId = Guid.Empty;
+                        if (transaction.RentOrderId != null)
+                        {
+                            orderId = (Guid)transaction.RentOrderId;
+                        }
+                        if (transaction.SaleOrderId != null)
+                        {
+                            orderId = (Guid)transaction.SaleOrderId;
+                        }
+                        if (transaction.ServiceOrderId != null)
+                        {
+                            orderId = (Guid)transaction.ServiceOrderId;
+                        }
+                        TransactionResModel transactionResModel = new TransactionResModel
+                        {
+                            Id = transaction.Id,
+                            OrderID = orderId,
+                            Amount = (double)transaction.Amount,
+                            PaidDate = (DateTime)transaction.DatetimePaid,
+                            Type = transaction.Type,
+                            Status = transaction.Status,
+                            PaymentType = paymentType,
+                        };
+
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = transactionResModel;
+                        result.Message = "Create transaction success";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Create transaction failed";
+                        return result;
+                    }
+                }
+                else if (transactionOrderCancelModel.OrderType.Trim().ToLower().Equals("sale"))
+                {
+                    Guid paymentID = Guid.Empty;
+                    if (transactionOrderCancelModel.PaymentType.Equals("momo"))
+                    {
+                        paymentID = PaymentMethod.MOMO;
+                    }
+                    else
+                    {
+                        paymentID = PaymentMethod.CASH;
+                    }
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        Id = Guid.NewGuid(),
+                        SaleOrderId = transactionOrderCancelModel.OrderID,
+                        Amount = transactionOrderCancelModel.Amount,
+                        DatetimePaid = currentTime,
+                        Description = transactionOrderCancelModel.Description,
+                        PaymentId = paymentID,
+                        Type = TransactionType.SALE_REFUND,
+                        Status = TransactionStatus.REFUND
+
+                    };
+                    Guid insert = await _transactionRepo.Insert(tblTransaction);
+                    if (insert != Guid.Empty)
+                    {
+                        TblTransaction transaction = await _transactionRepo.Get(tblTransaction.Id);
+                        PaymentType paymentType = new PaymentType
+                        {
+                            Id = transaction.PaymentId,
+                            PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
+                        };
+                        Guid orderId = Guid.Empty;
+                        if (transaction.RentOrderId != null)
+                        {
+                            orderId = (Guid)transaction.RentOrderId;
+                        }
+                        if (transaction.SaleOrderId != null)
+                        {
+                            orderId = (Guid)transaction.SaleOrderId;
+                        }
+                        if (transaction.ServiceOrderId != null)
+                        {
+                            orderId = (Guid)transaction.ServiceOrderId;
+                        }
+                        TransactionResModel transactionResModel = new TransactionResModel
+                        {
+                            Id = transaction.Id,
+                            OrderID = orderId,
+                            Amount = (double)transaction.Amount,
+                            PaidDate = (DateTime)transaction.DatetimePaid,
+                            Type = transaction.Type,
+                            Status = transaction.Status,
+                            PaymentType = paymentType
+                        };
+
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = transactionResModel;
+                        result.Message = "Create transaction success";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Create transaction failed";
+                        return result;
+                    }
+                }
+                else if (transactionOrderCancelModel.OrderType.Trim().ToLower().Equals("service"))
+                {
+                    Guid paymentID = Guid.Empty;
+                    if (transactionOrderCancelModel.PaymentType.Equals("momo"))
+                    {
+                        paymentID = PaymentMethod.MOMO;
+                    }
+                    else
+                    {
+                        paymentID = PaymentMethod.CASH;
+                    }
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        Id = Guid.NewGuid(),
+                        ServiceOrderId = transactionOrderCancelModel.OrderID,
+                        Amount = transactionOrderCancelModel.Amount,
+                        DatetimePaid = currentTime,
+                        Description = transactionOrderCancelModel.Description,
+                        PaymentId = paymentID,
+                        Type = TransactionType.SERVICE_REFUND,
+                        Status = TransactionStatus.REFUND
+
+                    };
+                    Guid insert = await _transactionRepo.Insert(tblTransaction);
+                    if (insert != Guid.Empty)
+                    {
+                        TblTransaction transaction = await _transactionRepo.Get(tblTransaction.Id);
+                        PaymentType paymentType = new PaymentType
+                        {
+                            Id = transaction.PaymentId,
+                            PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
+                        };
+                        Guid orderId = Guid.Empty;
+                        if (transaction.RentOrderId != null)
+                        {
+                            orderId = (Guid)transaction.RentOrderId;
+                        }
+                        if (transaction.SaleOrderId != null)
+                        {
+                            orderId = (Guid)transaction.SaleOrderId;
+                        }
+                        if (transaction.ServiceOrderId != null)
+                        {
+                            orderId = (Guid)transaction.ServiceOrderId;
+                        }
+                        TransactionResModel transactionResModel = new TransactionResModel
+                        {
+                            Id = transaction.Id,
+                            OrderID = orderId,
+                            Amount = (double)transaction.Amount,
+                            PaidDate = (DateTime)transaction.DatetimePaid,
+                            Type = transaction.Type,
+                            Status = transaction.Status,
+                            PaymentType = paymentType
+                        };
+
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = transactionResModel;
+                        result.Message = "Create transaction success";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Create transaction failed";
+                        return result;
+                    }
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "OrderType unknown.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
+
         public async Task<ResultModel> GetTransactionByDate(string token, TransactionGetByDateModel transactionGetByDateModel)
         {
             if (!string.IsNullOrEmpty(token))

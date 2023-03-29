@@ -37,6 +37,8 @@ public partial class TblService
 
     public int? RewardPointUsed { get; set; }
 
+    public string? Rules { get; set; }
+
     public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 
     public virtual ICollection<TblServiceOrder> TblServiceOrders { get; } = new List<TblServiceOrder>();

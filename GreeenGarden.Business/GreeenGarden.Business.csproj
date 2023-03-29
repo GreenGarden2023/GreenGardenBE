@@ -45,6 +45,7 @@
     <Folder Include="Service\TakecareService\" />
     <Folder Include="Service\TransactionService\" />
     <Folder Include="Service\ServiceCalendarService\" />
+    <Folder Include="Service\TransactionService\" />
   </ItemGroup>
 
   <ItemGroup>

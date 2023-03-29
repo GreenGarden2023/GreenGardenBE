@@ -12,6 +12,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         Task<List<TblService>> GetAllRequest();
         Task<bool> UpdateServiceUserInfo(ServiceUpdateModelManager serviceUpdateModelManager);
         Task<bool> CheckServiceCode(string serviceCode);
+        Task<TblService> GetServiceByServiceCode(string serviceCode);
     }
 }
 

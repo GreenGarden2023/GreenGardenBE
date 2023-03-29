@@ -134,6 +134,19 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
             return tblServices;
         }
 
+        public async Task<TblService> GetServiceByServiceCode(string serviceCode)
+        {
+            TblService tblService = await _context.TblServices.Where(x => x.ServiceCode.Equals(serviceCode)).FirstOrDefaultAsync();
+            if (tblService != null)
+            {
+                return tblService;
+            }
+            else {
+                return null;
+            }
+
+        }
+
         public async Task<bool> UpdateServiceUserInfo(ServiceUpdateModelManager serviceUpdateModelManager)
         {
             try
@@ -156,6 +169,10 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     {
                         tblService.Email = serviceUpdateModelManager.Email;
                     }
+                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Rules) && !serviceUpdateModelManager.Rules.Equals(tblService.Rules))
+                    {
+                        tblService.Rules = serviceUpdateModelManager.Rules;
+                    }
                     if (!String.IsNullOrEmpty(serviceUpdateModelManager.Address) && !serviceUpdateModelManager.Address.Equals(tblService.Address))
                     {
                         tblService.Address = serviceUpdateModelManager.Address;
@@ -168,6 +185,15 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     {
                         tblService.RewardPointUsed = serviceUpdateModelManager.RewardPointUsed;
                     }
+                    if (serviceUpdateModelManager.StartDate != null && !serviceUpdateModelManager.StartDate.Equals(tblService.StartDate))
+                    {
+                        tblService.StartDate = serviceUpdateModelManager.StartDate;
+                    }
+                    if (serviceUpdateModelManager.EndDate != null && !serviceUpdateModelManager.EndDate.Equals(tblService.EndDate))
+                    {
+                        tblService.EndDate = serviceUpdateModelManager.EndDate;
+                    }
+
                     _ = _context.Update(tblService);
                     _ = await _context.SaveChangesAsync();
                     return true;

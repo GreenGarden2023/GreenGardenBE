@@ -8,6 +8,7 @@ namespace GreeenGarden.Business.Service.TransactionService
 	{
 		Task<ResultModel> GetTransactionByOrder(string token, TransactionGetByOrderModel transactionGetByOrderModel);
         Task<ResultModel> GetTransactionByDate(string token, TransactionGetByDateModel transactionGetByDateModel);
+		Task<ResultModel> CreateATransaction(string token, TransactionOrderCancelModel transactionOrderCancelModel); 
     }
 }
 

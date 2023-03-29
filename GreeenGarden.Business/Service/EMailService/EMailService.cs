@@ -1,6 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
+using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -13,16 +14,19 @@ namespace GreeenGarden.Business.Service.EMailService
     {
         private readonly IEmailOTPCodeRepo _emailOTPCodeRepo;
         private readonly IUserRepo _userRepo;
-        public EMailService(IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo)
+        private readonly IServiceRepo _serviceRepo;
+        public EMailService(IServiceRepo serviceRepo, IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo)
         {
             _emailOTPCodeRepo = emailOTPCodeRepo;
             _userRepo = userRepo;
+            _serviceRepo = serviceRepo;
         }
 
         public async Task<ResultModel> SendEmailServiceUpdate(string email, string serviceCode)
         {
             ResultModel result = new();
             try {
+                TblService tblService = await _serviceRepo.GetServiceByServiceCode(serviceCode);
                 string from = SecretService.SecretService.GetEmailCred().EmailAddress;
                 string password = SecretService.SecretService.GetEmailCred().EmailPassword;
                 MimeMessage message = new();
@@ -37,7 +41,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     "<h1>GreenGarden<h1>" +
                     "<h3>Your takecare request " + serviceCode + " has been update by the manager.</h3>" +
                     "<p>Please review the request via the link: </p>" +
-                    "<p> https://ggarden.shop/take-care-service/me </p>"+
+                    "<p> https://ggarden.shop/take-care-service/me/"+tblService.Id+ " </p>"+
                     "<p> Best regards,</p>" +
                     "<h3>GreenGarden.</h3>" +
                     "</body>" +

@@ -23,6 +23,8 @@ public partial class TblTransaction
 
     public Guid? ServiceOrderId { get; set; }
 
+    public string? Description { get; set; }
+
     public virtual TblPayment Payment { get; set; } = null!;
 
     public virtual TblRentOrder? RentOrder { get; set; }

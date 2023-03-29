@@ -449,6 +449,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Phone).HasMaxLength(50);
+            entity.Property(e => e.Rules).HasMaxLength(1000);
             entity.Property(e => e.ServiceCode).HasMaxLength(20);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
             entity.Property(e => e.Status).HasMaxLength(50);
@@ -569,6 +570,7 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.DatetimePaid).HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(200);
             entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
             entity.Property(e => e.RentOrderId).HasColumnName("RentOrderID");
             entity.Property(e => e.SaleOrderId).HasColumnName("SaleOrderID");

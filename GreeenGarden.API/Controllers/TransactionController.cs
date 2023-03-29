@@ -36,5 +36,14 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _transactionService.GetTransactionByDate(token, transactionGetByDateModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("create-transaction")]
+        [SwaggerOperation(Summary = "rent/sale/service   -   cash/momo")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        public async Task<IActionResult> CreateTransaction(TransactionOrderCancelModel transactionOrderCancelModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _transactionService.CreateATransaction(token, transactionOrderCancelModel);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
