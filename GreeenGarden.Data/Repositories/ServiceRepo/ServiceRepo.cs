@@ -80,7 +80,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                         _ = await _context.SaveChangesAsync();
                         return true;
                     }
-                    else if (status.Trim().ToLower().Equals(ServiceStatus.USER_APPROVED))
+                    else if (status.ToLower().Equals(ServiceStatus.USER_APPROVED))
                     {
                         tblService.Status = ServiceStatus.USER_APPROVED;
                         _ = _context.Update(tblService);
