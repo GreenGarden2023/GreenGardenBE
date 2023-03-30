@@ -472,10 +472,16 @@ namespace GreeenGarden.Business.Service.TakecareService
             {
                 string userID = _decodeToken.Decode(token, "userid");
                 List<TblService> tblServices = await _serviceRepo.GetRequestByUser(Guid.Parse(userID));
+
                 List<ServiceResModel> resModels = new List<ServiceResModel>();
                 foreach (TblService service in tblServices)
                 {
+                    Guid orderID = Guid.Empty;
                     TblServiceOrder tblServiceOrder = await _serviceOrderRepo.GetServiceOrderByServiceID(service.Id);
+                    if (tblServiceOrder != null)
+                    {
+                        orderID = tblServiceOrder.Id;
+                    }
                     int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
                     ServiceResModel serviceResModel = new ServiceResModel
@@ -483,7 +489,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                         ID = service.Id,
                         ServiceCode = service.ServiceCode,
                         UserID = service.UserId,
-                        ServiceOrderID = tblServiceOrder.Id,
+                        ServiceOrderID = orderID,
                         UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
