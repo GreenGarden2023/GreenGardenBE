@@ -183,7 +183,7 @@ namespace GreeenGarden.API.Controllers
             {
                 ResultModel result = await _orderService.CancelRentOrderById(token, orderCancelModel.orderID);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
-            }else if (orderCancelModel.orderType.Trim().ToLower().Equals("sale"))
+            }else if (orderCancelModel.orderType.Trim().ToLower().Equals("service"))
             {
                 ResultModel result = await _orderService.CancelServiceOrderById(token, orderCancelModel.orderID);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
