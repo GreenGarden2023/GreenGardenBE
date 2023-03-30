@@ -11,6 +11,7 @@ namespace GreeenGarden.Business.Service.TakecareService
         Task<ResultModel> UpdateServicePrice(string token, ServiceUpdateModelManager? serviceUpdateModelManager, List<ServiceDetailUpdateModelManager>? serviceDetailUpdateModelManagers);
         Task<ResultModel> GetUserRequest(string token);
         Task<ResultModel> GetAllRequest(string token);
+        Task<ResultModel> GetARequestDetail(string token, Guid serviceID);
     }
 }
 

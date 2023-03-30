@@ -363,6 +363,82 @@ namespace GreeenGarden.Business.Service.TakecareService
             }
         }
 
+        public async Task<ResultModel> GetARequestDetail(string token, Guid serviceID)
+        {
+             if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                Guid orderID = Guid.Empty;
+                TblServiceOrder tblServiceOrder = await _serviceOrderRepo.GetServiceOrderByServiceID(serviceID);
+                if (tblServiceOrder != null)
+                {
+                    orderID = tblServiceOrder.Id;
+                }
+                TblService tblService = await _serviceRepo.Get(serviceID);
+                List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(serviceID);
+                ServiceResModel serviceResModel = new ServiceResModel
+                {
+                    ID = tblService.Id,
+                    ServiceCode = tblService.ServiceCode,
+                    UserID = tblService.UserId,
+                    ServiceOrderID = orderID,
+                    UserCurrentPoint = 0,
+                    CreateDate = tblService.CreateDate ?? DateTime.MinValue,
+                    StartDate = tblService.StartDate,
+                    EndDate = tblService.EndDate,
+                    Name = tblService.Name,
+                    Phone = tblService.Phone,
+                    Email = tblService.Email,
+                    Address = tblService.Address,
+                    Status = tblService.Status,
+                    IsTransport = tblService.IsTransport,
+                    TransportFee = tblService.TransportFee,
+                    RewardPointUsed = tblService.RewardPointUsed,
+                    TechnicianID = tblService.TechnicianId,
+                    TechnicianName = tblService.TechnicianName,
+                    ServiceDetailList = resServiceDetail
+                };
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = serviceResModel;
+                result.Message = "Get request success.";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
         public async Task<ResultModel> GetUserRequest(string token)
         {
             if (!string.IsNullOrEmpty(token))

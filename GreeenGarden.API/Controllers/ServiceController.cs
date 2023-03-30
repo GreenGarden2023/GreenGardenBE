@@ -50,6 +50,15 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _takecareService.GetUserRequest(token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-a-service-request-detail")]
+        [SwaggerOperation(Summary = "Get current user's service request")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetAServiceRequest(Guid serviceRequestID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.GetARequestDetail(token, serviceRequestID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpPost("assign-service-technician")]
         [SwaggerOperation(Summary = "Assign a technician to a service request")]
         [Authorize(Roles = "Staff, Manager, Admin, Technician")]

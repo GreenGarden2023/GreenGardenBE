@@ -31,7 +31,7 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
 
         public async Task<TblServiceOrder> GetServiceOrderByServiceID(Guid serviceId)
         {
-            TblServiceOrder order = await _context.TblServiceOrders.Where(x => x.ServiceId.Equals(serviceId)).FirstOrDefaultAsync();
+            TblServiceOrder order = await _context.TblServiceOrders.OrderByDescending(y => y.CreateDate).Where(x => x.ServiceId.Equals(serviceId)).FirstOrDefaultAsync();
             if (order != null)
             {
                 return order;
