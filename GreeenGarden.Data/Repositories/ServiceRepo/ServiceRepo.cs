@@ -193,7 +193,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     {
                         tblService.EndDate = serviceUpdateModelManager.EndDate;
                     }
-
+                    tblService.Status = ServiceStatus.CONFIRMED;
                     _ = _context.Update(tblService);
                     _ = await _context.SaveChangesAsync();
                     return true;
