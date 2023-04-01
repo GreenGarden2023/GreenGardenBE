@@ -42,7 +42,9 @@ namespace GreeenGarden.Data.Repositories.CartRepo
                 RentPrice = proItemDetail.RentPrice,
                 SalePrice = proItemDetail.SalePrice,
                 Quantity = proItemDetail.Quantity,
+                TransportFee = proItemDetail.TransportFee,
                 Status = proItemDetail.Status,
+
                 size = sizeTemp,
                 imgUrl = await GetListImgBySizeProItem(proItemDetail.Id)
             };
