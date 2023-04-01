@@ -14,5 +14,10 @@
 
         public string? Mail { get; set; }
     }
+    public class OTPVerifyModel
+    {
+        public string Email { get; set; }
+        public string OTPCode { get; set; }
+    }
 }
 

@@ -204,6 +204,29 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             }
             return userList;
         }
+
+        public async Task<UserCurrResModel> GetUserByEmail(string email)
+        {
+            var query = from u in context.TblUsers
+                        join ur in context.TblRoles
+                        on u.RoleId equals ur.Id
+                        where u.Mail.Equals(email)
+                        select new { u, ur };
+
+            UserCurrResModel? userModel = await query.Select(x => new UserCurrResModel()
+            {
+                Id = x.u.Id,
+                UserName = x.u.UserName,
+                FullName = x.u.FullName,
+                Address = x.u.Address,
+                DistrictID = x.u.DistrictId,
+                Phone = x.u.Phone,
+                Favorite = x.u.Favorite,
+                Mail = x.u.Mail,
+                RoleName = x.ur.RoleName,
+            }).FirstOrDefaultAsync();
+            return userModel;
+        }
     }
 }
 

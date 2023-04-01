@@ -12,6 +12,8 @@ namespace GreeenGarden.Data.Repositories.UserRepo
         public Task<TblUser> ResetPassword(string email, byte[] passHash, byte[] passSalt);
         public Task<UserCurrResModel> GetCurrentUser(string userName);
         public Task<bool> CheckUserEmail(string email);
+        public Task<UserCurrResModel> GetUserByEmail(string email);
+
     }
 }
 

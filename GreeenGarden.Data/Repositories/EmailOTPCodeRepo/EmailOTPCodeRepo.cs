@@ -12,11 +12,11 @@ namespace GreeenGarden.Data.Repositories.EmailOTPCodeRepo
             _context = context;
         }
 
-        public async Task<string> DeleteCode(string code)
+        public async Task<string> DeleteCode(string email, string code)
         {
             if (!string.IsNullOrEmpty(code))
             {
-                TblEmailOtpcode? emailCode = await _context.TblEmailOtpcodes.Where(x => x.Optcode.Equals(code)).FirstOrDefaultAsync();
+                TblEmailOtpcode? emailCode = await _context.TblEmailOtpcodes.Where(x => x.Optcode.Equals(code) && email.Equals(email)).FirstOrDefaultAsync();
                 if (emailCode != null)
                 {
                     _ = _context.TblEmailOtpcodes.Remove(emailCode);

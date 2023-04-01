@@ -130,6 +130,7 @@ namespace GreeenGarden.Business.Service.UserService
                     Phone = userInsertModel.Phone,
                     Favorite = userInsertModel.Favorite,
                     Mail = userInsertModel.Mail,
+                    Status = UserStatus.DISABLED
                 };
                 _ = await _userRepo.Insert(userModel);
                 TblReward tblReward = new()
@@ -143,6 +144,7 @@ namespace GreeenGarden.Business.Service.UserService
                 UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(userModel.UserName);
                 int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
                 userCurrResModel.CurrentPoint = rewardPoint;
+                _ = await _eMailService.SendEmailRegisterVerificationOTP(userModel.Mail, userModel.UserName);
                 return new ResultModel()
                 {
                     IsSuccess = true,
@@ -316,7 +318,7 @@ namespace GreeenGarden.Business.Service.UserService
             ResultModel result = new();
             try
             {
-                ResultModel verifyCode = await _eMailService.VerifyEmailVerificationOTP(passwordResetModel.OTPCode);
+                ResultModel verifyCode = await _eMailService.VerifyEmailVerificationOTP(passwordResetModel.Email, passwordResetModel.OTPCode);
                 if (verifyCode.Code == 200)
                 {
                     CreatePasswordHash(passwordResetModel.NewPassword, out byte[] passwordHash, out byte[] passwordSalt);
@@ -426,6 +428,38 @@ namespace GreeenGarden.Business.Service.UserService
                     result.IsSuccess = false;
                     result.Code = 400;
                     result.Message = "Get user list failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> VerifyOTPCode(OTPVerifyModel oTPVerifyModel)
+        {
+            ResultModel result = new();
+            try
+            {
+                ResultModel verify = await _eMailService.VerifyEmailVerificationOTP(oTPVerifyModel.Email, oTPVerifyModel.OTPCode);
+                if (verify.IsSuccess == true)
+                {
+                    UserCurrResModel userCurrResModel = await _userRepo.GetUserByEmail(oTPVerifyModel.Email);
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = userCurrResModel;
+                    result.Message = "Code verified successfully.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Code verified failed.";
                     return result;
                 }
             }

@@ -117,7 +117,7 @@ namespace GreeenGarden.API.Controllers
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
-        public async Task<ActionResult<ResultModel>> ResetPassword([FromForm] PasswordResetModel passwordResetModel)
+        public async Task<ActionResult<ResultModel>> ResetPassword( PasswordResetModel passwordResetModel)
         {
             try
             {
@@ -127,6 +127,22 @@ namespace GreeenGarden.API.Controllers
             }
             catch (Exception e)
             {
+                return BadRequest(e.ToString());
+            }
+
+        }
+        [HttpPost("verify-otp-code")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ResultModel>> VerifyOTPCode(OTPVerifyModel oTPVerifyModel)
+        {
+            try
+            {
+                ResultModel result = await _userService.VerifyOTPCode(oTPVerifyModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception e)
+            {
+
                 return BadRequest(e.ToString());
             }
 

@@ -43,4 +43,10 @@
         public static readonly string DONE = "done";
 
     }
+    public class UserStatus
+    {
+        public static readonly string ENABLE = "enable";
+        public static readonly string DISABLED = "disabled";
+
+    }
 }
