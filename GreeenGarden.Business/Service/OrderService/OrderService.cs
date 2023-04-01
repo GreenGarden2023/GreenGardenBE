@@ -24,6 +24,7 @@ using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
+using MailKit.Search;
 using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.OrderService
@@ -121,9 +122,12 @@ namespace GreeenGarden.Business.Service.OrderService
                     RentOrderResModel rentOrderResModel = new()
                     {
                         Id = rentOrder.Id,
+                        IsTransport = rentOrder.IsTransport,
                         TransportFee = rentOrder.TransportFee,
-                        StartDateRent = rentOrder.StartDateRent,
-                        EndDateRent = rentOrder.EndDateRent,
+                        StartRentDate = rentOrder.StartDateRent,
+                        EndRentDate = rentOrder.EndDateRent,
+                        CreatedBy = rentOrder.CreatedBy,
+                        UserId = rentOrder.UserId,
                         Deposit = rentOrder.Deposit,
                         TotalPrice = rentOrder.TotalPrice,
                         Status = rentOrder.Status,
@@ -205,7 +209,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         Id = saleOrder.Id,
                         TransportFee = saleOrder.TransportFee,
                         CreateDate = (DateTime)saleOrder.CreateDate,
-                        Deposit = saleOrder.Deposit,
+                        UserId = saleOrder.UserId,
+                        DepositAmount = saleOrder.Deposit,
                         TotalPrice = saleOrder.TotalPrice,
                         Status = saleOrder.Status,
                         RemainMoney = saleOrder.RemainMoney,
@@ -329,8 +334,11 @@ namespace GreeenGarden.Business.Service.OrderService
                         totalAmountPerDay = (double)(totalAmountPerDay + (item.Quantity * itemDetail.RentPrice));
                         totalQuantity += item.Quantity;
 
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
-                        transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                        if (rentOrderModel.IsTransport == true)
+                        {
+                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
+                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                        }
                     }
                 }
 
@@ -339,7 +347,10 @@ namespace GreeenGarden.Business.Service.OrderService
                 discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
                 totalOrderAmount = (numberRentDays * totalAmountPerDay) + transportFee - discountAmount;
 
-                deposit = totalOrderAmount * 0.2;
+                if (totalOrderAmount > 200000)
+                {
+                    deposit = totalOrderAmount * 0.2;
+                }
                 rewardPointGain = (int)Math.Ceiling(totalOrderAmount * 0.01 / 1000);
                 string userID = _decodeToken.Decode(token, "userid");
                 TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
@@ -377,6 +388,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.Parse(userID),
+                    IsTransport = rentOrderModel.IsTransport,
                     TransportFee = Math.Ceiling(transportFee),
                     StartDateRent = rentOrderModel.StartDateRent,
                     EndDateRent = rentOrderModel.EndDateRent,
@@ -446,9 +458,12 @@ namespace GreeenGarden.Business.Service.OrderService
                 RentOrderResModel rentOrderResModel = new()
                 {
                     Id = tblRentOrder.Id,
+                    UserId = tblRentOrder.UserId,
+                    CreatedBy = tblRentOrder.CreatedBy,
+                    IsTransport = tblRentOrder.IsTransport,
                     TransportFee = tblRentOrder.TransportFee,
-                    StartDateRent = tblRentOrder.StartDateRent,
-                    EndDateRent = tblRentOrder.EndDateRent,
+                    StartRentDate = tblRentOrder.StartDateRent,
+                    EndRentDate = tblRentOrder.EndDateRent,
                     Deposit = tblRentOrder.Deposit,
                     TotalPrice = tblRentOrder.TotalPrice,
                     Status = tblRentOrder.Status,
@@ -559,15 +574,22 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         totalAmountPerDay = (double)(item.Quantity * itemDetail.SalePrice);
                         totalQuantity += item.Quantity;
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
-                        transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+
+                        if (saleOrderModel.IsTransport == true)
+                        {
+                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
+                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                        }
                     }
                 }
 
                 discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
                 totalOrderAmount = totalAmountPerDay + transportFee - discountAmount;
 
-                deposit = totalOrderAmount * 0.2;
+                if (totalOrderAmount > 500000)
+                {
+                    deposit = totalOrderAmount * 0.2;
+                }
                 rewardPointGain = (int)Math.Ceiling(totalOrderAmount * 0.01 / 1000);
                 string userID = _decodeToken.Decode(token, "userid");
                 DateTime createDate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
@@ -576,6 +598,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.Parse(userID),
+                    IsTransport = saleOrderModel.IsTransport,
                     TransportFee = Math.Ceiling(transportFee),
                     CreateDate = createDate,
                     Deposit = Math.Ceiling(deposit),
@@ -642,9 +665,11 @@ namespace GreeenGarden.Business.Service.OrderService
                 SaleOrderResModel saleOrderResModel = new()
                 {
                     Id = tblSaleOrder.Id,
+                    UserId = tblSaleOrder.UserId,
+                    IsTransport = tblSaleOrder.IsTransport,
                     TransportFee = tblSaleOrder.TransportFee,
                     CreateDate = (DateTime)tblSaleOrder.CreateDate,
-                    Deposit = tblSaleOrder.Deposit,
+                    DepositAmount = tblSaleOrder.Deposit,
                     TotalPrice = tblSaleOrder.TotalPrice,
                     Status = tblSaleOrder.Status,
                     RemainMoney = tblSaleOrder.RemainMoney,
@@ -710,9 +735,12 @@ namespace GreeenGarden.Business.Service.OrderService
                     RentOrderResModel rentOrderResModel = new()
                     {
                         Id = tblRentOrder.Id,
+                        UserId = tblRentOrder.UserId,
+                        CreatedBy = tblRentOrder.CreatedBy,
+                        IsTransport = tblRentOrder.IsTransport,
                         TransportFee = tblRentOrder.TransportFee,
-                        StartDateRent = tblRentOrder.StartDateRent,
-                        EndDateRent = tblRentOrder.EndDateRent,
+                        StartRentDate = tblRentOrder.StartDateRent,
+                        EndRentDate = tblRentOrder.EndDateRent,
                         Deposit = tblRentOrder.Deposit,
                         TotalPrice = tblRentOrder.TotalPrice,
                         Status = tblRentOrder.Status,
@@ -802,9 +830,12 @@ namespace GreeenGarden.Business.Service.OrderService
                                 RentOrderResModel rentOrderResModel = new()
                                 {
                                     Id = order.Id,
+                                    UserId = order.UserId,
+                                    CreatedBy = order.CreatedBy,
+                                    IsTransport = order.IsTransport,
                                     TransportFee = order.TransportFee,
-                                    StartDateRent = order.StartDateRent,
-                                    EndDateRent = order.EndDateRent,
+                                    StartRentDate = order.StartDateRent,
+                                    EndRentDate = order.EndDateRent,
                                     Deposit = order.Deposit,
                                     TotalPrice = order.TotalPrice,
                                     Status = order.Status,
@@ -823,7 +854,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                 resList.Add(rentOrderResModel);
                             }
                         }
-                        resList.Sort((x, y) => y.EndDateRent.CompareTo(x.EndDateRent));
+                        resList.Sort((x, y) => y.EndRentDate.CompareTo(x.EndRentDate));
                         RentOrderGroupModel rentOrderGroupModel = new()
                         {
                             ID = tblRentGroup.Id,
@@ -911,9 +942,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     SaleOrderResModel saleOrderResModel = new()
                     {
                         Id = tblSaleOrder.Id,
+                        UserId = tblSaleOrder.UserId,
+                        IsTransport = tblSaleOrder.IsTransport,
                         TransportFee = tblSaleOrder.TransportFee,
                         CreateDate = (DateTime)tblSaleOrder.CreateDate,
-                        Deposit = tblSaleOrder.Deposit,
+                        DepositAmount = tblSaleOrder.Deposit,
                         TotalPrice = tblSaleOrder.TotalPrice,
                         Status = tblSaleOrder.Status,
                         RemainMoney = tblSaleOrder.RemainMoney,
@@ -992,9 +1025,11 @@ namespace GreeenGarden.Business.Service.OrderService
                         SaleOrderResModel saleOrderResModel = new()
                         {
                             Id = order.Id,
+                            UserId = order.UserId,
+                            IsTransport = order.IsTransport,
                             TransportFee = order.TransportFee,
                             CreateDate = (DateTime)order.CreateDate,
-                            Deposit = order.Deposit,
+                            DepositAmount = order.Deposit,
                             TotalPrice = order.TotalPrice,
                             Status = order.Status,
                             RemainMoney = order.RemainMoney,
@@ -1096,9 +1131,12 @@ namespace GreeenGarden.Business.Service.OrderService
                                 RentOrderResModel rentOrderResModel = new()
                                 {
                                     Id = order.Id,
+                                    UserId = order.UserId,
+                                    CreatedBy = order.CreatedBy,
+                                    IsTransport = order.IsTransport,
                                     TransportFee = order.TransportFee,
-                                    StartDateRent = order.StartDateRent,
-                                    EndDateRent = order.EndDateRent,
+                                    StartRentDate = order.StartDateRent,
+                                    EndRentDate = order.EndDateRent,
                                     Deposit = order.Deposit,
                                     TotalPrice = order.TotalPrice,
                                     Status = order.Status,
@@ -1117,7 +1155,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             }
                         }
 
-                        resList.Sort((x, y) => y.EndDateRent.CompareTo(x.EndDateRent));
+                        resList.Sort((x, y) => y.EndRentDate.CompareTo(x.EndRentDate));
 
                         RentOrderGroupModel rentOrderGroupModel = new()
                         {
@@ -1208,9 +1246,11 @@ namespace GreeenGarden.Business.Service.OrderService
                         SaleOrderResModel saleOrderResModel = new()
                         {
                             Id = order.Id,
+                            UserId = order.UserId,
+                            IsTransport = order.IsTransport,
                             TransportFee = order.TransportFee,
                             CreateDate = (DateTime)order.CreateDate,
-                            Deposit = order.Deposit,
+                            DepositAmount = order.Deposit,
                             TotalPrice = order.TotalPrice,
                             Status = order.Status,
                             RemainMoney = order.RemainMoney,
@@ -1325,9 +1365,12 @@ namespace GreeenGarden.Business.Service.OrderService
                         RentOrderResModel rentOrderResModel = new()
                         {
                             Id = order.Id,
+                            UserId = order.UserId,
+                            CreatedBy = order.CreatedBy,
+                            IsTransport = order.IsTransport,
                             TransportFee = order.TransportFee,
-                            StartDateRent = order.StartDateRent,
-                            EndDateRent = order.EndDateRent,
+                            StartRentDate = order.StartDateRent,
+                            EndRentDate = order.EndDateRent,
                             Deposit = order.Deposit,
                             TotalPrice = order.TotalPrice,
                             Status = order.Status,
@@ -1346,7 +1389,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         resList.Add(rentOrderResModel);
                     }
                 }
-                resList.Sort((x, y) => y.EndDateRent.CompareTo(x.EndDateRent));
+                resList.Sort((x, y) => y.EndRentDate.CompareTo(x.EndRentDate));
                 RentOrderGroupModel rentOrderGroupModel = new()
                 {
                     ID = tblRentOrderGroups.Id,
@@ -1433,8 +1476,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         totalAmountPerDay = (double)(totalAmountPerDay + (item.Quantity * itemDetail.RentPrice));
                         totalQuantity += item.Quantity;
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
-                        transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                        if (rentOrderModel.IsTransport == true)
+                        {
+                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
+                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                        }
                     }
                 }
 
@@ -1461,8 +1507,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     RecipientPhone = "" + rentOrderModel.RecipientPhone,
                     RecipientName = "" + rentOrderModel.RecipientName,
                 };
-                int maxPoint = (int)Math.Floor(((numberRentDays * totalAmountPerDay) + transportFee)/ 1000) - 50;
-                if (maxPoint<0)
+                int maxPoint = (int)Math.Floor(((numberRentDays * totalAmountPerDay) + transportFee) / 1000) - 50;
+                if (maxPoint < 0)
                 {
                     maxPoint = 0;
                 }
@@ -1544,8 +1590,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         totalAmountPerDay = (double)(item.Quantity * itemDetail.SalePrice);
                         totalQuantity += item.Quantity;
-                        TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
-                        transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                        if (saleOrderModel.IsTransport == true)
+                        {
+                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
+                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                        }
                     }
                 }
 
@@ -1570,7 +1619,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     DiscountAmount = discountAmount,
 
                 };
-                double maxPoint = (int)Math.Floor((totalAmountPerDay + transportFee)/ 1000) - 50;
+                double maxPoint = (int)Math.Floor((totalAmountPerDay + transportFee) / 1000) - 50;
                 if (maxPoint < 0)
                 {
                     maxPoint = 0;
@@ -1641,9 +1690,12 @@ namespace GreeenGarden.Business.Service.OrderService
                     RentOrderResModel rentOrderResModel = new()
                     {
                         Id = tblRentOrder.Id,
+                        UserId = tblRentOrder.UserId,
+                        CreatedBy = tblRentOrder.CreatedBy,
+                        IsTransport = tblRentOrder.IsTransport,
                         TransportFee = tblRentOrder.TransportFee,
-                        StartDateRent = tblRentOrder.StartDateRent,
-                        EndDateRent = tblRentOrder.EndDateRent,
+                        StartRentDate = tblRentOrder.StartDateRent,
+                        EndRentDate = tblRentOrder.EndDateRent,
                         Deposit = tblRentOrder.Deposit,
                         TotalPrice = tblRentOrder.TotalPrice,
                         Status = tblRentOrder.Status,
@@ -1821,7 +1873,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Code = 400;
                     return result;
                 }
-                
+
             }
             catch (Exception e)
             {
@@ -1876,7 +1928,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
-                            UserID = resService.UserId,
+                            UserId = resService.UserId,
+                            Rules = resService.Rules,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
                             EndDate = resService.EndDate,
@@ -2003,7 +2056,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
-                            UserID = resService.UserId,
+                            UserId = resService.UserId,
+                            Rules = resService.Rules,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
                             EndDate = resService.EndDate,
@@ -2129,7 +2183,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
-                            UserID = resService.UserId,
+                            UserId = resService.UserId,
+                            Rules = resService.Rules,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
                             EndDate = resService.EndDate,
@@ -2252,7 +2307,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
-                        UserID = resService.UserId,
+                        UserId = resService.UserId,
+                        Rules = resService.Rules,
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
@@ -2349,7 +2405,8 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(saleOrderID);
-                if (tblSaleOrder == null) {
+                if (tblSaleOrder == null)
+                {
 
                     result.Code = 400;
                     result.IsSuccess = false;
@@ -2357,7 +2414,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     return result;
                 }
                 var updateStatus = await _saleOrderRepo.UpdateSaleOrderStatus(saleOrderID, Status.CANCEL);
-                if(updateStatus.IsSuccess == true) {
+                if (updateStatus.IsSuccess == true)
+                {
                     List<SaleOrderDetailResModel> tblSaleOrderDetails = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
                     foreach (var i in tblSaleOrderDetails)
                     {
@@ -2413,6 +2471,115 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
+        }
+
+        public async Task<ResultModel> CompleteServiceOrderStatus(string token, Guid serviceOrderID)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                bool update = await _serviceOrderRepo.CompleteServiceOrder(serviceOrderID);
+                if (update == true)
+                {
+                    TblServiceOrder order = await _serviceOrderRepo.Get(serviceOrderID);
+                    TblService resService = await _serviceRepo.Get(order.Id);
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
+                    ServiceResModel serviceResModel = new ServiceResModel
+                    {
+                        ID = resService.Id,
+                        ServiceCode = resService.ServiceCode,
+                        UserId = resService.UserId,
+                        Rules = resService.Rules,
+                        CreateDate = resService.CreateDate ?? DateTime.MinValue,
+                        StartDate = resService.StartDate,
+                        EndDate = resService.EndDate,
+                        Name = resService.Name,
+                        Phone = resService.Phone,
+                        Email = resService.Email,
+                        Address = resService.Address,
+                        Status = resService.Status,
+                        TechnicianID = resService.TechnicianId,
+                        TechnicianName = resService.TechnicianName,
+                        ServiceDetailList = resServiceDetail
+                    };
+
+                    TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
+                    ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                    {
+                        TechnicianID = technicianGet.Id,
+                        TechnicianUserName = technicianGet.UserName,
+                        TechnicianFullName = technicianGet.FullName,
+                        TechnicianAddress = technicianGet.Address,
+                        TechnicianMail = technicianGet.Mail,
+                        TechnicianPhone = technicianGet.Phone
+                    };
+                    ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                    {
+                        Id = order.Id,
+                        OrderCode = order.OrderCode,
+                        CreateDate = order.CreateDate,
+                        ServiceStartDate = (DateTime)order.ServiceStartDate,
+                        ServiceEndDate = (DateTime)order.ServiceEndDate,
+                        Deposit = (double)order.Deposit,
+                        TotalPrice = (double)order.TotalPrice,
+                        DiscountAmount = (double)order.DiscountAmount,
+                        RemainAmount = (double)order.RemainAmount,
+                        RewardPointGain = (int)order.RewardPointGain,
+                        RewardPointUsed = (int)order.RewardPointUsed,
+                        Technician = technicianRes,
+                        UserID = order.UserId,
+                        TransportFee = (double)order.TransportFee,
+                        Status = order.Status,
+                        Service = serviceResModel
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = serviceOrderGetResModel;
+                    result.Message = "Complete service order success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Complete service order failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
         }
     }
 }

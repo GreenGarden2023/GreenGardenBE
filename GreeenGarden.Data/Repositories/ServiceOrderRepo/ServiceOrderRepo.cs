@@ -5,6 +5,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.ServiceRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
@@ -12,15 +13,37 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
 	public class ServiceOrderRepo : Repository<TblServiceOrder>, IServiceOrderRepo
 	{
 		private readonly GreenGardenDbContext _context;
-		public ServiceOrderRepo(GreenGardenDbContext context) : base(context)
+        private readonly IServiceRepo _serviceRepo;
+		public ServiceOrderRepo(GreenGardenDbContext context, IServiceRepo serviceRepo) : base(context)
 		{
 			_context = context;
+            _serviceRepo = serviceRepo;
 		}
 
         public async Task<bool> CheckOrderCode(string Code)
         {
             TblServiceOrder order = await _context.TblServiceOrders.Where(x => x.OrderCode.Equals(Code)).FirstOrDefaultAsync();
             return order != null;
+        }
+
+        public async Task<bool> CompleteServiceOrder(Guid serviceOrderID)
+        {
+            TblServiceOrder order = await _context.TblServiceOrders.Where(x => x.Id.Equals(serviceOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                order.Status = Status.COMPLETED;
+                _ = _context.Update(order);
+                _ = await _context.SaveChangesAsync();
+                TblService tblService = await _context.TblServices.Where(x => x.Id.Equals(order.ServiceId)).FirstOrDefaultAsync();
+                tblService.Status = ServiceStatus.COMPLETED;
+                _ = _context.Update(tblService);
+                _ = await _context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public async Task<Page<TblServiceOrder>> GetAllServiceOrders(PaginationRequestModel paginationRequestModel)

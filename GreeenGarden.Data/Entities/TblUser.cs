@@ -27,6 +27,8 @@ public partial class TblUser
 
     public Guid RoleId { get; set; }
 
+    public string? Status { get; set; }
+
     public virtual TblDistrict? District { get; set; }
 
     public virtual TblRole Role { get; set; } = null!;
@@ -37,7 +39,9 @@ public partial class TblUser
 
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
 
-    public virtual ICollection<TblRentOrder> TblRentOrders { get; } = new List<TblRentOrder>();
+    public virtual ICollection<TblRentOrder> TblRentOrderCreatedByNavigations { get; } = new List<TblRentOrder>();
+
+    public virtual ICollection<TblRentOrder> TblRentOrderUsers { get; } = new List<TblRentOrder>();
 
     public virtual ICollection<TblReward> TblRewards { get; } = new List<TblReward>();
 

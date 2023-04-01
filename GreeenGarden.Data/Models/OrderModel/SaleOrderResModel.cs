@@ -4,11 +4,15 @@
     {
         public Guid Id { get; set; }
 
+        public Guid? UserId { get; set; }
+
+        public bool? IsTransport { get; set; }
+
         public double? TransportFee { get; set; }
 
         public DateTime CreateDate { get; set; }
 
-        public double? Deposit { get; set; }
+        public double? DepositAmount { get; set; }
 
         public double? TotalPrice { get; set; }
 

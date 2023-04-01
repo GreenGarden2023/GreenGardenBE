@@ -18,6 +18,8 @@
 
         public string? Rules { get; set; }
 
+        public string IsTranSport { get; set; }
+
         public double? TransportFee { get; set; }
 
         public int? RewardPointUsed { get; set; }

@@ -6,7 +6,7 @@
 
         public string ServiceCode { get; set; }
 
-        public Guid UserID { get; set; }
+        public Guid UserId { get; set; }
 
         public Guid? ServiceOrderID { get; set; }
 
@@ -31,6 +31,8 @@
         public double? TransportFee { get; set; }
 
         public int? RewardPointUsed { get; set; }
+
+        public string? Rules { get; set; }
 
         public string? Status { get; set; }
 

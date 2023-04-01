@@ -19,6 +19,8 @@
 
         public Guid? RentOrderGroupID { get; set; }
 
+        public bool? IsTransport { get; set; }
+
         public List<OrderDetailModel> ItemList { get; set; }
 
     }

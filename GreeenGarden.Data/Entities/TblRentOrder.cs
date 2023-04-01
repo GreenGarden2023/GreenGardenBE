@@ -41,6 +41,12 @@ public partial class TblRentOrder
 
     public DateTime? CreateDate { get; set; }
 
+    public bool? IsTransport { get; set; }
+
+    public Guid CreatedBy { get; set; }
+
+    public virtual TblUser CreatedByNavigation { get; set; } = null!;
+
     public virtual TblRentOrderGroup? RentOrderGroup { get; set; }
 
     public virtual ICollection<TblRentOrderDetail> TblRentOrderDetails { get; } = new List<TblRentOrderDetail>();

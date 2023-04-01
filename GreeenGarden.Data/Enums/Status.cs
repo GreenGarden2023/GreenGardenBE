@@ -25,6 +25,7 @@
         public static readonly string USER_APPROVED = "user approved";
         public static readonly string CONFIRMED = "confirmed";
         public static readonly string REPROCESS = "reprocess";
+        public static readonly string COMPLETED = "completed";
     }
 
     public class ServiceOrderStatus

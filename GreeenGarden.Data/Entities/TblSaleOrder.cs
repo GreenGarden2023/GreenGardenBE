@@ -35,6 +35,8 @@ public partial class TblSaleOrder
 
     public string? OrderCode { get; set; }
 
+    public bool? IsTransport { get; set; }
+
     public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();
 
     public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();

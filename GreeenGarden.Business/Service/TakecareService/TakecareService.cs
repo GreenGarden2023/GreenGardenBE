@@ -90,7 +90,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
-                        UserID = resService.UserId,
+                        UserId = resService.UserId,
+                        Rules = resService.Rules,
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
@@ -246,7 +247,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
-                        UserID = resService.UserId,
+                        UserId = resService.UserId,
+                        Rules = resService.Rules,
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
@@ -327,7 +329,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         ID = service.Id,
                         ServiceCode = service.ServiceCode,
-                        UserID = service.UserId,
+                        UserId = service.UserId,
+                        Rules = service.Rules,
                         UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
@@ -406,7 +409,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                 {
                     ID = tblService.Id,
                     ServiceCode = tblService.ServiceCode,
-                    UserID = tblService.UserId,
+                    UserId = tblService.UserId,
+                    Rules = tblService.Rules,
                     ServiceOrderID = orderID,
                     UserCurrentPoint = 0,
                     CreateDate = tblService.CreateDate ?? DateTime.MinValue,
@@ -488,7 +492,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         ID = service.Id,
                         ServiceCode = service.ServiceCode,
-                        UserID = service.UserId,
+                        UserId = service.UserId,
+                        Rules = service.Rules,
                         ServiceOrderID = orderID,
                         UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
@@ -573,7 +578,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
-                        UserID = resService.UserId,
+                        UserId = resService.UserId,
+                        Rules = resService.Rules,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
                         Name = resService.Name,
@@ -684,7 +690,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         ID = getResService.Id,
                         ServiceCode = getResService.ServiceCode,
-                        UserID = getResService.UserId,
+                        UserId = getResService.UserId,
+                        Rules = getResService.Rules,
                         CreateDate = getResService.CreateDate ?? DateTime.MinValue,
                         StartDate = getResService.StartDate,
                         EndDate = getResService.EndDate,
@@ -700,7 +707,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                         TechnicianName = getResService.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
-                    TblUser user = await _userRepo.Get(serviceResModel.UserID);
+                    TblUser user = await _userRepo.Get(serviceResModel.UserId);
                     _ = await _emailService.SendEmailServiceUpdate(user.Mail, serviceResModel.ServiceCode);
                     result.IsSuccess = true;
                     result.Code = 200;
@@ -714,7 +721,8 @@ namespace GreeenGarden.Business.Service.TakecareService
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = getResService.Id,
-                        UserID = getResService.UserId,
+                        UserId = getResService.UserId,
+                        Rules = getResService.Rules,
                         ServiceCode = getResService.ServiceCode,
                         CreateDate = getResService.CreateDate ?? DateTime.MinValue,
                         StartDate = getResService.StartDate,
@@ -729,7 +737,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                         TechnicianName = getResService.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
-                    TblUser user = await _userRepo.Get(serviceResModel.UserID);
+                    TblUser user = await _userRepo.Get(serviceResModel.UserId);
                     _ = await _emailService.SendEmailServiceUpdate(user.Mail, serviceResModel.ServiceCode);
                     result.IsSuccess = true;
                     result.Code = 200;

@@ -4,13 +4,19 @@
     {
         public Guid Id { get; set; }
 
+        public bool? IsTransport { get; set; }
+
         public double? TransportFee { get; set; }
 
         public DateTime? CreateDate { get; set; }
 
-        public DateTime StartDateRent { get; set; }
+        public DateTime StartRentDate { get; set; }
 
-        public DateTime EndDateRent { get; set; }
+        public DateTime EndRentDate { get; set; }
+
+        public Guid? CreatedBy { get; set; }
+
+        public Guid? UserId { get; set; }
 
         public double? Deposit { get; set; }
 

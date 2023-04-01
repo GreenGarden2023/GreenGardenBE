@@ -324,11 +324,15 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TblRentOrderCreatedByNavigations)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
             entity.HasOne(d => d.RentOrderGroup).WithMany(p => p.TblRentOrders)
                 .HasForeignKey(d => d.RentOrderGroupId)
                 .HasConstraintName("FK_tblRentOrder_tblRentOrderGroup");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TblRentOrders)
+            entity.HasOne(d => d.User).WithMany(p => p.TblRentOrderUsers)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_tblRentOrder_tblUser");
         });
@@ -618,6 +622,9 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.RoleId)
                 .HasDefaultValueSql("('c98b8768-5827-4e5d-bf3c-3ba67b913d70')")
                 .HasColumnName("RoleID");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .HasDefaultValueSql("('enable')");
             entity.Property(e => e.UserName).HasMaxLength(200);
 
             entity.HasOne(d => d.District).WithMany(p => p.TblUsers)
