@@ -388,6 +388,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     Id = Guid.NewGuid(),
                     UserId = Guid.Parse(userID),
+                    CreatedBy = Guid.Parse(userID),
                     IsTransport = rentOrderModel.IsTransport,
                     TransportFee = Math.Ceiling(transportFee),
                     StartDateRent = rentOrderModel.StartDateRent,
