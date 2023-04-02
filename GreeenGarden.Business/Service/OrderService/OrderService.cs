@@ -433,7 +433,8 @@ namespace GreeenGarden.Business.Service.OrderService
                                 TotalPrice = item.Quantity * itemDetail.RentPrice,
                                 RentPricePerUnit = itemDetail.RentPrice,
                                 SizeName = tblSize.Name,
-                                ProductItemName = tblProductItem.Name
+                                ProductItemName = tblProductItem.Name,
+                                ProductItemDetailId = item.ProductItemDetailID,
                             };
                             _ = await _rentOrderDetailRepo.Insert(tblRentOrderDetail);
                             List<string> itemDetailImages = await _imageRepo.GetImgUrlProductItemDetail(itemDetail.Id);
