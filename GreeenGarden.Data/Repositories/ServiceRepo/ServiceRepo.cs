@@ -189,9 +189,14 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     {
                         tblService.StartDate = serviceUpdateModelManager.StartDate;
                     }
+
                     if (serviceUpdateModelManager.EndDate != null && !serviceUpdateModelManager.EndDate.Equals(tblService.EndDate))
                     {
                         tblService.EndDate = serviceUpdateModelManager.EndDate;
+                    }
+                    if (serviceUpdateModelManager.IsTransport != null && !serviceUpdateModelManager.IsTransport.Equals(tblService.IsTransport))
+                    {
+                        tblService.IsTransport = serviceUpdateModelManager.IsTransport;
                     }
                     _ = _context.Update(tblService);
                     _ = await _context.SaveChangesAsync();

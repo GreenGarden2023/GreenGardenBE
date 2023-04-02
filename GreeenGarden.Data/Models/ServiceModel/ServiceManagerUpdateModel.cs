@@ -18,7 +18,7 @@
 
         public string? Rules { get; set; }
 
-        public string IsTranSport { get; set; }
+        public bool? IsTransport { get; set; }
 
         public double? TransportFee { get; set; }
 
