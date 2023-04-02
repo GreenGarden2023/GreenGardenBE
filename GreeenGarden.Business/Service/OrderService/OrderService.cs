@@ -374,7 +374,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     List<TblRentOrder> checkPreviousOrder = await _rentOrderRepo.GetRentOrdersByGroup((Guid)rentOrderModel.RentOrderGroupID);
                     foreach (TblRentOrder preOrder in checkPreviousOrder)
                     {
-                        if (!preOrder.Status.Equals(Status.COMPLETED))
+                        if (!preOrder.Status.Equals(Status.PAID))
                         {
                             result.IsSuccess = false;
                             result.Code = 400;
@@ -642,6 +642,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                 SalePricePerUnit = itemDetail.SalePrice,
                                 SizeName = tblSize.Name,
                                 ProductItemName = tblProductItem.Name
+
                             };
                             _ = await _saleOrderDetailRepo.Insert(tblSaleOrderDetail);
                             List<string> itemDetailImages = await _imageRepo.GetImgUrlProductItemDetail(itemDetail.Id);
@@ -1152,6 +1153,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientName = order.RecipientName,
                                     RecipientPhone = order.RecipientPhone,
                                     OrderCode = order.OrderCode,
+                                    
                                     RentOrderDetailList = rentOrderDetailResModels
                                 };
                                 resList.Add(rentOrderResModel);
