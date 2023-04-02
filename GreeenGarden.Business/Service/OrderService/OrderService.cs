@@ -378,7 +378,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             result.IsSuccess = false;
                             result.Code = 400;
-                            result.Message = "Please complete previous order to create a new one.";
+                            result.Message = "Please complete previous order payment to create a new one.";
                             return result;
                         }
                     }
