@@ -12,7 +12,7 @@
 
         public DateTime CreateDate { get; set; }
 
-        public double? DepositAmount { get; set; }
+        public double? Deposit { get; set; }
 
         public double? TotalPrice { get; set; }
 

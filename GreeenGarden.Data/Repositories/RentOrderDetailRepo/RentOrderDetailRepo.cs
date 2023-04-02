@@ -43,6 +43,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                     RentPricePerUnit = detail.RentPricePerUnit ?? null,
                     SizeName = "" + detail.SizeName,
                     ProductItemName = "" + detail.ProductItemName,
+                    
                     ImgURL = imageURl
                 };
                 resultList.Add(model);
