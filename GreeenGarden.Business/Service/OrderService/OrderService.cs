@@ -1134,6 +1134,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     Id = order.Id,
                                     UserId = order.UserId,
                                     CreatedBy = order.CreatedBy,
+                                    CreateDate = order.CreateDate,
                                     IsTransport = order.IsTransport,
                                     TransportFee = order.TransportFee,
                                     StartRentDate = order.StartDateRent,
