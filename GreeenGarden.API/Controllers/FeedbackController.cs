@@ -43,13 +43,5 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.getListFeedbackByProductItem(token, pagingModel, productItemID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
-
-        [HttpPost("get-list-feedback-by-order")]
-        public async Task<IActionResult> getListFeedbackByOrder([FromQuery] PaginationRequestModel pagingModel, Guid orderID)
-        {
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _service.getListFeedbackByOrder(token, pagingModel, orderID);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
-        }
     }
 }
