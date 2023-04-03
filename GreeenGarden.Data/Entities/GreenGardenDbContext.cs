@@ -166,6 +166,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
+
             entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblFeedBacks)
                 .HasForeignKey(d => d.ProductItemDetailId)
                 .HasConstraintName("FK_tblFeedBack_tblProductItemDetail");
@@ -173,6 +174,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.TblFeedBacks)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
+
                 .HasConstraintName("FK_tblFeedBacks_tblUsers");
         });
 

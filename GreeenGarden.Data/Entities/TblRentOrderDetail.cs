@@ -21,6 +21,7 @@ public partial class TblRentOrderDetail
 
     public Guid? ProductItemDetailId { get; set; }
 
+
     public bool? FeedbackStatus { get; set; }
 
     public virtual TblProductItemDetail? ProductItemDetail { get; set; }

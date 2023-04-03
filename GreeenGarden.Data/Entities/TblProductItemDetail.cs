@@ -27,7 +27,9 @@ public partial class TblProductItemDetail
 
     public virtual ICollection<TblCartDetail> TblCartDetails { get; } = new List<TblCartDetail>();
 
+
     public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
+
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 
