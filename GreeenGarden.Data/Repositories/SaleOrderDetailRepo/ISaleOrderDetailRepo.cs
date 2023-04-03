@@ -7,6 +7,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
     public interface ISaleOrderDetailRepo : IRepository<TblSaleOrderDetail>
     {
         Task<List<SaleOrderDetailResModel>> GetSaleOrderDetails(Guid saleOrderId);
+        Task<bool> UpdateSaleOrderDetails(TblSaleOrderDetail entity);
     }
 }
 

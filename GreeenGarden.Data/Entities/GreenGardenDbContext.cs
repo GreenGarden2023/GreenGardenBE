@@ -164,6 +164,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
             entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
             entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
             entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblFeedBacks)
@@ -350,6 +351,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.FeedbackStatus).HasDefaultValueSql("((0))");
             entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
             entity.Property(e => e.ProductItemName).HasMaxLength(200);
             entity.Property(e => e.RentOrderId).HasColumnName("RentOrderID");
@@ -437,6 +439,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.FeedbackStatus).HasDefaultValueSql("((0))");
             entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
             entity.Property(e => e.ProductItemName).HasMaxLength(200);
             entity.Property(e => e.SaleOderId).HasColumnName("SaleOderID");

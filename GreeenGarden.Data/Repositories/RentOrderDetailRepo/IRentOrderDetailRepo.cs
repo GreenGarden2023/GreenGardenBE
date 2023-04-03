@@ -7,6 +7,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
     public interface IRentOrderDetailRepo : IRepository<TblRentOrderDetail>
     {
         Task<List<RentOrderDetailResModel>> GetRentOrderDetails(Guid RentOrderId);
+        Task<bool> UpdateRentOrderDetail(TblRentOrderDetail entity);
     }
 }
 

@@ -50,6 +50,13 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
             }
             return resultList;
         }
+
+        public async Task<bool> UpdateRentOrderDetail(TblRentOrderDetail entity)
+        {
+            _context.TblRentOrderDetails.Update(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
 

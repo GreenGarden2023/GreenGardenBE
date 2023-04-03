@@ -21,6 +21,8 @@ public partial class TblFeedBack
 
     public Guid? ProductItemDetailId { get; set; }
 
+    public DateTime? UpdateDate { get; set; }
+
     public virtual TblProductItemDetail? ProductItemDetail { get; set; }
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
