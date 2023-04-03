@@ -162,14 +162,13 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.Comment).HasMaxLength(500);
             entity.Property(e => e.OrderId).HasColumnName("OrderID");
-            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.ProductItem).WithMany(p => p.TblFeedBacks)
-                .HasForeignKey(d => d.ProductItemId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblFeedBacks_tblProductItems");
+            entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblFeedBacks)
+                .HasForeignKey(d => d.ProductItemDetailId)
+                .HasConstraintName("FK_tblFeedBack_tblProductItemDetail");
 
             entity.HasOne(d => d.User).WithMany(p => p.TblFeedBacks)
                 .HasForeignKey(d => d.UserId)

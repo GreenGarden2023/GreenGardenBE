@@ -19,8 +19,6 @@ public partial class TblProductItem
 
     public virtual TblProduct Product { get; set; } = null!;
 
-    public virtual ICollection<TblFeedBack> TblFeedBacks { get; } = new List<TblFeedBack>();
-
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 
     public virtual ICollection<TblProductItemDetail> TblProductItemDetails { get; } = new List<TblProductItemDetail>();
