@@ -134,7 +134,9 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     Id = Guid.NewGuid(),
                     Comment = model.Comment,
                     CreateDate = DateTime.Now,
+
                     //ProductItemId = model.ProductItemID,
+
                     Rating = model.Rating,
                     Status = Status.ACTIVE,
                     UserId = Guid.Parse(userID),
@@ -193,6 +195,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         CreateDate = i.CreateDate,
                         Status = i.Status,
                         ImageURL = imageURL,
+
                         //ProductItemID = i.ProductItemId
                     };
                     res.Add(fbRecord);

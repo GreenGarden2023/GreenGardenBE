@@ -36,6 +36,8 @@
 
         public string? RecipientAddress { get; set; }
 
+        public int? RecipientDistrict{ get; set; }
+
         public string? RecipientPhone { get; set; }
 
         public string? RecipientName { get; set; }
@@ -56,4 +58,5 @@
         public string? ImgURL { get; set; }
     }
 }
+
 
