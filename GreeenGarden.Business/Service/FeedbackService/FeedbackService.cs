@@ -8,6 +8,10 @@ using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.FeedbackRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
+using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
+using GreeenGarden.Data.Repositories.RentOrderRepo;
+using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
+using GreeenGarden.Data.Repositories.SaleOrderRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Rewrite;
@@ -26,13 +30,22 @@ namespace GreeenGarden.Business.Service.FeedbackService
         private readonly IFeedbackRepo _fbRepo;
         private readonly IProductItemRepo _proItemRepo;
         private readonly IImageRepo _imgRepo;
+        private readonly ISaleOrderRepo _saleOrdRepo;
+        private readonly ISaleOrderDetailRepo _saleOrdDetailRepo;
+        private readonly IRentOrderRepo _rentOrdRepo;
+        private readonly IRentOrderDetailRepo _rentOrdDetailRepo;
 
-        public FeedbackService(IFeedbackRepo fbRepo, IProductItemRepo proItemRepo, IImageRepo imgRepo)
+        public FeedbackService(IFeedbackRepo fbRepo, IProductItemRepo proItemRepo, IImageRepo imgRepo, ISaleOrderRepo saleOrdRepo,
+                               ISaleOrderDetailRepo saleOrdDetailRepo, IRentOrderRepo rentOrdRepo, IRentOrderDetailRepo rentOrdDetailRepo)
         {
             _fbRepo = fbRepo;
             _proItemRepo = proItemRepo;
             _imgRepo = imgRepo;
             _decodeToken = new DecodeToken();
+            _saleOrdRepo = saleOrdRepo;
+            _saleOrdDetailRepo = saleOrdDetailRepo;
+            _rentOrdRepo = rentOrdRepo;
+            _rentOrdDetailRepo = rentOrdDetailRepo;
         }
 
         public async Task<ResultModel> changeStatus(string token, FeedbackChangeStatusModel model)
@@ -90,9 +103,32 @@ namespace GreeenGarden.Business.Service.FeedbackService
                 if (productItem == null)
                 {
                     result.IsSuccess = true;
-                    result.Message = "Sản phẩm không tồn tại!";
+                    result.Message = "Sản phẩm không còn tồn tại!";
                     return result;
                 }
+
+                var order = new object();
+                var saleOrder = await _saleOrdRepo.Get(model.OrderID);
+                if (saleOrder != null)
+                {
+                    if ((DateTime.Now - (DateTime) saleOrder.CreateDate).TotalDays >= 30)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Đã quá hạn để feedback";
+                        return result;
+
+                    }
+                    var saleOrderDetail = await _saleOrdDetailRepo.GetSaleOrderDetails(saleOrder.Id);
+                    /*foreach (var i in saleOrderDetail)
+                    {
+                        i.
+                    }*/
+                };
+                var rentOrder = await _rentOrdRepo.Get(model.OrderID);
+                if (rentOrder != null) order = rentOrder;
+
+
+
                 var newFeedback = new TblFeedBack()
                 {
                     Id = Guid.NewGuid(),

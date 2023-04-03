@@ -19,6 +19,8 @@ public partial class TblFeedBack
 
     public string? Status { get; set; }
 
+    public Guid? OrderId { get; set; }
+
     public virtual TblProductItem ProductItem { get; set; } = null!;
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();

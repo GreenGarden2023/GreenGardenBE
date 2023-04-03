@@ -483,7 +483,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     RentOrderDetailList = rentOrderDetailResModels,
 
                 };
-                _ = await _cartService.CleanCart(token);
+                _ = await _cartService.CleanRentCart(token);
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = rentOrderResModel;
@@ -686,7 +686,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     OrderCode = tblSaleOrder.OrderCode,
                     RentOrderDetailList = rentOrderDetailResModels
                 };
-                _ = await _cartService.CleanCart(token);
+                _ = await _cartService.CleanSaleCart(token);
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = saleOrderResModel;
