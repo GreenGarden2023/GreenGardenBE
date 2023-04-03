@@ -29,6 +29,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
         private readonly DecodeToken _decodeToken;
         private readonly IFeedbackRepo _fbRepo;
         private readonly IProductItemRepo _proItemRepo;
+        private readonly IProductItemDetailRepo _proItemDetailRepo;
         private readonly IImageRepo _imgRepo;
         private readonly ISaleOrderRepo _saleOrdRepo;
         private readonly ISaleOrderDetailRepo _saleOrdDetailRepo;
@@ -36,10 +37,12 @@ namespace GreeenGarden.Business.Service.FeedbackService
         private readonly IRentOrderDetailRepo _rentOrdDetailRepo;
 
         public FeedbackService(IFeedbackRepo fbRepo, IProductItemRepo proItemRepo, IImageRepo imgRepo, ISaleOrderRepo saleOrdRepo,
-                               ISaleOrderDetailRepo saleOrdDetailRepo, IRentOrderRepo rentOrdRepo, IRentOrderDetailRepo rentOrdDetailRepo)
+                               ISaleOrderDetailRepo saleOrdDetailRepo, IRentOrderRepo rentOrdRepo, IRentOrderDetailRepo rentOrdDetailRepo
+                            , IProductItemDetailRepo proItemDetailRepo)
         {
             _fbRepo = fbRepo;
             _proItemRepo = proItemRepo;
+            _proItemDetailRepo = proItemDetailRepo;
             _imgRepo = imgRepo;
             _decodeToken = new DecodeToken();
             _saleOrdRepo = saleOrdRepo;
@@ -77,6 +80,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
             var result = new ResultModel();
             try
             {
+                bool flag = false;
                 if (!string.IsNullOrEmpty(token))
                 {
                     string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -98,11 +102,11 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     };
                 }
 
-                var productItem = await _proItemRepo.Get(model.ProductItemID);
+                var productItemDetail = await _proItemDetailRepo.Get(model.ProductItemDetailID);
                 string userID = _decodeToken.Decode(token, "userid");
-                if (productItem == null)
+                if (productItemDetail == null)
                 {
-                    result.IsSuccess = true;
+                    result.IsSuccess = false;
                     result.Message = "Sản phẩm không còn tồn tại!";
                     return result;
                 }
@@ -111,22 +115,109 @@ namespace GreeenGarden.Business.Service.FeedbackService
                 var saleOrder = await _saleOrdRepo.Get(model.OrderID);
                 if (saleOrder != null)
                 {
+                    flag = true;
+                    if (!saleOrder.Status.Equals(Status.COMPLETED))
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Đơn hàng chưa hoàn tất";
+                        return result;
+                    }
+                    var listSaleOrderDetail = await _saleOrdDetailRepo.GetSaleOrderDetails(saleOrder.Id);
+                    var saleOrderDetail = new TblSaleOrderDetail();
                     if ((DateTime.Now - (DateTime) saleOrder.CreateDate).TotalDays >= 30)
                     {
                         result.IsSuccess = false;
                         result.Message = "Đã quá hạn để feedback";
                         return result;
-
                     }
-                    var saleOrderDetail = await _saleOrdDetailRepo.GetSaleOrderDetails(saleOrder.Id);
-                    /*foreach (var i in saleOrderDetail)
+                    foreach (var i in listSaleOrderDetail)
                     {
-                        i.
-                    }*/
+                        bool check = false;
+                        if (model.ProductItemDetailID.Equals(i.ProductItemDetailID)) 
+                        { 
+                            check = true;
+                            saleOrderDetail = await _saleOrdDetailRepo.Get(i.ID);
+                        } // get saleOrderDetailID
+                        
+                        if (check == false)
+                        {
+                            result.IsSuccess = false;
+                            result.Message = "Sản phẩm không có trong order";
+                            return result;
+                        }
+                    }
+                    if (saleOrderDetail.FeedbackStatus == true)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Cây này đã được đánh giá trước đó";
+                        return result;
+                    }
+                    if (saleOrderDetail == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "không có đơn hàng chi tiết nào phù hợp";
+                        return result;
+                    }
+                    saleOrderDetail.FeedbackStatus = true;
+                    await _saleOrdDetailRepo.UpdateSaleOrderDetails(saleOrderDetail);
+                    
                 };
                 var rentOrder = await _rentOrdRepo.Get(model.OrderID);
-                if (rentOrder != null) order = rentOrder;
+                if (rentOrder != null)
+                {
+                    flag = true;
+                    if (!rentOrder.Status.Equals(Status.COMPLETED))
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Đơn hàng chưa hoàn tất";
+                        return result;
+                    }
+                    var listRentOrderDetail = await _rentOrdDetailRepo.GetRentOrderDetails(rentOrder.Id);
+                    var rentOrderDetail = new TblRentOrderDetail();
+                    if ((DateTime.Now - (DateTime)rentOrder.CreateDate).TotalDays >= 30)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Đã quá hạn để feedback";
+                        return result;
+                    }
+                    foreach (var i in listRentOrderDetail)
+                    {
+                        bool check = false;
+                        if (model.ProductItemDetailID.Equals(i.ProductItemDetailID))
+                        {
+                            check = true;
+                            rentOrderDetail = await _rentOrdDetailRepo.Get(i.ID);
+                        } // get saleOrderDetailID
 
+                        if (check == false)
+                        {
+                            result.IsSuccess = false;
+                            result.Message = "Sản phẩm không có trong order";
+                            return result;
+                        }
+                    }
+                    if (rentOrderDetail.FeedbackStatus == true)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Cây này đã được đánh giá trước đó";
+                        return result;
+                    }
+                    if (rentOrderDetail == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "không có đơn hàng chi tiết nào phù hợp";
+                        return result;
+                    }
+                    rentOrderDetail.FeedbackStatus = true;
+                    await _rentOrdDetailRepo.UpdateRentOrderDetail(rentOrderDetail);
+                }
+
+                if (flag == false)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "không tìm thấy đơn hàng nào";
+                    return result;
+                }
 
 
                 var newFeedback = new TblFeedBack()
@@ -134,12 +225,12 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     Id = Guid.NewGuid(),
                     Comment = model.Comment,
                     CreateDate = DateTime.Now,
-
-                    //ProductItemId = model.ProductItemID,
+                    ProductItemDetailId = model.ProductItemDetailID,
 
                     Rating = model.Rating,
                     Status = Status.ACTIVE,
                     UserId = Guid.Parse(userID),
+                    UpdateDate = null
                 };
                 await _fbRepo.Insert(newFeedback);
 
@@ -152,7 +243,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     };
                     await _imgRepo.Insert(newImg);
                 }
-
+                newFeedback.ProductItemDetail.TblRentOrderDetails.Clear();
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Data = newFeedback;
