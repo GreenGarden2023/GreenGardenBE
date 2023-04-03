@@ -67,4 +67,9 @@
         public object? Paging { get; set; }
         public object? ServiceOrderList { get; set; }
     }
+    public class FeedbackRes
+    {
+        public object? Paging { get; set; }
+        public object? FeedbackList { get; set; }
+    }
 }

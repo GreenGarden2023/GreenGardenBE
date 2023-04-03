@@ -1,5 +1,5 @@
-﻿using GreeenGarden.Data.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿    using GreeenGarden.Data.Entities;
+    using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.GenericRepository
 {

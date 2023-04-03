@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.FeedbackModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.FeedbackRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
@@ -13,14 +14,18 @@ using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
+using GreeenGarden.Data.Repositories.SizeRepo;
+using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Rewrite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using EntityFrameworkPaginateCore;
 using System.Text;
 using System.Threading.Tasks;
+using GreeenGarden.Business.Utilities.Convert;
 
 namespace GreeenGarden.Business.Service.FeedbackService
 {
@@ -35,10 +40,12 @@ namespace GreeenGarden.Business.Service.FeedbackService
         private readonly ISaleOrderDetailRepo _saleOrdDetailRepo;
         private readonly IRentOrderRepo _rentOrdRepo;
         private readonly IRentOrderDetailRepo _rentOrdDetailRepo;
+        private readonly IUserRepo _userRepo;
+        private readonly ISizeRepo _sizeRepo;
 
         public FeedbackService(IFeedbackRepo fbRepo, IProductItemRepo proItemRepo, IImageRepo imgRepo, ISaleOrderRepo saleOrdRepo,
                                ISaleOrderDetailRepo saleOrdDetailRepo, IRentOrderRepo rentOrdRepo, IRentOrderDetailRepo rentOrdDetailRepo
-                            , IProductItemDetailRepo proItemDetailRepo)
+                            , IProductItemDetailRepo proItemDetailRepo, IUserRepo userRepo, ISizeRepo sizeRepo)
         {
             _fbRepo = fbRepo;
             _proItemRepo = proItemRepo;
@@ -49,6 +56,8 @@ namespace GreeenGarden.Business.Service.FeedbackService
             _saleOrdDetailRepo = saleOrdDetailRepo;
             _rentOrdRepo = rentOrdRepo;
             _rentOrdDetailRepo = rentOrdDetailRepo;
+            _userRepo = userRepo;
+            _sizeRepo = sizeRepo;
         }
 
         public async Task<ResultModel> changeStatus(string token, FeedbackChangeStatusModel model)
@@ -183,11 +192,11 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     foreach (var i in listRentOrderDetail)
                     {
                         bool check = false;
-                       // if (model.ProductItemDetailID.Equals(i.ProductItemDetailID))
-                        //{
-                       //     check = true;
+                        if (model.ProductItemDetailID.Equals(i.ProductItemDetail.Id))
+                        {
+                            check = true;
                             rentOrderDetail = await _rentOrdDetailRepo.Get(i.ID);
-                        //} // get saleOrderDetailID
+                        } // get saleOrderDetailID
 
                         if (check == false)
                         {
@@ -286,25 +295,54 @@ namespace GreeenGarden.Business.Service.FeedbackService
             var result = new ResultModel();
             try
             {
-                var listFb = await _fbRepo.GetFeedBacks(pagingModel, productItemID);
-                var res = new List<ProItemFeedbackResModel>();
-
-                foreach (var i in listFb.Results)
+              var listProductItemDetail = await _proItemDetailRepo.GetSizeProductItems(productItemID, Status.ACTIVE);
+                var listFeedback = new List<FeedbackResModel>();
+                foreach (var i in listProductItemDetail)
                 {
-                    var imageURL = await _imgRepo.GetImgUrlFeedback(i.Id);
-                    var fbRecord = new ProItemFeedbackResModel()
+                    var listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(i.Id);
+                    foreach (var fb in listFeedbackRecord)
                     {
-                        ID = i.Id,
-                        Rating = i.Rating,
-                        Comment = i.Comment,
-                        CreateDate = i.CreateDate,
-                        Status = i.Status,
-                        ImageURL = imageURL,
+                        var fbRes = new FeedbackResModel();
+                        var user = await _userRepo.Get(fb.UserId);
+                        var size = await _sizeRepo.Get(i.Size.Id);
+                        var listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
+                        fbRes.CreateDate = fb.CreateDate;
+                        fbRes.UpdateDate = fb.UpdateDate;
+                        fbRes.ID = fb.Id;
+                        fbRes.Rating = fb.Rating;
+                        fbRes.Comment = fb.Comment;
+                        fbRes.Status = fb.Status;
+                        fbRes.User = new UserCurrResModel();
+                        fbRes.User.FullName = user.FullName;
+                        fbRes.User.UserName = user.UserName;
+                        fbRes.User.Id = user.Id;
+                        fbRes.User.Phone = user.Phone;
+                        fbRes.ProductItemDetail = new Data.Models.ProductItemDetailModel.ProductItemDetailResModel();
+                        fbRes.ProductItemDetail.Id = i.Id;
+                        fbRes.ProductItemDetail.Size = new Data.Models.SizeModel.SizeResModel();
+                        fbRes.ProductItemDetail.Size.Id = size.Id;
+                        fbRes.ProductItemDetail.Size.SizeName = size.Name;
+                        fbRes.ProductItemDetail.Size.SizeType = size.Type;
+                        fbRes.ImageURL = new List<string>();
+                        fbRes.ImageURL = listImgUrl;
 
-                        //ProductItemID = i.ProductItemId
-                    };
-                    res.Add(fbRecord);
+                        listFeedback.Add(fbRes);
+                    }
                 }
+                var pag = new PaginationResponseModel().CurPage(pagingModel.curPage)
+                    .PageSize(pagingModel.pageSize)
+                    .RecordCount(listFeedback.Count)
+                    .PageCount((int)Math.Ceiling((double)listFeedback.Count / pagingModel.pageSize));
+
+                var pageFeedback = listFeedback.OrderByDescending(y=>y.CreateDate)
+                    .Skip((pagingModel.curPage - 1) * pagingModel.pageSize)
+                    .Take(pagingModel.pageSize).ToList();
+
+               var res = new FeedbackRes()
+                {
+                    FeedbackList= pageFeedback,
+                    Paging = pag,
+                };
 
                 result.Code = 200;
                 result.IsSuccess = true;
