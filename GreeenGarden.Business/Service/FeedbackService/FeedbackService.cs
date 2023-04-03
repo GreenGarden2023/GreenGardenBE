@@ -183,11 +183,11 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     foreach (var i in listRentOrderDetail)
                     {
                         bool check = false;
-                        if (model.ProductItemDetailID.Equals(i.ProductItemDetailID))
-                        {
-                            check = true;
+                       // if (model.ProductItemDetailID.Equals(i.ProductItemDetailID))
+                        //{
+                       //     check = true;
                             rentOrderDetail = await _rentOrdDetailRepo.Get(i.ID);
-                        } // get saleOrderDetailID
+                        //} // get saleOrderDetailID
 
                         if (check == false)
                         {
