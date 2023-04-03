@@ -1733,7 +1733,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     List<ProductItemDetailResModel> productItems = new();
                     foreach (RentOrderDetailResModel model in rentOrderDetailResModels)
                     {
-                        TblProductItemDetail detail = await _productItemDetailRepo.Get(model.ProductItemDetailID);
+                        TblProductItemDetail detail = await _productItemDetailRepo.Get(model.ProductItemDetail.Id);
                         TblSize? sizeGet = await _sizeRepo.Get(detail.SizeId);
                         List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(detail.Id);
                         SizeResModel size = new()
@@ -2468,7 +2468,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     var rentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
                     foreach (var i in rentOrderDetail)
                     {
-                        var itemDetail = await _productItemDetailRepo.Get(i.ProductItemDetailID);
+                        var itemDetail = await _productItemDetailRepo.Get(i.ProductItemDetail.Id);
                         itemDetail.Quantity += i.Quantity;
                         await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
                     }

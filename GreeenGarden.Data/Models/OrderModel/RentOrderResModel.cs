@@ -1,4 +1,6 @@
-﻿namespace GreeenGarden.Data.Models.OrderModel
+﻿using GreeenGarden.Data.Models.ProductItemDetailModel;
+
+namespace GreeenGarden.Data.Models.OrderModel
 {
     public class RentOrderResModel
     {
@@ -49,7 +51,7 @@
     public class RentOrderDetailResModel
     {
         public Guid ID { get; set; }
-        public Guid ProductItemDetailID { get; set; }
+        public ProductItemDetailResModel ProductItemDetail { get; set; }
         public double? TotalPrice { get; set; }
         public int? Quantity { get; set; }
         public double? RentPricePerUnit { get; set; }
