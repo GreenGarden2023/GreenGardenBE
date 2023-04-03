@@ -189,7 +189,6 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                     {
                         tblService.StartDate = serviceUpdateModelManager.StartDate;
                     }
-
                     if (serviceUpdateModelManager.EndDate != null && !serviceUpdateModelManager.EndDate.Equals(tblService.EndDate))
                     {
                         tblService.EndDate = serviceUpdateModelManager.EndDate;

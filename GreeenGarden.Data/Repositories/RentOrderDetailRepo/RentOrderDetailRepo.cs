@@ -50,6 +50,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                     SalePrice = tblProductItemDetail.SalePrice,
                     Quantity = tblProductItemDetail.Quantity,
                     Status = tblProductItemDetail.Status,
+                    TransportFee = tblProductItemDetail.TransportFee,
                     ImagesURL = imgGet
                 };
                 TblImage image = await _imageRepo.GetImgUrlRentOrderDetail(detail.Id);
@@ -58,7 +59,6 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                 {
                     imageURl = image.ImageUrl;
                 }
-
                 RentOrderDetailResModel model = new()
                 {
                     ID = detail.Id,
@@ -68,7 +68,6 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                     RentPricePerUnit = detail.RentPricePerUnit ?? null,
                     SizeName = "" + detail.SizeName,
                     ProductItemName = "" + detail.ProductItemName,
-                    
                     ImgURL = imageURl
                 };
                 resultList.Add(model);
