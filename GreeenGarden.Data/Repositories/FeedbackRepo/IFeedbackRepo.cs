@@ -15,6 +15,6 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
     public interface IFeedbackRepo : IRepository<TblFeedBack>
     {
         Task<bool> ChangeStatus(FeedbackChangeStatusModel model);
-        Task<Page<TblFeedBack>> GetFeedBacks(PaginationRequestModel pagingModel, Guid productItemID);
+        Task<List<TblFeedBack>> GetFeedBackByProductItemDetail(Guid productItemDetailID);
     }
 }

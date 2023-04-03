@@ -32,13 +32,9 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
             return true;
         }
 
-        public async Task<Page<TblFeedBack>> GetFeedBacks(PaginationRequestModel pagingModel, Guid productItemID)
+        public async Task<List<TblFeedBack>> GetFeedBackByProductItemDetail(Guid productItemDetailID)
         {
-
-            return null;
-            //return await _context.TblFeedBacks.Where(x=>x.ProductItemId.Equals(productItemID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-
-
+            return await _context.TblFeedBacks.Where(x => x.ProductItemDetailId.Equals(productItemDetailID)).ToListAsync();
         }
     }
 }
