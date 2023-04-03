@@ -39,5 +39,21 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.CleanCart(token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
+        [HttpDelete("clean-sale-cart")]
+        public async Task<IActionResult> CleanSaleCart()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.CleanSaleCart(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpDelete("clean-rent-cart")]
+        public async Task<IActionResult> CleanRentCart()
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.CleanRentCart(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
