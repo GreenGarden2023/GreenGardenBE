@@ -40,7 +40,8 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                 SizeResModel size = new()
                 {
                     Id = sizeGet.Id,
-                    SizeName = sizeGet.Name
+                    SizeName = sizeGet.Name,
+                    SizeType = sizeGet.Type
                 };
                 ProductItemDetailResModel upResult = new()
                 {
@@ -62,7 +63,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                 RentOrderDetailResModel model = new()
                 {
                     ID = detail.Id,
-                    ProductItemDetail = upResult,
+                    ProductItemDetail = upResult?? null,
                     Quantity = detail.Quantity ?? null,
                     TotalPrice = detail.TotalPrice ?? null,
                     RentPricePerUnit = detail.RentPricePerUnit ?? null,
