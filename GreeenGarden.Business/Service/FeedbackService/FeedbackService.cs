@@ -106,7 +106,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
                 string userID = _decodeToken.Decode(token, "userid");
                 if (productItemDetail == null)
                 {
-                    result.IsSuccess = true;
+                    result.IsSuccess = false;
                     result.Message = "Sản phẩm không còn tồn tại!";
                     return result;
                 }
