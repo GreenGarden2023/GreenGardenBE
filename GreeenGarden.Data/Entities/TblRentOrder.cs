@@ -33,6 +33,8 @@ public partial class TblRentOrder
 
     public string? RecipientAddress { get; set; }
 
+    public int? RecipientDistrict { get; set; }
+
     public string? RecipientPhone { get; set; }
 
     public string? RecipientName { get; set; }
@@ -45,7 +47,11 @@ public partial class TblRentOrder
 
     public Guid CreatedBy { get; set; }
 
+    public bool? FeedbackStatus { get; set; }
+
     public virtual TblUser CreatedByNavigation { get; set; } = null!;
+
+    public virtual TblDistrict? RecipientDistrictNavigation { get; set; }
 
     public virtual TblRentOrderGroup? RentOrderGroup { get; set; }
 

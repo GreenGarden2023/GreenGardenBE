@@ -396,6 +396,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     Deposit = Math.Ceiling(deposit),
                     TotalPrice = Math.Ceiling(totalOrderAmount),
                     Status = Status.UNPAID,
+                    RecipientDistrict = rentOrderModel.ShippingID,
                     RemainMoney = Math.Ceiling(totalOrderAmount),
                     RewardPointGain = rewardPointGain,
                     RewardPointUsed = rentOrderModel.RewardPointUsed,
