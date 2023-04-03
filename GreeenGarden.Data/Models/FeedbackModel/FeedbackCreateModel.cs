@@ -12,6 +12,7 @@ namespace GreeenGarden.Data.Models.FeedbackModel
         public float Rating { get; set; }
         public string Comment { get; set; }
         public List<string> ImagesUrls { get; set; }
+        public Guid OrderID { get; set; }
 
     }
 }
