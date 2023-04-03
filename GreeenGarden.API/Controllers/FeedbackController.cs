@@ -40,7 +40,7 @@ namespace GreeenGarden.API.Controllers
         public async Task<IActionResult> getListFeedback([FromQuery] PaginationRequestModel pagingModel, Guid productItemID)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _service.getListFeedback(token, pagingModel, productItemID);
+            Data.Models.ResultModel.ResultModel result = await _service.getListFeedbackByProductItem(token, pagingModel, productItemID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

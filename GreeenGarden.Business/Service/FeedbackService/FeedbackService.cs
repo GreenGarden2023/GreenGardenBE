@@ -134,7 +134,9 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     Id = Guid.NewGuid(),
                     Comment = model.Comment,
                     CreateDate = DateTime.Now,
-                    ProductItemDetailId = model.ProductItemID,
+
+                    //ProductItemId = model.ProductItemID,
+
                     Rating = model.Rating,
                     Status = Status.ACTIVE,
                     UserId = Guid.Parse(userID),
@@ -164,7 +166,17 @@ namespace GreeenGarden.Business.Service.FeedbackService
             return result;
         }
 
-        public async Task<ResultModel> getListFeedback(string token, PaginationRequestModel pagingModel, Guid productItemID)
+        public Task<ResultModel> getListFeedbackByManager(string token, PaginationRequestModel pagingModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultModel> getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<ResultModel> getListFeedbackByProductItem(string token, PaginationRequestModel pagingModel, Guid productItemID)
         {
             var result = new ResultModel();
             try
@@ -183,7 +195,8 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         CreateDate = i.CreateDate,
                         Status = i.Status,
                         ImageURL = imageURL,
-                        ProductItemID = (Guid)i.ProductItemDetailId
+
+                        //ProductItemID = i.ProductItemId
                     };
                     res.Add(fbRecord);
                 }

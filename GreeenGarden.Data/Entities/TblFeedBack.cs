@@ -9,6 +9,7 @@ public partial class TblFeedBack
 
     public double Rating { get; set; }
 
+
     public string? Comment { get; set; }
 
     public DateTime? CreateDate { get; set; }
@@ -19,9 +20,11 @@ public partial class TblFeedBack
 
     public Guid? OrderId { get; set; }
 
+
     public Guid? ProductItemDetailId { get; set; }
 
     public virtual TblProductItemDetail? ProductItemDetail { get; set; }
+
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 
