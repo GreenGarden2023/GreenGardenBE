@@ -9,5 +9,7 @@ namespace GreeenGarden.Business.Service.CartService
         Task<ResultModel> AddToCart(string token, AddToCartModel model);
         Task<ResultModel> GetCart(string token);
         Task<ResultModel> CleanCart(string token);
+        Task<ResultModel> CleanSaleCart(string token);
+        Task<ResultModel> CleanRentCart(string token);
     }
 }

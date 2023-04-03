@@ -37,8 +37,6 @@ public partial class TblServiceOrder
 
     public string Status { get; set; } = null!;
 
-    public bool? FeedbackStatus { get; set; }
-
     public virtual TblService Service { get; set; } = null!;
 
     public virtual ICollection<TblServiceCalendar> TblServiceCalendars { get; } = new List<TblServiceCalendar>();

@@ -12,6 +12,7 @@ namespace GreeenGarden.Data.Repositories.CartRepo
         Task<productItemDetail> GetProductItemDetail(Guid? ProductItemDetailID);
         Task<TblCartDetail> AddProductItemToCart(TblCartDetail model);
         Task<List<TblCartDetail>> GetListCartDetail(Guid cartID);
+        Task<List<TblCartDetail>> GetListCartDetailByType(Guid cartID, bool isForRent);
         Task<bool> RemoveCartDetail(TblCartDetail model);
         Task<TblProductItem> GetProductItem(Guid productItemID);
         Task<TblSize> GetSize(Guid sizeID);
