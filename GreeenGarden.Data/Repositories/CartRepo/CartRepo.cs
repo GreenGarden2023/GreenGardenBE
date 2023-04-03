@@ -1,6 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.CartRepo
@@ -93,6 +94,11 @@ namespace GreeenGarden.Data.Repositories.CartRepo
         public async Task<TblProductItemDetail> GetProductItemDetails(Guid proDetailID)
         {
             return await _context.TblProductItemDetails.Where(x => x.Id.Equals(proDetailID)).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<TblCartDetail>> GetListCartDetailByType(Guid cartID, bool isForRent)
+        {
+            return await _context.TblCartDetails.Where(x => x.CartId.Equals(cartID) && x.IsForRent == isForRent).ToListAsync();
         }
     }
 }

@@ -290,6 +290,92 @@ namespace GreeenGarden.Business.Service.CartService
             return result;
         }
 
+        public async Task<ResultModel> CleanRentCart(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                TblUser tblUser = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                TblCart cart = await _cartRepo.GetCart(tblUser.Id);
+                if (cart == null)
+                {
+                    result.Code = 201;
+                    result.IsSuccess = true;
+                    result.Data = "Xóa thành công";
+                    return result;
+                }
+                List<TblCartDetail> cartDetail = await _cartRepo.GetListCartDetailByType(cart.Id, true);
+                if (cartDetail == null || cartDetail.Count == 0)
+                {
+                    result.Code = 201;
+                    result.IsSuccess = true;
+                    result.Data = "Xóa thành công";
+                    return result;
+                }
+
+                foreach (TblCartDetail i in cartDetail)
+                {
+                    _ = await _cartRepo.RemoveCartDetail(i);
+                }
+
+
+
+                result.Code = 201;
+                result.IsSuccess = true;
+                result.Message = "Xóa thành công";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> CleanSaleCart(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                TblUser tblUser = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
+                TblCart cart = await _cartRepo.GetCart(tblUser.Id);
+                if (cart == null)
+                {
+                    result.Code = 201;
+                    result.IsSuccess = true;
+                    result.Data = "Xóa thành công";
+                    return result;
+                }
+                List<TblCartDetail> cartDetail = await _cartRepo.GetListCartDetailByType(cart.Id, false);
+                if (cartDetail == null || cartDetail.Count == 0)
+                {
+                    result.Code = 201;
+                    result.IsSuccess = true;
+                    result.Data = "Xóa thành công";
+                    return result;
+                }
+
+                foreach (TblCartDetail i in cartDetail)
+                {
+                    _ = await _cartRepo.RemoveCartDetail(i);
+                }
+
+
+
+                result.Code = 201;
+                result.IsSuccess = true;
+                result.Message = "Xóa thành công";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> GetCart(string token)
         {
             ResultModel result = new();
