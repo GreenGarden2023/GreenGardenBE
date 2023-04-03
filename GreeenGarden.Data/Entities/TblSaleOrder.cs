@@ -39,8 +39,6 @@ public partial class TblSaleOrder
 
     public bool? IsTransport { get; set; }
 
-    public bool? FeedbackStatus { get; set; }
-
     public virtual TblDistrict? RecipientDistrictNavigation { get; set; }
 
     public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();

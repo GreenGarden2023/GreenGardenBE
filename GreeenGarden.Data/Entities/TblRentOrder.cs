@@ -47,8 +47,6 @@ public partial class TblRentOrder
 
     public Guid CreatedBy { get; set; }
 
-    public bool? FeedbackStatus { get; set; }
-
     public virtual TblUser CreatedByNavigation { get; set; } = null!;
 
     public virtual TblDistrict? RecipientDistrictNavigation { get; set; }

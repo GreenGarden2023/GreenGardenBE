@@ -34,7 +34,8 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
 
         public async Task<Page<TblFeedBack>> GetFeedBacks(PaginationRequestModel pagingModel, Guid productItemID)
         {
-            return await _context.TblFeedBacks.Where(x=>x.ProductItemId.Equals(productItemID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            return null;
+            //return await _context.TblFeedBacks.Where(x=>x.ProductItemId.Equals(productItemID)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
 
         }
     }
