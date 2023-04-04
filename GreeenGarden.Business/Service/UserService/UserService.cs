@@ -7,6 +7,7 @@ using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -440,7 +441,7 @@ namespace GreeenGarden.Business.Service.UserService
             }
         }
 
-        public async Task<ResultModel> VerifyOTPCode(OTPVerifyModel oTPVerifyModel)
+        public async Task<ResultModel> VerifyRegisterOTPCode(OTPVerifyModel oTPVerifyModel)
         {
             ResultModel result = new();
             try
@@ -449,6 +450,7 @@ namespace GreeenGarden.Business.Service.UserService
                 if (verify.IsSuccess == true)
                 {
                     UserCurrResModel userCurrResModel = await _userRepo.GetUserByEmail(oTPVerifyModel.Email);
+                    _ = await _userRepo.UpdateUserStatus(userCurrResModel.Id, UserStatus.ENABLE);
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = userCurrResModel;
@@ -460,6 +462,59 @@ namespace GreeenGarden.Business.Service.UserService
                     result.IsSuccess = false;
                     result.Code = 400;
                     result.Message = "Code verified failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
+        public async Task<ResultModel> UpdateUserStatus(string token, UserUpdateStatusModel userUpdateStatusModel)
+        {
+            
+            string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+            if (!userRole.Equals(Commons.ADMIN)
+                && !userRole.Equals(Commons.MANAGER))
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed."
+                };
+            }
+            if (!userUpdateStatusModel.Equals(UserStatus.ENABLE) && !userUpdateStatusModel.Equals(UserStatus.DISABLED))
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Status unknown."
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                bool update = await _userRepo.UpdateUserStatus(userUpdateStatusModel.UserID, userUpdateStatusModel.Status);
+                if (update == true)
+                {
+                    UserLoginResModel user = await _userRepo.GetUserByID(userUpdateStatusModel.UserID);
+                    result.Code = 200;
+                    result.Data = user;
+                    result.IsSuccess = true;
+                    result.Message = "Update user status sucessful.";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Update user status failed.";
                     return result;
                 }
             }

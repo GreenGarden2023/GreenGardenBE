@@ -122,7 +122,6 @@ namespace GreeenGarden.API.Controllers
             try
             {
                 ResultModel result = await _userService.ResetPassword(passwordResetModel);
-
                 return result;
             }
             catch (Exception e)
@@ -131,13 +130,29 @@ namespace GreeenGarden.API.Controllers
             }
 
         }
-        [HttpPost("verify-otp-code")]
+        [HttpPost("verify-register-otp-code")]
         [AllowAnonymous]
         public async Task<ActionResult<ResultModel>> VerifyOTPCode(OTPVerifyModel oTPVerifyModel)
         {
             try
             {
-                ResultModel result = await _userService.VerifyOTPCode(oTPVerifyModel);
+                ResultModel result = await _userService.VerifyRegisterOTPCode(oTPVerifyModel);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+        }
+        [HttpPost("update-user-status")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<ActionResult<ResultModel>> UpdateUserStatus(UserUpdateStatusModel userUpdateStatusModel)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.UpdateUserStatus(token, userUpdateStatusModel);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             catch (Exception e)
@@ -147,7 +162,6 @@ namespace GreeenGarden.API.Controllers
             }
 
         }
-
     }
 }
 

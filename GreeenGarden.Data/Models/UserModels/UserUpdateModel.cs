@@ -19,5 +19,10 @@
         public string Email { get; set; }
         public string OTPCode { get; set; }
     }
+    public class UserUpdateStatusModel
+    {
+        public Guid UserID { get; set; }
+        public string Status { get; set; }
+    }
 }
 

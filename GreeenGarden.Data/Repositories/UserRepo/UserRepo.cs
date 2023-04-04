@@ -227,6 +227,43 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             }).FirstOrDefaultAsync();
             return userModel;
         }
+
+        public async  Task<bool> UpdateUserStatus(Guid userID, string status)
+        {
+            var query = from u in context.TblUsers
+                        where u.Id.Equals(userID)
+                        select new { u };
+
+            TblUser? user = await query.Select(x => x.u).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return false;
+            }
+            user.Status = status;
+            _ = _context.Update(user);
+            _ = await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<UserLoginResModel> GetUserByID(Guid userID)
+        {
+            var query = from u in context.TblUsers
+                        join ur in context.TblRoles
+                        on u.RoleId equals ur.Id
+                        where u.Id.Equals(userID)
+                        select new { u, ur };
+            UserLoginResModel? userModel = await query.Select(x => new UserLoginResModel()
+            {
+                ID = x.u.Id,
+                UserName = x.u.UserName,
+                FullName = x.u.FullName,
+                PasswordHash = x.u.PasswordHash,
+                PasswordSalt = x.u.PasswordSalt,
+                RoleName = x.ur.RoleName,
+                Email = x.u.Mail
+            }).FirstOrDefaultAsync();
+            return userModel;
+        }
     }
 }
 
