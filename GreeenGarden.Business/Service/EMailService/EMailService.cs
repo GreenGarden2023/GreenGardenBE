@@ -43,7 +43,7 @@ namespace GreeenGarden.Business.Service.EMailService
 
             MimeMessage message = new();
             message.From.Add(MailboxAddress.Parse(from));
-            message.Subject = "GreenGarden account email verification code";
+            message.Subject = "GreenGarden Yêu cầu chăm sócác cập nhật yêu cầu chăm sóc đăng ký.";
             message.To.Add(MailboxAddress.Parse(email));
             message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
@@ -51,9 +51,9 @@ namespace GreeenGarden.Business.Service.EMailService
                 "<html>" +
                 "<body>" +
                 "<h1>GreenGarden<h1>" +
-                "<h3>You have just created a GreenGarden account: " + userName + ".</h3>" +
-                "<p>Please use the code below verify your account.</p>" +
-                "<p>Your code is: " + OTP + "</p>" +
+                "<h3>Bạn vừa tạo tài khoản trên GreenGarden: " + userName + ".</h3>" +
+                "<p>Vui lòng sử dụng mã bên dưới để xác minh tài khoản của bạn.</p>" +
+                "<p>Mã của bạn là: " + OTP + "</p>" +
                 "</body>" +
                 "</html>"
             };
@@ -86,7 +86,7 @@ namespace GreeenGarden.Business.Service.EMailService
                 string password = SecretService.SecretService.GetEmailCred().EmailPassword;
                 MimeMessage message = new();
                 message.From.Add(MailboxAddress.Parse(from));
-                message.Subject = "GreenGarden takecare request update";
+                message.Subject = "GreenGarden cập nhật yêu cầu chăm sóc.";
                 message.To.Add(MailboxAddress.Parse(email));
                 message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
                 {
@@ -94,8 +94,8 @@ namespace GreeenGarden.Business.Service.EMailService
                     "<html>" +
                     "<body>" +
                     "<h1>GreenGarden<h1>" +
-                    "<h3>Your takecare request " + serviceCode + " has been update by the manager.</h3>" +
-                    "<p>Please review the request via the link: </p>" +
+                    "<h3>Yêu cầu chăm sóc " + serviceCode + " đã được cập nhật.</h3>" +
+                    "<p>Vui lòng xác nhận qua đường dẫn bên dưới: </p>" +
                     "<p> https://ggarden.shop/take-care-service/me/"+tblService.Id+ " </p>"+
                     "<p> Best regards,</p>" +
                     "<h3>GreenGarden.</h3>" +
@@ -150,9 +150,9 @@ namespace GreeenGarden.Business.Service.EMailService
                 "<html>" +
                 "<body>" +
                 "<h1>GreenGarden<h1>" +
-                "<h3>You requested a password reset. </h3>" +
-                "<p>Please use the code below to reset your password.</p>" +
-                "<p>Your code is: " + OTP + "</p>" +
+                "<h3>Bạn dã yêu cầu đặt lại mật khẩu. </h3>" +
+                "<p>Vui lòng sử dụng mã bên dưới để xác nhận.</p>" +
+                "<p>Mã của bạn là: " + OTP + "</p>" +
                 "</body>" +
                 "</html>"
             };

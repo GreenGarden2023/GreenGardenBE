@@ -21,9 +21,7 @@ public partial class TblSaleOrderDetail
 
     public string? ProductItemName { get; set; }
 
-
     public bool? FeedbackStatus { get; set; }
-
 
     public virtual TblSaleOrder SaleOder { get; set; } = null!;
 

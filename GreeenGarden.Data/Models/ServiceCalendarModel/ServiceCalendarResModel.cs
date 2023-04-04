@@ -9,13 +9,13 @@ namespace GreeenGarden.Data.Models.ServiceCalendarModel
 
         public DateTime? ServiceDate { get; set; }
 
-        public DateTime? NextServiceDate { get; set; }
-
-        public string? ReportFileURL { get; set; }
+        public DateTime? NextServiceDate { get; set; }        
 
         public string? Sumary { get; set; }
 
         public string? Status { get; set; }
+
+        public List<string>? Images { get; set; }
     }
     public class ServiceCalendarUpdateResModel
     {
@@ -48,11 +48,11 @@ namespace GreeenGarden.Data.Models.ServiceCalendarModel
 
         public DateTime? NextServiceDate { get; set; }
 
-        public string? ReportFileURL { get; set; }
-
         public string? Sumary { get; set; }
 
         public string? Status { get; set; }
+
+        public List<string>? Images { get; set; }
     }
 
     public class ServiceCalendarUserGetModel

@@ -167,7 +167,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.UpdateDate).HasColumnType("datetime");
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
-
             entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblFeedBacks)
                 .HasForeignKey(d => d.ProductItemDetailId)
                 .HasConstraintName("FK_tblFeedBack_tblProductItemDetail");
@@ -175,7 +174,6 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.TblFeedBacks)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-
                 .HasConstraintName("FK_tblFeedBacks_tblUsers");
         });
 
@@ -197,6 +195,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
             entity.Property(e => e.RentOrderDetailId).HasColumnName("RentOrderDetailID");
             entity.Property(e => e.SaleOrderDetailId).HasColumnName("SaleOrderDetailID");
+            entity.Property(e => e.ServiceCalendarId).HasColumnName("ServiceCalendarID");
             entity.Property(e => e.ServiceDetailId).HasColumnName("ServiceDetailID");
             entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
 
@@ -227,6 +226,10 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.SaleOrderDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.SaleOrderDetailId)
                 .HasConstraintName("FK_tblImage_tblSaleOrderDetail");
+
+            entity.HasOne(d => d.ServiceCalendar).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.ServiceCalendarId)
+                .HasConstraintName("FK_tblImage_tblServiceCalendar");
 
             entity.HasOne(d => d.ServiceDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ServiceDetailId)
@@ -489,9 +492,6 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.NextServiceDate).HasColumnType("datetime");
-            entity.Property(e => e.ReportFileUrl)
-                .HasMaxLength(2048)
-                .HasColumnName("ReportFileURL");
             entity.Property(e => e.ServiceDate).HasColumnType("datetime");
             entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
             entity.Property(e => e.Status).HasMaxLength(50);

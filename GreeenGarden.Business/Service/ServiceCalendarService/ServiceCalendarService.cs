@@ -7,6 +7,7 @@ using GreeenGarden.Data.Models.ServiceCalendarModel;
 using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
 using GreeenGarden.Data.Entities;
 using Newtonsoft.Json.Linq;
+using GreeenGarden.Data.Repositories.ImageRepo;
 
 namespace GreeenGarden.Business.Service.ServiceCalendarService
 {
@@ -14,10 +15,12 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
     {
         private readonly DecodeToken _decodeToken;
         private readonly IServiceCalendarRepo _serviceCalendarRepo;
-        public ServiceCalendarService(IServiceCalendarRepo serviceCalendarRepo)
+        private readonly IImageRepo _imageRepo;
+        public ServiceCalendarService(IServiceCalendarRepo serviceCalendarRepo, IImageRepo imageRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceCalendarRepo = serviceCalendarRepo;
+            _imageRepo = imageRepo;
         }
 
         public async Task<ResultModel> CreateServiceCalendar(string token, ServiceCalendarInsertModel serviceCalendarInsertModel)
@@ -63,15 +66,16 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                     if (insert != Guid.Empty)
                     {
                         TblServiceCalendar resGetModel = await _serviceCalendarRepo.Get(tblServiceCalendar.Id);
+                        List<string> ImgUrls = await _imageRepo.GetImgUrlServiceCalendar(resGetModel.Id);
                         ServiceCalendarResModel resModel = new ServiceCalendarResModel
                         {
                             Id = resGetModel.Id,
                             ServiceOrderId = resGetModel.ServiceOrderId,
                             ServiceDate = resGetModel.ServiceDate,
                             NextServiceDate = resGetModel.NextServiceDate,
-                            ReportFileURL = resGetModel.ReportFileUrl,
                             Sumary = resGetModel.Sumary,
                             Status = resGetModel.Status,
+                            Images = ImgUrls
                         };
                         result.Code = 200;
                         result.IsSuccess = true;
@@ -93,15 +97,17 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                     if (update == true)
                     {
                         TblServiceCalendar oldCalendarGet = await _serviceCalendarRepo.Get(serviceCalendarInsertModel.CalendarUpdate.ServiceCalendarId);
+                        bool updateImg = await _imageRepo.UpdateImgForServiceCalendar(oldCalendarGet.Id, serviceCalendarInsertModel.CalendarUpdate.Images);
+                        List<string> ImgUrls = await _imageRepo.GetImgUrlServiceCalendar(oldCalendarGet.Id);
                         ServiceCalendarResModel oldCalendarRes = new ServiceCalendarResModel
                         {
                             Id = oldCalendarGet.Id,
                             ServiceOrderId = oldCalendarGet.ServiceOrderId,
                             ServiceDate = oldCalendarGet.ServiceDate,
                             NextServiceDate = oldCalendarGet.NextServiceDate,
-                            ReportFileURL = oldCalendarGet.ReportFileUrl,
                             Sumary = oldCalendarGet.Sumary,
                             Status = oldCalendarGet.Status,
+                            Images = ImgUrls
                         };
                         TblServiceCalendar tblServiceCalendar = new TblServiceCalendar
                         {
@@ -115,15 +121,16 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                         {
 
                             TblServiceCalendar nextCalendarGet = await _serviceCalendarRepo.Get(tblServiceCalendar.Id);
+                            List<string> nextCaImgUrls = await _imageRepo.GetImgUrlServiceCalendar(nextCalendarGet.Id);
                             ServiceCalendarResModel nextCalendarRes = new ServiceCalendarResModel
                             {
                                 Id = nextCalendarGet.Id,
                                 ServiceOrderId = nextCalendarGet.ServiceOrderId,
                                 ServiceDate = nextCalendarGet.ServiceDate,
                                 NextServiceDate = nextCalendarGet.NextServiceDate,
-                                ReportFileURL = nextCalendarGet.ReportFileUrl,
                                 Sumary = nextCalendarGet.Sumary,
                                 Status = nextCalendarGet.Status,
+                                Images = nextCaImgUrls
                             };
                             ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new ServiceCalendarUpdateResModel
                             {
@@ -209,15 +216,16 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                     List<ServiceCalendarResModel> resModel = new List<ServiceCalendarResModel>();
                     foreach (TblServiceCalendar calendar in resGet)
                     {
+                        List<string> ImgUrls = await _imageRepo.GetImgUrlServiceCalendar(calendar.Id);
                         ServiceCalendarResModel serviceCalendarResModel = new ServiceCalendarResModel
                         {
                             Id = calendar.Id,
                             ServiceOrderId = calendar.ServiceOrderId,
                             ServiceDate = calendar.ServiceDate,
                             NextServiceDate = calendar.ServiceDate,
-                            ReportFileURL = calendar.ReportFileUrl,
                             Sumary = calendar.Sumary,
-                            Status = calendar.Status
+                            Status = calendar.Status,
+                            Images = ImgUrls,
                         };
                         resModel.Add(serviceCalendarResModel);
                     }

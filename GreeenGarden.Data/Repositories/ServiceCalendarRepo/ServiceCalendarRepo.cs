@@ -3,6 +3,7 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ServiceCalendarModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +13,12 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
 	{
 		private readonly GreenGardenDbContext _context;
 		private readonly IServiceOrderRepo _serviceOrderRepo;
-		public ServiceCalendarRepo(GreenGardenDbContext context, IServiceOrderRepo serviceOrderRepo) : base(context)
+		private readonly IImageRepo _imageRepo;
+		public ServiceCalendarRepo(GreenGardenDbContext context, IServiceOrderRepo serviceOrderRepo, IImageRepo imageRepo) : base(context)
 		{
 			_context = context;
 			_serviceOrderRepo = serviceOrderRepo;
+			_imageRepo = imageRepo;
 		}
 
         public async Task<List<TblServiceCalendar>> GetServiceCalendarsByServiceOrder(Guid serviceOrderId)
@@ -44,11 +47,14 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
 				ServiceOrderId = x.so.Id,
 				ServiceDate = x.sc.ServiceDate,
 				NextServiceDate = x.sc.NextServiceDate,
-				ReportFileURL = x.sc.ReportFileUrl,
 				Sumary = x.sc.Sumary,
-				Status = x.sc.Status
-			}).ToListAsync();
-			ServiceCalendarGetModel serviceCalendarGetModel = new ServiceCalendarGetModel
+				Status = x.sc.Status,
+        }).ToListAsync();
+            foreach (ServiceCalendarResModel serviceCalendar in listServiceCalendar)
+            {
+                serviceCalendar.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendar.Id);
+            }
+            ServiceCalendarGetModel serviceCalendarGetModel = new ServiceCalendarGetModel
 			{
 				TechnicianId = technicianID,
 				Date = date,
@@ -73,18 +79,20 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
                         on sc.ServiceOrderId equals so.Id
                         where so.UserId.Equals(userID) && sc.ServiceDate >= startDate && sc.ServiceDate <= endDate
                         select new { sc, so };
-            List<ServiceCalendarUserResModel> listServiceCalendar = await query.Select(x => new ServiceCalendarUserResModel()
+            List<ServiceCalendarUserResModel> listServiceCalendar = await query.Select( x => new ServiceCalendarUserResModel()
             {
                 Id = x.sc.Id,
                 ServiceOrderId = x.so.Id,
 				TechnicianId = x.so.TechnicianId,
                 ServiceDate = x.sc.ServiceDate,
                 NextServiceDate = x.sc.NextServiceDate,
-                ReportFileURL = x.sc.ReportFileUrl,
                 Sumary = x.sc.Sumary,
-                Status = x.sc.Status
+                Status = x.sc.Status,
             }).ToListAsync();
-			
+			foreach (ServiceCalendarUserResModel serviceCalendarUserResModel in listServiceCalendar)
+			{
+				serviceCalendarUserResModel.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendarUserResModel.Id);
+            }
 			List<ServiceCalendarUserGetModel> result = new List<ServiceCalendarUserGetModel>();
             foreach (DateTime date in datesInRange)
 			{
@@ -113,7 +121,6 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
 			if (tblServiceCalendar != null)
 			{
 				tblServiceCalendar.NextServiceDate = serviceCalendarUpdateModel.NextServiceDate;
-				tblServiceCalendar.ReportFileUrl = serviceCalendarUpdateModel.ReportFileURL;
 				tblServiceCalendar.Sumary = serviceCalendarUpdateModel.Sumary;
 				tblServiceCalendar.Status = ServiceCalendarStatus.DONE;
 				_ = _context.Update(tblServiceCalendar);
