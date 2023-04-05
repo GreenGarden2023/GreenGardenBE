@@ -2875,10 +2875,6 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Service order Id invalid.";
                     return result;
                 }
-
-                result.Code = 200;
-                result.IsSuccess = true;
-                result.Data = "";
             }
             catch (Exception e)
             {
