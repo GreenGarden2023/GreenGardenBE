@@ -16,6 +16,8 @@ namespace GreeenGarden.Data.Models.TransactionModel
 
         public string Status { get; set; }
 
+        public string? Description { get; set; }
+
         public PaymentType PaymentType { get; set; }
     }
 

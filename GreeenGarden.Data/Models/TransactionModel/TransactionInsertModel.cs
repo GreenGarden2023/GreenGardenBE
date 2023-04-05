@@ -9,7 +9,11 @@ namespace GreeenGarden.Data.Models.TransactionModel
 
 		public double Amount { get; set; }
 
-		public string PaymentType { get; set; }
+		public string Status { get; set; }
+
+		public string TransactionType { get; set; }
+
+        public string PaymentType { get; set; }
 
 		public string Description { get; set; }
     }

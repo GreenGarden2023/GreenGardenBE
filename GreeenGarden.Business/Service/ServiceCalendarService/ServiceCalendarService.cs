@@ -8,6 +8,8 @@ using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
 using GreeenGarden.Data.Entities;
 using Newtonsoft.Json.Linq;
 using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Data.Repositories.ServiceRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 
 namespace GreeenGarden.Business.Service.ServiceCalendarService
 {
@@ -16,11 +18,15 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
         private readonly DecodeToken _decodeToken;
         private readonly IServiceCalendarRepo _serviceCalendarRepo;
         private readonly IImageRepo _imageRepo;
-        public ServiceCalendarService(IServiceCalendarRepo serviceCalendarRepo, IImageRepo imageRepo)
+        private readonly IServiceRepo _serviceRepo;
+        private readonly IServiceOrderRepo _serviceOrderRepo;
+        public ServiceCalendarService(IServiceCalendarRepo serviceCalendarRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceOrderRepo serviceOrderRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceCalendarRepo = serviceCalendarRepo;
             _imageRepo = imageRepo;
+            _serviceRepo = serviceRepo;
+            _serviceOrderRepo = serviceOrderRepo;
         }
 
         public async Task<ResultModel> CreateServiceCalendar(string token, ServiceCalendarInsertModel serviceCalendarInsertModel)
@@ -156,6 +162,9 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                         }
                         else
                         {
+                            bool updateOrder = await _serviceOrderRepo.CompleteServiceOrder(oldCalendarRes.ServiceOrderId);
+                            TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(oldCalendarRes.ServiceOrderId);
+                            bool updateService = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.COMPLETED);
                             ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new ServiceCalendarUpdateResModel
                             {
                                 PreviousCalendar = oldCalendarRes,

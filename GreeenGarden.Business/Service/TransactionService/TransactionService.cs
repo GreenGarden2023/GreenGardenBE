@@ -70,8 +70,8 @@ namespace GreeenGarden.Business.Service.TransactionService
                         DatetimePaid = currentTime,
                         Description = transactionOrderCancelModel.Description,
                         PaymentId = paymentID,
-                        Type = TransactionType.RENT_REFUND,
-                        Status = TransactionStatus.REFUND
+                        Type = transactionOrderCancelModel.TransactionType,
+                        Status = transactionOrderCancelModel.Status
 
                     };
                     Guid insert = await _transactionRepo.Insert(tblTransaction);
@@ -103,6 +103,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                             Amount = (double)transaction.Amount,
                             PaidDate = (DateTime)transaction.DatetimePaid,
                             Type = transaction.Type,
+                            Description = transaction.Description,
                             Status = transaction.Status,
                             PaymentType = paymentType,
                         };
@@ -142,8 +143,8 @@ namespace GreeenGarden.Business.Service.TransactionService
                         DatetimePaid = currentTime,
                         Description = transactionOrderCancelModel.Description,
                         PaymentId = paymentID,
-                        Type = TransactionType.SALE_REFUND,
-                        Status = TransactionStatus.REFUND
+                        Type = transactionOrderCancelModel.TransactionType,
+                        Status = transactionOrderCancelModel.Status
 
                     };
                     Guid insert = await _transactionRepo.Insert(tblTransaction);
@@ -214,8 +215,8 @@ namespace GreeenGarden.Business.Service.TransactionService
                         DatetimePaid = currentTime,
                         Description = transactionOrderCancelModel.Description,
                         PaymentId = paymentID,
-                        Type = TransactionType.SERVICE_REFUND,
-                        Status = TransactionStatus.REFUND
+                        Type = transactionOrderCancelModel.TransactionType,
+                        Status = transactionOrderCancelModel.Status
 
                     };
                     Guid insert = await _transactionRepo.Insert(tblTransaction);
@@ -247,6 +248,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                             Amount = (double)transaction.Amount,
                             PaidDate = (DateTime)transaction.DatetimePaid,
                             Type = transaction.Type,
+                            Description = transaction.Description,
                             Status = transaction.Status,
                             PaymentType = paymentType
                         };
@@ -345,6 +347,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                             Amount = (double)transaction.Amount,
                             PaidDate = (DateTime)transaction.DatetimePaid,
                             Type = transaction.Type,
+                            Description = transaction.Description,
                             Status = transaction.Status,
                             PaymentType = paymentType
                         };
@@ -438,6 +441,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                             Amount = (double)transaction.Amount,
                             PaidDate = (DateTime)transaction.DatetimePaid,
                             Type = transaction.Type,
+                            Description = transaction.Description,
                             Status = transaction.Status,
                             PaymentType = paymentType
                         };
