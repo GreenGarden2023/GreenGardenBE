@@ -14,6 +14,8 @@
 
         public string? Address { get; set; }
 
+        public int? DistrictID { get; set; }
+
         public bool? IsTransport { get; set; }
 
         public int? RewardPointUsed { get; set; }

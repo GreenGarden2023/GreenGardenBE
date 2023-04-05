@@ -26,6 +26,8 @@
 
         public string? Address { get; set; }
 
+        public int? DistrictID { get; set; }
+
         public bool? IsTransport { get; set; }
 
         public double? TransportFee { get; set; }
