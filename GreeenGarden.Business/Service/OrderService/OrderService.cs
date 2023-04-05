@@ -2600,5 +2600,160 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
         }
+
+        public async Task<ResultModel> GetRentOrderDetailByOrderCode(string token, string orderCode)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.MANAGER)
+                        && !userRole.Equals(Commons.STAFF)
+                        && !userRole.Equals(Commons.ADMIN)
+                        && !userRole.Equals(Commons.CUSTOMER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Code = 403,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+
+                TblRentOrder tblRentOrder = await _rentOrderRepo.GetRentOrderByOrderCode(orderCode);
+                if (tblRentOrder != null)
+                {
+                    List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
+                    RentOrderResModel rentOrderResModel = new()
+                    {
+                        Id = tblRentOrder.Id,
+                        UserId = tblRentOrder.UserId,
+                        CreatedBy = tblRentOrder.CreatedBy,
+                        IsTransport = tblRentOrder.IsTransport,
+                        TransportFee = tblRentOrder.TransportFee,
+                        StartRentDate = tblRentOrder.StartDateRent,
+                        EndRentDate = tblRentOrder.EndDateRent,
+                        Deposit = tblRentOrder.Deposit,
+                        TotalPrice = tblRentOrder.TotalPrice,
+                        Status = tblRentOrder.Status,
+                        RemainMoney = tblRentOrder.RemainMoney,
+                        RewardPointGain = tblRentOrder.RewardPointGain,
+                        RewardPointUsed = tblRentOrder.RewardPointUsed,
+                        RentOrderGroupID = tblRentOrder.RentOrderGroupId,
+                        DiscountAmount = tblRentOrder.DiscountAmount,
+                        RecipientAddress = tblRentOrder.RecipientAddress,
+                        RecipientDistrict = tblRentOrder.RecipientDistrict,
+                        RecipientName = tblRentOrder.RecipientName,
+                        RecipientPhone = tblRentOrder.RecipientPhone,
+                        OrderCode = tblRentOrder.OrderCode,
+                        CreateDate = tblRentOrder.CreateDate,
+                        RentOrderDetailList = rentOrderDetailResModels
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = rentOrderResModel;
+                    result.Message = "Get rent order detail successful.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GetSaleOrderDetailByOrderCode(string token, string orderCode)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.MANAGER)
+                        && !userRole.Equals(Commons.STAFF)
+                        && !userRole.Equals(Commons.ADMIN)
+                        && !userRole.Equals(Commons.CUSTOMER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Code = 403,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+
+                TblSaleOrder tblSaleOrder = await _saleOrderRepo.GetSaleOrderByOrderCode(orderCode);
+                if (tblSaleOrder != null)
+                {
+                    List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(tblSaleOrder.Id);
+                    SaleOrderResModel saleOrderResModel = new()
+                    {
+                        Id = tblSaleOrder.Id,
+                        UserId = tblSaleOrder.UserId,
+                        IsTransport = tblSaleOrder.IsTransport,
+                        TransportFee = tblSaleOrder.TransportFee,
+                        CreateDate = (DateTime)tblSaleOrder.CreateDate,
+                        Deposit = tblSaleOrder.Deposit,
+                        TotalPrice = tblSaleOrder.TotalPrice,
+                        Status = tblSaleOrder.Status,
+                        RemainMoney = tblSaleOrder.RemainMoney,
+                        RewardPointGain = tblSaleOrder.RewardPointGain,
+                        RewardPointUsed = tblSaleOrder.RewardPointUsed,
+                        DiscountAmount = tblSaleOrder.DiscountAmount,
+                        RecipientAddress = tblSaleOrder.RecipientAddress,
+                        RecipientDistrict = tblSaleOrder.RecipientDistrict,
+                        RecipientName = tblSaleOrder.RecipientName,
+                        RecipientPhone = tblSaleOrder.RecipientPhone,
+                        OrderCode = tblSaleOrder.OrderCode,
+                        RentOrderDetailList = saleOrderDetailResModels
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = saleOrderResModel;
+                    result.Message = "Get sale order detail successful.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Id invalid.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }

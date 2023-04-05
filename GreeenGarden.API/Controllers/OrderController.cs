@@ -192,5 +192,22 @@ namespace GreeenGarden.API.Controllers
                 return BadRequest("Order type unknown."); 
             }
         }
+
+        [HttpPost("get-rent-order-detail-by-order-code")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetRentOrderDetailByOrderCode(string orderCode)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetRentOrderDetailByOrderCode(token, orderCode);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("get-sale-order-detail-by-order-code")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetSaleOrderDetailByOrderCode(string orderCode)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetSaleOrderDetailByOrderCode(token, orderCode);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }

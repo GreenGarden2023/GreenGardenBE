@@ -107,6 +107,11 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.OrderCode.Equals(code)).FirstOrDefaultAsync();
             return order != null;
         }
+
+        public async Task<TblSaleOrder> GetSaleOrderByOrderCode(string orderCode)
+        {
+            return await _context.TblSaleOrders.Where(x=>x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
+        }
     }
 }
 
