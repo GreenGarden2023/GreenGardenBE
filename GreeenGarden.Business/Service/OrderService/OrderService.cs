@@ -9,6 +9,7 @@ using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Models.SizeModel;
+using GreeenGarden.Data.Models.TransactionModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
@@ -23,6 +24,7 @@ using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
+using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using MailKit.Search;
 using System.Security.Claims;
@@ -48,6 +50,7 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly IServiceDetailRepo _serviceDetailRepo;
         private readonly IServiceOrderRepo _serviceOrderRepo;
         private readonly IUserRepo _userRepo;
+        private readonly ITransactionRepo _transactionRepo;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             IServiceRepo serviceRepo,
             IServiceDetailRepo serviceDetailRepo,
@@ -63,6 +66,7 @@ namespace GreeenGarden.Business.Service.OrderService
             IImageRepo imageRepo,
             IShippingFeeRepo shippingFeeRepo,
             IServiceOrderRepo serviceOrderRepo,
+            ITransactionRepo transactionRepo,
             IUserRepo userRepo)
         {
             _decodeToken = new DecodeToken();
@@ -82,6 +86,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _shippingFeeRepo = shippingFeeRepo;
             _serviceOrderRepo = serviceOrderRepo;
             _userRepo = userRepo;
+            _transactionRepo = transactionRepo;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -2529,6 +2534,23 @@ namespace GreeenGarden.Business.Service.OrderService
                     TblServiceOrder order = await _serviceOrderRepo.Get(serviceOrderID);
                     TblService resService = await _serviceRepo.Get(order.Id);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
+
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new TblTransaction
+                    {
+                        Id = Guid.NewGuid(),
+                        ServiceOrderId = order.Id,
+                        Amount = order.TotalPrice,
+                        DatetimePaid = currentTime,
+                        Description = "Order completion refund.",
+                        PaymentId = PaymentMethod.CASH,
+                        Type = TransactionType.SERVICE_REFUND,
+                        Status = TransactionStatus.REFUND
+
+                    };
+
+                    Guid insert = await _transactionRepo.Insert(tblTransaction);
                     ServiceResModel serviceResModel = new ServiceResModel
                     {
                         ID = resService.Id,

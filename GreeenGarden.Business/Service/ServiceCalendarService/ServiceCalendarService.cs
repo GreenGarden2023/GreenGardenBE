@@ -10,6 +10,8 @@ using Newtonsoft.Json.Linq;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
+using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Data.Repositories.UserRepo;
 
 namespace GreeenGarden.Business.Service.ServiceCalendarService
 {
@@ -20,13 +22,17 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
         private readonly IImageRepo _imageRepo;
         private readonly IServiceRepo _serviceRepo;
         private readonly IServiceOrderRepo _serviceOrderRepo;
-        public ServiceCalendarService(IServiceCalendarRepo serviceCalendarRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceOrderRepo serviceOrderRepo)
+        private readonly IEMailService _emailService;
+        private readonly IUserRepo _userRepo;
+        public ServiceCalendarService(IUserRepo userRepo, IServiceCalendarRepo serviceCalendarRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceOrderRepo serviceOrderRepo, IEMailService eMailService)
         {
             _decodeToken = new DecodeToken();
             _serviceCalendarRepo = serviceCalendarRepo;
             _imageRepo = imageRepo;
             _serviceRepo = serviceRepo;
             _serviceOrderRepo = serviceOrderRepo;
+            _emailService = eMailService;
+            _userRepo = userRepo;
         }
 
         public async Task<ResultModel> CreateServiceCalendar(string token, ServiceCalendarInsertModel serviceCalendarInsertModel)
@@ -146,6 +152,9 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                                     PreviousCalendar = oldCalendarRes,
                                     NextCalendar = nextCalendarRes
                                 };
+                                TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(oldCalendarRes.ServiceOrderId);
+                                TblUser tblUser = await _userRepo.Get(tblServiceOrder.UserId);
+                                _ = await _emailService.SendEmailReportUpdate(tblUser.Mail, oldCalendarRes.Id);
                                 result.Code = 200;
                                 result.IsSuccess = true;
                                 result.Data = serviceCalendarUpdateResModel;
@@ -162,6 +171,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                         }
                         else
                         {
+
                             bool updateOrder = await _serviceOrderRepo.CompleteServiceOrder(oldCalendarRes.ServiceOrderId);
                             TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(oldCalendarRes.ServiceOrderId);
                             bool updateService = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.COMPLETED);
@@ -170,6 +180,8 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                                 PreviousCalendar = oldCalendarRes,
                                 NextCalendar = null
                             };
+                            TblUser tblUser = await _userRepo.Get(tblServiceOrder.UserId);
+                            _ = await _emailService.SendEmailReportUpdate(tblUser.Mail, oldCalendarRes.Id);
                             result.Code = 200;
                             result.IsSuccess = true;
                             result.Data = serviceCalendarUpdateResModel;

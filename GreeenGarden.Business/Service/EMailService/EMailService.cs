@@ -1,6 +1,8 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
+using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
+using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using MailKit.Net.Smtp;
@@ -15,11 +17,15 @@ namespace GreeenGarden.Business.Service.EMailService
         private readonly IEmailOTPCodeRepo _emailOTPCodeRepo;
         private readonly IUserRepo _userRepo;
         private readonly IServiceRepo _serviceRepo;
-        public EMailService(IServiceRepo serviceRepo, IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo)
+        private readonly IServiceCalendarRepo _serviceCalendarRepo;
+        private readonly IServiceOrderRepo _serviceOrderRepo;
+        public EMailService(IServiceRepo serviceRepo, IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo, IServiceCalendarRepo serviceCalendarRepo, IServiceOrderRepo serviceOrderRepo)
         {
             _emailOTPCodeRepo = emailOTPCodeRepo;
             _userRepo = userRepo;
             _serviceRepo = serviceRepo;
+            _serviceCalendarRepo = serviceCalendarRepo;
+            _serviceOrderRepo = serviceOrderRepo;
         }
 
         public async Task<ResultModel> SendEmailRegisterVerificationOTP(string email, string userName)
@@ -196,16 +202,19 @@ namespace GreeenGarden.Business.Service.EMailService
                 return result;
             }
         }
-        public async Task<ResultModel> SendEmailReportUpdate(string email, string link)
+
+        public async Task<ResultModel> SendEmailReportUpdate(string email, Guid serviceCalendarId)
         {
             var result = new ResultModel();
             try
             {
+                TblServiceCalendar tblServiceCalendar = await _serviceCalendarRepo.Get(serviceCalendarId);
+                TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(tblServiceCalendar.ServiceOrderId);
                 string from = SecretService.SecretService.GetEmailCred().EmailAddress;
                 string password = SecretService.SecretService.GetEmailCred().EmailPassword;
                 MimeMessage message = new();
                 message.From.Add(MailboxAddress.Parse(from));
-                message.Subject = "GreenGarden takecare request update";
+                message.Subject = "GreenGarden cập nhật chăm sóc";
                 message.To.Add(MailboxAddress.Parse(email));
                 message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
                 {
@@ -213,9 +222,8 @@ namespace GreeenGarden.Business.Service.EMailService
                     "<html>" +
                     "<body>" +
                     "<h1>GreenGarden<h1>" +
-                    "<h3>Đơn hàng trong dịch vụ chăm sóc của bạn đã được thêm báo cáo.</h3>" +
-                    "<p>Vui lòng kiểm tra báo cáo tại: </p>" +
-                    link +
+                    "<h3>Lịch chăm sóc ngày"+ tblServiceCalendar.ServiceDate + " cho đơn hàng "+ tblServiceOrder.OrderCode + " đã có cập nhật.</h3>" +
+                    "<p>Vui lòng kiểm tra cập nhật tại: </p>" +
                     "<p> Trân trọng,</p>" +
                     "<h3>GreenGarden.</h3>" +
                     "</body>" +

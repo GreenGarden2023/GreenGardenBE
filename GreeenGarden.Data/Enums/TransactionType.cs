@@ -18,5 +18,7 @@
         public static readonly string RENT_ORDER = "rent payment";
         public static readonly string SALE_ORDER = "sale payment";
         public static readonly string SERVICE_ORDER = "service payment";
+
+        public static readonly string COMPENSATION_PAYMENT = "compensation payment";
     }
 }
