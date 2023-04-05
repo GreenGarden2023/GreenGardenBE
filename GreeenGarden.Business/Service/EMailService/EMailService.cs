@@ -77,6 +77,7 @@ namespace GreeenGarden.Business.Service.EMailService
             return result;
         }
 
+
         public async Task<ResultModel> SendEmailServiceUpdate(string email, string serviceCode)
         {
             ResultModel result = new();
@@ -172,7 +173,6 @@ namespace GreeenGarden.Business.Service.EMailService
             result.IsSuccess = true;
             result.Code = 200;
             result.Message = OTP;
-
             return result;
         }
 
@@ -195,6 +195,51 @@ namespace GreeenGarden.Business.Service.EMailService
                 result.Message = "Code verified failed.";
                 return result;
             }
+        }
+        public async Task<ResultModel> SendEmailReportUpdate(string email, string link)
+        {
+            var result = new ResultModel();
+            try
+            {
+                string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                MimeMessage message = new();
+                message.From.Add(MailboxAddress.Parse(from));
+                message.Subject = "GreenGarden takecare request update";
+                message.To.Add(MailboxAddress.Parse(email));
+                message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                {
+                    Text =
+                    "<html>" +
+                    "<body>" +
+                    "<h1>GreenGarden<h1>" +
+                    "<h3>Đơn hàng trong dịch vụ chăm sóc của bạn đã được thêm báo cáo.</h3>" +
+                    "<p>Vui lòng kiểm tra báo cáo tại: </p>" +
+                    link +
+                    "<p> Trân trọng,</p>" +
+                    "<h3>GreenGarden.</h3>" +
+                    "</body>" +
+                    "</html>"
+                };
+
+                using SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, password);
+                _ = await smtp.SendAsync(message);
+                await smtp.DisconnectAsync(true);
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Email send successful";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }
