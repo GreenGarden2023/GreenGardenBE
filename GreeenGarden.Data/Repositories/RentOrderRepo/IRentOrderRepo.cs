@@ -7,6 +7,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
     public interface IRentOrderRepo : IRepository<TblRentOrder>
     {
         Task<List<TblRentOrder>> GetRentOrders(Guid userID);
+        Task<TblRentOrder> GetRentOrderByOrderCode(string orderCode);
         Task<List<TblRentOrder>> GetRentOrdersByGroup(Guid rentOrderGroupID);
         Task<ResultModel> UpdateRentOrderStatus(Guid rentOrderID, string status);
         Task<ResultModel> UpdateRentOrderDeposit(Guid rentOrderID);
