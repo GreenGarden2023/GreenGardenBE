@@ -8,7 +8,6 @@ using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
 {
@@ -19,7 +18,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
         private readonly IProductItemRepo _productItemRepo;
         private readonly IImageRepo _imageRepo;
         private readonly ISizeRepo _sizeRepo;
-        public RentOrderDetailRepo(GreenGardenDbContext context,ISizeRepo sizeRepo,  IProductItemDetailRepo sizeProductItemRepo, IImageRepo imageRepo, IProductItemRepo productItemRepo) : base(context)
+        public RentOrderDetailRepo(GreenGardenDbContext context, ISizeRepo sizeRepo, IProductItemDetailRepo sizeProductItemRepo, IImageRepo imageRepo, IProductItemRepo productItemRepo) : base(context)
         {
             _context = context;
             _productItemDetailRepo = sizeProductItemRepo;
@@ -63,7 +62,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                 RentOrderDetailResModel model = new()
                 {
                     ID = detail.Id,
-                    ProductItemDetail = upResult?? null,
+                    ProductItemDetail = upResult ?? null,
                     Quantity = detail.Quantity ?? null,
                     TotalPrice = detail.TotalPrice ?? null,
                     RentPricePerUnit = detail.RentPricePerUnit ?? null,
@@ -78,8 +77,8 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
 
         public async Task<bool> UpdateRentOrderDetail(TblRentOrderDetail entity)
         {
-            _context.TblRentOrderDetails.Update(entity);
-            await _context.SaveChangesAsync();
+            _ = _context.TblRentOrderDetails.Update(entity);
+            _ = await _context.SaveChangesAsync();
             return true;
         }
     }

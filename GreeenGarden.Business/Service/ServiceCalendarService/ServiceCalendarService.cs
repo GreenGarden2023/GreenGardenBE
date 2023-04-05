@@ -1,17 +1,15 @@
-﻿using System;
+﻿using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Business.Utilities.TokenService;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
-using System.Security.Claims;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ServiceCalendarModel;
-using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
-using GreeenGarden.Data.Entities;
-using Newtonsoft.Json.Linq;
 using GreeenGarden.Data.Repositories.ImageRepo;
-using GreeenGarden.Data.Repositories.ServiceRepo;
+using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
-using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
+using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.ServiceCalendarService
 {
@@ -67,7 +65,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
             {
                 if (serviceCalendarInsertModel.CalendarInitial != null && serviceCalendarInsertModel.CalendarUpdate == null)
                 {
-                    TblServiceCalendar tblServiceCalendar = new TblServiceCalendar
+                    TblServiceCalendar tblServiceCalendar = new()
                     {
                         Id = Guid.NewGuid(),
                         ServiceOrderId = serviceCalendarInsertModel.CalendarInitial.ServiceOrderId,
@@ -79,7 +77,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                     {
                         TblServiceCalendar resGetModel = await _serviceCalendarRepo.Get(tblServiceCalendar.Id);
                         List<string> ImgUrls = await _imageRepo.GetImgUrlServiceCalendar(resGetModel.Id);
-                        ServiceCalendarResModel resModel = new ServiceCalendarResModel
+                        ServiceCalendarResModel resModel = new()
                         {
                             Id = resGetModel.Id,
                             ServiceOrderId = resGetModel.ServiceOrderId,
@@ -111,7 +109,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                         TblServiceCalendar oldCalendarGet = await _serviceCalendarRepo.Get(serviceCalendarInsertModel.CalendarUpdate.ServiceCalendarId);
                         bool updateImg = await _imageRepo.UpdateImgForServiceCalendar(oldCalendarGet.Id, serviceCalendarInsertModel.CalendarUpdate.Images);
                         List<string> ImgUrls = await _imageRepo.GetImgUrlServiceCalendar(oldCalendarGet.Id);
-                        ServiceCalendarResModel oldCalendarRes = new ServiceCalendarResModel
+                        ServiceCalendarResModel oldCalendarRes = new()
                         {
                             Id = oldCalendarGet.Id,
                             ServiceOrderId = oldCalendarGet.ServiceOrderId,
@@ -124,7 +122,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
 
                         if (serviceCalendarInsertModel.CalendarUpdate.NextServiceDate != null)
                         {
-                            TblServiceCalendar tblServiceCalendar = new TblServiceCalendar
+                            TblServiceCalendar tblServiceCalendar = new()
                             {
                                 Id = Guid.NewGuid(),
                                 ServiceOrderId = oldCalendarRes.ServiceOrderId,
@@ -137,7 +135,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
 
                                 TblServiceCalendar nextCalendarGet = await _serviceCalendarRepo.Get(tblServiceCalendar.Id);
                                 List<string> nextCaImgUrls = await _imageRepo.GetImgUrlServiceCalendar(nextCalendarGet.Id);
-                                ServiceCalendarResModel nextCalendarRes = new ServiceCalendarResModel
+                                ServiceCalendarResModel nextCalendarRes = new()
                                 {
                                     Id = nextCalendarGet.Id,
                                     ServiceOrderId = nextCalendarGet.ServiceOrderId,
@@ -147,7 +145,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                                     Status = nextCalendarGet.Status,
                                     Images = nextCaImgUrls
                                 };
-                                ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new ServiceCalendarUpdateResModel
+                                ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new()
                                 {
                                     PreviousCalendar = oldCalendarRes,
                                     NextCalendar = nextCalendarRes
@@ -175,7 +173,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                             bool updateOrder = await _serviceOrderRepo.CompleteServiceOrder(oldCalendarRes.ServiceOrderId);
                             TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(oldCalendarRes.ServiceOrderId);
                             bool updateService = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.COMPLETED);
-                            ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new ServiceCalendarUpdateResModel
+                            ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new()
                             {
                                 PreviousCalendar = oldCalendarRes,
                                 NextCalendar = null
@@ -188,7 +186,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                             result.Message = "Update calendar success";
                             return result;
                         }
-                        
+
 
                     }
                     else
@@ -252,11 +250,11 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                 List<TblServiceCalendar> resGet = await _serviceCalendarRepo.GetServiceCalendarsByServiceOrder(serviceOrderID);
                 if (resGet.Any())
                 {
-                    List<ServiceCalendarResModel> resModel = new List<ServiceCalendarResModel>();
+                    List<ServiceCalendarResModel> resModel = new();
                     foreach (TblServiceCalendar calendar in resGet)
                     {
                         List<string> ImgUrls = await _imageRepo.GetImgUrlServiceCalendar(calendar.Id);
-                        ServiceCalendarResModel serviceCalendarResModel = new ServiceCalendarResModel
+                        ServiceCalendarResModel serviceCalendarResModel = new()
                         {
                             Id = calendar.Id,
                             ServiceOrderId = calendar.ServiceOrderId,
@@ -322,34 +320,34 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                     Message = "User not allowed"
                 };
             }
-                ResultModel result = new();
-                try
+            ResultModel result = new();
+            try
+            {
+                ServiceCalendarGetModel res = await _serviceCalendarRepo.GetServiceCalendarsByTechnician(getServiceCalendarsByTechnician.TechnicianID, getServiceCalendarsByTechnician.Date);
+                if (res != null)
                 {
-                    ServiceCalendarGetModel res = await _serviceCalendarRepo.GetServiceCalendarsByTechnician(getServiceCalendarsByTechnician.TechnicianID, getServiceCalendarsByTechnician.Date);
-                    if (res != null)
-                    {
-                        result.Code = 200;
-                        result.IsSuccess = true;
-                        result.Data = res;
-                        result.Message = "Get calendar success";
-                        return result;
-                    }
-                    else
-                    {
-                        result.Code = 400;
-                        result.IsSuccess = false;
-                        result.Message = "Get calendar failed.";
-                        return result;
-                    }
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = res;
+                    result.Message = "Get calendar success";
+                    return result;
                 }
-                catch (Exception e)
+                else
                 {
-                    result.IsSuccess = false;
                     result.Code = 400;
-                    result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                    result.IsSuccess = false;
+                    result.Message = "Get calendar failed.";
                     return result;
                 }
             }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
 
         public async Task<ResultModel> GetServiceCalendarsByUser(string token, GetServiceCalendarsByUser getServiceCalendarsByUser)
         {
@@ -379,36 +377,36 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                     Message = "User not allowed"
                 };
             }
-                    ResultModel result = new();
-                    try
-                    {
-                        List<ServiceCalendarUserGetModel> resList = await _serviceCalendarRepo.GetServiceCalendarsByUser(getServiceCalendarsByUser.UserID, getServiceCalendarsByUser.StartDate, getServiceCalendarsByUser.EndDate);
-                        if (resList != null)
-                        {
-                            result.Code = 200;
-                            result.IsSuccess = true;
-                            result.Data = resList;
-                            result.Message = "Get calendar success";
-                            return result;
-                        }
-                        else
-                        {
-                            result.Code = 400;
-                            result.IsSuccess = false;
-                            result.Message = "Get calendar failed.";
-                            return result;
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        result.IsSuccess = false;
-                        result.Code = 400;
-                        result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-                        return result;
-                    }
+            ResultModel result = new();
+            try
+            {
+                List<ServiceCalendarUserGetModel> resList = await _serviceCalendarRepo.GetServiceCalendarsByUser(getServiceCalendarsByUser.UserID, getServiceCalendarsByUser.StartDate, getServiceCalendarsByUser.EndDate);
+                if (resList != null)
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = resList;
+                    result.Message = "Get calendar success";
+                    return result;
                 }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Get calendar failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
         }
-        }
-   
-        
+    }
+}
+
+
 

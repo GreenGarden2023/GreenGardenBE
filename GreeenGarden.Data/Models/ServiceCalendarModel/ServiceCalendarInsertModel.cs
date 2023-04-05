@@ -1,14 +1,13 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.ServiceCalendarModel
+﻿namespace GreeenGarden.Data.Models.ServiceCalendarModel
 {
-	public class ServiceCalendarInitModel
-	{
-		public Guid ServiceOrderId { get; set; }
+    public class ServiceCalendarInitModel
+    {
+        public Guid ServiceOrderId { get; set; }
 
-		public DateTime ServiceDate { get; set; }
+        public DateTime ServiceDate { get; set; }
 
     }
-	public class ServiceCalendarUpdateModel
+    public class ServiceCalendarUpdateModel
     {
         public Guid ServiceCalendarId { get; set; }
 

@@ -7,7 +7,6 @@ using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -476,7 +475,7 @@ namespace GreeenGarden.Business.Service.UserService
 
         public async Task<ResultModel> UpdateUserStatus(string token, UserUpdateStatusModel userUpdateStatusModel)
         {
-            
+
             string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
             if (!userRole.Equals(Commons.ADMIN)
                 && !userRole.Equals(Commons.MANAGER))

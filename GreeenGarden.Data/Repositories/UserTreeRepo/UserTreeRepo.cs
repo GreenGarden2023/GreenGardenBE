@@ -51,7 +51,7 @@ namespace GreeenGarden.Data.Repositories.UserTreeRepo
             }
         }
 
-        public async Task<List<TblUserTree>> GetUserTrees(Guid userID)
+        public async Task<List<TblUserTree>?> GetUserTrees(Guid userID)
         {
             List<TblUserTree> tblUserTrees = await _context.TblUserTrees.Where(x => x.UserId.Equals(userID)).ToListAsync();
             return tblUserTrees.Any() ? tblUserTrees : null;

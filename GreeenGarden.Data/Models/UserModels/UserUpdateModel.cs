@@ -16,13 +16,13 @@
     }
     public class OTPVerifyModel
     {
-        public string Email { get; set; }
-        public string OTPCode { get; set; }
+        public string? Email { get; set; }
+        public string? OTPCode { get; set; }
     }
     public class UserUpdateStatusModel
     {
         public Guid UserID { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
     }
 }
 

@@ -1,17 +1,15 @@
-﻿using System;
-using GreeenGarden.Business.Utilities.TokenService;
+﻿using GreeenGarden.Business.Utilities.TokenService;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
-using System.Security.Claims;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.TransactionModel;
-using Newtonsoft.Json.Linq;
-using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.TransactionRepo;
+using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.TransactionService
 {
-	public class TransactionService : ITransactionService
-	{
+    public class TransactionService : ITransactionService
+    {
         private readonly DecodeToken _decodeToken;
         private readonly ITransactionRepo _transactionRepo;
         public TransactionService(ITransactionRepo transactionRepo)
@@ -48,21 +46,15 @@ namespace GreeenGarden.Business.Service.TransactionService
                 };
             }
             ResultModel result = new();
-            try {
+            try
+            {
                 if (transactionOrderCancelModel.OrderType.Trim().ToLower().Equals("rent"))
                 {
                     Guid paymentID = Guid.Empty;
-                    if (transactionOrderCancelModel.PaymentType.Equals("momo"))
-                    {
-                        paymentID = PaymentMethod.MOMO;
-                    }
-                    else
-                    {
-                        paymentID = PaymentMethod.CASH;
-                    }
+                    paymentID = transactionOrderCancelModel.PaymentType.Equals("momo") ? PaymentMethod.MOMO : PaymentMethod.CASH;
                     TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                     DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                    TblTransaction tblTransaction = new TblTransaction
+                    TblTransaction tblTransaction = new()
                     {
                         Id = Guid.NewGuid(),
                         RentOrderId = transactionOrderCancelModel.OrderID,
@@ -78,7 +70,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                     if (insert != Guid.Empty)
                     {
                         TblTransaction transaction = await _transactionRepo.Get(tblTransaction.Id);
-                        PaymentType paymentType = new PaymentType
+                        PaymentType paymentType = new()
                         {
                             Id = transaction.PaymentId,
                             PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
@@ -96,7 +88,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
                         }
-                        TransactionResModel transactionResModel = new TransactionResModel
+                        TransactionResModel transactionResModel = new()
                         {
                             Id = transaction.Id,
                             OrderID = orderId,
@@ -125,17 +117,10 @@ namespace GreeenGarden.Business.Service.TransactionService
                 else if (transactionOrderCancelModel.OrderType.Trim().ToLower().Equals("sale"))
                 {
                     Guid paymentID = Guid.Empty;
-                    if (transactionOrderCancelModel.PaymentType.Equals("momo"))
-                    {
-                        paymentID = PaymentMethod.MOMO;
-                    }
-                    else
-                    {
-                        paymentID = PaymentMethod.CASH;
-                    }
+                    paymentID = transactionOrderCancelModel.PaymentType.Equals("momo") ? PaymentMethod.MOMO : PaymentMethod.CASH;
                     TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                     DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                    TblTransaction tblTransaction = new TblTransaction
+                    TblTransaction tblTransaction = new()
                     {
                         Id = Guid.NewGuid(),
                         SaleOrderId = transactionOrderCancelModel.OrderID,
@@ -151,7 +136,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                     if (insert != Guid.Empty)
                     {
                         TblTransaction transaction = await _transactionRepo.Get(tblTransaction.Id);
-                        PaymentType paymentType = new PaymentType
+                        PaymentType paymentType = new()
                         {
                             Id = transaction.PaymentId,
                             PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
@@ -169,7 +154,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
                         }
-                        TransactionResModel transactionResModel = new TransactionResModel
+                        TransactionResModel transactionResModel = new()
                         {
                             Id = transaction.Id,
                             OrderID = orderId,
@@ -197,17 +182,10 @@ namespace GreeenGarden.Business.Service.TransactionService
                 else if (transactionOrderCancelModel.OrderType.Trim().ToLower().Equals("service"))
                 {
                     Guid paymentID = Guid.Empty;
-                    if (transactionOrderCancelModel.PaymentType.Equals("momo"))
-                    {
-                        paymentID = PaymentMethod.MOMO;
-                    }
-                    else
-                    {
-                        paymentID = PaymentMethod.CASH;
-                    }
+                    paymentID = transactionOrderCancelModel.PaymentType.Equals("momo") ? PaymentMethod.MOMO : PaymentMethod.CASH;
                     TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                     DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                    TblTransaction tblTransaction = new TblTransaction
+                    TblTransaction tblTransaction = new()
                     {
                         Id = Guid.NewGuid(),
                         ServiceOrderId = transactionOrderCancelModel.OrderID,
@@ -223,7 +201,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                     if (insert != Guid.Empty)
                     {
                         TblTransaction transaction = await _transactionRepo.Get(tblTransaction.Id);
-                        PaymentType paymentType = new PaymentType
+                        PaymentType paymentType = new()
                         {
                             Id = transaction.PaymentId,
                             PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
@@ -241,7 +219,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
                         }
-                        TransactionResModel transactionResModel = new TransactionResModel
+                        TransactionResModel transactionResModel = new()
                         {
                             Id = transaction.Id,
                             OrderID = orderId,
@@ -319,16 +297,16 @@ namespace GreeenGarden.Business.Service.TransactionService
                 List<TblTransaction> tblTransactions = await _transactionRepo.GetTransactionByDateRange(transactionGetByDateModel.StartDate, transactionGetByDateModel.EndDate);
                 if (tblTransactions.Any())
                 {
-                    List<TransactionResModel> resList = new List<TransactionResModel>();
+                    List<TransactionResModel> resList = new();
                     foreach (TblTransaction transaction in tblTransactions)
                     {
-                        PaymentType paymentType = new PaymentType
+                        PaymentType paymentType = new()
                         {
                             Id = transaction.PaymentId,
                             PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
                         };
-                        Guid orderId = Guid.Empty; 
-                        if ( transaction.RentOrderId != null)
+                        Guid orderId = Guid.Empty;
+                        if (transaction.RentOrderId != null)
                         {
                             orderId = (Guid)transaction.RentOrderId;
                         }
@@ -340,7 +318,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
                         }
-                        TransactionResModel transactionResModel = new TransactionResModel
+                        TransactionResModel transactionResModel = new()
                         {
                             Id = transaction.Id,
                             OrderID = orderId,
@@ -413,10 +391,10 @@ namespace GreeenGarden.Business.Service.TransactionService
                 List<TblTransaction> tblTransactions = await _transactionRepo.GetTransactionByOrder(transactionGetByOrderModel.orderId, transactionGetByOrderModel.orderType);
                 if (tblTransactions.Any())
                 {
-                    List<TransactionResModel> resList = new List<TransactionResModel>();
+                    List<TransactionResModel> resList = new();
                     foreach (TblTransaction transaction in tblTransactions)
                     {
-                        PaymentType paymentType = new PaymentType
+                        PaymentType paymentType = new()
                         {
                             Id = transaction.PaymentId,
                             PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
@@ -434,7 +412,7 @@ namespace GreeenGarden.Business.Service.TransactionService
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
                         }
-                        TransactionResModel transactionResModel = new TransactionResModel
+                        TransactionResModel transactionResModel = new()
                         {
                             Id = transaction.Id,
                             OrderID = orderId,

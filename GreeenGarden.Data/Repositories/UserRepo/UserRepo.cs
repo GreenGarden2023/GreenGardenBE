@@ -131,14 +131,14 @@ namespace GreeenGarden.Data.Repositories.UserRepo
 
         public async Task<List<UserByRoleResModel>> GetUsersByRole(string role)
         {
-            List<UserByRoleResModel> userList = new List<UserByRoleResModel>();
-            List<TblUser> userGetList = new List<TblUser>();
+            List<UserByRoleResModel>? userList = new();
+            List<TblUser> userGetList = new();
             if (role.Equals("admin"))
             {
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("a56b469d-0f7e-4c3b-bba5-17037581596a"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -154,7 +154,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("56d4606a-08d0-4589-bd51-3a195d253ec5"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -170,7 +170,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("c98b8768-5827-4e5d-bf3c-3ba67b913d70"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -187,7 +187,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("7fb830b9-81c9-4d6e-984c-dfe9a779cf20"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -228,7 +228,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             return userModel;
         }
 
-        public async  Task<bool> UpdateUserStatus(Guid userID, string status)
+        public async Task<bool> UpdateUserStatus(Guid userID, string status)
         {
             var query = from u in context.TblUsers
                         where u.Id.Equals(userID)

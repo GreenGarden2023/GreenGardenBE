@@ -8,7 +8,6 @@ using GreeenGarden.Data.Repositories.UserRepo;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
-using static System.Net.WebRequestMethods;
 
 namespace GreeenGarden.Business.Service.EMailService
 {
@@ -87,7 +86,8 @@ namespace GreeenGarden.Business.Service.EMailService
         public async Task<ResultModel> SendEmailServiceUpdate(string email, string serviceCode)
         {
             ResultModel result = new();
-            try {
+            try
+            {
                 TblService tblService = await _serviceRepo.GetServiceByServiceCode(serviceCode);
                 string from = SecretService.SecretService.GetEmailCred().EmailAddress;
                 string password = SecretService.SecretService.GetEmailCred().EmailPassword;
@@ -103,7 +103,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     "<h1>GreenGarden<h1>" +
                     "<h3>Yêu cầu chăm sóc " + serviceCode + " đã được cập nhật.</h3>" +
                     "<p>Vui lòng xác nhận qua đường dẫn bên dưới: </p>" +
-                    "<p> https://ggarden.shop/take-care-service/me/"+tblService.Id+ " </p>"+
+                    "<p> https://ggarden.shop/take-care-service/me/" + tblService.Id + " </p>" +
                     "<p> Best regards,</p>" +
                     "<h3>GreenGarden.</h3>" +
                     "</body>" +
@@ -120,7 +120,9 @@ namespace GreeenGarden.Business.Service.EMailService
                 result.Code = 200;
                 result.Message = "Email send successful";
                 return result;
-            }catch(Exception e) {
+            }
+            catch (Exception e)
+            {
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.Message = e.ToString();
@@ -205,7 +207,7 @@ namespace GreeenGarden.Business.Service.EMailService
 
         public async Task<ResultModel> SendEmailReportUpdate(string email, Guid serviceCalendarId)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 TblServiceCalendar tblServiceCalendar = await _serviceCalendarRepo.Get(serviceCalendarId);
@@ -222,7 +224,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     "<html>" +
                     "<body>" +
                     "<h1>GreenGarden<h1>" +
-                    "<h3>Lịch chăm sóc ngày"+ tblServiceCalendar.ServiceDate + " cho đơn hàng "+ tblServiceOrder.OrderCode + " đã có cập nhật.</h3>" +
+                    "<h3>Lịch chăm sóc ngày" + tblServiceCalendar.ServiceDate + " cho đơn hàng " + tblServiceOrder.OrderCode + " đã có cập nhật.</h3>" +
                     "<p>Vui lòng kiểm tra cập nhật tại: </p>" +
                     "<p> Trân trọng,</p>" +
                     "<h3>GreenGarden.</h3>" +

@@ -20,7 +20,7 @@ namespace GreeenGarden.Data.Models.CategoryModel
     public class CategoryUpdateStatusModel
     {
         public Guid CategoryID { get; set; }
-        public string status { get; set; }
+        public string? status { get; set; }
     }
 }
 

@@ -86,7 +86,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 {
                     TblService resService = await _serviceRepo.Get(serviceAssignModelManager.ServiceID);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
@@ -167,14 +167,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 foreach (Guid id in serviceInsertModel.UserTreeIDList)
                 {
                     TblUserTree tblUserTree = await _userTreeRepo.Get(id);
-                    if (tblUserTree != null)
-                    {
-                        checkUserTree = false;
-                    }
-                    else
-                    {
-                        checkUserTree = true;
-                    }
+                    checkUserTree = tblUserTree == null;
 
                 }
                 if (checkUserTree == true)
@@ -186,7 +179,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 }
                 TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                TblService tblService = new TblService
+                TblService tblService = new()
                 {
                     Id = Guid.NewGuid(),
                     ServiceCode = "SERVICE_" + await GenerateServiceCode(),
@@ -210,7 +203,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     {
                         TblUserTree tblUserTree = await _userTreeRepo.Get(id);
                         List<string> tblUserTreeImgs = await _imageRepo.GetImgUrlUserTree(tblUserTree.Id);
-                        TblServiceDetail tblServiceDetail = new TblServiceDetail
+                        TblServiceDetail tblServiceDetail = new()
                         {
                             Id = Guid.NewGuid(),
                             UserTreeId = tblUserTree.Id,
@@ -223,7 +216,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Guid insertServiceDetail = await _serviceDetailRepo.Insert(tblServiceDetail);
                         if (insertServiceDetail != Guid.Empty)
                         {
-                            List<string> serviceDetailImgs = new List<string>();
+                            List<string> serviceDetailImgs = new();
                             foreach (string imgUrl in tblUserTreeImgs)
                             {
                                 string newImgUrl = await _imageService.ReUpload(imgUrl);
@@ -231,7 +224,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                             }
                             foreach (string url in serviceDetailImgs)
                             {
-                                TblImage tblImage = new TblImage
+                                TblImage tblImage = new()
                                 {
                                     ServiceDetailId = insertServiceDetail,
                                     ImageUrl = url
@@ -243,7 +236,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     }
                     TblService resService = await _serviceRepo.Get(tblService.Id);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
@@ -320,12 +313,12 @@ namespace GreeenGarden.Business.Service.TakecareService
             try
             {
                 List<TblService> tblServices = await _serviceRepo.GetAllRequest();
-                List<ServiceResModel> resModels = new List<ServiceResModel>();
+                List<ServiceResModel> resModels = new();
                 foreach (TblService service in tblServices)
                 {
                     int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = service.Id,
                         ServiceCode = service.ServiceCode,
@@ -368,7 +361,7 @@ namespace GreeenGarden.Business.Service.TakecareService
 
         public async Task<ResultModel> GetARequestDetail(string token, Guid serviceID)
         {
-             if (!string.IsNullOrEmpty(token))
+            if (!string.IsNullOrEmpty(token))
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
                 if (!userRole.Equals(Commons.MANAGER)
@@ -405,7 +398,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 }
                 TblService tblService = await _serviceRepo.Get(serviceID);
                 List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(serviceID);
-                ServiceResModel serviceResModel = new ServiceResModel
+                ServiceResModel serviceResModel = new()
                 {
                     ID = tblService.Id,
                     ServiceCode = tblService.ServiceCode,
@@ -478,7 +471,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 string userID = _decodeToken.Decode(token, "userid");
                 List<TblService> tblServices = await _serviceRepo.GetRequestByUser(Guid.Parse(userID));
 
-                List<ServiceResModel> resModels = new List<ServiceResModel>();
+                List<ServiceResModel> resModels = new();
                 foreach (TblService service in tblServices)
                 {
                     Guid orderID = Guid.Empty;
@@ -489,7 +482,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     }
                     int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = service.Id,
                         ServiceCode = service.ServiceCode,
@@ -575,7 +568,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 {
                     TblService resService = await _serviceRepo.Get(tblService.Id);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
@@ -687,7 +680,7 @@ namespace GreeenGarden.Business.Service.TakecareService
 
                     TblService getResService = await _serviceRepo.Get(serviceID);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = getResService.Id,
                         ServiceCode = getResService.ServiceCode,
@@ -719,7 +712,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 {
                     TblService getResService = await _serviceRepo.Get(serviceUpdateModelManager.ServiceID);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = getResService.Id,
                         UserId = getResService.UserId,
@@ -746,7 +739,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     result.Message = "Updated service with out service detail change.";
                     return result;
                 }
-                
+
                 return result;
             }
 
@@ -775,7 +768,7 @@ namespace GreeenGarden.Business.Service.TakecareService
         }
         public async Task<ResultModel> GetRequestDetailByServiceOrder(string token, string serviceOrder)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 if (!string.IsNullOrEmpty(token))
@@ -815,11 +808,11 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (tblService == null)
                 {
                     result.Message = "Service not found.";
-                    result.IsSuccess= false;
+                    result.IsSuccess = false;
                     return result;
                 }
                 List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(tblService.Id);
-                ServiceResModel serviceResModel = new ServiceResModel
+                ServiceResModel serviceResModel = new()
                 {
                     ID = tblService.Id,
                     ServiceCode = tblService.ServiceCode,

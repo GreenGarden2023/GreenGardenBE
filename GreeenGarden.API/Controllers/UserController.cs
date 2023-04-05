@@ -117,7 +117,7 @@ namespace GreeenGarden.API.Controllers
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
-        public async Task<ActionResult<ResultModel>> ResetPassword( PasswordResetModel passwordResetModel)
+        public async Task<ActionResult<ResultModel>> ResetPassword(PasswordResetModel passwordResetModel)
         {
             try
             {

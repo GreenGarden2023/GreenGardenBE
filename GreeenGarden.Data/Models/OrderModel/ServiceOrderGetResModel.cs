@@ -1,5 +1,4 @@
-﻿using System;
-using GreeenGarden.Data.Models.ServiceModel;
+﻿using GreeenGarden.Data.Models.ServiceModel;
 
 namespace GreeenGarden.Data.Models.OrderModel
 {
@@ -7,11 +6,11 @@ namespace GreeenGarden.Data.Models.OrderModel
     {
         public Guid Id { get; set; }
 
-        public string OrderCode { get; set; }
+        public string? OrderCode { get; set; }
 
         public Guid UserID { get; set; }
 
-        public ServiceOrderTechnician Technician { get; set; }
+        public ServiceOrderTechnician? Technician { get; set; }
 
         public DateTime CreateDate { get; set; }
 
@@ -33,24 +32,24 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public double TransportFee { get; set; }
 
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
-        public ServiceResModel Service { get; set; }
+        public ServiceResModel? Service { get; set; }
     }
 
     public class ServiceOrderTechnician
     {
         public Guid TechnicianID { get; set; }
 
-        public string TechnicianUserName { get; set; }
+        public string? TechnicianUserName { get; set; }
 
-        public string TechnicianFullName { get; set; }
+        public string? TechnicianFullName { get; set; }
 
-        public string TechnicianAddress { get; set; }
+        public string? TechnicianAddress { get; set; }
 
-        public string TechnicianPhone { get; set; }
+        public string? TechnicianPhone { get; set; }
 
-        public string TechnicianMail { get; set; }
+        public string? TechnicianMail { get; set; }
     }
 }
 

@@ -831,7 +831,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("rent"))
                 {
                     TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    
+
                     if (tblRentOrder == null)
                     {
                         resultModel.Code = 400;
@@ -867,7 +867,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 else if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("sale"))
                 {
                     TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    
+
                     if (tblSaleOrder == null)
                     {
                         resultModel.Code = 400;
@@ -903,7 +903,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 else if (moMoWholeOrderModel.OrderType.ToLower().Trim().Equals("service"))
                 {
                     TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    
+
                     if (tblServiceOrder == null)
                     {
                         resultModel.Code = 400;

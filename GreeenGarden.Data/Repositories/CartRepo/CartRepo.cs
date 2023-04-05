@@ -1,7 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.CartRepo

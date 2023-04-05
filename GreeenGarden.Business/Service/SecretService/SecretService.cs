@@ -9,7 +9,7 @@ namespace GreeenGarden.Business.Service.SecretService
         public static string URI = "https://ggkeyvault2023.vault.azure.net/";
         public static string GetConnectionString()
         {
-            string conn = null;
+            string? conn = null;
             try
             {
                 SecretClientOptions options = new()
@@ -66,7 +66,7 @@ namespace GreeenGarden.Business.Service.SecretService
         }
         public static string GetIMGConn()
         {
-            string tokenSecret = null;
+            string? tokenSecret = null;
             try
             {
                 SecretClientOptions options = new()
@@ -94,7 +94,7 @@ namespace GreeenGarden.Business.Service.SecretService
         }
         public static string GetStorageKey()
         {
-            string tokenSecret = null;
+            string? tokenSecret = null;
             try
             {
                 SecretClientOptions options = new()
@@ -187,8 +187,8 @@ namespace GreeenGarden.Business.Service.SecretService
     }
     public class EmailSecrets
     {
-        public string EmailAddress { get; set; }
-        public string EmailPassword { get; set; }
+        public string? EmailAddress { get; set; }
+        public string? EmailPassword { get; set; }
     }
 
 }

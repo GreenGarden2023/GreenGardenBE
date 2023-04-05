@@ -135,7 +135,7 @@ namespace GreeenGarden.Business.Service.ProductService
                 foreach (TblProduct p in listProdct.Results)
                 {
                     TblImage img = await _imageRepo.GetImgUrlProduct(p.Id);
-                    string imgURL = img != null ? img.ImageUrl : "";
+                    string? imgURL = img != null ? img.ImageUrl : "";
                     ProductModel productToShow = new()
                     {
                         Id = p.Id,
@@ -205,7 +205,7 @@ namespace GreeenGarden.Business.Service.ProductService
                 foreach (TblProduct p in listProdct.Results)
                 {
                     TblImage img = await _imageRepo.GetImgUrlProduct(p.Id);
-                    string imgURL = img != null ? img.ImageUrl : "";
+                    string? imgURL = img != null ? img.ImageUrl : "";
                     ProductModel productToShow = new()
                     {
                         Id = p.Id,

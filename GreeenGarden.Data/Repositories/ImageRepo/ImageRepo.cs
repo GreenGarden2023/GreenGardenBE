@@ -44,10 +44,14 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<List<string>> GetImgUrlFeedback(Guid feedbackID)
         {
-            var result = new List<string>();
-            var tblImg =  await _context.TblImages.Where(x=>x.FeedbackId.Equals(feedbackID)).ToListAsync();
-            if (tblImg == null) result = null;
-            foreach (var img in tblImg)
+            List<string>? result = new();
+            List<TblImage>? tblImg = await _context.TblImages.Where(x => x.FeedbackId.Equals(feedbackID)).ToListAsync();
+            if (tblImg == null)
+            {
+                result = null;
+            }
+
+            foreach (TblImage? img in tblImg)
             {
                 result.Add(img.ImageUrl);
             }

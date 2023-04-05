@@ -36,7 +36,7 @@
 
         public string? OrderCode { get; set; }
 
-        public List<SaleOrderDetailResModel> RentOrderDetailList { get; set; }
+        public List<SaleOrderDetailResModel>? RentOrderDetailList { get; set; }
     }
     public class SaleOrderDetailResModel
     {

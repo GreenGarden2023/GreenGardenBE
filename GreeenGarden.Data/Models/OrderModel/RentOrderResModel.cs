@@ -38,7 +38,7 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public string? RecipientAddress { get; set; }
 
-        public int? RecipientDistrict{ get; set; }
+        public int? RecipientDistrict { get; set; }
 
         public string? RecipientPhone { get; set; }
 
@@ -46,12 +46,12 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public string? OrderCode { get; set; }
 
-        public List<RentOrderDetailResModel> RentOrderDetailList { get; set; }
+        public List<RentOrderDetailResModel>? RentOrderDetailList { get; set; }
     }
     public class RentOrderDetailResModel
     {
         public Guid ID { get; set; }
-        public ProductItemDetailResModel ProductItemDetail { get; set; }
+        public ProductItemDetailResModel? ProductItemDetail { get; set; }
         public double? TotalPrice { get; set; }
         public int? Quantity { get; set; }
         public double? RentPricePerUnit { get; set; }

@@ -39,7 +39,7 @@
     }
     public class ServiceCalendarStatus
     {
-        public static readonly string PENDING = "pending"; 
+        public static readonly string PENDING = "pending";
         public static readonly string DONE = "done";
 
     }

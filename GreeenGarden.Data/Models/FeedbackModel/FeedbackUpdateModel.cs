@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GreeenGarden.Data.Models.FeedbackModel
+﻿namespace GreeenGarden.Data.Models.FeedbackModel
 {
     public class FeedbackUpdateModel
     {
@@ -12,6 +6,6 @@ namespace GreeenGarden.Data.Models.FeedbackModel
     public class FeedbackChangeStatusModel
     {
         public Guid FeedbackID { get; set; }
-        public string Status { get; set;}
+        public string? Status { get; set; }
     }
 }

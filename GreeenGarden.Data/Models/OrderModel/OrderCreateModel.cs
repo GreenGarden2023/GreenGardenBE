@@ -21,7 +21,7 @@
 
         public bool? IsTransport { get; set; }
 
-        public List<OrderDetailModel> ItemList { get; set; }
+        public List<OrderDetailModel>? ItemList { get; set; }
 
     }
     public class OrderDetailModel

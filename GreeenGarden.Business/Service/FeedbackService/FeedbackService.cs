@@ -5,7 +5,6 @@ using GreeenGarden.Data.Models.FeedbackModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
-using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.FeedbackRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
@@ -16,16 +15,7 @@ using GreeenGarden.Data.Repositories.SaleOrderRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Rewrite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using EntityFrameworkPaginateCore;
-using System.Text;
-using System.Threading.Tasks;
-using GreeenGarden.Business.Utilities.Convert;
 
 namespace GreeenGarden.Business.Service.FeedbackService
 {
@@ -62,7 +52,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
 
         public async Task<ResultModel> changeStatus(string token, FeedbackChangeStatusModel model)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
@@ -86,7 +76,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
 
         public async Task<ResultModel> createFeedback(string token, FeedbackCreateModel model)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 bool flag = false;
@@ -111,7 +101,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     };
                 }
 
-                var productItemDetail = await _proItemDetailRepo.Get(model.ProductItemDetailID);
+                TblProductItemDetail? productItemDetail = await _proItemDetailRepo.Get(model.ProductItemDetailID);
                 string userID = _decodeToken.Decode(token, "userid");
                 if (productItemDetail == null)
                 {
@@ -120,8 +110,8 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     return result;
                 }
 
-                var order = new object();
-                var saleOrder = await _saleOrdRepo.Get(model.OrderID);
+                object order = new();
+                TblSaleOrder? saleOrder = await _saleOrdRepo.Get(model.OrderID);
                 if (saleOrder != null)
                 {
                     flag = true;
@@ -131,23 +121,23 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         result.Message = "Đơn hàng chưa hoàn tất";
                         return result;
                     }
-                    var listSaleOrderDetail = await _saleOrdDetailRepo.GetSaleOrderDetails(saleOrder.Id);
-                    var saleOrderDetail = new TblSaleOrderDetail();
-                    if ((DateTime.Now - (DateTime) saleOrder.CreateDate).TotalDays >= 30)
+                    List<Data.Models.OrderModel.SaleOrderDetailResModel> listSaleOrderDetail = await _saleOrdDetailRepo.GetSaleOrderDetails(saleOrder.Id);
+                    TblSaleOrderDetail? saleOrderDetail = new();
+                    if ((DateTime.Now - (DateTime)saleOrder.CreateDate).TotalDays >= 30)
                     {
                         result.IsSuccess = false;
                         result.Message = "Đã quá hạn để feedback";
                         return result;
                     }
-                    foreach (var i in listSaleOrderDetail)
+                    foreach (Data.Models.OrderModel.SaleOrderDetailResModel i in listSaleOrderDetail)
                     {
                         bool check = false;
-                        if (model.ProductItemDetailID.Equals(i.ProductItemDetailID)) 
-                        { 
+                        if (model.ProductItemDetailID.Equals(i.ProductItemDetailID))
+                        {
                             check = true;
                             saleOrderDetail = await _saleOrdDetailRepo.Get(i.ID);
                         } // get saleOrderDetailID
-                        
+
                         if (check == false)
                         {
                             result.IsSuccess = false;
@@ -168,10 +158,10 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         return result;
                     }
                     saleOrderDetail.FeedbackStatus = true;
-                    await _saleOrdDetailRepo.UpdateSaleOrderDetails(saleOrderDetail);
-                    
+                    _ = await _saleOrdDetailRepo.UpdateSaleOrderDetails(saleOrderDetail);
+
                 };
-                var rentOrder = await _rentOrdRepo.Get(model.OrderID);
+                TblRentOrder? rentOrder = await _rentOrdRepo.Get(model.OrderID);
                 if (rentOrder != null)
                 {
                     flag = true;
@@ -181,15 +171,15 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         result.Message = "Đơn hàng chưa hoàn tất";
                         return result;
                     }
-                    var listRentOrderDetail = await _rentOrdDetailRepo.GetRentOrderDetails(rentOrder.Id);
-                    var rentOrderDetail = new TblRentOrderDetail();
+                    List<Data.Models.OrderModel.RentOrderDetailResModel> listRentOrderDetail = await _rentOrdDetailRepo.GetRentOrderDetails(rentOrder.Id);
+                    TblRentOrderDetail? rentOrderDetail = new();
                     if ((DateTime.Now - (DateTime)rentOrder.CreateDate).TotalDays >= 30)
                     {
                         result.IsSuccess = false;
                         result.Message = "Đã quá hạn để feedback";
                         return result;
                     }
-                    foreach (var i in listRentOrderDetail)
+                    foreach (Data.Models.OrderModel.RentOrderDetailResModel i in listRentOrderDetail)
                     {
                         bool check = false;
                         if (model.ProductItemDetailID.Equals(i.ProductItemDetail.Id))
@@ -218,7 +208,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         return result;
                     }
                     rentOrderDetail.FeedbackStatus = true;
-                    await _rentOrdDetailRepo.UpdateRentOrderDetail(rentOrderDetail);
+                    _ = await _rentOrdDetailRepo.UpdateRentOrderDetail(rentOrderDetail);
                 }
 
                 if (flag == false)
@@ -229,7 +219,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
                 }
 
 
-                var newFeedback = new TblFeedBack()
+                TblFeedBack newFeedback = new()
                 {
                     Id = Guid.NewGuid(),
                     Comment = model.Comment,
@@ -241,16 +231,16 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     UserId = Guid.Parse(userID),
                     UpdateDate = null
                 };
-                await _fbRepo.Insert(newFeedback);
+                _ = await _fbRepo.Insert(newFeedback);
 
-                foreach (var url in model.ImagesUrls)
+                foreach (string url in model.ImagesUrls)
                 {
                     TblImage newImg = new()
                     {
                         ImageUrl = url,
                         FeedbackId = newFeedback.Id,
                     };
-                    await _imgRepo.Insert(newImg);
+                    _ = await _imgRepo.Insert(newImg);
                 }
                 newFeedback.ProductItemDetail.TblRentOrderDetails.Clear();
                 result.Code = 200;
@@ -271,9 +261,9 @@ namespace GreeenGarden.Business.Service.FeedbackService
             throw new NotImplementedException();
         }
 
-        public async Task<ResultModel> getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
+        public ResultModel getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
 
@@ -292,55 +282,61 @@ namespace GreeenGarden.Business.Service.FeedbackService
 
         public async Task<ResultModel> getListFeedbackByProductItem(string token, PaginationRequestModel pagingModel, Guid productItemID)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-              var listProductItemDetail = await _proItemDetailRepo.GetSizeProductItems(productItemID, Status.ACTIVE);
-                var listFeedback = new List<FeedbackResModel>();
-                foreach (var i in listProductItemDetail)
+                List<Data.Models.ProductItemDetailModel.ProductItemDetailResModel> listProductItemDetail = await _proItemDetailRepo.GetSizeProductItems(productItemID, Status.ACTIVE);
+                List<FeedbackResModel> listFeedback = new();
+                foreach (Data.Models.ProductItemDetailModel.ProductItemDetailResModel i in listProductItemDetail)
                 {
-                    var listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(i.Id);
-                    foreach (var fb in listFeedbackRecord)
+                    List<TblFeedBack> listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(i.Id);
+                    foreach (TblFeedBack fb in listFeedbackRecord)
                     {
-                        var fbRes = new FeedbackResModel();
-                        var user = await _userRepo.Get(fb.UserId);
-                        var size = await _sizeRepo.Get(i.Size.Id);
-                        var listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
+                        FeedbackResModel fbRes = new();
+                        TblUser? user = await _userRepo.Get(fb.UserId);
+                        TblSize? size = await _sizeRepo.Get(i.Size.Id);
+                        List<string> listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
                         fbRes.CreateDate = fb.CreateDate;
                         fbRes.UpdateDate = fb.UpdateDate;
                         fbRes.ID = fb.Id;
                         fbRes.Rating = fb.Rating;
                         fbRes.Comment = fb.Comment;
                         fbRes.Status = fb.Status;
-                        fbRes.User = new UserCurrResModel();
-                        fbRes.User.FullName = user.FullName;
-                        fbRes.User.UserName = user.UserName;
-                        fbRes.User.Id = user.Id;
-                        fbRes.User.Phone = user.Phone;
-                        fbRes.ProductItemDetail = new Data.Models.ProductItemDetailModel.ProductItemDetailResModel();
-                        fbRes.ProductItemDetail.Id = i.Id;
-                        fbRes.ProductItemDetail.Size = new Data.Models.SizeModel.SizeResModel();
-                        fbRes.ProductItemDetail.Size.Id = size.Id;
-                        fbRes.ProductItemDetail.Size.SizeName = size.Name;
-                        fbRes.ProductItemDetail.Size.SizeType = size.Type;
+                        fbRes.User = new UserCurrResModel
+                        {
+                            FullName = user.FullName,
+                            UserName = user.UserName,
+                            Id = user.Id,
+                            Phone = user.Phone
+                        };
+                        fbRes.ProductItemDetail = new Data.Models.ProductItemDetailModel.ProductItemDetailResModel
+                        {
+                            Id = i.Id,
+                            Size = new Data.Models.SizeModel.SizeResModel
+                            {
+                                Id = size.Id,
+                                SizeName = size.Name,
+                                SizeType = size.Type
+                            }
+                        };
                         fbRes.ImageURL = new List<string>();
                         fbRes.ImageURL = listImgUrl;
 
                         listFeedback.Add(fbRes);
                     }
                 }
-                var pag = new PaginationResponseModel().CurPage(pagingModel.curPage)
+                PaginationResponseModel pag = new PaginationResponseModel().CurPage(pagingModel.curPage)
                     .PageSize(pagingModel.pageSize)
                     .RecordCount(listFeedback.Count)
                     .PageCount((int)Math.Ceiling((double)listFeedback.Count / pagingModel.pageSize));
 
-                var pageFeedback = listFeedback.OrderByDescending(y=>y.CreateDate)
+                List<FeedbackResModel> pageFeedback = listFeedback.OrderByDescending(y => y.CreateDate)
                     .Skip((pagingModel.curPage - 1) * pagingModel.pageSize)
                     .Take(pagingModel.pageSize).ToList();
 
-               var res = new FeedbackRes()
+                FeedbackRes res = new()
                 {
-                    FeedbackList= pageFeedback,
+                    FeedbackList = pageFeedback,
                     Paging = pag,
                 };
 
@@ -355,6 +351,11 @@ namespace GreeenGarden.Business.Service.FeedbackService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
+        }
+
+        Task<ResultModel> IFeedbackService.getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
+        {
+            throw new NotImplementedException();
         }
     }
 }
