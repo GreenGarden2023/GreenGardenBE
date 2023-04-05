@@ -19,9 +19,9 @@ namespace GreeenGarden.Data.Models.ServiceCalendarModel
     }
     public class ServiceCalendarUpdateResModel
     {
-        public ServiceCalendarResModel PreviousCalendar { get; set; }
+        public ServiceCalendarResModel? PreviousCalendar { get; set; }
 
-        public ServiceCalendarResModel NextCalendar { get; set; }
+        public ServiceCalendarResModel? NextCalendar { get; set; }
     }
 
 

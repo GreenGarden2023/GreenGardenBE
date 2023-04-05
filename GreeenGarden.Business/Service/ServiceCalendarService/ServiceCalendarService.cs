@@ -109,33 +109,57 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                             Status = oldCalendarGet.Status,
                             Images = ImgUrls
                         };
-                        TblServiceCalendar tblServiceCalendar = new TblServiceCalendar
-                        {
-                            Id = Guid.NewGuid(),
-                            ServiceOrderId = oldCalendarRes.ServiceOrderId,
-                            ServiceDate = serviceCalendarInsertModel.CalendarUpdate.NextServiceDate,
-                            Status = ServiceCalendarStatus.PENDING
-                        };
-                        Guid insert = await _serviceCalendarRepo.Insert(tblServiceCalendar);
-                        if (insert != Guid.Empty)
-                        {
 
-                            TblServiceCalendar nextCalendarGet = await _serviceCalendarRepo.Get(tblServiceCalendar.Id);
-                            List<string> nextCaImgUrls = await _imageRepo.GetImgUrlServiceCalendar(nextCalendarGet.Id);
-                            ServiceCalendarResModel nextCalendarRes = new ServiceCalendarResModel
+                        if (serviceCalendarInsertModel.CalendarUpdate.NextServiceDate != null)
+                        {
+                            TblServiceCalendar tblServiceCalendar = new TblServiceCalendar
                             {
-                                Id = nextCalendarGet.Id,
-                                ServiceOrderId = nextCalendarGet.ServiceOrderId,
-                                ServiceDate = nextCalendarGet.ServiceDate,
-                                NextServiceDate = nextCalendarGet.NextServiceDate,
-                                Sumary = nextCalendarGet.Sumary,
-                                Status = nextCalendarGet.Status,
-                                Images = nextCaImgUrls
+                                Id = Guid.NewGuid(),
+                                ServiceOrderId = oldCalendarRes.ServiceOrderId,
+                                ServiceDate = serviceCalendarInsertModel.CalendarUpdate.NextServiceDate,
+                                Status = ServiceCalendarStatus.PENDING
                             };
+                            Guid insert = await _serviceCalendarRepo.Insert(tblServiceCalendar);
+                            if (insert != Guid.Empty)
+                            {
+
+                                TblServiceCalendar nextCalendarGet = await _serviceCalendarRepo.Get(tblServiceCalendar.Id);
+                                List<string> nextCaImgUrls = await _imageRepo.GetImgUrlServiceCalendar(nextCalendarGet.Id);
+                                ServiceCalendarResModel nextCalendarRes = new ServiceCalendarResModel
+                                {
+                                    Id = nextCalendarGet.Id,
+                                    ServiceOrderId = nextCalendarGet.ServiceOrderId,
+                                    ServiceDate = nextCalendarGet.ServiceDate,
+                                    NextServiceDate = nextCalendarGet.NextServiceDate,
+                                    Sumary = nextCalendarGet.Sumary,
+                                    Status = nextCalendarGet.Status,
+                                    Images = nextCaImgUrls
+                                };
+                                ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new ServiceCalendarUpdateResModel
+                                {
+                                    PreviousCalendar = oldCalendarRes,
+                                    NextCalendar = nextCalendarRes
+                                };
+                                result.Code = 200;
+                                result.IsSuccess = true;
+                                result.Data = serviceCalendarUpdateResModel;
+                                result.Message = "Update calendar success";
+                                return result;
+                            }
+                            else
+                            {
+                                result.Code = 400;
+                                result.IsSuccess = false;
+                                result.Message = "Create next calendar failed";
+                                return result;
+                            }
+                        }
+                        else
+                        {
                             ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new ServiceCalendarUpdateResModel
                             {
                                 PreviousCalendar = oldCalendarRes,
-                                NextCalendar = nextCalendarRes
+                                NextCalendar = null
                             };
                             result.Code = 200;
                             result.IsSuccess = true;
@@ -143,13 +167,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                             result.Message = "Update calendar success";
                             return result;
                         }
-                        else
-                        {
-                            result.Code = 400;
-                            result.IsSuccess = false;
-                            result.Message = "Create next calendar failed";
-                            return result;
-                        }
+                        
 
                     }
                     else
