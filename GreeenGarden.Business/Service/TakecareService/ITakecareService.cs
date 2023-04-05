@@ -12,6 +12,7 @@ namespace GreeenGarden.Business.Service.TakecareService
         Task<ResultModel> GetUserRequest(string token);
         Task<ResultModel> GetAllRequest(string token);
         Task<ResultModel> GetARequestDetail(string token, Guid serviceID);
+        Task<ResultModel> GetRequestDetailByServiceOrder(string token, string serviceOrder);
     }
 }
 

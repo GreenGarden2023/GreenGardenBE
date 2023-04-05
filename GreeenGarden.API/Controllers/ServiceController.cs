@@ -77,6 +77,15 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _takecareService.UpdateServicePrice(token, updateService.ServiceUpdate, updateService.ServiceDetailUpdate);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
+        [HttpGet("get-request-detail-by-service-order")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetRequestDetailByServiceOrder(string serviceOrder)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.GetRequestDetailByServiceOrder(token, serviceOrder);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
 
