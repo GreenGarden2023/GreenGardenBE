@@ -21,6 +21,8 @@ public partial class TblService
 
     public string? Address { get; set; }
 
+    public int? DistrictId { get; set; }
+
     public string? Status { get; set; }
 
     public Guid UserId { get; set; }
@@ -38,6 +40,8 @@ public partial class TblService
     public int? RewardPointUsed { get; set; }
 
     public string? Rules { get; set; }
+
+    public virtual TblDistrict? District { get; set; }
 
     public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();
 

@@ -16,7 +16,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
             _imageRepo = imageRepo;
         }
 
-        public async Task<ServiceDetailResModel> GetServiceDetailByID(Guid serviceDetailID)
+        public async Task<ServiceDetailResModel?> GetServiceDetailByID(Guid serviceDetailID)
         {
             try
             {
@@ -24,7 +24,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                 if (tblServiceDetail != null)
                 {
                     List<string> imgs = await _imageRepo.GetImgUrlServiceDetail(tblServiceDetail.Id);
-                    ServiceDetailResModel serviceDetail = new ServiceDetailResModel
+                    ServiceDetailResModel serviceDetail = new()
                     {
                         ID = tblServiceDetail.Id,
                         UserTreeID = tblServiceDetail.UserTreeId ?? Guid.Empty,
@@ -49,19 +49,19 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
             }
         }
 
-        public async Task<List<ServiceDetailResModel>> GetServiceDetailByServiceID(Guid serviceID)
+        public async Task<List<ServiceDetailResModel>?> GetServiceDetailByServiceID(Guid serviceID)
         {
             try
             {
                 List<TblServiceDetail> tblServiceDetails = await _context.TblServiceDetails.Where(x => x.ServiceId.Equals(serviceID)).ToListAsync();
                 if (tblServiceDetails.Any())
                 {
-                    List<ServiceDetailResModel> resList = new List<ServiceDetailResModel>();
+                    List<ServiceDetailResModel> resList = new();
 
                     foreach (TblServiceDetail detail in tblServiceDetails)
                     {
                         List<string> imgs = await _imageRepo.GetImgUrlServiceDetail(detail.Id);
-                        ServiceDetailResModel serviceDetail = new ServiceDetailResModel
+                        ServiceDetailResModel serviceDetail = new()
                         {
                             ID = detail.Id,
                             UserTreeID = detail.UserTreeId ?? Guid.Empty,

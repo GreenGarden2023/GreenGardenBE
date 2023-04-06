@@ -1,7 +1,4 @@
-﻿
-using System;
-using GreeenGarden.Business.Service.TransactionService;
-using GreeenGarden.Data.Models.MoMoModel;
+﻿using GreeenGarden.Business.Service.TransactionService;
 using GreeenGarden.Data.Models.TransactionModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +11,10 @@ namespace GreeenGarden.API.Controllers
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
-		public TransactionController(ITransactionService transactionService)
-		{
+        public TransactionController(ITransactionService transactionService)
+        {
             _transactionService = transactionService;
-		}
+        }
         [HttpGet("get-transaction-by-order")]
         [SwaggerOperation(Summary = "rent/sale/service")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer")]

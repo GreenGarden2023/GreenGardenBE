@@ -13,11 +13,11 @@ public partial class TblServiceCalendar
 
     public DateTime? NextServiceDate { get; set; }
 
-    public string? ReportFileUrl { get; set; }
-
     public string? Sumary { get; set; }
 
     public string? Status { get; set; }
 
     public virtual TblServiceOrder ServiceOrder { get; set; } = null!;
+
+    public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
 }

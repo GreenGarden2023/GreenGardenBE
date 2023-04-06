@@ -4,7 +4,7 @@
     {
         public Guid ID { get; set; }
 
-        public string ServiceCode { get; set; }
+        public string? ServiceCode { get; set; }
 
         public Guid UserId { get; set; }
 
@@ -26,6 +26,8 @@
 
         public string? Address { get; set; }
 
+        public int? DistrictID { get; set; }
+
         public bool? IsTransport { get; set; }
 
         public double? TransportFee { get; set; }
@@ -40,7 +42,7 @@
 
         public string? TechnicianName { get; set; }
 
-        public List<ServiceDetailResModel> ServiceDetailList { get; set; }
+        public List<ServiceDetailResModel>? ServiceDetailList { get; set; }
 
     }
 
@@ -62,7 +64,7 @@
 
         public string? ManagerDescription { get; set; }
 
-        public List<string> ImgUrls { get; set; }
+        public List<string>? ImgUrls { get; set; }
     }
 }
 

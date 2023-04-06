@@ -292,7 +292,7 @@ namespace GreeenGarden.Business.Service.CartService
 
         public async Task<ResultModel> CleanRentCart(string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 TblUser tblUser = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));
@@ -335,7 +335,7 @@ namespace GreeenGarden.Business.Service.CartService
 
         public async Task<ResultModel> CleanSaleCart(string token)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 TblUser tblUser = await _cartRepo.GetByUserName(_decodeToken.Decode(token, "username"));

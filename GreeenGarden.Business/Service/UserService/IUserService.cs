@@ -5,15 +5,15 @@ namespace GreeenGarden.Business.Service.UserService
 {
     public interface IUserService
     {
-        public Task<ResultModel> Register(UserInsertModel userInsertModel);
-        public Task<ResultModel> Login(UserLoginReqModel userLoginReqModel);
-        public Task<ResultModel> GetCurrentUser(string token);
-        public Task<ResultModel> UpdateUser(string token, UserUpdateModel userUpdateModel);
-        public Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel);
-        public Task<ResultModel> GetListUserByFullName(string token, string fullName);
-        public Task<ResultModel> GetUsersByRole(string token, string role);
-        public Task<ResultModel> VerifyOTPCode(OTPVerifyModel oTPVerifyModel);
-
+        Task<ResultModel> Register(UserInsertModel userInsertModel);
+        Task<ResultModel> Login(UserLoginReqModel userLoginReqModel);
+        Task<ResultModel> GetCurrentUser(string token);
+        Task<ResultModel> UpdateUser(string token, UserUpdateModel userUpdateModel);
+        Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel);
+        Task<ResultModel> GetListUserByFullName(string token, string fullName);
+        Task<ResultModel> GetUsersByRole(string token, string role);
+        Task<ResultModel> VerifyRegisterOTPCode(OTPVerifyModel oTPVerifyModel);
+        Task<ResultModel> UpdateUserStatus(string token, UserUpdateStatusModel userUpdateStatusModel);
 
     }
 }

@@ -25,7 +25,7 @@
     }
     public class LoginResposneModel
     {
-        public UserCurrResModel User { get; set; }
+        public UserCurrResModel? User { get; set; }
         public string? Token { get; set; }
 
     }

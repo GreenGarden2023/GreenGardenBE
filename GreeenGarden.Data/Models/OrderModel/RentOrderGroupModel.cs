@@ -6,7 +6,7 @@
         public DateTime CreateDate { get; set; }
         public double TotalGroupAmount { get; set; }
         public int NumberOfOrder { get; set; }
-        public List<RentOrderResModel> RentOrderList { get; set; }
+        public List<RentOrderResModel>? RentOrderList { get; set; }
 
     }
 }

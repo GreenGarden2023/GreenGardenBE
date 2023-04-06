@@ -127,7 +127,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 if (productItemModel != null)
                 {
                     TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProduct(productItemModel.Id);
-                    string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                    string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
                     ProductItemResModel responseProdItem = new()
                     {
                         Id = productItemModel.Id,
@@ -290,7 +290,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                 {
                     List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(productItemID, sizeProductItemStatus);
                     TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemID);
-                    string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                    string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
                     ProductItemResModel productItemResModel = new()
                     {
                         Id = prodItem.Id,
@@ -304,7 +304,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     };
                     TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
                     TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
-                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    string? prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
                     ProductModel productModel = new()
                     {
                         Id = productGet.Id,
@@ -319,7 +319,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     ///
                     TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
                     TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
-                    string cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
                     CategoryModel categoryModel = new()
                     {
                         Id = cateGet.Id,
@@ -379,7 +379,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     {
                         List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(pi.Id, status);
                         TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
-                        string prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                        string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
                         ProductItemResModel pItem = new()
                         {
                             Id = pi.Id,
@@ -405,7 +405,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     ///
 
                     TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
-                    string prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    string? prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
                     ProductModel productModel = new()
                     {
                         Id = productGet.Id,
@@ -420,7 +420,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     ///
                     TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
                     TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
-                    string cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
                     CategoryModel categoryModel = new()
                     {
                         Id = cateGet.Id,

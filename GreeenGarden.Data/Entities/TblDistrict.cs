@@ -13,6 +13,8 @@ public partial class TblDistrict
 
     public virtual ICollection<TblSaleOrder> TblSaleOrders { get; } = new List<TblSaleOrder>();
 
+    public virtual ICollection<TblService> TblServices { get; } = new List<TblService>();
+
     public virtual ICollection<TblShippingFee> TblShippingFees { get; } = new List<TblShippingFee>();
 
     public virtual ICollection<TblUser> TblUsers { get; } = new List<TblUser>();

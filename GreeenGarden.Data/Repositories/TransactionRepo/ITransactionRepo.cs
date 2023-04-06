@@ -1,5 +1,4 @@
 ﻿using GreeenGarden.Data.Entities;
-using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.TransactionRepo

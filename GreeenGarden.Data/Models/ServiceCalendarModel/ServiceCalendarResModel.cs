@@ -1,8 +1,7 @@
-﻿using System;
-namespace GreeenGarden.Data.Models.ServiceCalendarModel
+﻿namespace GreeenGarden.Data.Models.ServiceCalendarModel
 {
-	public class ServiceCalendarResModel
-	{
+    public class ServiceCalendarResModel
+    {
         public Guid Id { get; set; }
 
         public Guid ServiceOrderId { get; set; }
@@ -11,17 +10,17 @@ namespace GreeenGarden.Data.Models.ServiceCalendarModel
 
         public DateTime? NextServiceDate { get; set; }
 
-        public string? ReportFileURL { get; set; }
-
         public string? Sumary { get; set; }
 
         public string? Status { get; set; }
+
+        public List<string>? Images { get; set; }
     }
     public class ServiceCalendarUpdateResModel
     {
-        public ServiceCalendarResModel PreviousCalendar { get; set; }
+        public ServiceCalendarResModel? PreviousCalendar { get; set; }
 
-        public ServiceCalendarResModel NextCalendar { get; set; }
+        public ServiceCalendarResModel? NextCalendar { get; set; }
     }
 
 
@@ -33,7 +32,7 @@ namespace GreeenGarden.Data.Models.ServiceCalendarModel
 
         public int CalendarQuantity { get; set; }
 
-        public List<ServiceCalendarResModel> CalendarList { get; set; }
+        public List<ServiceCalendarResModel>? CalendarList { get; set; }
     }
 
     public class ServiceCalendarUserResModel
@@ -48,11 +47,11 @@ namespace GreeenGarden.Data.Models.ServiceCalendarModel
 
         public DateTime? NextServiceDate { get; set; }
 
-        public string? ReportFileURL { get; set; }
-
         public string? Sumary { get; set; }
 
         public string? Status { get; set; }
+
+        public List<string>? Images { get; set; }
     }
 
     public class ServiceCalendarUserGetModel
@@ -61,7 +60,7 @@ namespace GreeenGarden.Data.Models.ServiceCalendarModel
 
         public int CalendarQuantity { get; set; }
 
-        public List<ServiceCalendarUserResModel> CalendarList { get; set; }
+        public List<ServiceCalendarUserResModel>? CalendarList { get; set; }
     }
 
 }

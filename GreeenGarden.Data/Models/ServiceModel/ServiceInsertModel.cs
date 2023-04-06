@@ -14,17 +14,19 @@
 
         public string? Address { get; set; }
 
+        public int? DistrictID { get; set; }
+
         public bool? IsTransport { get; set; }
 
         public int? RewardPointUsed { get; set; }
 
-        public List<Guid> UserTreeIDList { get; set; }
+        public List<Guid>? UserTreeIDList { get; set; }
     }
     public class ServiceStatusModel
     {
         public Guid ServiceID { get; set; }
 
-        public string status { get; set; }
+        public string? status { get; set; }
     }
 }
 

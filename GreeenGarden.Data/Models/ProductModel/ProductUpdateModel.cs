@@ -19,6 +19,6 @@ namespace GreeenGarden.Data.Models.ProductModel
     {
         [Required]
         public Guid ID { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
     }
 }

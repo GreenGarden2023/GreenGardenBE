@@ -27,6 +27,8 @@ public partial class TblImage
 
     public Guid? ServiceDetailId { get; set; }
 
+    public Guid? ServiceCalendarId { get; set; }
+
     public virtual TblCategory? Category { get; set; }
 
     public virtual TblFeedBack? Feedback { get; set; }
@@ -40,6 +42,8 @@ public partial class TblImage
     public virtual TblRentOrderDetail? RentOrderDetail { get; set; }
 
     public virtual TblSaleOrderDetail? SaleOrderDetail { get; set; }
+
+    public virtual TblServiceCalendar? ServiceCalendar { get; set; }
 
     public virtual TblServiceDetail? ServiceDetail { get; set; }
 }

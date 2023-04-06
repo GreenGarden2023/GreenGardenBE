@@ -1,6 +1,4 @@
-﻿using GreeenGarden.Data.Models.FeedbackModel;
-
-namespace GreeenGarden.Business.Utilities.Convert
+﻿namespace GreeenGarden.Business.Utilities.Convert
 {
     public class ConvertUtil
     {

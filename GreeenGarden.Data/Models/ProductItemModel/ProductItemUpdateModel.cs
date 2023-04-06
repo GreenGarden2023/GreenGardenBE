@@ -6,6 +6,6 @@
     public class ProductItemDetailUpdateStatusModel
     {
         public Guid ProductItemDetailId { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
     }
 }

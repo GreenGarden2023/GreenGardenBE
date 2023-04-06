@@ -2,7 +2,6 @@
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
-using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -176,20 +175,24 @@ namespace GreeenGarden.API.Controllers
         public async Task<IActionResult> CancelServiceOrderById(OrderCancelModel orderCancelModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            if (orderCancelModel.orderType.Trim().ToLower().Equals("sale")) {
+            if (orderCancelModel.orderType.Trim().ToLower().Equals("sale"))
+            {
                 ResultModel result = await _orderService.CancelSaleOrderById(token, orderCancelModel.orderID);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
-            }else if (orderCancelModel.orderType.Trim().ToLower().Equals("rent"))
+            }
+            else if (orderCancelModel.orderType.Trim().ToLower().Equals("rent"))
             {
                 ResultModel result = await _orderService.CancelRentOrderById(token, orderCancelModel.orderID);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
-            }else if (orderCancelModel.orderType.Trim().ToLower().Equals("service"))
+            }
+            else if (orderCancelModel.orderType.Trim().ToLower().Equals("service"))
             {
                 ResultModel result = await _orderService.CancelServiceOrderById(token, orderCancelModel.orderID);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
-            else {
-                return BadRequest("Order type unknown."); 
+            else
+            {
+                return BadRequest("Order type unknown.");
             }
         }
 

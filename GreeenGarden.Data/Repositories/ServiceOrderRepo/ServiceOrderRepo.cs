@@ -1,5 +1,4 @@
-﻿using System;
-using EntityFrameworkPaginateCore;
+﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
@@ -10,15 +9,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
 {
-	public class ServiceOrderRepo : Repository<TblServiceOrder>, IServiceOrderRepo
-	{
-		private readonly GreenGardenDbContext _context;
+    public class ServiceOrderRepo : Repository<TblServiceOrder>, IServiceOrderRepo
+    {
+        private readonly GreenGardenDbContext _context;
         private readonly IServiceRepo _serviceRepo;
-		public ServiceOrderRepo(GreenGardenDbContext context, IServiceRepo serviceRepo) : base(context)
-		{
-			_context = context;
+        public ServiceOrderRepo(GreenGardenDbContext context, IServiceRepo serviceRepo) : base(context)
+        {
+            _context = context;
             _serviceRepo = serviceRepo;
-		}
+        }
 
         public async Task<bool> CheckOrderCode(string Code)
         {
@@ -54,19 +53,13 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
 
         public async Task<TblServiceOrder> GetServiceOrderByOrderCode(string orderCode)
         {
-            return await _context.TblServiceOrders.Where(x=>x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();   
+            return await _context.TblServiceOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
         }
 
         public async Task<TblServiceOrder> GetServiceOrderByServiceID(Guid serviceId)
         {
             TblServiceOrder order = await _context.TblServiceOrders.OrderByDescending(y => y.CreateDate).Where(x => x.ServiceId.Equals(serviceId)).FirstOrDefaultAsync();
-            if (order != null)
-            {
-                return order;
-            }
-            else {
-                return null;
-            }
+            return order ?? null;
         }
 
         public async Task<Page<TblServiceOrder>> GetServiceOrderByTechnician(PaginationRequestModel paginationRequestModel, Guid technicianID)
@@ -83,8 +76,8 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
 
         public async Task<bool> UpdateServiceOrder(TblServiceOrder entity)
         {
-            _context.TblServiceOrders.Update(entity);
-            await _context.SaveChangesAsync();
+            _ = _context.TblServiceOrders.Update(entity);
+            _ = await _context.SaveChangesAsync();
             return true;
         }
 

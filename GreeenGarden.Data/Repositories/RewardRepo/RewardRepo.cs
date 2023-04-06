@@ -64,25 +64,25 @@ namespace GreeenGarden.Data.Repositories.RewardRepo
         public async Task<ResultModel> UpdateUserRewardPointByUserID(Guid userID, int pointGain, int pointUsed)
         {
             ResultModel? result = new();
-            TblReward? reward = await _context.TblRewards.Where(x => x.UserId.Equals(userID)).FirstOrDefaultAsync();                
-                if (reward != null)
-                {
-                    reward.Total += pointGain;
-                    reward.CurrentPoint = reward.CurrentPoint + pointGain - pointUsed;
-                    _ = _context.Update(reward);
-                    _ = await _context.SaveChangesAsync();
-                    result.IsSuccess = true;
-                    result.Code = 200;
-                    result.Message = "User reward updated.";
-                    return result;
-                }
-                else
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Can not user reward.";
-                    return result;
-                }
+            TblReward? reward = await _context.TblRewards.Where(x => x.UserId.Equals(userID)).FirstOrDefaultAsync();
+            if (reward != null)
+            {
+                reward.Total += pointGain;
+                reward.CurrentPoint = reward.CurrentPoint + pointGain - pointUsed;
+                _ = _context.Update(reward);
+                _ = await _context.SaveChangesAsync();
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "User reward updated.";
+                return result;
+            }
+            else
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "Can not user reward.";
+                return result;
+            }
         }
     }
 }

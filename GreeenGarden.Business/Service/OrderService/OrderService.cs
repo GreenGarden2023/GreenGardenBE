@@ -23,8 +23,8 @@ using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
+using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
-using MailKit.Search;
 using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.OrderService
@@ -48,6 +48,7 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly IServiceDetailRepo _serviceDetailRepo;
         private readonly IServiceOrderRepo _serviceOrderRepo;
         private readonly IUserRepo _userRepo;
+        private readonly ITransactionRepo _transactionRepo;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             IServiceRepo serviceRepo,
             IServiceDetailRepo serviceDetailRepo,
@@ -63,6 +64,7 @@ namespace GreeenGarden.Business.Service.OrderService
             IImageRepo imageRepo,
             IShippingFeeRepo shippingFeeRepo,
             IServiceOrderRepo serviceOrderRepo,
+            ITransactionRepo transactionRepo,
             IUserRepo userRepo)
         {
             _decodeToken = new DecodeToken();
@@ -82,6 +84,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _shippingFeeRepo = shippingFeeRepo;
             _serviceOrderRepo = serviceOrderRepo;
             _userRepo = userRepo;
+            _transactionRepo = transactionRepo;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -1164,7 +1167,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientName = order.RecipientName,
                                     RecipientPhone = order.RecipientPhone,
                                     OrderCode = order.OrderCode,
-                                    
+
                                     RentOrderDetailList = rentOrderDetailResModels
                                 };
                                 resList.Add(rentOrderResModel);
@@ -1843,7 +1846,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 double deposit = Math.Ceiling(finalTotal / 2);
 
                 DateTime createDate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
-                TblServiceOrder tblServiceOrder = new TblServiceOrder
+                TblServiceOrder tblServiceOrder = new()
                 {
                     Id = Guid.NewGuid(),
                     OrderCode = await GenerateOrderCode(),
@@ -1867,7 +1870,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 if (insert != Guid.Empty)
                 {
                     TblServiceOrder tblServiceOrderGet = await _serviceOrderRepo.Get(tblServiceOrder.Id);
-                    ServiceOrderCreateResModel resModel = new ServiceOrderCreateResModel
+                    ServiceOrderCreateResModel resModel = new()
                     {
                         Id = tblServiceOrderGet.Id,
                         CreateDate = tblServiceOrderGet.CreateDate,
@@ -1949,7 +1952,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         TblService resService = await _serviceRepo.Get(order.ServiceId);
                         List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                        ServiceResModel serviceResModel = new ServiceResModel
+                        ServiceResModel serviceResModel = new()
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
@@ -1969,7 +1972,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         };
 
                         TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
-                        ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                        ServiceOrderTechnician technicianRes = new()
                         {
                             TechnicianID = technicianGet.Id,
                             TechnicianUserName = technicianGet.UserName,
@@ -1978,7 +1981,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
                         };
-                        ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                        ServiceOrderGetResModel serviceOrderGetResModel = new()
                         {
                             Id = order.Id,
                             OrderCode = order.OrderCode,
@@ -2007,7 +2010,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                     resList.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
 
-                    ServiceOrderListRes serviceOrderListRes = new ServiceOrderListRes
+                    ServiceOrderListRes serviceOrderListRes = new()
                     {
                         Paging = paging,
                         ServiceOrderList = resList
@@ -2077,7 +2080,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         TblService resService = await _serviceRepo.Get(order.ServiceId);
                         List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                        ServiceResModel serviceResModel = new ServiceResModel
+                        ServiceResModel serviceResModel = new()
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
@@ -2097,7 +2100,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         };
 
                         TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
-                        ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                        ServiceOrderTechnician technicianRes = new()
                         {
                             TechnicianID = technicianGet.Id,
                             TechnicianUserName = technicianGet.UserName,
@@ -2106,7 +2109,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
                         };
-                        ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                        ServiceOrderGetResModel serviceOrderGetResModel = new()
                         {
                             Id = order.Id,
                             OrderCode = order.OrderCode,
@@ -2135,7 +2138,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                     resList.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
 
-                    ServiceOrderListRes serviceOrderListRes = new ServiceOrderListRes
+                    ServiceOrderListRes serviceOrderListRes = new()
                     {
                         Paging = paging,
                         ServiceOrderList = resList
@@ -2204,7 +2207,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         TblService resService = await _serviceRepo.Get(order.ServiceId);
                         List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                        ServiceResModel serviceResModel = new ServiceResModel
+                        ServiceResModel serviceResModel = new()
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
@@ -2224,7 +2227,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         };
 
                         TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
-                        ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                        ServiceOrderTechnician technicianRes = new()
                         {
                             TechnicianID = technicianGet.Id,
                             TechnicianUserName = technicianGet.UserName,
@@ -2233,7 +2236,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
                         };
-                        ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                        ServiceOrderGetResModel serviceOrderGetResModel = new()
                         {
                             Id = order.Id,
                             OrderCode = order.OrderCode,
@@ -2262,7 +2265,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                     resList.Sort((x, y) => y.CreateDate.CompareTo(x.CreateDate));
 
-                    ServiceOrderListRes serviceOrderListRes = new ServiceOrderListRes
+                    ServiceOrderListRes serviceOrderListRes = new()
                     {
                         Paging = paging,
                         ServiceOrderList = resList
@@ -2328,7 +2331,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     TblService resService = await _serviceRepo.Get(order.ServiceId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
@@ -2348,7 +2351,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     };
 
                     TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
-                    ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                    ServiceOrderTechnician technicianRes = new()
                     {
                         TechnicianID = technicianGet.Id,
                         TechnicianUserName = technicianGet.UserName,
@@ -2357,7 +2360,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         TechnicianMail = technicianGet.Mail,
                         TechnicianPhone = technicianGet.Phone
                     };
-                    ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                    ServiceOrderGetResModel serviceOrderGetResModel = new()
                     {
                         Id = order.Id,
                         OrderCode = order.OrderCode,
@@ -2402,14 +2405,14 @@ namespace GreeenGarden.Business.Service.OrderService
 
         public async Task<ResultModel> CancelServiceOrderById(string token, Guid orderID)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var serviceOrder = await _serviceOrderRepo.Get(orderID);
+                TblServiceOrder? serviceOrder = await _serviceOrderRepo.Get(orderID);
                 serviceOrder.Status = ServiceOrderStatus.CANCEL;
-                await _serviceOrderRepo.UpdateServiceOrder(serviceOrder);
+                _ = await _serviceOrderRepo.UpdateServiceOrder(serviceOrder);
 
-                await _serviceRepo.ChangeServiceStatus(serviceOrder.ServiceId, ServiceStatus.REPROCESS);
+                _ = await _serviceRepo.ChangeServiceStatus(serviceOrder.ServiceId, ServiceStatus.REPROCESS);
 
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -2426,7 +2429,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         public async Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(saleOrderID);
@@ -2438,15 +2441,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Sale order Id invalid.";
                     return result;
                 }
-                var updateStatus = await _saleOrderRepo.UpdateSaleOrderStatus(saleOrderID, Status.CANCEL);
+                ResultModel updateStatus = await _saleOrderRepo.UpdateSaleOrderStatus(saleOrderID, Status.CANCEL);
                 if (updateStatus.IsSuccess == true)
                 {
                     List<SaleOrderDetailResModel> tblSaleOrderDetails = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
-                    foreach (var i in tblSaleOrderDetails)
+                    foreach (SaleOrderDetailResModel i in tblSaleOrderDetails)
                     {
-                        var itemDetail = await _productItemDetailRepo.Get((Guid)i.ProductItemDetailID);
+                        TblProductItemDetail? itemDetail = await _productItemDetailRepo.Get((Guid)i.ProductItemDetailID);
                         itemDetail.Quantity += i.Quantity;
-                        await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
+                        _ = await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
                     }
                 }
                 result.Code = 200;
@@ -2464,19 +2467,19 @@ namespace GreeenGarden.Business.Service.OrderService
 
         public async Task<ResultModel> CancelRentOrderById(string token, Guid rentOrderID)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
-                var rentOrder = await _rentOrderRepo.Get(rentOrderID);
-                var chaneStatus = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, Status.CANCEL);
+                TblRentOrder? rentOrder = await _rentOrderRepo.Get(rentOrderID);
+                ResultModel chaneStatus = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, Status.CANCEL);
                 if (chaneStatus.Code == 200)
                 {
-                    var rentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
-                    foreach (var i in rentOrderDetail)
+                    List<RentOrderDetailResModel> rentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
+                    foreach (RentOrderDetailResModel i in rentOrderDetail)
                     {
-                        var itemDetail = await _productItemDetailRepo.Get(i.ProductItemDetail.Id);
+                        TblProductItemDetail? itemDetail = await _productItemDetailRepo.Get(i.ProductItemDetail.Id);
                         itemDetail.Quantity += i.Quantity;
-                        await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
+                        _ = await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
                     }
                 }
                 else
@@ -2535,7 +2538,24 @@ namespace GreeenGarden.Business.Service.OrderService
                     TblServiceOrder order = await _serviceOrderRepo.Get(serviceOrderID);
                     TblService resService = await _serviceRepo.Get(order.Id);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        ServiceOrderId = order.Id,
+                        Amount = order.TotalPrice,
+                        DatetimePaid = currentTime,
+                        Description = "Order completion refund.",
+                        PaymentId = PaymentMethod.CASH,
+                        Type = TransactionType.SERVICE_REFUND,
+                        Status = TransactionStatus.REFUND
+
+                    };
+
+                    Guid insert = await _transactionRepo.Insert(tblTransaction);
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
@@ -2555,7 +2575,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     };
 
                     TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
-                    ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                    ServiceOrderTechnician technicianRes = new()
                     {
                         TechnicianID = technicianGet.Id,
                         TechnicianUserName = technicianGet.UserName,
@@ -2564,7 +2584,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         TechnicianMail = technicianGet.Mail,
                         TechnicianPhone = technicianGet.Phone
                     };
-                    ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                    ServiceOrderGetResModel serviceOrderGetResModel = new()
                     {
                         Id = order.Id,
                         OrderCode = order.OrderCode,
@@ -2609,7 +2629,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         public async Task<ResultModel> GetRentOrderDetailByOrderCode(string token, string orderCode)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 if (!string.IsNullOrEmpty(token))
@@ -2685,7 +2705,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         public async Task<ResultModel> GetSaleOrderDetailByOrderCode(string token, string orderCode)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 if (!string.IsNullOrEmpty(token))
@@ -2764,7 +2784,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
         public async Task<ResultModel> GetServiceOrderDetailByOrderCode(string token, string orderCode)
         {
-            var result = new ResultModel();
+            ResultModel result = new();
             try
             {
                 if (!string.IsNullOrEmpty(token))
@@ -2800,7 +2820,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     TblService resService = await _serviceRepo.Get(order.ServiceId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
-                    ServiceResModel serviceResModel = new ServiceResModel
+                    ServiceResModel serviceResModel = new()
                     {
                         ID = resService.Id,
                         ServiceCode = resService.ServiceCode,
@@ -2820,7 +2840,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     };
 
                     TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
-                    ServiceOrderTechnician technicianRes = new ServiceOrderTechnician
+                    ServiceOrderTechnician technicianRes = new()
                     {
                         TechnicianID = technicianGet.Id,
                         TechnicianUserName = technicianGet.UserName,
@@ -2829,7 +2849,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         TechnicianMail = technicianGet.Mail,
                         TechnicianPhone = technicianGet.Phone
                     };
-                    ServiceOrderGetResModel serviceOrderGetResModel = new ServiceOrderGetResModel
+                    ServiceOrderGetResModel serviceOrderGetResModel = new()
                     {
                         Id = order.Id,
                         OrderCode = order.OrderCode,
@@ -2861,10 +2881,6 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Service order Id invalid.";
                     return result;
                 }
-
-                result.Code = 200;
-                result.IsSuccess = true;
-                result.Data = "";
             }
             catch (Exception e)
             {

@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugType>full</DebugType>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1701;1702;IL2121;CS8629;CS8618;CS8603;CS8602;CS8600;CS8603;CS8604;CS8601;CS8625;IL2121</NoWarn>
+    <NoWarn>1701;1702;IL2121;IL2121;CS8600;CS8601;CS8602;CS8603;CS8604;CS8613;CS8629;</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

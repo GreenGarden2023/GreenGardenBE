@@ -6,7 +6,7 @@ namespace GreeenGarden.Business.Utilities.ImgUtility
 {
     public class ImgUtility
     {
-        public static async Task<string> uploadImg(IFormFile file)
+        public static async Task<string?> uploadImg(IFormFile file)
         {
             if (file == null)
             {

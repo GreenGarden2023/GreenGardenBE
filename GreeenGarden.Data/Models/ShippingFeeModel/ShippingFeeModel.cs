@@ -8,7 +8,7 @@
     public class ShippingFeeResModel
     {
         public int DistrictID { get; set; }
-        public string District { get; set; }
+        public string? District { get; set; }
         public double FeeAmount { get; set; }
     }
 }

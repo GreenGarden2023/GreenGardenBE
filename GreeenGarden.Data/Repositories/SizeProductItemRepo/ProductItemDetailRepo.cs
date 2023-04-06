@@ -141,8 +141,8 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 
         public async Task<bool> UpdateProductItemDetail(TblProductItemDetail entity)
         {
-            _context.TblProductItemDetails.Update(entity);
-            await _context.SaveChangesAsync();
+            _ = _context.TblProductItemDetails.Update(entity);
+            _ = await _context.SaveChangesAsync();
             return true;
         }
     }

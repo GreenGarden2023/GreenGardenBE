@@ -131,14 +131,14 @@ namespace GreeenGarden.Data.Repositories.UserRepo
 
         public async Task<List<UserByRoleResModel>> GetUsersByRole(string role)
         {
-            List<UserByRoleResModel> userList = new List<UserByRoleResModel>();
-            List<TblUser> userGetList = new List<TblUser>();
+            List<UserByRoleResModel>? userList = new();
+            List<TblUser> userGetList = new();
             if (role.Equals("admin"))
             {
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("a56b469d-0f7e-4c3b-bba5-17037581596a"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -154,7 +154,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("56d4606a-08d0-4589-bd51-3a195d253ec5"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -170,7 +170,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("c98b8768-5827-4e5d-bf3c-3ba67b913d70"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -187,7 +187,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("7fb830b9-81c9-4d6e-984c-dfe9a779cf20"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
-                    UserByRoleResModel resModel = new UserByRoleResModel
+                    UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
@@ -224,6 +224,43 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 Favorite = x.u.Favorite,
                 Mail = x.u.Mail,
                 RoleName = x.ur.RoleName,
+            }).FirstOrDefaultAsync();
+            return userModel;
+        }
+
+        public async Task<bool> UpdateUserStatus(Guid userID, string status)
+        {
+            var query = from u in context.TblUsers
+                        where u.Id.Equals(userID)
+                        select new { u };
+
+            TblUser? user = await query.Select(x => x.u).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return false;
+            }
+            user.Status = status;
+            _ = _context.Update(user);
+            _ = await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<UserLoginResModel> GetUserByID(Guid userID)
+        {
+            var query = from u in context.TblUsers
+                        join ur in context.TblRoles
+                        on u.RoleId equals ur.Id
+                        where u.Id.Equals(userID)
+                        select new { u, ur };
+            UserLoginResModel? userModel = await query.Select(x => new UserLoginResModel()
+            {
+                ID = x.u.Id,
+                UserName = x.u.UserName,
+                FullName = x.u.FullName,
+                PasswordHash = x.u.PasswordHash,
+                PasswordSalt = x.u.PasswordSalt,
+                RoleName = x.ur.RoleName,
+                Email = x.u.Mail
             }).FirstOrDefaultAsync();
             return userModel;
         }

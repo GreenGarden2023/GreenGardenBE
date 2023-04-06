@@ -44,10 +44,14 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<List<string>> GetImgUrlFeedback(Guid feedbackID)
         {
-            var result = new List<string>();
-            var tblImg =  await _context.TblImages.Where(x=>x.FeedbackId.Equals(feedbackID)).ToListAsync();
-            if (tblImg == null) result = null;
-            foreach (var img in tblImg)
+            List<string>? result = new();
+            List<TblImage>? tblImg = await _context.TblImages.Where(x => x.FeedbackId.Equals(feedbackID)).ToListAsync();
+            if (tblImg == null)
+            {
+                result = null;
+            }
+
+            foreach (TblImage? img in tblImg)
             {
                 result.Add(img.ImageUrl);
             }
@@ -131,6 +135,28 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
                 ImageUrl = x.c.ImageUrl
             }).FirstOrDefaultAsync();
             return result;
+        }
+
+        public async Task<List<string>> GetImgUrlServiceCalendar(Guid serviceCalendarID)
+        {
+            List<string> urls = new();
+            if (serviceCalendarID != Guid.Empty)
+            {
+                List<TblImage> result = await _context.TblImages.Where(x => x.ServiceCalendarId.Equals(serviceCalendarID)).ToListAsync();
+                if (result != null)
+                {
+
+                    foreach (TblImage image in result)
+                    {
+                        if (!string.IsNullOrEmpty(image.ImageUrl))
+                        {
+                            urls.Add(image.ImageUrl);
+                        }
+                    }
+
+                }
+            }
+            return urls;
         }
 
         public async Task<List<string>> GetImgUrlServiceDetail(Guid serviceDetailId)
@@ -264,6 +290,46 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
                     {
                         ImageUrl = url,
                         ProductItemDetailId = ProductItemDetailId
+                    };
+                    _ = _context.Add(newProdIMG);
+                    _ = await _context.SaveChangesAsync();
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            return success;
+        }
+
+        public async Task<bool> UpdateImgForServiceCalendar(Guid serviceCalendarID, List<string> ImgUrls)
+        {
+            bool success = false;
+            List<TblImage> oldImgList = await _context.TblImages.Where(x => x.ServiceCalendarId.Equals(serviceCalendarID)).ToListAsync();
+            foreach (TblImage tblImage in oldImgList)
+            {
+                try
+                {
+                    _ = _context.Remove(tblImage);
+                    _ = await _context.SaveChangesAsync();
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            foreach (string url in ImgUrls)
+            {
+                try
+                {
+                    TblImage newProdIMG = new()
+                    {
+                        ImageUrl = url,
+                        ServiceCalendarId = serviceCalendarID
                     };
                     _ = _context.Add(newProdIMG);
                     _ = await _context.SaveChangesAsync();

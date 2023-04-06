@@ -1,10 +1,8 @@
-﻿
-using System;
-namespace GreeenGarden.Data.Models.TransactionModel
+﻿namespace GreeenGarden.Data.Models.TransactionModel
 {
-	public class TransactionResModel
-	{
-		public Guid Id { get; set; }
+    public class TransactionResModel
+    {
+        public Guid Id { get; set; }
 
         public Guid OrderID { get; set; }
 
@@ -12,18 +10,20 @@ namespace GreeenGarden.Data.Models.TransactionModel
 
         public DateTime PaidDate { get; set; }
 
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
-        public PaymentType PaymentType { get; set; }
+        public string? Description { get; set; }
+
+        public PaymentType? PaymentType { get; set; }
     }
 
     public class PaymentType
     {
         public Guid Id { get; set; }
 
-        public string PaymentName { get; set; }
+        public string? PaymentName { get; set; }
     }
 }
 

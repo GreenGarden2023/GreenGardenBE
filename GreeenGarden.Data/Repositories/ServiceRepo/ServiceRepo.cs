@@ -73,7 +73,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                         _ = await _context.SaveChangesAsync();
                         return true;
                     }
-                    else if(status.Trim().ToLower().Equals(ServiceStatus.CONFIRMED))
+                    else if (status.Trim().ToLower().Equals(ServiceStatus.CONFIRMED))
                     {
                         tblService.Status = ServiceStatus.CONFIRMED;
                         _ = _context.Update(tblService);
@@ -94,7 +94,8 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                         _ = await _context.SaveChangesAsync();
                         return true;
                     }
-                    else {
+                    else
+                    {
                         return false;
                     }
                 }
@@ -112,14 +113,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         public async Task<bool> CheckServiceCode(string serviceCode)
         {
             TblService tblService = await _context.TblServices.Where(x => x.ServiceCode.Equals(serviceCode)).FirstOrDefaultAsync();
-            if (tblService != null)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return tblService != null;
         }
 
         public async Task<List<TblService>> GetAllRequest()
@@ -134,16 +128,10 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
             return tblServices;
         }
 
-        public async Task<TblService> GetServiceByServiceCode(string serviceCode)
+        public async Task<TblService?> GetServiceByServiceCode(string serviceCode)
         {
             TblService tblService = await _context.TblServices.Where(x => x.ServiceCode.Equals(serviceCode)).FirstOrDefaultAsync();
-            if (tblService != null)
-            {
-                return tblService;
-            }
-            else {
-                return null;
-            }
+            return tblService ?? null;
 
         }
 
@@ -155,25 +143,25 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                 if (tblService != null)
                 {
                     int returnPoints = (int)(tblService.RewardPointUsed - serviceUpdateModelManager.RewardPointUsed);
-                    _ = await _rewardRepo.UpdateUserRewardPointByUserID(tblService.UserId, returnPoints , 0);
-;
-                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Name) && !serviceUpdateModelManager.Name.Equals(tblService.Name))
+                    _ = await _rewardRepo.UpdateUserRewardPointByUserID(tblService.UserId, returnPoints, 0);
+                    ;
+                    if (!string.IsNullOrEmpty(serviceUpdateModelManager.Name) && !serviceUpdateModelManager.Name.Equals(tblService.Name))
                     {
                         tblService.Name = serviceUpdateModelManager.Name;
                     }
-                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Phone) && !serviceUpdateModelManager.Phone.Equals(tblService.Phone))
+                    if (!string.IsNullOrEmpty(serviceUpdateModelManager.Phone) && !serviceUpdateModelManager.Phone.Equals(tblService.Phone))
                     {
                         tblService.Phone = serviceUpdateModelManager.Phone;
                     }
-                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Email) && !serviceUpdateModelManager.Email.Equals(tblService.Email))
+                    if (!string.IsNullOrEmpty(serviceUpdateModelManager.Email) && !serviceUpdateModelManager.Email.Equals(tblService.Email))
                     {
                         tblService.Email = serviceUpdateModelManager.Email;
                     }
-                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Rules) && !serviceUpdateModelManager.Rules.Equals(tblService.Rules))
+                    if (!string.IsNullOrEmpty(serviceUpdateModelManager.Rules) && !serviceUpdateModelManager.Rules.Equals(tblService.Rules))
                     {
                         tblService.Rules = serviceUpdateModelManager.Rules;
                     }
-                    if (!String.IsNullOrEmpty(serviceUpdateModelManager.Address) && !serviceUpdateModelManager.Address.Equals(tblService.Address))
+                    if (!string.IsNullOrEmpty(serviceUpdateModelManager.Address) && !serviceUpdateModelManager.Address.Equals(tblService.Address))
                     {
                         tblService.Address = serviceUpdateModelManager.Address;
                     }
