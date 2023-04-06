@@ -1505,7 +1505,10 @@ namespace GreeenGarden.Business.Service.OrderService
                 discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
                 totalOrderAmount = (numberRentDays * totalAmountPerDay) + transportFee - discountAmount;
 
-                deposit = totalOrderAmount * 0.2;
+                if (totalOrderAmount >= 500000)
+                {
+                    deposit = totalOrderAmount * 0.2;
+                }
                 rewardPointGain = (int)Math.Ceiling(totalOrderAmount * 0.01 / 1000);
 
                 TblRentOrder tblRentOrder = new()
@@ -1619,7 +1622,10 @@ namespace GreeenGarden.Business.Service.OrderService
                 discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
                 totalOrderAmount = totalAmountPerDay + transportFee - discountAmount;
 
-                deposit = totalOrderAmount * 0.2;
+                if (totalOrderAmount > 500000)
+                {
+                    deposit = totalOrderAmount * 0.2;
+                }
                 rewardPointGain = (int)Math.Ceiling(totalOrderAmount * 0.01 / 1000);
                 DateTime createDate = TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"));
 
