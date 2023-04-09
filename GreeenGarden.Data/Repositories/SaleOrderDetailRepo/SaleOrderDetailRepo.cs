@@ -1,5 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.FeedbackModel;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Repositories.FeedbackRepo;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +12,12 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
     {
         private readonly GreenGardenDbContext _context;
         private readonly IImageRepo _imageRepo;
-        public SaleOrderDetailRepo(GreenGardenDbContext context, IImageRepo imageRepo) : base(context)
+        private readonly IFeedbackRepo _feedbackRepo;
+        public SaleOrderDetailRepo(GreenGardenDbContext context, IFeedbackRepo feedbackRepo, IImageRepo imageRepo) : base(context)
         {
             _context = context;
             _imageRepo = imageRepo;
+            _feedbackRepo = feedbackRepo;   
         }
 
         public async Task<List<SaleOrderDetailResModel>> GetSaleOrderDetails(Guid saleOrderId)
@@ -28,6 +32,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
                 {
                     imageURl = image.ImageUrl;
                 }
+                List<FeedbackOrderResModel> fbList = await _feedbackRepo.GetFeedBackOrderDetail(saleOrderId, (Guid)detail.ProductItemDetailId);
                 SaleOrderDetailResModel model = new()
                 {
                     ID = detail.Id,
@@ -37,7 +42,8 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
                     SizeName = "" + detail.SizeName,
                     ProductItemName = "" + detail.ProductItemName,
                     ProductItemDetailID = detail.ProductItemDetailId,
-                    ImgURL = imageURl
+                    ImgURL = imageURl,
+                    FeedbackList = fbList,
                 };
                 resultList.Add(model);
             }

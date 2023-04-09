@@ -1,6 +1,7 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.FeedbackModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.FeedbackRepo
@@ -8,9 +9,11 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
     public class FeedbackRepo : Repository<TblFeedBack>, IFeedbackRepo
     {
         private readonly GreenGardenDbContext _context;
-        public FeedbackRepo(GreenGardenDbContext context) : base(context)
+        private readonly IImageRepo _imageRepo;
+        public FeedbackRepo(GreenGardenDbContext context, IImageRepo imageRepo) : base(context)
         {
             _context = context;
+            _imageRepo = imageRepo;
         }
 
         public async Task<bool> ChangeStatus(FeedbackChangeStatusModel model)
@@ -25,6 +28,33 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
         public async Task<List<TblFeedBack>> GetFeedBackByProductItemDetail(Guid productItemDetailID)
         {
             return await _context.TblFeedBacks.Where(x => x.ProductItemDetailId.Equals(productItemDetailID)).ToListAsync();
+        }
+
+        public async Task<List<FeedbackOrderResModel>> GetFeedBackOrderDetail(Guid orderID, Guid productItemDetailID)
+        {
+            List<FeedbackOrderResModel> resList = new();
+            List<TblFeedBack> tblFeedBacks =  await _context.TblFeedBacks.Where(x => x.ProductItemDetailId.Equals(productItemDetailID) &&  x.OrderId.Equals(orderID)).ToListAsync();
+           
+            if(tblFeedBacks != null && tblFeedBacks.Count > 0)
+            {
+                foreach(var item in tblFeedBacks)
+                {
+                    List<string> fbImages = await _imageRepo.GetImgUrlFeedback(item.Id);
+                    FeedbackOrderResModel model = new FeedbackOrderResModel
+                    { 
+                        ID = item.Id,
+                        Rating = item.Rating,
+                        Comment = item.Comment,
+                        CreateDate = item.CreateDate,
+                        UpdateDate = item.UpdateDate,
+                        Status = item.Status,
+                        ImageURL = fbImages
+                    };
+                    resList.Add(model);
+                }
+                return resList;
+            }
+            else { return null; }
         }
     }
 }

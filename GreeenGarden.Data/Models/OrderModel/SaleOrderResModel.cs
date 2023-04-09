@@ -1,4 +1,6 @@
-﻿namespace GreeenGarden.Data.Models.OrderModel
+﻿using GreeenGarden.Data.Models.FeedbackModel;
+
+namespace GreeenGarden.Data.Models.OrderModel
 {
     public class SaleOrderResModel
     {
@@ -48,6 +50,7 @@
         public double? TotalPrice { get; set; }
         public string? SizeName { get; set; }
         public string? ImgURL { get; set; }
+        public List<FeedbackOrderResModel>? FeedbackList { get; set; }
     }
 }
 

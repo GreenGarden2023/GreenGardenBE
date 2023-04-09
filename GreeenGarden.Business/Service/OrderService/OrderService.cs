@@ -122,6 +122,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     TblRentOrder rentOrder = await _rentOrderRepo.Get(rentOrderID);
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
+
                     RentOrderResModel rentOrderResModel = new()
                     {
                         Id = rentOrder.Id,

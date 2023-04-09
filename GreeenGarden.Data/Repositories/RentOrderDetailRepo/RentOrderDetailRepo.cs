@@ -1,7 +1,9 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.FeedbackModel;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.SizeModel;
+using GreeenGarden.Data.Repositories.FeedbackRepo;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
@@ -18,13 +20,15 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
         private readonly IProductItemRepo _productItemRepo;
         private readonly IImageRepo _imageRepo;
         private readonly ISizeRepo _sizeRepo;
-        public RentOrderDetailRepo(GreenGardenDbContext context, ISizeRepo sizeRepo, IProductItemDetailRepo sizeProductItemRepo, IImageRepo imageRepo, IProductItemRepo productItemRepo) : base(context)
+        private readonly IFeedbackRepo _feedbackRepo;
+        public RentOrderDetailRepo(GreenGardenDbContext context, IFeedbackRepo feedbackRepo, ISizeRepo sizeRepo, IProductItemDetailRepo sizeProductItemRepo, IImageRepo imageRepo, IProductItemRepo productItemRepo) : base(context)
         {
             _context = context;
             _productItemDetailRepo = sizeProductItemRepo;
             _imageRepo = imageRepo;
             _productItemRepo = productItemRepo;
             _sizeRepo = sizeRepo;
+            _feedbackRepo = feedbackRepo;
         }
 
         public async Task<List<RentOrderDetailResModel>> GetRentOrderDetails(Guid RentOrderId)
@@ -33,6 +37,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
             List<RentOrderDetailResModel> resultList = new();
             foreach (TblRentOrderDetail detail in list)
             {
+
                 TblProductItemDetail tblProductItemDetail = await _productItemDetailRepo.Get((Guid)detail.ProductItemDetailId);
                 TblSize? sizeGet = await _sizeRepo.Get(tblProductItemDetail.SizeId);
                 List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(tblProductItemDetail.Id);
@@ -59,7 +64,8 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                 {
                     imageURl = image.ImageUrl;
                 }
-                RentOrderDetailResModel model = new()
+                List<FeedbackOrderResModel> fbList = await _feedbackRepo.GetFeedBackOrderDetail(RentOrderId, (Guid)detail.ProductItemDetailId);
+                 RentOrderDetailResModel model = new()
                 {
                     ID = detail.Id,
                     ProductItemDetail = upResult ?? null,
@@ -68,8 +74,9 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                     RentPricePerUnit = detail.RentPricePerUnit ?? null,
                     SizeName = "" + detail.SizeName,
                     ProductItemName = "" + detail.ProductItemName,
-                    ImgURL = imageURl
-                };
+                    ImgURL = imageURl,
+                    FeedbackList = fbList
+                 };
                 resultList.Add(model);
             }
             return resultList;

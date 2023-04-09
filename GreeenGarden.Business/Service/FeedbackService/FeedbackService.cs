@@ -225,7 +225,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     Comment = model.Comment,
                     CreateDate = DateTime.Now,
                     ProductItemDetailId = model.ProductItemDetailID,
-
+                    OrderId = model.OrderID,
                     Rating = model.Rating,
                     Status = Status.ACTIVE,
                     UserId = Guid.Parse(userID),

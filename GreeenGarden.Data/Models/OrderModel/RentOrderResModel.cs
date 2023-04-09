@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Data.Models.ProductItemDetailModel;
+﻿using GreeenGarden.Data.Models.FeedbackModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 
 namespace GreeenGarden.Data.Models.OrderModel
 {
@@ -58,6 +59,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public string? SizeName { get; set; }
         public string? ProductItemName { get; set; }
         public string? ImgURL { get; set; }
+        public List<FeedbackOrderResModel>? FeedbackList { get; set; }
     }
 }
 

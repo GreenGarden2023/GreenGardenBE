@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Entities;
 
@@ -67,607 +65,607 @@ public partial class GreenGardenDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<TblCart>(entity =>
+        _ = modelBuilder.Entity<TblCart>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblCarts");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblCarts");
 
-            entity.ToTable("tblCart");
+            _ = entity.ToTable("tblCart");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TblCarts)
+            _ = entity.HasOne(d => d.User).WithMany(p => p.TblCarts)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_tblCarts_tblUsers");
         });
 
-        modelBuilder.Entity<TblCartDetail>(entity =>
+        _ = modelBuilder.Entity<TblCartDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblCartDetails");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblCartDetails");
 
-            entity.ToTable("tblCartDetail");
+            _ = entity.ToTable("tblCartDetail");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.CartId).HasColumnName("CartID");
-            entity.Property(e => e.SizeProductItemId).HasColumnName("SizeProductItemID");
+            _ = entity.Property(e => e.CartId).HasColumnName("CartID");
+            _ = entity.Property(e => e.SizeProductItemId).HasColumnName("SizeProductItemID");
 
-            entity.HasOne(d => d.Cart).WithMany(p => p.TblCartDetails)
+            _ = entity.HasOne(d => d.Cart).WithMany(p => p.TblCartDetails)
                 .HasForeignKey(d => d.CartId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblCartDetails_tblCarts");
 
-            entity.HasOne(d => d.SizeProductItem).WithMany(p => p.TblCartDetails)
+            _ = entity.HasOne(d => d.SizeProductItem).WithMany(p => p.TblCartDetails)
                 .HasForeignKey(d => d.SizeProductItemId)
                 .HasConstraintName("FK_tblCartDetails_tblSIzeProductItems");
         });
 
-        modelBuilder.Entity<TblCategory>(entity =>
+        _ = modelBuilder.Entity<TblCategory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblCategories");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblCategories");
 
-            entity.ToTable("tblCategory");
+            _ = entity.ToTable("tblCategory");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Description).HasMaxLength(500);
-            entity.Property(e => e.Name).HasMaxLength(200);
-            entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.Description).HasMaxLength(500);
+            _ = entity.Property(e => e.Name).HasMaxLength(200);
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
         });
 
-        modelBuilder.Entity<TblDistrict>(entity =>
+        _ = modelBuilder.Entity<TblDistrict>(entity =>
         {
-            entity.ToTable("tblDistrict");
+            _ = entity.ToTable("tblDistrict");
 
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.DistrictName).HasMaxLength(200);
+            _ = entity.Property(e => e.Id).HasColumnName("ID");
+            _ = entity.Property(e => e.DistrictName).HasMaxLength(200);
         });
 
-        modelBuilder.Entity<TblEmailOtpcode>(entity =>
+        _ = modelBuilder.Entity<TblEmailOtpcode>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_EmailOTPCode");
+            _ = entity.HasKey(e => e.Id).HasName("PK_EmailOTPCode");
 
-            entity.ToTable("tblEmailOTPCode");
+            _ = entity.ToTable("tblEmailOTPCode");
 
-            entity.HasIndex(e => e.Optcode, "Index_EmailOTPCode_1").IsUnique();
+            _ = entity.HasIndex(e => e.Optcode, "Index_EmailOTPCode_1").IsUnique();
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Email).HasMaxLength(200);
-            entity.Property(e => e.Optcode)
+            _ = entity.Property(e => e.Email).HasMaxLength(200);
+            _ = entity.Property(e => e.Optcode)
                 .HasMaxLength(50)
                 .HasColumnName("OPTCode");
 
-            entity.HasOne(d => d.EmailNavigation).WithMany(p => p.TblEmailOtpcodes)
+            _ = entity.HasOne(d => d.EmailNavigation).WithMany(p => p.TblEmailOtpcodes)
                 .HasPrincipalKey(p => p.Mail)
                 .HasForeignKey(d => d.Email)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EmailOTPCode_tblUsers");
         });
 
-        modelBuilder.Entity<TblFeedBack>(entity =>
+        _ = modelBuilder.Entity<TblFeedBack>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblFeedBacks");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblFeedBacks");
 
-            entity.ToTable("tblFeedBack");
+            _ = entity.ToTable("tblFeedBack");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Comment).HasMaxLength(500);
-            entity.Property(e => e.OrderId).HasColumnName("OrderID");
-            entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UpdateDate).HasColumnType("datetime");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.Comment).HasMaxLength(500);
+            _ = entity.Property(e => e.OrderId).HasColumnName("OrderID");
+            _ = entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.UpdateDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblFeedBacks)
+            _ = entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblFeedBacks)
                 .HasForeignKey(d => d.ProductItemDetailId)
                 .HasConstraintName("FK_tblFeedBack_tblProductItemDetail");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TblFeedBacks)
+            _ = entity.HasOne(d => d.User).WithMany(p => p.TblFeedBacks)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblFeedBacks_tblUsers");
         });
 
-        modelBuilder.Entity<TblImage>(entity =>
+        _ = modelBuilder.Entity<TblImage>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblImages");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblImages");
 
-            entity.ToTable("tblImage");
+            _ = entity.ToTable("tblImage");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-            entity.Property(e => e.FeedbackId).HasColumnName("FeedbackID");
-            entity.Property(e => e.ImageUrl)
+            _ = entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            _ = entity.Property(e => e.FeedbackId).HasColumnName("FeedbackID");
+            _ = entity.Property(e => e.ImageUrl)
                 .HasMaxLength(2048)
                 .HasColumnName("ImageURL");
-            entity.Property(e => e.ProductId).HasColumnName("ProductID");
-            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
-            entity.Property(e => e.RentOrderDetailId).HasColumnName("RentOrderDetailID");
-            entity.Property(e => e.SaleOrderDetailId).HasColumnName("SaleOrderDetailID");
-            entity.Property(e => e.ServiceCalendarId).HasColumnName("ServiceCalendarID");
-            entity.Property(e => e.ServiceDetailId).HasColumnName("ServiceDetailID");
-            entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
+            _ = entity.Property(e => e.ProductId).HasColumnName("ProductID");
+            _ = entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            _ = entity.Property(e => e.RentOrderDetailId).HasColumnName("RentOrderDetailID");
+            _ = entity.Property(e => e.SaleOrderDetailId).HasColumnName("SaleOrderDetailID");
+            _ = entity.Property(e => e.ServiceCalendarId).HasColumnName("ServiceCalendarID");
+            _ = entity.Property(e => e.ServiceDetailId).HasColumnName("ServiceDetailID");
+            _ = entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
 
-            entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("FK_tblImages_tblCategories");
 
-            entity.HasOne(d => d.Feedback).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.Feedback).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.FeedbackId)
                 .HasConstraintName("FK_tblImages_tblFeedBacks");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.Product).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("FK_tblImages_tblProducts");
 
-            entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ProductItemDetailId)
                 .HasConstraintName("FK_tblImages_tblSizeProductItems");
 
-            entity.HasOne(d => d.ProductItem).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.ProductItem).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ProductItemId)
                 .HasConstraintName("FK_tblImages_tblProductItems");
 
-            entity.HasOne(d => d.RentOrderDetail).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.RentOrderDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.RentOrderDetailId)
                 .HasConstraintName("FK_tblImage_tblRentOrderDetail");
 
-            entity.HasOne(d => d.SaleOrderDetail).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.SaleOrderDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.SaleOrderDetailId)
                 .HasConstraintName("FK_tblImage_tblSaleOrderDetail");
 
-            entity.HasOne(d => d.ServiceCalendar).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.ServiceCalendar).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ServiceCalendarId)
                 .HasConstraintName("FK_tblImage_tblServiceCalendar");
 
-            entity.HasOne(d => d.ServiceDetail).WithMany(p => p.TblImages)
+            _ = entity.HasOne(d => d.ServiceDetail).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.ServiceDetailId)
                 .HasConstraintName("FK_tblImage_tblServiceDetail");
         });
 
-        modelBuilder.Entity<TblPayment>(entity =>
+        _ = modelBuilder.Entity<TblPayment>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblTransactions");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblTransactions");
 
-            entity.ToTable("tblPayment");
+            _ = entity.ToTable("tblPayment");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.PaymentMethod).HasMaxLength(200);
-            entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.PaymentMethod).HasMaxLength(200);
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
         });
 
-        modelBuilder.Entity<TblProduct>(entity =>
+        _ = modelBuilder.Entity<TblProduct>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblProducts");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblProducts");
 
-            entity.ToTable("tblProduct");
+            _ = entity.ToTable("tblProduct");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
-            entity.Property(e => e.Description).HasMaxLength(500);
-            entity.Property(e => e.Name).HasMaxLength(200);
-            entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            _ = entity.Property(e => e.Description).HasMaxLength(500);
+            _ = entity.Property(e => e.Name).HasMaxLength(200);
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
 
-            entity.HasOne(d => d.Category).WithMany(p => p.TblProducts)
+            _ = entity.HasOne(d => d.Category).WithMany(p => p.TblProducts)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblProducts_tblCategories");
         });
 
-        modelBuilder.Entity<TblProductItem>(entity =>
+        _ = modelBuilder.Entity<TblProductItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblProductItems");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblProductItems");
 
-            entity.ToTable("tblProductItem");
+            _ = entity.ToTable("tblProductItem");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Description).HasMaxLength(500);
-            entity.Property(e => e.Name).HasMaxLength(200);
-            entity.Property(e => e.Type).HasMaxLength(50);
+            _ = entity.Property(e => e.Description).HasMaxLength(500);
+            _ = entity.Property(e => e.Name).HasMaxLength(200);
+            _ = entity.Property(e => e.Type).HasMaxLength(50);
 
-            entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
+            _ = entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblProductItems_tblProducts");
         });
 
-        modelBuilder.Entity<TblProductItemDetail>(entity =>
+        _ = modelBuilder.Entity<TblProductItemDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblSIzeProductItems");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblSIzeProductItems");
 
-            entity.ToTable("tblProductItemDetail");
+            _ = entity.ToTable("tblProductItemDetail");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
-            entity.Property(e => e.SizeId).HasColumnName("SizeID");
-            entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
+            _ = entity.Property(e => e.SizeId).HasColumnName("SizeID");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
 
-            entity.HasOne(d => d.ProductItem).WithMany(p => p.TblProductItemDetails)
+            _ = entity.HasOne(d => d.ProductItem).WithMany(p => p.TblProductItemDetails)
                 .HasForeignKey(d => d.ProductItemId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSizeProductItems_tblProductItems");
 
-            entity.HasOne(d => d.Size).WithMany(p => p.TblProductItemDetails)
+            _ = entity.HasOne(d => d.Size).WithMany(p => p.TblProductItemDetails)
                 .HasForeignKey(d => d.SizeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSizeProductItems_tblSizes");
         });
 
-        modelBuilder.Entity<TblRentOrder>(entity =>
+        _ = modelBuilder.Entity<TblRentOrder>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblAddendums");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblAddendums");
 
-            entity.ToTable("tblRentOrder");
+            _ = entity.ToTable("tblRentOrder");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.OrderCode).HasMaxLength(20);
-            entity.Property(e => e.RecipientAddress).HasMaxLength(500);
-            entity.Property(e => e.RecipientName).HasMaxLength(200);
-            entity.Property(e => e.RecipientPhone).HasMaxLength(50);
-            entity.Property(e => e.RentOrderGroupId).HasColumnName("RentOrderGroupID");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.OrderCode).HasMaxLength(20);
+            _ = entity.Property(e => e.RecipientAddress).HasMaxLength(500);
+            _ = entity.Property(e => e.RecipientName).HasMaxLength(200);
+            _ = entity.Property(e => e.RecipientPhone).HasMaxLength(50);
+            _ = entity.Property(e => e.RentOrderGroupId).HasColumnName("RentOrderGroupID");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TblRentOrderCreatedByNavigations)
+            _ = entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TblRentOrderCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            entity.HasOne(d => d.RecipientDistrictNavigation).WithMany(p => p.TblRentOrders)
+            _ = entity.HasOne(d => d.RecipientDistrictNavigation).WithMany(p => p.TblRentOrders)
                 .HasForeignKey(d => d.RecipientDistrict)
                 .HasConstraintName("FK_tblRentOrder_tblDistrict");
 
-            entity.HasOne(d => d.RentOrderGroup).WithMany(p => p.TblRentOrders)
+            _ = entity.HasOne(d => d.RentOrderGroup).WithMany(p => p.TblRentOrders)
                 .HasForeignKey(d => d.RentOrderGroupId)
                 .HasConstraintName("FK_tblRentOrder_tblRentOrderGroup");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TblRentOrderUsers)
+            _ = entity.HasOne(d => d.User).WithMany(p => p.TblRentOrderUsers)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_tblRentOrder_tblUser");
         });
 
-        modelBuilder.Entity<TblRentOrderDetail>(entity =>
+        _ = modelBuilder.Entity<TblRentOrderDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblAddendumProductItems");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblAddendumProductItems");
 
-            entity.ToTable("tblRentOrderDetail");
+            _ = entity.ToTable("tblRentOrderDetail");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.FeedbackStatus).HasDefaultValueSql("((0))");
-            entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
-            entity.Property(e => e.ProductItemName).HasMaxLength(200);
-            entity.Property(e => e.RentOrderId).HasColumnName("RentOrderID");
-            entity.Property(e => e.SizeName).HasMaxLength(200);
+            _ = entity.Property(e => e.FeedbackStatus).HasDefaultValueSql("((0))");
+            _ = entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
+            _ = entity.Property(e => e.ProductItemName).HasMaxLength(200);
+            _ = entity.Property(e => e.RentOrderId).HasColumnName("RentOrderID");
+            _ = entity.Property(e => e.SizeName).HasMaxLength(200);
 
-            entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblRentOrderDetails)
+            _ = entity.HasOne(d => d.ProductItemDetail).WithMany(p => p.TblRentOrderDetails)
                 .HasForeignKey(d => d.ProductItemDetailId)
                 .HasConstraintName("FK_tblRentOrderDetail_tblProductItemDetail");
 
-            entity.HasOne(d => d.RentOrder).WithMany(p => p.TblRentOrderDetails)
+            _ = entity.HasOne(d => d.RentOrder).WithMany(p => p.TblRentOrderDetails)
                 .HasForeignKey(d => d.RentOrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblRentOrderDetail_tblRentOrder");
         });
 
-        modelBuilder.Entity<TblRentOrderGroup>(entity =>
+        _ = modelBuilder.Entity<TblRentOrderGroup>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_RentOrderGroup");
+            _ = entity.HasKey(e => e.Id).HasName("PK_RentOrderGroup");
 
-            entity.ToTable("tblRentOrderGroup");
+            _ = entity.ToTable("tblRentOrderGroup");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
         });
 
-        modelBuilder.Entity<TblReward>(entity =>
+        _ = modelBuilder.Entity<TblReward>(entity =>
         {
-            entity.ToTable("tblReward");
+            _ = entity.ToTable("tblReward");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TblRewards)
+            _ = entity.HasOne(d => d.User).WithMany(p => p.TblRewards)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_tblRewards_tblUsers");
         });
 
-        modelBuilder.Entity<TblRole>(entity =>
+        _ = modelBuilder.Entity<TblRole>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblRoles");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblRoles");
 
-            entity.ToTable("tblRole");
+            _ = entity.ToTable("tblRole");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Description).HasMaxLength(200);
-            entity.Property(e => e.RoleName).HasMaxLength(200);
+            _ = entity.Property(e => e.Description).HasMaxLength(200);
+            _ = entity.Property(e => e.RoleName).HasMaxLength(200);
         });
 
-        modelBuilder.Entity<TblSaleOrder>(entity =>
+        _ = modelBuilder.Entity<TblSaleOrder>(entity =>
         {
-            entity.ToTable("tblSaleOrder");
+            _ = entity.ToTable("tblSaleOrder");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.OrderCode).HasMaxLength(20);
-            entity.Property(e => e.RecipientAddress).HasMaxLength(500);
-            entity.Property(e => e.RecipientName).HasMaxLength(200);
-            entity.Property(e => e.RecipientPhone).HasMaxLength(50);
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.OrderCode).HasMaxLength(20);
+            _ = entity.Property(e => e.RecipientAddress).HasMaxLength(500);
+            _ = entity.Property(e => e.RecipientName).HasMaxLength(200);
+            _ = entity.Property(e => e.RecipientPhone).HasMaxLength(50);
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.RecipientDistrictNavigation).WithMany(p => p.TblSaleOrders)
+            _ = entity.HasOne(d => d.RecipientDistrictNavigation).WithMany(p => p.TblSaleOrders)
                 .HasForeignKey(d => d.RecipientDistrict)
                 .HasConstraintName("FK_tblSaleOrder_tblDistrict");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TblSaleOrders)
+            _ = entity.HasOne(d => d.User).WithMany(p => p.TblSaleOrders)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSaleOrder_tblUser");
         });
 
-        modelBuilder.Entity<TblSaleOrderDetail>(entity =>
+        _ = modelBuilder.Entity<TblSaleOrderDetail>(entity =>
         {
-            entity.ToTable("tblSaleOrderDetail");
+            _ = entity.ToTable("tblSaleOrderDetail");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.FeedbackStatus).HasDefaultValueSql("((0))");
-            entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
-            entity.Property(e => e.ProductItemName).HasMaxLength(200);
-            entity.Property(e => e.SaleOderId).HasColumnName("SaleOderID");
-            entity.Property(e => e.SizeName).HasMaxLength(200);
+            _ = entity.Property(e => e.FeedbackStatus).HasDefaultValueSql("((0))");
+            _ = entity.Property(e => e.ProductItemDetailId).HasColumnName("ProductItemDetailID");
+            _ = entity.Property(e => e.ProductItemName).HasMaxLength(200);
+            _ = entity.Property(e => e.SaleOderId).HasColumnName("SaleOderID");
+            _ = entity.Property(e => e.SizeName).HasMaxLength(200);
 
-            entity.HasOne(d => d.SaleOder).WithMany(p => p.TblSaleOrderDetails)
+            _ = entity.HasOne(d => d.SaleOder).WithMany(p => p.TblSaleOrderDetails)
                 .HasForeignKey(d => d.SaleOderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblSaleOrderDetail_tblSaleOrder");
         });
 
-        modelBuilder.Entity<TblService>(entity =>
+        _ = modelBuilder.Entity<TblService>(entity =>
         {
-            entity.ToTable("tblService");
+            _ = entity.ToTable("tblService");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
-            entity.Property(e => e.Address).HasMaxLength(200);
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
-            entity.Property(e => e.Email).HasMaxLength(200);
-            entity.Property(e => e.EndDate).HasColumnType("datetime");
-            entity.Property(e => e.Name).HasMaxLength(200);
-            entity.Property(e => e.Phone).HasMaxLength(50);
-            entity.Property(e => e.Rules).HasMaxLength(1000);
-            entity.Property(e => e.ServiceCode).HasMaxLength(20);
-            entity.Property(e => e.StartDate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
-            entity.Property(e => e.TechnicianName).HasMaxLength(200);
+            _ = entity.Property(e => e.Address).HasMaxLength(200);
+            _ = entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
+            _ = entity.Property(e => e.Email).HasMaxLength(200);
+            _ = entity.Property(e => e.EndDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.Name).HasMaxLength(200);
+            _ = entity.Property(e => e.Phone).HasMaxLength(50);
+            _ = entity.Property(e => e.Rules).HasMaxLength(1000);
+            _ = entity.Property(e => e.ServiceCode).HasMaxLength(20);
+            _ = entity.Property(e => e.StartDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
+            _ = entity.Property(e => e.TechnicianName).HasMaxLength(200);
 
-            entity.HasOne(d => d.District).WithMany(p => p.TblServices)
+            _ = entity.HasOne(d => d.District).WithMany(p => p.TblServices)
                 .HasForeignKey(d => d.DistrictId)
                 .HasConstraintName("FK_tblService_tblDistrict");
 
-            entity.HasOne(d => d.User).WithMany(p => p.TblServices)
+            _ = entity.HasOne(d => d.User).WithMany(p => p.TblServices)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblService_tblUser");
         });
 
-        modelBuilder.Entity<TblServiceCalendar>(entity =>
+        _ = modelBuilder.Entity<TblServiceCalendar>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblCalendar");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblCalendar");
 
-            entity.ToTable("tblServiceCalendar");
+            _ = entity.ToTable("tblServiceCalendar");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.NextServiceDate).HasColumnType("datetime");
-            entity.Property(e => e.ServiceDate).HasColumnType("datetime");
-            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.Sumary).HasMaxLength(500);
+            _ = entity.Property(e => e.NextServiceDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.ServiceDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.Sumary).HasMaxLength(500);
 
-            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblServiceCalendars)
+            _ = entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblServiceCalendars)
                 .HasForeignKey(d => d.ServiceOrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblCalendar_tblServiceOrder");
         });
 
-        modelBuilder.Entity<TblServiceDetail>(entity =>
+        _ = modelBuilder.Entity<TblServiceDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblServiceUserTree");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblServiceUserTree");
 
-            entity.ToTable("tblServiceDetail");
+            _ = entity.ToTable("tblServiceDetail");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
-            entity.Property(e => e.Desciption).HasMaxLength(500);
-            entity.Property(e => e.ManagerDescription).HasMaxLength(500);
-            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
-            entity.Property(e => e.ServicePrice).HasDefaultValueSql("((0))");
-            entity.Property(e => e.TreeName).HasMaxLength(200);
-            entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
+            _ = entity.Property(e => e.Desciption).HasMaxLength(500);
+            _ = entity.Property(e => e.ManagerDescription).HasMaxLength(500);
+            _ = entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
+            _ = entity.Property(e => e.ServicePrice).HasDefaultValueSql("((0))");
+            _ = entity.Property(e => e.TreeName).HasMaxLength(200);
+            _ = entity.Property(e => e.UserTreeId).HasColumnName("UserTreeID");
 
-            entity.HasOne(d => d.Service).WithMany(p => p.TblServiceDetails)
+            _ = entity.HasOne(d => d.Service).WithMany(p => p.TblServiceDetails)
                 .HasForeignKey(d => d.ServiceId)
                 .HasConstraintName("FK_tblServiceUserTree_tblService");
 
-            entity.HasOne(d => d.UserTree).WithMany(p => p.TblServiceDetails)
+            _ = entity.HasOne(d => d.UserTree).WithMany(p => p.TblServiceDetails)
                 .HasForeignKey(d => d.UserTreeId)
                 .HasConstraintName("FK_tblServiceUserTree_tblUserTree");
         });
 
-        modelBuilder.Entity<TblServiceOrder>(entity =>
+        _ = modelBuilder.Entity<TblServiceOrder>(entity =>
         {
-            entity.ToTable("tblServiceOrder");
+            _ = entity.ToTable("tblServiceOrder");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.CreateDate).HasColumnType("datetime");
-            entity.Property(e => e.OrderCode).HasMaxLength(20);
-            entity.Property(e => e.ServiceEndDate).HasColumnType("datetime");
-            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
-            entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.OrderCode).HasMaxLength(20);
+            _ = entity.Property(e => e.ServiceEndDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
+            _ = entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.Service).WithMany(p => p.TblServiceOrders)
+            _ = entity.HasOne(d => d.Service).WithMany(p => p.TblServiceOrders)
                 .HasForeignKey(d => d.ServiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblServiceOrder_tblService");
         });
 
-        modelBuilder.Entity<TblShippingFee>(entity =>
+        _ = modelBuilder.Entity<TblShippingFee>(entity =>
         {
-            entity.ToTable("tblShippingFee");
+            _ = entity.ToTable("tblShippingFee");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
+            _ = entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
 
-            entity.HasOne(d => d.District).WithMany(p => p.TblShippingFees)
+            _ = entity.HasOne(d => d.District).WithMany(p => p.TblShippingFees)
                 .HasForeignKey(d => d.DistrictId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblShippingFee_tblDistrict");
         });
 
-        modelBuilder.Entity<TblSize>(entity =>
+        _ = modelBuilder.Entity<TblSize>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblSizes");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblSizes");
 
-            entity.ToTable("tblSize");
+            _ = entity.ToTable("tblSize");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Name).HasMaxLength(200);
+            _ = entity.Property(e => e.Name).HasMaxLength(200);
         });
 
-        modelBuilder.Entity<TblTransaction>(entity =>
+        _ = modelBuilder.Entity<TblTransaction>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblPayments");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblPayments");
 
-            entity.ToTable("tblTransaction");
+            _ = entity.ToTable("tblTransaction");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.DatetimePaid).HasColumnType("datetime");
-            entity.Property(e => e.Description).HasMaxLength(200);
-            entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
-            entity.Property(e => e.RentOrderId).HasColumnName("RentOrderID");
-            entity.Property(e => e.SaleOrderId).HasColumnName("SaleOrderID");
-            entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.Type).HasMaxLength(50);
+            _ = entity.Property(e => e.DatetimePaid).HasColumnType("datetime");
+            _ = entity.Property(e => e.Description).HasMaxLength(200);
+            _ = entity.Property(e => e.PaymentId).HasColumnName("PaymentID");
+            _ = entity.Property(e => e.RentOrderId).HasColumnName("RentOrderID");
+            _ = entity.Property(e => e.SaleOrderId).HasColumnName("SaleOrderID");
+            _ = entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.Type).HasMaxLength(50);
 
-            entity.HasOne(d => d.Payment).WithMany(p => p.TblTransactions)
+            _ = entity.HasOne(d => d.Payment).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.PaymentId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblTransactions_tblPayments");
 
-            entity.HasOne(d => d.RentOrder).WithMany(p => p.TblTransactions)
+            _ = entity.HasOne(d => d.RentOrder).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.RentOrderId)
                 .HasConstraintName("FK_tblTransaction_tblRentOrder");
 
-            entity.HasOne(d => d.SaleOrder).WithMany(p => p.TblTransactions)
+            _ = entity.HasOne(d => d.SaleOrder).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.SaleOrderId)
                 .HasConstraintName("FK_tblTransaction_tblSaleOrder");
 
-            entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblTransactions)
+            _ = entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.ServiceOrderId)
                 .HasConstraintName("FK_tblTransaction_tblServiceOrder");
         });
 
-        modelBuilder.Entity<TblUser>(entity =>
+        _ = modelBuilder.Entity<TblUser>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK_tblUsers");
+            _ = entity.HasKey(e => e.Id).HasName("PK_tblUsers");
 
-            entity.ToTable("tblUser");
+            _ = entity.ToTable("tblUser");
 
-            entity.HasIndex(e => e.UserName, "Index_tblUsers_1").IsUnique();
+            _ = entity.HasIndex(e => e.UserName, "Index_tblUsers_1").IsUnique();
 
-            entity.HasIndex(e => e.Mail, "Index_tblUsers_2").IsUnique();
+            _ = entity.HasIndex(e => e.Mail, "Index_tblUsers_2").IsUnique();
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
-            entity.Property(e => e.Address).HasMaxLength(500);
-            entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
-            entity.Property(e => e.Favorite).HasMaxLength(500);
-            entity.Property(e => e.FullName).HasMaxLength(200);
-            entity.Property(e => e.Mail).HasMaxLength(200);
-            entity.Property(e => e.Phone).HasMaxLength(50);
-            entity.Property(e => e.RoleId)
+            _ = entity.Property(e => e.Address).HasMaxLength(500);
+            _ = entity.Property(e => e.DistrictId).HasColumnName("DistrictID");
+            _ = entity.Property(e => e.Favorite).HasMaxLength(500);
+            _ = entity.Property(e => e.FullName).HasMaxLength(200);
+            _ = entity.Property(e => e.Mail).HasMaxLength(200);
+            _ = entity.Property(e => e.Phone).HasMaxLength(50);
+            _ = entity.Property(e => e.RoleId)
                 .HasDefaultValueSql("('c98b8768-5827-4e5d-bf3c-3ba67b913d70')")
                 .HasColumnName("RoleID");
-            entity.Property(e => e.Status)
+            _ = entity.Property(e => e.Status)
                 .HasMaxLength(20)
                 .HasDefaultValueSql("('disabled')");
-            entity.Property(e => e.UserName).HasMaxLength(200);
+            _ = entity.Property(e => e.UserName).HasMaxLength(200);
 
-            entity.HasOne(d => d.District).WithMany(p => p.TblUsers)
+            _ = entity.HasOne(d => d.District).WithMany(p => p.TblUsers)
                 .HasForeignKey(d => d.DistrictId)
                 .HasConstraintName("FK_tblUser_tblDistrict");
 
-            entity.HasOne(d => d.Role).WithMany(p => p.TblUsers)
+            _ = entity.HasOne(d => d.Role).WithMany(p => p.TblUsers)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_tblUsers_tblRoles");
         });
 
-        modelBuilder.Entity<TblUserTree>(entity =>
+        _ = modelBuilder.Entity<TblUserTree>(entity =>
         {
-            entity.ToTable("tblUserTree");
+            _ = entity.ToTable("tblUserTree");
 
-            entity.Property(e => e.Id)
+            _ = entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
-            entity.Property(e => e.Description)
+            _ = entity.Property(e => e.Description)
                 .HasMaxLength(500)
                 .IsUnicode(false);
-            entity.Property(e => e.Status).HasMaxLength(50);
-            entity.Property(e => e.TreeName).HasMaxLength(50);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            _ = entity.Property(e => e.Status).HasMaxLength(50);
+            _ = entity.Property(e => e.TreeName).HasMaxLength(50);
+            _ = entity.Property(e => e.UserId).HasColumnName("UserID");
         });
 
         OnModelCreatingPartial(modelBuilder);
