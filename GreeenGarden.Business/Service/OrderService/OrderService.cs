@@ -2923,9 +2923,22 @@ namespace GreeenGarden.Business.Service.OrderService
                         Message = "User not allowed"
                     };
                 }
-
+                if (model.fromDate == null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Error: fromDate null";
+                    return result;
+                }
                 var fromDate = ConvertUtil.convertStringToDateTime(model.fromDate);
-                var toDate = ConvertUtil.convertStringToDateTime(model.toDate);
+                var toDate = new DateTime();
+                if (model.toDate == null)
+                {
+                    toDate = fromDate.AddDays(1);
+                }
+                else
+                {
+                    toDate = ConvertUtil.convertStringToDateTime(model.toDate);
+                }
 
                 if (fromDate > toDate)
                 {
