@@ -17,6 +17,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetRentOrdersByGroup(string token, Guid groupID);
 
         Task<ResultModel> GetRentOrderDetail(string token, Guid rentOrderID);
+        Task<ResultModel> GetRentOrderDetailByRangeDate(string token, OrderRangeDateReqModel model);
         Task<ResultModel> GetRentOrderDetailByOrderCode(string token, string orderCode);
 
         Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status);

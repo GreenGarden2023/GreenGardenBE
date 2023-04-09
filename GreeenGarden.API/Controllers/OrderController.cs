@@ -220,5 +220,13 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.GetServiceOrderDetailByOrderCode(token, orderCode);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-rent-order-detail-by-range-date")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetRentOrderDetailByRangeDate([FromQuery]OrderRangeDateReqModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetRentOrderDetailByRangeDate(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }

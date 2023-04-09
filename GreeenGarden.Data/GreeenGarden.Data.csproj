@@ -26,7 +26,6 @@
     <Folder Include="Repositories\SizeProductItemRepo\" />
     <Folder Include="Models\MoMoModel\" />
     <Folder Include="Repositories\TransactionRepo\" />
-    <Folder Include="Models\OrderModel\" />
     <Folder Include="Repositories\RentOrderRepo\" />
     <Folder Include="Repositories\RentOrderDetailRepo\" />
     <Folder Include="Repositories\RewardRepo\" />
