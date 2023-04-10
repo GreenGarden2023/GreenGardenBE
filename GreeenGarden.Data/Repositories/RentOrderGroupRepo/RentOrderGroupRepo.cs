@@ -27,6 +27,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderGroupRepo
             return tblRentOrderGroups;
         }
 
+
         public async Task<ResultModel> UpdateRentOrderGroup(Guid rentOrderGroupID, double newRentOrderAmount)
         {
             ResultModel result = new();

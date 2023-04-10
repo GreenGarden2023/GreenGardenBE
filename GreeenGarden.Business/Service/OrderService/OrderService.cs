@@ -2660,9 +2660,13 @@ namespace GreeenGarden.Business.Service.OrderService
                     };
                 }
 
+
                 TblRentOrder tblRentOrder = await _rentOrderRepo.GetRentOrderByOrderCode(orderCode);
                 if (tblRentOrder != null)
                 {
+                    var rentOrderList = new List<RentOrderResModel>();
+                    var tblRentGroup = await _rentOrderGroupRepo.Get((Guid)tblRentOrder.RentOrderGroupId);
+
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
                     RentOrderResModel rentOrderResModel = new()
                     {
@@ -2689,10 +2693,27 @@ namespace GreeenGarden.Business.Service.OrderService
                         CreateDate = tblRentOrder.CreateDate,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
+                    rentOrderList.Add(rentOrderResModel);
+                    RentOrderGroupModel rentOrderGroupModel = new()
+                    {
+                        ID = tblRentGroup.Id,
+                        NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
+                        TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
+                        RentOrderList = rentOrderList
+                    };
+
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = rentOrderResModel;
+                    result.Data = rentOrderGroupModel;
                     result.Message = "Get rent order detail successful.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = null;
+                    result.Message = "Data null.";
                     return result;
                 }
             }
@@ -2769,9 +2790,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 }
                 else
                 {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Id invalid.";
+                    result.IsSuccess = true;
+                    result.Data = null;
+                    result.Message = "Data null.";
                     return result;
                 }
             }
@@ -2878,9 +2899,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 }
                 else
                 {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.Message = "Service order Id invalid.";
+                    result.IsSuccess = true;
+                    result.Data = null;
+                    result.Message = "Data null.";
                     return result;
                 }
             }
