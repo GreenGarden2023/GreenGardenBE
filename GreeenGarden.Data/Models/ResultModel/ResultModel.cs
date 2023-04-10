@@ -75,6 +75,6 @@
     public class RentOrderByRangeDateResModel
     {
         public object? Paging { get; set; }
-        public object? RentOrderGroup { get; set; }
+        public object? RentOrderGroups { get; set; }
     }
 }
