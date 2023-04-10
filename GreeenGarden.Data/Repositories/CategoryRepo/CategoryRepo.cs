@@ -66,10 +66,7 @@ namespace GreeenGarden.Data.Repositories.CategoryRepo
             {
                 category.Name = categoryUpdateModel.Name;
             }
-            if (!string.IsNullOrEmpty(categoryUpdateModel.Description) && !categoryUpdateModel.Description.Equals(category.Description))
-            {
                 category.Description = categoryUpdateModel.Description;
-            }
             if (!string.IsNullOrEmpty(categoryUpdateModel.Status) && !categoryUpdateModel.Status.Equals(category.Status))
             {
                 category.Status = categoryUpdateModel.Status;

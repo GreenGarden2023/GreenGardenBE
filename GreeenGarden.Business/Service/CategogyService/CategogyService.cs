@@ -165,7 +165,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                         Name = c.Name,
                         Status = c.Status,
                         ImgUrl = "" + await _cateRepo.getImgByCategory(c.Id),
-                        Description = c.Description
+                        Description = c.Description ?? ""
 
                     };
                     dataList.Add(CategoryToShow);

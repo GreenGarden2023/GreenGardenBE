@@ -206,14 +206,23 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
 
         public async Task<TblImage> UpdateImgForCategory(Guid categoryId, string imgUrl)
         {
-            TblImage? imgCategory = await _context.TblImages.Where(x => x.CategoryId == categoryId).FirstOrDefaultAsync();
+            TblImage? imgCategory = await _context.TblImages.Where(x => x.CategoryId.Equals(categoryId)).FirstOrDefaultAsync();
             if (imgCategory != null)
             {
                 imgCategory.ImageUrl = imgUrl;
                 _ = _context.Update(imgCategory);
                 _ = await _context.SaveChangesAsync();
             }
-
+            else
+            {
+                TblImage tblImage = new TblImage
+                {
+                    ImageUrl = imgUrl,
+                    CategoryId = categoryId
+                };
+                _context.TblImages.Add(tblImage);
+                _ = await _context.SaveChangesAsync();
+            }
             return imgCategory;
         }
 
