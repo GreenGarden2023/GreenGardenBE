@@ -1,5 +1,6 @@
 using EntityFrameworkPaginateCore;
 using GreeenGarden.Business.Service.CartService;
+using GreeenGarden.Business.Utilities.Convert;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
@@ -1509,7 +1510,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
                 totalOrderAmount = (numberRentDays * totalAmountPerDay) + transportFee - discountAmount;
 
-                if (totalOrderAmount >= 500000)
+                if (totalOrderAmount > 200000)
                 {
                     deposit = totalOrderAmount * 0.2;
                 }
@@ -2882,6 +2883,111 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Service order Id invalid.";
                     return result;
                 }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GetRentOrderDetailByRangeDate(string token, OrderRangeDateReqModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.MANAGER)
+                        && !userRole.Equals(Commons.STAFF)
+                        && !userRole.Equals(Commons.ADMIN)
+                        && !userRole.Equals(Commons.CUSTOMER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Code = 403,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+                if (model.fromDate == null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Error: fromDate null";
+                    return result;
+                }
+                var fromDate = ConvertUtil.convertStringToDateTime(model.fromDate);
+                var toDate = new DateTime();
+                if (model.toDate == null)
+                {
+                    toDate = fromDate.AddDays(1);
+                }
+                else
+                {
+                    toDate = ConvertUtil.convertStringToDateTime(model.toDate);
+                }
+
+                if (fromDate > toDate)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Error: fromDate > endDate";
+                    return result;
+                }
+
+                List<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrderByDate(fromDate, toDate);
+                var res = new List<RentOrderResModel>();
+                foreach (var tblRentOrder in listTblRentOrder)
+                {
+                    if (tblRentOrder != null)
+                    {
+                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
+                        RentOrderResModel rentOrderResModel = new()
+                        {
+                            Id = tblRentOrder.Id,
+                            UserId = tblRentOrder.UserId,
+                            CreatedBy = tblRentOrder.CreatedBy,
+                            IsTransport = tblRentOrder.IsTransport,
+                            TransportFee = tblRentOrder.TransportFee,
+                            StartRentDate = tblRentOrder.StartDateRent,
+                            EndRentDate = tblRentOrder.EndDateRent,
+                            Deposit = tblRentOrder.Deposit,
+                            TotalPrice = tblRentOrder.TotalPrice,
+                            Status = tblRentOrder.Status,
+                            RemainMoney = tblRentOrder.RemainMoney,
+                            RewardPointGain = tblRentOrder.RewardPointGain,
+                            RewardPointUsed = tblRentOrder.RewardPointUsed,
+                            RentOrderGroupID = tblRentOrder.RentOrderGroupId,
+                            DiscountAmount = tblRentOrder.DiscountAmount,
+                            RecipientAddress = tblRentOrder.RecipientAddress,
+                            RecipientDistrict = tblRentOrder.RecipientDistrict,
+                            RecipientName = tblRentOrder.RecipientName,
+                            RecipientPhone = tblRentOrder.RecipientPhone,
+                            OrderCode = tblRentOrder.OrderCode,
+                            CreateDate = tblRentOrder.CreateDate,
+                            RentOrderDetailList = rentOrderDetailResModels
+                        };
+                        res.Add(rentOrderResModel);
+                    }
+                }
+                var ress = res.OrderBy(o => o.EndRentDate).ToList();
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = ress;
+                result.Message = "Get rent order detail successful.";
+                return result;
             }
             catch (Exception e)
             {

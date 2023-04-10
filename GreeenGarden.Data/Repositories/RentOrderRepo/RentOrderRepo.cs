@@ -1,5 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -112,6 +113,11 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
         public async Task<TblRentOrder> GetRentOrderByOrderCode(string orderCode)
         {
             return await _context.TblRentOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<TblRentOrder>> GetRentOrderByDate(DateTime fromDate, DateTime toDate)
+        {
+            return await _context.TblRentOrders.Where(x => x.EndDateRent >= fromDate && x.EndDateRent <= toDate).ToListAsync();
         }
     }
 }
