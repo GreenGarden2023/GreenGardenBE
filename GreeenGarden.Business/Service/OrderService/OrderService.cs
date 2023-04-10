@@ -3024,7 +3024,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 var newRes = new RentOrderByRangeDateResModel()
                 {
                     Paging = paging,
-                    RentOrderGroup = listRes
+                    RentOrderGroups = listRes
                 };
 
                 var ress = res.OrderBy(o => o.EndRentDate).ToList();
