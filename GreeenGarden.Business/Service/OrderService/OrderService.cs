@@ -1510,7 +1510,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
                 totalOrderAmount = (numberRentDays * totalAmountPerDay) + transportFee - discountAmount;
 
-                if (totalOrderAmount >= 500000)
+                if (totalOrderAmount >= 200000)
                 {
                     deposit = totalOrderAmount * 0.2;
                 }
