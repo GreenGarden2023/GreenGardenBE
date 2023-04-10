@@ -222,10 +222,10 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-rent-order-detail-by-range-date")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
-        public async Task<IActionResult> GetRentOrderDetailByRangeDate([FromQuery]OrderRangeDateReqModel model)
+        public async Task<IActionResult> GetRentOrderDetailByRangeDate([FromQuery]OrderRangeDateReqModel model, [FromQuery] PaginationRequestModel pagingModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.GetRentOrderDetailByRangeDate(token, model);
+            ResultModel result = await _orderService.GetRentOrderDetailByRangeDate(token, model, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

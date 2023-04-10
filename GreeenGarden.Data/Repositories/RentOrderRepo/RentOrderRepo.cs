@@ -1,6 +1,8 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -115,9 +117,9 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
             return await _context.TblRentOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
         }
 
-        public async Task<List<TblRentOrder>> GetRentOrderByDate(DateTime fromDate, DateTime toDate)
+        public async Task<Page<TblRentOrder>> GetRentOrderByDate(DateTime fromDate, DateTime toDate, PaginationRequestModel pagingModel)
         {
-            return await _context.TblRentOrders.Where(x => x.EndDateRent >= fromDate && x.EndDateRent <= toDate).ToListAsync();
+            return await _context.TblRentOrders.Where(x => x.EndDateRent >= fromDate && x.EndDateRent <= toDate).OrderBy(y => y.EndDateRent).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
         }
     }
 }

@@ -1201,7 +1201,6 @@ namespace GreeenGarden.Business.Service.OrderService
                         Paging = paging,
                         RentOrderGroups = listGroup
                     };
-
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = rentOrderGroupResModel;
@@ -2914,7 +2913,7 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> GetRentOrderDetailByRangeDate(string token, OrderRangeDateReqModel model)
+        public async Task<ResultModel> GetRentOrderDetailByRangeDate(string token, OrderRangeDateReqModel model, PaginationRequestModel pagingModel)
         {
             var result = new ResultModel();
             try
@@ -2968,12 +2967,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     return result;
                 }
 
-                List<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrderByDate(fromDate, toDate);
+                Page<TblRentOrder> listTblRentOrder = await _rentOrderRepo.GetRentOrderByDate(fromDate, toDate, pagingModel);
                 var res = new List<RentOrderResModel>();
-                foreach (var tblRentOrder in listTblRentOrder)
+                var rentOrderList = new List<RentOrderResModel>();
+                var listRes = new List<RentOrderGroupModel>();
+                foreach (var tblRentOrder in listTblRentOrder.Results)
                 {
                     if (tblRentOrder != null)
                     {
+                        var tblRentGroup = await _rentOrderGroupRepo.Get((Guid)tblRentOrder.RentOrderGroupId);
                         List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
                         RentOrderResModel rentOrderResModel = new()
                         {
@@ -3000,13 +3002,35 @@ namespace GreeenGarden.Business.Service.OrderService
                             CreateDate = tblRentOrder.CreateDate,
                             RentOrderDetailList = rentOrderDetailResModels
                         };
-                        res.Add(rentOrderResModel);
+                        rentOrderList.Add(rentOrderResModel);
+
+                        RentOrderGroupModel rentOrderGroupModel = new()
+                        {
+                            ID = tblRentGroup.Id,
+                            NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
+                            TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
+                            RentOrderList = rentOrderList
+                        };
+                        listRes.Add(rentOrderGroupModel);
                     }
                 }
+
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(listTblRentOrder.PageSize)
+                    .CurPage(listTblRentOrder.CurrentPage)
+                    .RecordCount(listTblRentOrder.RecordCount)
+                    .PageCount(listTblRentOrder.PageCount);
+
+                var newRes = new RentOrderByRangeDateResModel()
+                {
+                    Paging = paging,
+                    RentOrderGroup = listRes
+                };
+
                 var ress = res.OrderBy(o => o.EndRentDate).ToList();
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.Data = ress;
+                result.Data = newRes;
                 result.Message = "Get rent order detail successful.";
                 return result;
             }

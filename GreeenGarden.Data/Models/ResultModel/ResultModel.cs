@@ -72,4 +72,9 @@
         public object? Paging { get; set; }
         public object? FeedbackList { get; set; }
     }
+    public class RentOrderByRangeDateResModel
+    {
+        public object? Paging { get; set; }
+        public object? RentOrderGroup { get; set; }
+    }
 }
