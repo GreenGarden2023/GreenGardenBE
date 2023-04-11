@@ -142,9 +142,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
                 TblService tblService = await _context.TblServices.Where(x => x.Id.Equals(serviceUpdateModelManager.ServiceID)).FirstOrDefaultAsync();
                 if (tblService != null)
                 {
-                    int returnPoints = (int)(tblService.RewardPointUsed - serviceUpdateModelManager.RewardPointUsed);
-                    _ = await _rewardRepo.UpdateUserRewardPointByUserID(tblService.UserId, returnPoints, 0);
-                    ;
+                    
                     if (!string.IsNullOrEmpty(serviceUpdateModelManager.Name) && !serviceUpdateModelManager.Name.Equals(tblService.Name))
                     {
                         tblService.Name = serviceUpdateModelManager.Name;

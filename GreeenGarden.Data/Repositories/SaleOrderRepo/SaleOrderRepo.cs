@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.SaleOrderRepo
@@ -11,9 +12,11 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
     public class SaleOrderRepo : Repository<TblSaleOrder>, ISaleOrderRepo
     {
         private readonly GreenGardenDbContext _context;
-        public SaleOrderRepo(GreenGardenDbContext context) : base(context)
+        private readonly IRewardRepo _rewardRepo;
+        public SaleOrderRepo(GreenGardenDbContext context, IRewardRepo rewardRepo) : base(context)
         {
             _context = context;
+            _rewardRepo = rewardRepo;
         }
 
         public async Task<ResultModel> UpdateSaleOrderStatus(Guid SaleOrderID, string status)
@@ -22,6 +25,10 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.Id.Equals(SaleOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
+                if (status.Trim().ToLower().Equals(Status.COMPLETED))
+                {
+                    _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
+                }
                 order.Status = status.Trim().ToLower();
                 _ = _context.Update(order);
                 _ = await _context.SaveChangesAsync();
@@ -85,7 +92,9 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
                 if (order.RemainMoney == 0)
                 {
                     order.Status = Status.COMPLETED;
+                    _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
                 }
+               
                 _ = _context.Update(order);
                 _ = await _context.SaveChangesAsync();
                 result.Code = 200;

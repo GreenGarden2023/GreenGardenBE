@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,12 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
     {
         private readonly GreenGardenDbContext _context;
         private readonly IServiceRepo _serviceRepo;
-        public ServiceOrderRepo(GreenGardenDbContext context, IServiceRepo serviceRepo) : base(context)
+        private readonly IRewardRepo _rewardRepo;
+        public ServiceOrderRepo(GreenGardenDbContext context, IServiceRepo serviceRepo, IRewardRepo rewardRepo) : base(context)
         {
             _context = context;
             _serviceRepo = serviceRepo;
+            _rewardRepo = rewardRepo;   
         }
 
         public async Task<bool> CheckOrderCode(string Code)
@@ -31,6 +34,7 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
             if (order != null)
             {
                 order.Status = Status.COMPLETED;
+                _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
                 _ = _context.Update(order);
                 _ = await _context.SaveChangesAsync();
                 TblService tblService = await _context.TblServices.Where(x => x.Id.Equals(order.ServiceId)).FirstOrDefaultAsync();

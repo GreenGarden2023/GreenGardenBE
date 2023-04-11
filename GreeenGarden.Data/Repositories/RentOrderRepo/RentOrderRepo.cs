@@ -5,6 +5,7 @@ using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Repositories.RewardRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.RentOrderRepo
@@ -12,9 +13,11 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
     public class RentOrderRepo : Repository<TblRentOrder>, IRentOrderRepo
     {
         private readonly GreenGardenDbContext _context;
-        public RentOrderRepo(GreenGardenDbContext context) : base(context)
+        private readonly IRewardRepo _rewardRepo; 
+        public RentOrderRepo(GreenGardenDbContext context, IRewardRepo rewardRepo) : base(context)
         {
             _context = context;
+            _rewardRepo = rewardRepo;   
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(Guid RentOrderID, string status)
@@ -23,6 +26,10 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
             TblRentOrder order = await _context.TblRentOrders.Where(x => x.Id.Equals(RentOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
+                if (status.Trim().ToLower().Equals(Status.COMPLETED))
+                {
+                    _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
+                }
                 order.Status = status.Trim().ToLower();
                 _ = _context.Update(order);
                 _ = await _context.SaveChangesAsync();

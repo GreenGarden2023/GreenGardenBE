@@ -455,7 +455,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);
                         }
                     }
-                    _ = await _rewardRepo.UpdateUserRewardPoint(userName, rewardPointGain, (int)rentOrderModel.RewardPointUsed);
+                    _ = await _rewardRepo.RemoveUserRewardPoint(userName, (int)rentOrderModel.RewardPointUsed);
                 }
                 else
                 {
@@ -665,7 +665,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             _ = await _productItemDetailRepo.UpdateProductItemDetailQuantity(itemDetail.Id, item.Quantity);
                         }
                     }
-                    _ = await _rewardRepo.UpdateUserRewardPoint(userName, rewardPointGain, (int)saleOrderModel.RewardPointUsed);
+                    _ = await _rewardRepo.RemoveUserRewardPoint(userName, (int)saleOrderModel.RewardPointUsed);
                 }
                 else
                 {
@@ -1866,6 +1866,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     UserId = tblService.UserId,
                     TransportFee = tblService.TransportFee,
                 };
+                _ = await _rewardRepo.RemoveUserRewardPointByUserID(tblService.UserId, (int)tblService.RewardPointUsed);
                 Guid insert = await _serviceOrderRepo.Insert(tblServiceOrder);
                 _ = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.CONFIRMED);
                 if (insert != Guid.Empty)
