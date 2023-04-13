@@ -198,26 +198,26 @@ namespace GreeenGarden.API.Controllers
 
         [HttpGet("get-rent-order-detail-by-order-code")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
-        public async Task<IActionResult> GetRentOrderDetailByOrderCode(string orderCode)
+        public async Task<IActionResult> GetRentOrderDetailByOrderCode([FromQuery] OrderFilterModel model, [FromQuery] PaginationRequestModel pagingModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.GetRentOrderDetailByOrderCode(token, orderCode);
+            ResultModel result = await _orderService.SearchRentOrderDetail(token, model, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-sale-order-detail-by-order-code")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
-        public async Task<IActionResult> GetSaleOrderDetailByOrderCode(string orderCode)
+        public async Task<IActionResult> GetSaleOrderDetailByOrderCode([FromQuery] OrderFilterModel model, [FromQuery] PaginationRequestModel pagingModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.GetSaleOrderDetailByOrderCode(token, orderCode);
+            ResultModel result = await _orderService.GetSaleOrderDetailByOrderCode(token, model, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-service-order-detail-by-order-code")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
-        public async Task<IActionResult> GetServiceOrderDetailByOrderCode(string orderCode)
+        public async Task<IActionResult> GetServiceOrderDetailByOrderCode([FromQuery] OrderFilterModel model, [FromQuery] PaginationRequestModel pagingModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.GetServiceOrderDetailByOrderCode(token, orderCode);
+            ResultModel result = await _orderService.GetServiceOrderDetailByOrderCode(token, model, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-rent-order-detail-by-range-date")]

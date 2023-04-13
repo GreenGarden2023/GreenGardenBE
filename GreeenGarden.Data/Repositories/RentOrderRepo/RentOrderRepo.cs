@@ -7,6 +7,7 @@ using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace GreeenGarden.Data.Repositories.RentOrderRepo
 {
@@ -119,14 +120,91 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
 
         }
 
-        public async Task<TblRentOrder> GetRentOrderByOrderCode(string orderCode)
+        public async Task<Page<TblRentOrder>> SearchRentOrder(OrderFilterModel model, PaginationRequestModel pagingModel)
         {
-            return await _context.TblRentOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
+            try
+            {
+                var result = new Page<TblRentOrder>();
+                var listResult = await GetRentOrderBy(model.Phone, model.Status, model.OrderCode);
+
+                var listResultPaging = listResult.Skip((pagingModel.curPage - 1) * pagingModel.pageSize).Take(pagingModel.pageSize);
+
+                result.PageSize = pagingModel.pageSize;
+                result.CurrentPage = pagingModel.curPage;
+                result.RecordCount = listResult.Count();
+                result.PageCount = (int)Math.Ceiling((double)result.RecordCount / result.PageSize);
+
+                result.Results = listResultPaging.ToList();
+
+                return result;
+
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<Page<TblRentOrder>> GetRentOrderByDate(DateTime fromDate, DateTime toDate, PaginationRequestModel pagingModel)
         {
             return await _context.TblRentOrders.Where(x => x.EndDateRent >= fromDate && x.EndDateRent <= toDate).OrderBy(y => y.EndDateRent).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+        }
+        
+        public async Task<List<TblRentOrder>> GetRentOrderBy(string phone, string status, string orderCode)
+        {
+            try
+            {
+                var result = new List<TblRentOrder>();
+                if (orderCode != null && orderCode.Trim() != "")
+                {
+                    var rentOrder = await _context.TblRentOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
+                    if (rentOrder != null) result.Add(rentOrder);
+                    return result;
+                }
+                if (status != null && status.Trim() != "" && phone != null && phone.Trim() != "")
+                {
+                    var user = await _context.TblUsers.Where(x => x.Phone.Equals(phone)).FirstOrDefaultAsync();
+                    var rentOrderByPhone = await _context.TblRentOrders.Where(x => x.UserId.Equals(user.Id) && x.Status.Equals(status)).ToListAsync();
+                    if (rentOrderByPhone.Any() == true)
+                    {
+                        foreach (var r in rentOrderByPhone)
+                        {
+                            result.Add(r);
+                        }
+                    }
+                    return result.OrderBy(x => x.CreateDate).ToList();
+
+                }
+                if (status != null && status.Trim() != "")
+                {
+                    var rentOrder = await _context.TblRentOrders.Where(x => x.Status.Equals(status)).ToListAsync();
+                    if (rentOrder.Any() == true)
+                    {
+                        foreach (var r in rentOrder)
+                        {
+                            result.Add(r);
+                        }
+                    }
+                }
+                if (phone != null && phone.Trim() != "")
+                {
+                    var user = await _context.TblUsers.Where(x => x.Phone.Equals(phone)).FirstOrDefaultAsync();
+                    var rentOrder = await _context.TblRentOrders.Where(x => x.UserId.Equals(user.Id)).ToListAsync();
+                    if (rentOrder.Any() == true)
+                    {
+                        foreach (var r in rentOrder)
+                        {
+                            result.Add(r);
+                        }
+                    }
+                }
+
+                return result.OrderBy(x => x.CreateDate).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }            
         }
     }
 }
