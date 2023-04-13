@@ -1,11 +1,13 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace GreeenGarden.Data.Repositories.SaleOrderRepo
 {
@@ -117,9 +119,84 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             return order != null;
         }
 
-        public async Task<TblSaleOrder> GetSaleOrderByOrderCode(string orderCode)
+        public async Task<Page<TblSaleOrder>> GetSaleOrderByOrderCode(OrderFilterModel model, PaginationRequestModel pagingModel)
         {
-            return await _context.TblSaleOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
+            try
+            {
+                var result = new Page<TblSaleOrder>();
+                var listSaleOrder = await GetSaleOrderBy(model.Phone, model.Status, model.OrderCode);
+
+                var listResultPaging = listSaleOrder.Skip((pagingModel.curPage - 1) * pagingModel.pageSize).Take(pagingModel.pageSize);
+
+                result.PageSize = pagingModel.pageSize;
+                result.CurrentPage = pagingModel.curPage;
+                result.RecordCount = listSaleOrder.Count();
+                result.PageCount = (int)Math.Ceiling((double)result.RecordCount / result.PageSize);
+
+                result.Results = listResultPaging.ToList();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public async Task<List<TblSaleOrder>> GetSaleOrderBy(string phone, string status, string orderCode)
+        {
+            try
+            {
+                var result = new List<TblSaleOrder>();
+                if (orderCode != null && orderCode.Trim() != "")
+                {
+                    var saleOrder = await _context.TblSaleOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
+                    if (saleOrder != null) result.Add(saleOrder);
+                    return result;
+                }
+                if (status != null && status.Trim() != "" && phone != null && phone.Trim() != "")
+                {
+                    var user = await _context.TblUsers.Where(x => x.Phone.Equals(phone)).FirstOrDefaultAsync();
+                    var saleOrderByPhone = await _context.TblSaleOrders.Where(x => x.UserId.Equals(user.Id) && x.Status.Equals(status)).ToListAsync();
+                    if (saleOrderByPhone.Any() == true)
+                    {
+                        foreach (var s in saleOrderByPhone)
+                        {
+                            result.Add(s);
+                        }
+                    }
+                    return result.OrderBy(x => x.CreateDate).ToList();
+
+                }
+                if (status != null && status.Trim() != "")
+                {
+                    var saleOrder = await _context.TblSaleOrders.Where(x => x.Status.Equals(status)).ToListAsync();
+                    if (saleOrder.Any() == true)
+                    {
+                        foreach (var r in saleOrder)
+                        {
+                            result.Add(r);
+                        }
+                    }
+                }
+                if (phone != null && phone.Trim() != "")
+                {
+                    var user = await _context.TblUsers.Where(x => x.Phone.Equals(phone)).FirstOrDefaultAsync();
+                    var saleOrders = await _context.TblSaleOrders.Where(x => x.UserId.Equals(user.Id)).ToListAsync();
+                    if (saleOrders.Any() == true)
+                    {
+                        foreach (var r in saleOrders)
+                        {
+                            result.Add(r);
+                        }
+                    }
+                }
+
+                return result.OrderBy(x => x.CreateDate).ToList();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
