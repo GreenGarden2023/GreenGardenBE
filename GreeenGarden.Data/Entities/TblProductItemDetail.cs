@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblProductItemDetail
 {
@@ -17,6 +20,8 @@ public partial class TblProductItemDetail
     public string Status { get; set; } = null!;
 
     public double? TransportFee { get; set; }
+
+    public string? Rule { get; set; }
 
     public virtual TblProductItem ProductItem { get; set; } = null!;
 

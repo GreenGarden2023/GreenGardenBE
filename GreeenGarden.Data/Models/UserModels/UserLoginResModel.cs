@@ -28,6 +28,7 @@
         public string Email { get; set; } = null!;
 
         public string RoleName { get; set; } = null!;
+        public int OrderNumber { get; set; } = new int();
     }
 }
 

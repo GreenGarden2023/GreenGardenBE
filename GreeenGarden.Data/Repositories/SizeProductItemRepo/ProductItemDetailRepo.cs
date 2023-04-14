@@ -47,6 +47,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             Quantity = item.Quantity,
                             TransportFee = item.TransportFee,
                             Status = item.Status,
+                            Rule= item.Rule,
                             ImagesURL = imgGet
                         };
                         listSizeProd.Add(sizeProd);
@@ -80,6 +81,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                             Quantity = item.Quantity,
                             Status = item.Status,
                             TransportFee = item.TransportFee,
+                            Rule = item.Rule,
                             ImagesURL = imgGet,
                         };
                         listSizeProd.Add(sizeProd);

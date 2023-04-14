@@ -136,6 +136,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Content = productItemModel.Content,
                         ProductId = productItemModel.ProductId,
                         Type = productItemModel.Type,
+
                         ImageURL = prodItemImgURL,
                     };
 
@@ -218,6 +219,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Quantity = productItemDetailModel.Quantity,
                     TransportFee = productItemDetailModel.TransportFee,
                     Status = productItemDetailModel.Status,
+                    Rule = productItemDetailModel.Rule,
                 };
 
                 Guid insertSizeProdItem = await _productItemDetailRepo.Insert(tblProductItemDetail);
@@ -253,6 +255,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Quantity = tblProductItemDetail.Quantity,
                         Status = tblProductItemDetail.Status,
                         TransportFee = tblProductItemDetail.TransportFee,
+                        Rule = tblProductItemDetail.Rule,
                         ImagesUrls = productItemDetailModel.ImagesUrls
                     };
                     result.Message = "Create Product Item Detail successful.";
@@ -378,7 +381,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     foreach (TblProductItem pi in prodItemList.Results)
                     {
                         List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(pi.Id, status);
-                        TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
+                            TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
                         string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
                         ProductItemResModel pItem = new()
                         {

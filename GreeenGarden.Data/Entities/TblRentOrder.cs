@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Entities;
+﻿using System;
+using System.Collections.Generic;
+
+namespace GreeenGarden.Data.Entities;
 
 public partial class TblRentOrder
 {
@@ -43,6 +46,8 @@ public partial class TblRentOrder
     public bool? IsTransport { get; set; }
 
     public Guid CreatedBy { get; set; }
+
+    public string? Description { get; set; }
 
     public virtual TblUser CreatedByNavigation { get; set; } = null!;
 

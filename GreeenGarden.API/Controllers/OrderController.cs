@@ -177,17 +177,17 @@ namespace GreeenGarden.API.Controllers
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             if (orderCancelModel.orderType.Trim().ToLower().Equals("sale"))
             {
-                ResultModel result = await _orderService.CancelSaleOrderById(token, orderCancelModel.orderID);
+                ResultModel result = await _orderService.CancelSaleOrderById(token, orderCancelModel.orderID, orderCancelModel.reason);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             else if (orderCancelModel.orderType.Trim().ToLower().Equals("rent"))
             {
-                ResultModel result = await _orderService.CancelRentOrderById(token, orderCancelModel.orderID);
+                ResultModel result = await _orderService.CancelRentOrderById(token, orderCancelModel.orderID, orderCancelModel.reason);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             else if (orderCancelModel.orderType.Trim().ToLower().Equals("service"))
             {
-                ResultModel result = await _orderService.CancelServiceOrderById(token, orderCancelModel.orderID);
+                ResultModel result = await _orderService.CancelServiceOrderById(token, orderCancelModel.orderID, orderCancelModel.reason);
                 return result.IsSuccess ? Ok(result) : BadRequest(result);
             }
             else
