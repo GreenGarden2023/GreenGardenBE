@@ -15,6 +15,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
         Task<ResultModel> UpdateSaleOrderStatus(Guid saleOrderID, string status);
         Task<ResultModel> UpdateSaleOrderDeposit(Guid saleOrderID);
         Task<ResultModel> UpdateSaleOrderRemain(Guid saleOrderID, double amount);
+        Task<bool> UpdateSaleOrder(TblSaleOrder entity);
         Task<bool> CheckOrderCode(string code);
     }
 }

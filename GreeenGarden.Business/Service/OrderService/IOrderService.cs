@@ -21,7 +21,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> SearchRentOrderDetail(string token, OrderFilterModel model, PaginationRequestModel pagingModel);
 
         Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status);
-        Task<ResultModel> CancelRentOrderById(string token, Guid rentOrderID);
+        Task<ResultModel> CancelRentOrderById(string token, Guid rentOrderID, string reason);
 
         Task<ResultModel> GetSaleOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetAllSaleOrders(string token, PaginationRequestModel pagingModel);
@@ -32,7 +32,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetARentOrder(string token, Guid rentOrderID);
 
         Task<ResultModel> UpdateSaleOrderStatus(string token, Guid saleOrderID, string status);
-        Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID);
+        Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID, string reason);
 
         Task<ResultModel> CompleteServiceOrderStatus(string token, Guid serviceOrderID);
         Task<ResultModel> CreateServiceOrder(string token, ServiceOrderCreateModel serviceOrderCreateModel);
@@ -41,7 +41,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetServiceOrderByTechnician(string token, PaginationRequestModel pagingModel, Guid technicianID);
         Task<ResultModel> GetServiceOrderById(string token, Guid orderID);
         Task<ResultModel> GetServiceOrderDetailByOrderCode(string token, OrderFilterModel model, PaginationRequestModel pagingModel);
-        Task<ResultModel> CancelServiceOrderById(string token, Guid orderID);
+        Task<ResultModel> CancelServiceOrderById(string token, Guid orderID, string reason);
     }
 }
 

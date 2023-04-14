@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -144,7 +145,8 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         UserName = user.UserName,
                         FullName = user.FullName,
                         Email = user.Mail,
-                        RoleName = "Admin"
+                        RoleName = "Admin",
+                        OrderNumber = 0
                     };
                     userList.Add(resModel);
                 }
@@ -154,13 +156,17 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 userGetList = await _context.TblUsers.Where(x => x.RoleId.Equals(Guid.Parse("56d4606a-08d0-4589-bd51-3a195d253ec5"))).ToListAsync();
                 foreach (TblUser user in userGetList)
                 {
+                    var orderNumber = 0;
+                    var orderTakeCare = await _context.TblServiceOrders.Where(x => x.TechnicianId.Equals(user.Id)&&x.Status!=Status.CANCEL).ToListAsync();
+                    if (orderTakeCare != null) orderNumber = orderTakeCare.Count();
                     UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
                         UserName = user.UserName,
                         FullName = user.FullName,
                         Email = user.Mail,
-                        RoleName = "Technician"
+                        RoleName = "Technician",
+                        OrderNumber = orderNumber,
                     };
                     userList.Add(resModel);
                 }
@@ -176,7 +182,8 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         UserName = user.UserName,
                         FullName = user.FullName,
                         Email = user.Mail,
-                        RoleName = "Customer"
+                        RoleName = "Customer",
+                        OrderNumber = 0
                     };
                     userList.Add(resModel);
                 }
@@ -193,7 +200,8 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                         UserName = user.UserName,
                         FullName = user.FullName,
                         Email = user.Mail,
-                        RoleName = "Manager"
+                        RoleName = "Manager",
+                        OrderNumber = 0
                     };
                     userList.Add(resModel);
                 }

@@ -149,6 +149,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientName = rentOrder.RecipientName,
                         RecipientPhone = rentOrder.RecipientPhone,
                         RentOrderDetailList = rentOrderDetailResModels,
+                        Reason = rentOrder.Description,
                         OrderCode = rentOrder.OrderCode,
 
                     };
@@ -231,6 +232,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientName = saleOrder.RecipientName,
                         RecipientPhone = saleOrder.RecipientPhone,
                         RentOrderDetailList = saleOrderDetailResModels,
+                        Reason = saleOrder.Description,
                         OrderCode = saleOrder.OrderCode
                     };
 
@@ -772,6 +774,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientPhone = tblRentOrder.RecipientPhone,
                         OrderCode = tblRentOrder.OrderCode,
                         CreateDate = tblRentOrder.CreateDate,
+                        Reason = tblRentOrder.Description,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
                     result.IsSuccess = true;
@@ -868,6 +871,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientPhone = order.RecipientPhone,
                                     OrderCode = order.OrderCode,
                                     CreateDate = order.CreateDate,
+                                    Reason = order.Description,
                                     RentOrderDetailList = rentOrderDetailResModels
                                 };
                                 resList.Add(rentOrderResModel);
@@ -977,6 +981,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientName = tblSaleOrder.RecipientName,
                         RecipientPhone = tblSaleOrder.RecipientPhone,
                         OrderCode = tblSaleOrder.OrderCode,
+                        Reason = tblSaleOrder.Description,
+                        
                         RentOrderDetailList = saleOrderDetailResModels
                     };
                     result.IsSuccess = true;
@@ -1061,6 +1067,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientName = order.RecipientName,
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
+                            Reason = order.Description,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
@@ -1172,6 +1179,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientName = order.RecipientName,
                                     RecipientPhone = order.RecipientPhone,
                                     OrderCode = order.OrderCode,
+                                    Reason = order.Description,
 
                                     RentOrderDetailList = rentOrderDetailResModels
                                 };
@@ -1285,6 +1293,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientName = order.RecipientName,
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
+                            Reason = order.Description,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
@@ -1409,6 +1418,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
                             CreateDate = order.CreateDate,
+                            Reason = order.Description,
                             RentOrderDetailList = rentOrderDetailResModels
                         };
                         resList.Add(rentOrderResModel);
@@ -1741,6 +1751,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientPhone = tblRentOrder.RecipientPhone,
                         OrderCode = tblRentOrder.OrderCode,
                         CreateDate = tblRentOrder.CreateDate,
+                        Reason = tblRentOrder.Description,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
                     List<ProductItemDetailResModel> productItems = new();
@@ -1867,6 +1878,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     TechnicianId = (Guid)tblService.TechnicianId,
                     ServiceId = serviceOrderCreateModel.ServiceId,
                     UserId = tblService.UserId,
+                    
                     TransportFee = tblService.TransportFee,
                 };
                 _ = await _rewardRepo.RemoveUserRewardPointByUserID(tblService.UserId, (int)tblService.RewardPointUsed);
@@ -1891,6 +1903,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceID = tblServiceOrderGet.ServiceId,
                         UserID = tblServiceOrderGet.UserId,
                         TransportFee = (double)tblServiceOrderGet.TransportFee,
+                        
                         Status = tblServiceOrderGet.Status
                     };
                     result.Message = "Create service order success.";
@@ -2003,6 +2016,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
+                            Reason = order.Description,
                             Service = serviceResModel
                         };
                         resList.Add(serviceOrderGetResModel);
@@ -2131,6 +2145,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
+                            Reason = order.Description,
                             Service = serviceResModel
                         };
                         resList.Add(serviceOrderGetResModel);
@@ -2258,6 +2273,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
+                            Reason = order.Description,
                             Service = serviceResModel
                         };
                         resList.Add(serviceOrderGetResModel);
@@ -2382,6 +2398,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         UserID = order.UserId,
                         TransportFee = (double)order.TransportFee,
                         Status = order.Status,
+                        Reason = order.Description,
                         Service = serviceResModel
                     };
                     result.IsSuccess = true;
@@ -2408,13 +2425,14 @@ namespace GreeenGarden.Business.Service.OrderService
             }
         }
 
-        public async Task<ResultModel> CancelServiceOrderById(string token, Guid orderID)
+        public async Task<ResultModel> CancelServiceOrderById(string token, Guid orderID, string reason)
         {
             ResultModel result = new();
             try
             {
                 TblServiceOrder? serviceOrder = await _serviceOrderRepo.Get(orderID);
                 serviceOrder.Status = ServiceOrderStatus.CANCEL;
+                serviceOrder.Description = reason;
                 _ = await _serviceOrderRepo.UpdateServiceOrder(serviceOrder);
 
                 _ = await _serviceRepo.ChangeServiceStatus(serviceOrder.ServiceId, ServiceStatus.REPROCESS);
@@ -2432,7 +2450,7 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID)
+        public async Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID, string reason)
         {
             ResultModel result = new();
             try
@@ -2447,6 +2465,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     return result;
                 }
                 ResultModel updateStatus = await _saleOrderRepo.UpdateSaleOrderStatus(saleOrderID, Status.CANCEL);
+                tblSaleOrder.Description = reason;
+                await _saleOrderRepo.UpdateSaleOrder(tblSaleOrder);
                 if (updateStatus.IsSuccess == true)
                 {
                     List<SaleOrderDetailResModel> tblSaleOrderDetails = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
@@ -2470,13 +2490,15 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> CancelRentOrderById(string token, Guid rentOrderID)
+        public async Task<ResultModel> CancelRentOrderById(string token, Guid rentOrderID, string reason)
         {
             ResultModel result = new();
             try
             {
                 TblRentOrder? rentOrder = await _rentOrderRepo.Get(rentOrderID);
                 ResultModel chaneStatus = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, Status.CANCEL);
+                rentOrder.Description = reason;
+                await _rentOrderRepo.UpdateRentOrder(rentOrder);
                 if (chaneStatus.Code == 200)
                 {
                     List<RentOrderDetailResModel> rentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
@@ -2702,6 +2724,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientPhone = tblRentOrder.RecipientPhone,
                             OrderCode = tblRentOrder.OrderCode,
                             CreateDate = tblRentOrder.CreateDate,
+                            Reason = tblRentOrder.Description,
                             RentOrderDetailList = rentOrderDetailResModels
                         };
                         rentOrderList.Add(rentOrderResModel);
@@ -2807,6 +2830,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientName = order.RecipientName,
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
+                            Reason = order.Description,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
@@ -2935,6 +2959,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
+                            Reason = order.Description,
                             Service = serviceResModel
                         };
                         resList.Add(serviceOrderGetResModel);
@@ -3069,6 +3094,8 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientPhone = tblRentOrder.RecipientPhone,
                             OrderCode = tblRentOrder.OrderCode,
                             CreateDate = tblRentOrder.CreateDate,
+                            Reason = tblRentOrder.Description,
+
                             RentOrderDetailList = rentOrderDetailResModels
                         };
                         rentOrderList.Add(rentOrderResModel);

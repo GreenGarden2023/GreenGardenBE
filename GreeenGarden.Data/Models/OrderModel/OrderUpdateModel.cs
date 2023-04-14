@@ -9,6 +9,7 @@
     {
         public Guid orderID { get; set; }
         public string? orderType { get; set; }
+        public string? reason { get; set; }
     }
 }
 

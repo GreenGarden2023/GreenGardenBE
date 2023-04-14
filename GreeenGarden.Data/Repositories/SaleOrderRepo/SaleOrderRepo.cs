@@ -198,6 +198,13 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
                 return null;
             }
         }
+
+        public async Task<bool> UpdateSaleOrder(TblSaleOrder entity)
+        {
+            _context.TblSaleOrders.Update(entity); 
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
 
