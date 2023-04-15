@@ -4,6 +4,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.CartRepo;
+using GreeenGarden.Data.Repositories.ProductItemRepo;
 
 namespace GreeenGarden.Business.Service.CartService
 {
@@ -11,11 +12,13 @@ namespace GreeenGarden.Business.Service.CartService
     {
         private readonly DecodeToken _decodeToken;
         private readonly ICartRepo _cartRepo;
+        private readonly IProductItemRepo _proItemRepo;
 
-        public CartService(ICartRepo cartRepo)
+        public CartService(ICartRepo cartRepo, IProductItemRepo proItemRepo)
         {
             _cartRepo = cartRepo;
             _decodeToken = new DecodeToken();
+            _proItemRepo= proItemRepo;
         }
 
         public async Task<ResultModel> AddToCart(string token, AddToCartModel model)
@@ -37,7 +40,7 @@ namespace GreeenGarden.Business.Service.CartService
                         }
 
                     }
-                }
+                } // gộp sản phẩm rent
                 if (model.saleItems.Count > 1)
                 {
                     for (int i = 0; i < model.saleItems.Count; i++)
@@ -51,7 +54,9 @@ namespace GreeenGarden.Business.Service.CartService
                             }
                         }
                     }
-                }
+                }// gộp sản phẩm sale
+
+
                 // check sale + rent
                 foreach (ItemResponse i in model.saleItems)
                 {
@@ -60,6 +65,7 @@ namespace GreeenGarden.Business.Service.CartService
                         if (i.productItemDetailID == j.productItemDetailID)
                         {
                             TblProductItemDetail proItemDetial = await _cartRepo.GetProductItemDetails((Guid)i.productItemDetailID);
+                            var productItem = await _proItemRepo.Get(proItemDetial.ProductItemId);
                             if (proItemDetial == null)
                             {
                                 result.Code = 102;
@@ -68,13 +74,17 @@ namespace GreeenGarden.Business.Service.CartService
                                 return result;
 
                             }
-                            if ((i.quantity + j.quantity) > proItemDetial.Quantity)
+                            if (!model.status.Equals("remove"))
                             {
-                                result.Code = 101;
-                                result.IsSuccess = false;
-                                result.Message = "Số lượng của sản phẩm: " + i.productItemDetailID + " trong kho chỉ còn: " + proItemDetial.Quantity + ", đơn hàng của bạn tổng: " + (i.quantity + j.quantity);
-                                return result;
-                            }
+                                if ((i.quantity + j.quantity) > proItemDetial.Quantity)
+                                {
+                                    string message = "Số lượng của " + productItem.Name + " còn lại trong kho là " + proItemDetial.Quantity + " không đủ để cập nhật giỏ hàng.";
+                                    result.Code = 101;
+                                    result.IsSuccess = false;
+                                    result.Message = message;
+                                    return result;
+                                }
+                            } // nếu status là remove thì k check điều kiện số lượng                             
                         }
                     }
                 }
@@ -123,19 +133,22 @@ namespace GreeenGarden.Business.Service.CartService
                             if (item.productItemDetailID != null)
                             {
                                 productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
-                                if (item.quantity > productItemDetail.Quantity)
+                                if (!model.status.Equals("remove"))
                                 {
-                                    result.Code = 101;
-                                    result.IsSuccess = false;
-                                    result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
-                                    return result;
-                                }
-                                if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.RentPrice == 0)
-                                {
-                                    result.Code = 102;
-                                    result.IsSuccess = false;
-                                    result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
-                                    return result;
+                                    if (item.quantity > productItemDetail.Quantity)
+                                    {
+                                        result.Code = 101;
+                                        result.IsSuccess = false;
+                                        result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
+                                        return result;
+                                    }
+                                    if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.RentPrice == 0)
+                                    {
+                                        result.Code = 102;
+                                        result.IsSuccess = false;
+                                        result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
+                                        return result;
+                                    }
                                 }
                                 TblCartDetail newCartDetail = new()
                                 {
@@ -182,20 +195,22 @@ namespace GreeenGarden.Business.Service.CartService
                             if (item.productItemDetailID != null)
                             {
                                 productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
-
-                                if (item.quantity > productItemDetail.Quantity)
+                                if (!model.status.Equals("remove"))
                                 {
-                                    result.Code = 101;
-                                    result.IsSuccess = false;
-                                    result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
-                                    return result;
-                                }
-                                if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.SalePrice == 0)
-                                {
-                                    result.Code = 102;
-                                    result.IsSuccess = false;
-                                    result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
-                                    return result;
+                                    if (item.quantity > productItemDetail.Quantity)
+                                    {
+                                        result.Code = 101;
+                                        result.IsSuccess = false;
+                                        result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
+                                        return result;
+                                    }
+                                    if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.SalePrice == 0)
+                                    {
+                                        result.Code = 102;
+                                        result.IsSuccess = false;
+                                        result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
+                                        return result;
+                                    }
                                 }
                                 TblCartDetail newCartDetail = new()
                                 {
