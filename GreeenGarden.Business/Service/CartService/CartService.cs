@@ -65,12 +65,13 @@ namespace GreeenGarden.Business.Service.CartService
                         if (i.productItemDetailID == j.productItemDetailID)
                         {
                             TblProductItemDetail proItemDetial = await _cartRepo.GetProductItemDetails((Guid)i.productItemDetailID);
+                            
                             var productItem = await _proItemRepo.Get(proItemDetial.ProductItemId);
                             if (proItemDetial == null)
                             {
                                 result.Code = 102;
                                 result.IsSuccess = false;
-                                result.Message = "Don't product: " + i.productItemDetailID;
+                                result.Message = "Không tìm thấy sản phẩm " + productItem.Name;
                                 return result;
 
                             }
@@ -133,20 +134,21 @@ namespace GreeenGarden.Business.Service.CartService
                             if (item.productItemDetailID != null)
                             {
                                 productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
+                                var productItem = await _proItemRepo.Get(productItemDetail.ProductItemId);
                                 if (!model.status.Equals("remove"))
                                 {
                                     if (item.quantity > productItemDetail.Quantity)
                                     {
                                         result.Code = 101;
                                         result.IsSuccess = false;
-                                        result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
+                                        result.Message = "Số lượng của " + productItem.Name + " còn lại trong kho là " + productItemDetail.Quantity + " không đủ để cập nhật giỏ hàng.";
                                         return result;
                                     }
                                     if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.RentPrice == 0)
                                     {
                                         result.Code = 102;
                                         result.IsSuccess = false;
-                                        result.Message = "Sản phẩm " + item.productItemDetailID + " đang bị vô hiệu!";
+                                        result.Message = "Sản phẩm: " + productItem.Name + " đang bị vô hiệu";
                                         return result;
                                     }
                                 }
@@ -160,7 +162,6 @@ namespace GreeenGarden.Business.Service.CartService
                                 };
                                 _ = await _cartRepo.AddProductItemToCart(newCartDetail);
                                 //show
-                                TblProductItem productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
                                 productItem productItemRecord = new()
                                 {
                                     Content = productItem.Content,
@@ -195,13 +196,15 @@ namespace GreeenGarden.Business.Service.CartService
                             if (item.productItemDetailID != null)
                             {
                                 productItemDetail productItemDetail = await _cartRepo.GetProductItemDetail(item.productItemDetailID);
+
+                                TblProductItem productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
                                 if (!model.status.Equals("remove"))
                                 {
                                     if (item.quantity > productItemDetail.Quantity)
                                     {
                                         result.Code = 101;
                                         result.IsSuccess = false;
-                                        result.Message = "Product " + productItemDetail.Id + " don't enough quantity!";
+                                        result.Message = "Số lượng của " + productItem.Name + " còn lại trong kho là " + productItemDetail.Quantity + " không đủ để cập nhật giỏ hàng.";
                                         return result;
                                     }
                                     if (productItemDetail.Status.ToLower() != Status.ACTIVE || productItemDetail.SalePrice == 0)
@@ -222,7 +225,6 @@ namespace GreeenGarden.Business.Service.CartService
                                 };
                                 _ = await _cartRepo.AddProductItemToCart(newCartDetail);
                                 //show
-                                TblProductItem productItem = await _cartRepo.GetProductItem(productItemDetail.ProductItemId);
                                 productItem productItemRecord = new()
                                 {
                                     Content = productItem.Content,
