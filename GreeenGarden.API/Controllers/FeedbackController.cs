@@ -26,6 +26,13 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.createFeedback(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("update-feedback")]
+        public async Task<IActionResult> updateFeedback(FeedbackUpdateModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.updateFeedback(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
 
         [HttpPatch("change-status")]
         public async Task<IActionResult> changeStatus(FeedbackChangeStatusModel model)
@@ -40,6 +47,14 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             Data.Models.ResultModel.ResultModel result = await _service.getListFeedbackByProductItem(token, pagingModel, productItemID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpPost("get-list-feedback-by-order")]
+        public async Task<IActionResult> getListFeedbackByOrder([FromQuery] PaginationRequestModel pagingModel, Guid orderID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.getListFeedbackByOrder(token, pagingModel, orderID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }

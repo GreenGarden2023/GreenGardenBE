@@ -261,15 +261,38 @@ namespace GreeenGarden.Business.Service.FeedbackService
             throw new NotImplementedException();
         }
 
-        public ResultModel getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
+        public async Task<ResultModel> getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
         {
             ResultModel result = new();
             try
             {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.CUSTOMER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+
+                var feedback = await _fbRepo.GetFeedBackByOrderID(orderID, pagingModel);
+                
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Data = feedback;
             }
             catch (Exception e)
             {
@@ -353,9 +376,79 @@ namespace GreeenGarden.Business.Service.FeedbackService
             return result;
         }
 
-        Task<ResultModel> IFeedbackService.getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
+        public async Task<ResultModel> updateFeedback(string token, FeedbackUpdateModel model)
         {
-            throw new NotImplementedException();
+            var result = new ResultModel();
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.CUSTOMER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+                var feedback = await _fbRepo.Get(model.FeedbackID);
+                if (feedback.UpdateDate != null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Feedback chỉ được cập nhật 1 lần";
+                    return result;
+                }
+                feedback.Rating = model.Rating;
+                feedback.Comment = model.Comment;
+                feedback.UpdateDate = DateTime.Now;
+                await _fbRepo.UpdateFeedback(feedback);
+                if (model.ImagesUrls.Any())
+                {
+                    var listUrl = await _imgRepo.GetImgUrlFeedback(feedback.Id);
+                    if (listUrl != null)
+                    {
+                        foreach (var i in listUrl)
+                        {
+                            await _imgRepo.DeleteImage(i);
+                        }
+                    }
+
+                    foreach (var i in model.ImagesUrls)
+                    {
+                        var newTblImage = new TblImage()
+                        {
+                            Id = Guid.NewGuid(),
+                            ImageUrl= i,
+                            FeedbackId = feedback.Id,
+                        };
+                        await _imgRepo.Insert(newTblImage);
+                    }
+                }
+
+                
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = await _fbRepo.Get(model.FeedbackID);
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
+
+       
     }
 }
