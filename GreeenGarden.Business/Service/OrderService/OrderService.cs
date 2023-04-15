@@ -126,6 +126,15 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     TblRentOrder rentOrder = await _rentOrderRepo.Get(rentOrderID);
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
+                    if (status.Equals(Status.COMPLETED) || status.Equals(Status.CANCEL))
+                    {
+                        foreach (var i in rentOrderDetailResModels)
+                        {
+                            var productItemDetail = await _productItemDetailRepo.Get(i.ProductItemDetail.Id);
+                            productItemDetail.Quantity += i.ProductItemDetail.Quantity;
+                            await _productItemDetailRepo.UpdateProductItemDetail(productItemDetail);
+                        }
+                    }
 
                     RentOrderResModel rentOrderResModel = new()
                     {
@@ -150,7 +159,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientPhone = rentOrder.RecipientPhone,
                         RentOrderDetailList = rentOrderDetailResModels,
                         Reason = rentOrder.Description,
-                        OrderCode = rentOrder.OrderCode,
+                        OrderCode = rentOrder.OrderCode
 
                     };
 
