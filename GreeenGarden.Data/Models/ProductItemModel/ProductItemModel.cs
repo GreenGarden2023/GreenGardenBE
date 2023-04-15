@@ -18,6 +18,8 @@ namespace GreeenGarden.Data.Models.ProductItemModel
         public string? Type { get; set; } = null!;
 
         public string? ImageURL { get; set; } = null!;
+
+        public string? Rule { get; set; }
     }
 }
 

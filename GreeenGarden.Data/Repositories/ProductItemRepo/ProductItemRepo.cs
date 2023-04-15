@@ -64,6 +64,10 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                 {
                     productItem.Content = productItemModel.Content;
                 }
+                if (!string.IsNullOrEmpty(productItemModel.Rule) && !productItemModel.Rule.Equals(productItem.Rule))
+                {
+                    productItem.Rule = productItemModel.Rule;
+                }
                 if ((productItemModel.ProductId != Guid.Empty) && !productItemModel.ProductId.Equals(productItem.ProductId))
                 {
                     productItem.ProductId = (Guid)productItemModel.ProductId;

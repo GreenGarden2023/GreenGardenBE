@@ -280,6 +280,7 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Name).HasMaxLength(200);
+            entity.Property(e => e.Rule).HasMaxLength(500);
             entity.Property(e => e.Type).HasMaxLength(50);
 
             entity.HasOne(d => d.Product).WithMany(p => p.TblProductItems)
@@ -298,7 +299,6 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.ProductItemId).HasColumnName("ProductItemID");
-            entity.Property(e => e.Rule).HasMaxLength(500);
             entity.Property(e => e.SizeId).HasColumnName("SizeID");
             entity.Property(e => e.Status).HasMaxLength(50);
 

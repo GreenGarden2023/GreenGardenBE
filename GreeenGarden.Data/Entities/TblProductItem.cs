@@ -17,6 +17,8 @@ public partial class TblProductItem
 
     public string? Content { get; set; }
 
+    public string? Rule { get; set; }
+
     public virtual TblProduct Product { get; set; } = null!;
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();
