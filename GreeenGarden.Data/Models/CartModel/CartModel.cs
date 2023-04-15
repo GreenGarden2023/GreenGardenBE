@@ -53,6 +53,7 @@
     {
         public List<ItemResponse>? rentItems { get; set; }
         public List<ItemResponse>? saleItems { get; set; }
+        public string? status { get; set; }
     }
     public class ItemResponse
     {
