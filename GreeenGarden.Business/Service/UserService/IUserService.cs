@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Data.Models.ResultModel;
+﻿using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 
 namespace GreeenGarden.Business.Service.UserService
@@ -14,6 +15,7 @@ namespace GreeenGarden.Business.Service.UserService
         Task<ResultModel> GetUsersByRole(string token, string role);
         Task<ResultModel> VerifyRegisterOTPCode(OTPVerifyModel oTPVerifyModel);
         Task<ResultModel> UpdateUserStatus(string token, UserUpdateStatusModel userUpdateStatusModel);
+        Task<ResultModel> GetListAccountByAdmin(string token, PaginationRequestModel pagingModel);
 
     }
 }

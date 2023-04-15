@@ -1,5 +1,6 @@
 ﻿using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Business.Service.UserService;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using Microsoft.AspNetCore.Authorization;
@@ -78,6 +79,21 @@ namespace GreeenGarden.API.Controllers
             catch (Exception e)
             {
 
+                return BadRequest(e.ToString());
+            }
+        }
+        [HttpGet("get-list-account-by-admin")]
+        [Authorize(Roles = "Admin, Manager")]
+        public async Task<ActionResult<ResultModel>> GetListAccountByAdmin([FromQuery]PaginationRequestModel pagingModel)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.GetListAccountByAdmin(token, pagingModel);
+                return result;
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e.ToString());
             }
         }

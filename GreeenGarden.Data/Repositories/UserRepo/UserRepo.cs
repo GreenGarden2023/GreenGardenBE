@@ -1,5 +1,7 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using Microsoft.EntityFrameworkCore;
@@ -271,6 +273,28 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 Email = x.u.Mail
             }).FirstOrDefaultAsync();
             return userModel;
+        }
+
+        public async Task<Page<UserLoginResModel>> GetListUser(PaginationRequestModel pagingModel)
+        {
+            var result = await _context.TblUsers.
+                Select(x => new UserLoginResModel
+                {
+                    ID = x.Id,
+                    UserName = x.UserName,
+                    FullName = x.FullName,
+                    Email = x.Mail,
+                    RoleName = null, 
+                }).
+                PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            return result;
+        }
+
+        public async Task<string> GetRoleName(Guid userID)
+        {
+            var user = await _context.TblUsers.Where(x=>x.Id.Equals(userID)).FirstOrDefaultAsync();
+            var role = await _context.TblRoles.Where(x=>x.Id.Equals(user.RoleId)).FirstOrDefaultAsync();
+            return role.RoleName;
         }
     }
 }

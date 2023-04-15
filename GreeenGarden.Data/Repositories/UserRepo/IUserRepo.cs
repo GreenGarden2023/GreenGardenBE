@@ -1,4 +1,6 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
@@ -15,6 +17,8 @@ namespace GreeenGarden.Data.Repositories.UserRepo
         public Task<bool> CheckUserEmail(string email);
         public Task<UserCurrResModel> GetUserByEmail(string email);
         public Task<bool> UpdateUserStatus(Guid userID, string status);
+        public Task<string> GetRoleName(Guid userID);
+        public Task<Page<UserLoginResModel>> GetListUser(PaginationRequestModel pagingModel);
     }
 }
 

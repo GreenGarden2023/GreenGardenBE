@@ -2,6 +2,7 @@
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.RewardRepo;
@@ -524,6 +525,54 @@ namespace GreeenGarden.Business.Service.UserService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
             }
+        }
+
+        public async Task<ResultModel> GetListAccountByAdmin(string token, PaginationRequestModel pagingModel)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.ADMIN) &&
+                        !userRole.Equals(Commons.MANAGER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+
+                var pageUser = await _userRepo.GetListUser(pagingModel);
+
+                foreach (var i in pageUser.Results)
+                {
+                    var roleName = await _userRepo.GetRoleName(i.ID);
+                    i.RoleName = roleName;
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = pageUser;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }
