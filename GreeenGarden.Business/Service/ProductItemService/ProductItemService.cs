@@ -102,8 +102,10 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Name = productItemInsertModel.Name,
                     Description = productItemInsertModel.Description,
                     Content = productItemInsertModel.Content,
+                    Rule = productItemInsertModel.Rule,
                     ProductId = (Guid)productItemInsertModel.ProductId,
                     Type = productItemInsertModel.Type,
+                    
 
                 };
                 Guid insertProdItem = await _proItemRepo.Insert(productItemModel);
@@ -136,7 +138,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Content = productItemModel.Content,
                         ProductId = productItemModel.ProductId,
                         Type = productItemModel.Type,
-
                         ImageURL = prodItemImgURL,
                     };
 
@@ -219,7 +220,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Quantity = productItemDetailModel.Quantity,
                     TransportFee = productItemDetailModel.TransportFee,
                     Status = productItemDetailModel.Status,
-                    Rule = productItemDetailModel.Rule,
                 };
 
                 Guid insertSizeProdItem = await _productItemDetailRepo.Insert(tblProductItemDetail);
@@ -255,7 +255,6 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Quantity = tblProductItemDetail.Quantity,
                         Status = tblProductItemDetail.Status,
                         TransportFee = tblProductItemDetail.TransportFee,
-                        Rule = tblProductItemDetail.Rule,
                         ImagesUrls = productItemDetailModel.ImagesUrls
                     };
                     result.Message = "Create Product Item Detail successful.";
@@ -303,6 +302,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ProductId = prodItem.ProductId,
                         Type = prodItem.Type,
                         ImageURL = prodItemImgURL,
+                        Rule = prodItem.Rule,
                         ProductItemDetail = sizeGet
                     };
                     TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
@@ -392,6 +392,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                             ProductId = pi.ProductId,
                             Type = pi.Type,
                             ImageURL = prodItemImgURL,
+                            Rule = pi.Rule,
                             ProductItemDetail = sizeGet
                         };
 
@@ -496,6 +497,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Description = updateResult.Description,
                         ProductId = updateResult.ProductId,
                         Type = updateResult.Type,
+                        Rule = updateResult.Rule,
                         ProductItemDetail = sizeGet
                     };
 
