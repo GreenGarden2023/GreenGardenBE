@@ -1,11 +1,14 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.FeedbackModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.FeedbackRepo
 {
+
     public class FeedbackRepo : Repository<TblFeedBack>, IFeedbackRepo
     {
         private readonly GreenGardenDbContext _context;
@@ -23,6 +26,16 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
             _ = _context.TblFeedBacks.Update(result);
             _ = await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<Page<TblFeedBack>> GetFeedBackByOrderID(Guid orderID, PaginationRequestModel pagingModel)
+        {
+            var result = await _context.TblFeedBacks.Where(x => x.OrderId.Equals(orderID)).OrderBy(x => x.CreateDate).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            foreach (var i in result.Results)
+            {
+                var listImg = await _imageRepo.GetImgUrlFeedback(i.Id);
+            }
+            return result;
         }
 
         public async Task<List<TblFeedBack>> GetFeedBackByProductItemDetail(Guid productItemDetailID)
@@ -55,6 +68,13 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
                 return resList;
             }
             else { return null; }
+        }
+
+        public async Task<bool> UpdateFeedback(TblFeedBack entity)
+        {
+            _context.TblFeedBacks.Update(entity);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
