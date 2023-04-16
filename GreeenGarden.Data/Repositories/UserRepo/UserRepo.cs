@@ -302,6 +302,39 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             var role = await _context.TblRoles.Where(x=>x.Id.Equals(user.RoleId)).FirstOrDefaultAsync();
             return role.RoleName;
         }
+
+        public async Task<Guid> GetRoleID(string roleName)
+        {
+            var role = await _context.TblRoles.Where(x => x.RoleName.ToLower().Equals(roleName.ToLower())).FirstOrDefaultAsync();
+            return role.Id;
+        }
+
+        public async Task<bool> UpdateTblUser(TblUser entity)
+        {
+            _context.TblUsers.Update(entity);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<int> CheckUserNamePhoneAndMail(string username, string phone, string mail)
+        {
+            var checkUsername = await _context.TblUsers.Where(x => x.UserName.Equals(username)).FirstOrDefaultAsync();
+            var checkPhone = await _context.TblUsers.Where(x => x.Phone.Equals(phone)).FirstOrDefaultAsync();
+            var checkMail = await _context.TblUsers.Where(x => x.Mail.Equals(mail)).FirstOrDefaultAsync();
+            if (checkUsername != null)
+            {
+                return 1;
+            }
+            if (checkPhone != null)
+            {
+                return 2;
+            }
+            if (checkMail != null)
+            {
+                return 3;
+            }
+            return 0;
+        }
     }
 }
 

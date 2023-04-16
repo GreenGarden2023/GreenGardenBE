@@ -34,6 +34,21 @@ namespace GreeenGarden.API.Controllers
                 return BadRequest(e.ToString());
             }
         }
+        [HttpPost("create-user-by-admin")]
+        public async Task<ActionResult<ResultModel>> CreateUserByAdmin([FromBody]UserInsertModel model)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.CreateUserByAdmin(token, model);
+                return result;
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+        }
         [HttpPost("login")]
         public async Task<ActionResult<ResultModel>> Login(UserLoginReqModel request)
         {
@@ -112,6 +127,21 @@ namespace GreeenGarden.API.Controllers
                 return BadRequest(e.ToString());
             }
 
+        }
+        [HttpPost("assign-user-role")]
+        public async Task<ActionResult<ResultModel>> AssignRole(UserAssignRoleModel model)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.AssignRole(token, model);
+                return result;
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
         }
         [HttpPost("send-email-code")]
         [AllowAnonymous]
