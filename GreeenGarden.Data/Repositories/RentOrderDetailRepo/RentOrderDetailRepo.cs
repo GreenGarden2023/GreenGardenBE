@@ -82,6 +82,11 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
             return resultList;
         }
 
+        public async Task<List<TblRentOrderDetail>> GetRentOrderDetailsByRentOrderID(Guid RentOrderId)
+        {
+            return await _context.TblRentOrderDetails.Where(x=>x.RentOrderId.Equals(RentOrderId)).ToListAsync();
+        }
+
         public async Task<bool> UpdateRentOrderDetail(TblRentOrderDetail entity)
         {
             _ = _context.TblRentOrderDetails.Update(entity);

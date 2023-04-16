@@ -125,13 +125,14 @@ namespace GreeenGarden.Business.Service.OrderService
                 if (updateResult.IsSuccess == true)
                 {
                     TblRentOrder rentOrder = await _rentOrderRepo.Get(rentOrderID);
+                    var listRentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(rentOrderID);
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
                     if (status.Equals(Status.COMPLETED) || status.Equals(Status.CANCEL))
                     {
-                        foreach (var i in rentOrderDetailResModels)
+                        foreach (var i in listRentOrderDetail)
                         {
-                            var productItemDetail = await _productItemDetailRepo.Get(i.ProductItemDetail.Id);
-                            productItemDetail.Quantity += i.ProductItemDetail.Quantity;
+                            var productItemDetail = await _productItemDetailRepo.Get((Guid)i.ProductItemDetailId);
+                            productItemDetail.Quantity += i.Quantity;
                             await _productItemDetailRepo.UpdateProductItemDetail(productItemDetail);
                         }
                     }
