@@ -275,16 +275,22 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             return userModel;
         }
 
-        public async Task<Page<UserLoginResModel>> GetListUser(PaginationRequestModel pagingModel)
+        public async Task<Page<UserResByAdminModel>> GetListUser(PaginationRequestModel pagingModel)
         {
             var result = await _context.TblUsers.
-                Select(x => new UserLoginResModel
+                Select(x => new UserResByAdminModel
                 {
                     ID = x.Id,
                     UserName = x.UserName,
                     FullName = x.FullName,
-                    Email = x.Mail,
+                    Address = x.Address,
+                    DistrictName = null,
+                    Phone= x.Phone,
+                    Favorite= x.Favorite,
+                    Mail = x.Mail,
                     RoleName = null, 
+                    Status= x.Status,
+
                 }).
                 PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
             return result;
