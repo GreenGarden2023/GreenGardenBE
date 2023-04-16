@@ -14,6 +14,7 @@ namespace GreeenGarden.Data.Models.UserModels
         public string? Address { get; set; }
 
         public int? DistrictId { get; set; }
+        public string? RoleName { get; set; }
 
         public string? Phone { get; set; }
 
