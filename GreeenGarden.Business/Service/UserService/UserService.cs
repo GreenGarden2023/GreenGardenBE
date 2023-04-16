@@ -676,6 +676,7 @@ namespace GreeenGarden.Business.Service.UserService
                     {
 
                     }
+                var roleID = await _userRepo.GetRoleID(model.RoleName);
                     CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
                     TblUser userModel = new()
                     {
@@ -689,6 +690,7 @@ namespace GreeenGarden.Business.Service.UserService
                         Phone = model.Phone,
                         Favorite = model.Favorite,
                         Mail = model.Mail,
+                        RoleId = roleID,
                         Status = UserStatus.ENABLE
                     };
                 await _userRepo.Insert(userModel);
