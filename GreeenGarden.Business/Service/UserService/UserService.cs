@@ -32,6 +32,10 @@ namespace GreeenGarden.Business.Service.UserService
             _districtRepo = districtRepo;
         }
 
+        public UserService()
+        {
+        }
+
         public async Task<ResultModel> Login(UserLoginReqModel userLoginReqModel)
         {
             try
@@ -571,6 +575,137 @@ namespace GreeenGarden.Business.Service.UserService
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Data = pageUser;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> AssignRole(string token, UserAssignRoleModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.ADMIN) &&
+                        !userRole.Equals(Commons.MANAGER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+
+                var roleID = await _userRepo.GetRoleID(model.RoleName);
+                var tblUser = await _userRepo.Get(model.UserID);
+                tblUser.RoleId = roleID;
+                await _userRepo.UpdateTblUser(tblUser);
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Cập nhật role thành công";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> CreateUserByAdmin(string token, UserInsertModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (!string.IsNullOrEmpty(token))
+                {
+                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                    if (!userRole.Equals(Commons.ADMIN) &&
+                        !userRole.Equals(Commons.MANAGER))
+                    {
+                        return new ResultModel()
+                        {
+                            IsSuccess = false,
+                            Message = "User not allowed"
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Message = "User not allowed"
+                    };
+                }
+
+                if (model == null)
+                { 
+                    result.IsSuccess = false;
+                    result.Message = "Data null";
+                    return result;
+                }
+                    var checkUser = await _userRepo.CheckUserNamePhoneAndMail(model.UserName, model.Phone, model.Mail);
+                    if (checkUser != 0)
+                    {
+                        if (checkUser == 1) result.Message = "Tên tài khoản đã tồn tại";
+                        if (checkUser == 2) result.Message = "Số điện thoại đã đăng ký";
+                        if (checkUser == 3) result.Message = "Mail đã tồn tại";
+                        result.IsSuccess = false;
+                        return result;
+                    }
+                    if (model.DistrictId <= 19)
+                    {
+
+                    }
+                    CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
+                    TblUser userModel = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        UserName = model.UserName,
+                        PasswordHash = passwordHash,
+                        PasswordSalt = passwordSalt,
+                        FullName = model.FullName,
+                        Address = model.Address,
+                        DistrictId = model.DistrictId,
+                        Phone = model.Phone,
+                        Favorite = model.Favorite,
+                        Mail = model.Mail,
+                        Status = UserStatus.ENABLE
+                    };
+                await _userRepo.Insert(userModel);
+
+                var newReward = new TblReward()
+                {
+                    Id = Guid.NewGuid(),
+                    CurrentPoint = 0,
+                    Total = 0,
+                    UserId = userModel.Id,
+                };
+                await _rewardRepo.Insert(newReward);
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = await _userRepo.GetCurrentUser(userModel.UserName);
             }
             catch (Exception e)
             {

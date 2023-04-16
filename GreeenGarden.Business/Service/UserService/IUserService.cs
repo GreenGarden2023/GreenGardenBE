@@ -16,6 +16,8 @@ namespace GreeenGarden.Business.Service.UserService
         Task<ResultModel> VerifyRegisterOTPCode(OTPVerifyModel oTPVerifyModel);
         Task<ResultModel> UpdateUserStatus(string token, UserUpdateStatusModel userUpdateStatusModel);
         Task<ResultModel> GetListAccountByAdmin(string token, PaginationRequestModel pagingModel);
+        Task<ResultModel> AssignRole(string token, UserAssignRoleModel model);
+        Task<ResultModel> CreateUserByAdmin(string token, UserInsertModel model);
 
     }
 }

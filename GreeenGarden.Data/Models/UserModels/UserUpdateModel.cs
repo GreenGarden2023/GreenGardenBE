@@ -24,5 +24,10 @@
         public Guid UserID { get; set; }
         public string? Status { get; set; }
     }
+    public class UserAssignRoleModel
+    {
+        public Guid UserID { get; set; }
+        public string RoleName { get; set; }
+    }
 }
 
