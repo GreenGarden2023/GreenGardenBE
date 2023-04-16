@@ -5,6 +5,7 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
+using GreeenGarden.Data.Repositories.DistrictRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.IdentityModel.Tokens;
@@ -21,12 +22,14 @@ namespace GreeenGarden.Business.Service.UserService
         private readonly DecodeToken _decodeToken;
         private readonly IEMailService _eMailService;
         private readonly IRewardRepo _rewardRepo;
-        public UserService(IUserRepo userRepo, IEMailService eMailService, IRewardRepo rewardRepo)
+        private readonly IDistrictRepo _districtRepo;
+        public UserService(IUserRepo userRepo, IEMailService eMailService, IRewardRepo rewardRepo, IDistrictRepo districtRepo)
         {
             _userRepo = userRepo;
             _decodeToken = new DecodeToken();
             _eMailService = eMailService;
             _rewardRepo = rewardRepo;
+            _districtRepo = districtRepo;
         }
 
         public async Task<ResultModel> Login(UserLoginReqModel userLoginReqModel)
@@ -558,8 +561,11 @@ namespace GreeenGarden.Business.Service.UserService
 
                 foreach (var i in pageUser.Results)
                 {
+                    var user = await _userRepo.Get(i.ID);
                     var roleName = await _userRepo.GetRoleName(i.ID);
+                    var districtName = await _districtRepo.GetNameDistrict((int)user.DistrictId);
                     i.RoleName = roleName;
+                    i.DistrictName = districtName;
                 }
 
                 result.Code = 200;

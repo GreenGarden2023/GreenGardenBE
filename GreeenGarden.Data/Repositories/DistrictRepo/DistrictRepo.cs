@@ -24,6 +24,11 @@ namespace GreeenGarden.Data.Repositories.DistrictRepo
             List<TblDistrict> districts = await _context.TblDistricts.ToListAsync();
             return districts;
         }
+
+        public async Task<string> GetNameDistrict(int id)
+        {
+            return _context.TblDistricts.Where(x=>x.Id.Equals(id)).FirstOrDefault()?.DistrictName;
+        }
     }
 }
 

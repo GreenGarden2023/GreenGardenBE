@@ -19,7 +19,6 @@
     <Folder Include="Entities\" />
     <Folder Include="Repositories\UserRepo\" />
     <Folder Include="Repositories\GenericRepository\" />
-    <Folder Include="Models\UserModels\" />
     <Folder Include="Models\SizeModel\" />
     <Folder Include="Repositories\EmailOTPCodeRepo\" />
     <Folder Include="Models\EmailCodeVerifyModel\" />
