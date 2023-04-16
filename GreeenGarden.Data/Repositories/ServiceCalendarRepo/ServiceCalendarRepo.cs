@@ -42,7 +42,7 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
                 NextServiceDate = x.sc.NextServiceDate,
                 Sumary = x.sc.Sumary,
                 Status = x.sc.Status,
-            }).OrderBy(x=>x.ServiceDate).ToListAsync();
+            }).OrderByDescending(x=>x.ServiceDate).ToListAsync();
             foreach (ServiceCalendarResModel serviceCalendar in listServiceCalendar)
             {
                 serviceCalendar.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendar.Id);
@@ -81,7 +81,7 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
                 NextServiceDate = x.sc.NextServiceDate,
                 Sumary = x.sc.Sumary,
                 Status = x.sc.Status,
-            }).OrderBy(x=>x.ServiceDate).ToListAsync();
+            }).OrderByDescending(x=>x.ServiceDate).ToListAsync();
             foreach (ServiceCalendarUserResModel serviceCalendarUserResModel in listServiceCalendar)
             {
                 serviceCalendarUserResModel.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendarUserResModel.Id);
