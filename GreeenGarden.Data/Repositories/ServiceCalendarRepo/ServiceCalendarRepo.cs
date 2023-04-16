@@ -5,6 +5,7 @@ using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography.X509Certificates;
 
 namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
 {
@@ -22,7 +23,7 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
 
         public async Task<List<TblServiceCalendar>?> GetServiceCalendarsByServiceOrder(Guid serviceOrderId)
         {
-            List<TblServiceCalendar> tblServiceCalendars = await _context.TblServiceCalendars.Where(x => x.ServiceOrderId.Equals(serviceOrderId)).ToListAsync();
+            List<TblServiceCalendar> tblServiceCalendars = await _context.TblServiceCalendars.Where(x => x.ServiceOrderId.Equals(serviceOrderId)).OrderByDescending(x=>x.ServiceDate).ToListAsync();
             return tblServiceCalendars ?? null;
         }
 
@@ -41,7 +42,7 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
                 NextServiceDate = x.sc.NextServiceDate,
                 Sumary = x.sc.Sumary,
                 Status = x.sc.Status,
-            }).ToListAsync();
+            }).OrderByDescending(x=>x.ServiceDate).ToListAsync();
             foreach (ServiceCalendarResModel serviceCalendar in listServiceCalendar)
             {
                 serviceCalendar.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendar.Id);
@@ -80,7 +81,7 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
                 NextServiceDate = x.sc.NextServiceDate,
                 Sumary = x.sc.Sumary,
                 Status = x.sc.Status,
-            }).ToListAsync();
+            }).OrderByDescending(x=>x.ServiceDate).ToListAsync();
             foreach (ServiceCalendarUserResModel serviceCalendarUserResModel in listServiceCalendar)
             {
                 serviceCalendarUserResModel.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendarUserResModel.Id);
