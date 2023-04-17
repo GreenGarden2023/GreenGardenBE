@@ -362,10 +362,14 @@ namespace GreeenGarden.Business.Service.OrderService
 
                         if (rentOrderModel.IsTransport == true)
                         {
-                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
-                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                            transportFee += (double)((itemDetail.TransportFee * item.Quantity));
                         }
                     }
+                }
+                if (rentOrderModel.IsTransport == true)
+                {
+                    TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
+                    transportFee += + tblShippingFee.FeeAmount;
                 }
 
 
@@ -607,10 +611,14 @@ namespace GreeenGarden.Business.Service.OrderService
 
                         if (saleOrderModel.IsTransport == true)
                         {
-                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
-                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                            transportFee += (double)((itemDetail.TransportFee * item.Quantity) );
                         }
                     }
+                }
+                if (saleOrderModel.IsTransport == true)
+                {
+                    TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
+                    transportFee += tblShippingFee.FeeAmount;
                 }
 
                 discountAmount += (double)(saleOrderModel.RewardPointUsed * 1000);
@@ -1527,10 +1535,14 @@ namespace GreeenGarden.Business.Service.OrderService
                         totalQuantity += item.Quantity;
                         if (rentOrderModel.IsTransport == true)
                         {
-                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
-                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                            transportFee += (double)((itemDetail.TransportFee * item.Quantity));
                         }
                     }
+                }
+                if (rentOrderModel.IsTransport == true)
+                {
+                    TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
+                    transportFee += tblShippingFee.FeeAmount;
                 }
 
                 discountAmount = (double)(rentOrderModel.RewardPointUsed * 1000);
@@ -1644,10 +1656,14 @@ namespace GreeenGarden.Business.Service.OrderService
                         totalQuantity += item.Quantity;
                         if (saleOrderModel.IsTransport == true)
                         {
-                            TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
-                            transportFee = (double)((itemDetail.TransportFee * totalQuantity) + tblShippingFee.FeeAmount);
+                           transportFee += (double)((itemDetail.TransportFee * item.Quantity));
                         }
                     }
+                }
+                if(saleOrderModel.IsTransport == true)
+                {
+                    TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
+                    transportFee +=  tblShippingFee.FeeAmount;
                 }
 
                 discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
