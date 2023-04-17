@@ -572,9 +572,22 @@ namespace GreeenGarden.Business.Service.UserService
                     i.DistrictName = districtName;
                 }
 
+
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(pageUser.PageSize)
+                    .CurPage(pageUser.CurrentPage)
+                    .RecordCount(pageUser.RecordCount)
+                    .PageCount(pageUser.PageCount);
+
+                var newres = new UserResult()
+                {
+                    Paging= paging,
+                    Users = pageUser.Results
+                };
+
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = pageUser;
+                result.Data = newres;
             }
             catch (Exception e)
             {

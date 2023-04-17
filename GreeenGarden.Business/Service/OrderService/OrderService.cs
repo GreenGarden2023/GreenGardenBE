@@ -559,7 +559,7 @@ namespace GreeenGarden.Business.Service.OrderService
             {
                 string userName = _decodeToken.Decode(token, "username");
                 double totalAmountPerDay = 0;
-                int totalQuantity = 0;
+                int totalQuantity = 0;  
                 double totalOrderAmount = 0;
                 double transportFee = 0;
                 double deposit = 0;
