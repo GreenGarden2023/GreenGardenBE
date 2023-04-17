@@ -18,6 +18,7 @@ using GreeenGarden.Data.Repositories.RentOrderRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SaleOrderRepo;
+using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
 using GreeenGarden.Data.Repositories.ServiceDetailRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
@@ -53,6 +54,7 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly IServiceOrderRepo _serviceOrderRepo;
         private readonly IUserRepo _userRepo;
         private readonly ITransactionRepo _transactionRepo;
+        private readonly IServiceCalendarRepo _serCalendarRepo;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             IServiceRepo serviceRepo,
             IServiceDetailRepo serviceDetailRepo,
@@ -69,6 +71,7 @@ namespace GreeenGarden.Business.Service.OrderService
             IShippingFeeRepo shippingFeeRepo,
             IServiceOrderRepo serviceOrderRepo,
             ITransactionRepo transactionRepo,
+            IServiceCalendarRepo serCalendarRepo,
             IUserRepo userRepo)
         {
             _decodeToken = new DecodeToken();
@@ -89,6 +92,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _serviceOrderRepo = serviceOrderRepo;
             _userRepo = userRepo;
             _transactionRepo = transactionRepo;
+            _serCalendarRepo = serCalendarRepo;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -2326,6 +2330,7 @@ namespace GreeenGarden.Business.Service.OrderService
             }
         }
 
+        
         public async Task<ResultModel> GetServiceOrderById(string token, Guid orderID)
         {
             if (!string.IsNullOrEmpty(token))
@@ -3147,6 +3152,7 @@ namespace GreeenGarden.Business.Service.OrderService
             }
             return result;
         }
+
 
         /*public async Task<ResultModel> GetRentOrderDetailByRangeDate(string token, OrderRangeDateReqModel model, PaginationRequestModel pagingModel)
         {
