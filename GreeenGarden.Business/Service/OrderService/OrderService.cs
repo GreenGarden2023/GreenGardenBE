@@ -602,7 +602,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     }
                     else
                     {
-                        totalAmountPerDay = (double)(item.Quantity * itemDetail.SalePrice);
+                        totalAmountPerDay += (double)(item.Quantity * itemDetail.SalePrice);
                         totalQuantity += item.Quantity;
 
                         if (saleOrderModel.IsTransport == true)
@@ -613,7 +613,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     }
                 }
 
-                discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
+                discountAmount += (double)(saleOrderModel.RewardPointUsed * 1000);
                 totalOrderAmount = totalAmountPerDay + transportFee - discountAmount;
 
                 if (totalOrderAmount > 500000)
