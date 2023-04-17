@@ -1,4 +1,7 @@
-﻿namespace GreeenGarden.Data.Models.ServiceModel
+﻿using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.UserModels;
+
+namespace GreeenGarden.Data.Models.ServiceModel
 {
     public class ServiceResModel
     {
@@ -65,6 +68,30 @@
         public string? ManagerDescription { get; set; }
 
         public List<string>? ImgUrls { get; set; }
+    }
+
+    public class ServiceByTechResModel
+    {
+        public Guid ID { get; set; }
+        public string ServiceCode { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string Name { get; set; }
+        public int UserCurrentPoint { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string Address { get; set; }
+        public string Status { get; set; }
+        public int DistrictID { get; set; }
+        public UserCurrResModel User { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string TechnicianName { get; set; }
+        public bool IsTransport { get; set; }
+        public double TransportFee { get; set; }
+        public string Rules { get; set; }
+        public int RewardPointUsed { get; set; }
+        public ServiceOrderTechnician Technician { get; set; }
+        public List<ServiceDetailResModel>? ServiceDetailList { get; set; }
     }
 }
 

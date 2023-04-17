@@ -3,10 +3,14 @@ using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.OrderModel;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ServiceModel;
+using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
+using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
 using GreeenGarden.Data.Repositories.ServiceDetailRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
@@ -28,7 +32,8 @@ namespace GreeenGarden.Business.Service.TakecareService
         private readonly IRewardRepo _rewardRepo;
         private readonly IServiceOrderRepo _serviceOrderRepo;
         private readonly IEMailService _emailService;
-        public TakecareService(IEMailService eMailService, IServiceOrderRepo serviceOrderRepo, IRewardRepo rewardRepo, IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
+        private readonly IServiceCalendarRepo _serCalendarRepo;
+        public TakecareService(IEMailService eMailService, IServiceCalendarRepo serCalendarRepo, IServiceOrderRepo serviceOrderRepo, IRewardRepo rewardRepo, IUserRepo userRepo, IImageService imageService, IUserTreeRepo userTreeRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceDetailRepo serviceDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -40,6 +45,7 @@ namespace GreeenGarden.Business.Service.TakecareService
             _rewardRepo = rewardRepo;
             _serviceOrderRepo = serviceOrderRepo;
             _emailService = eMailService;
+            _serCalendarRepo = serCalendarRepo; 
         }
 
         public async Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager)
@@ -111,7 +117,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = serviceResModel;
-                    result.Message = "Assign technician success.";
+                    result.Message = "Đã chọn kỹ thuật viên "+ resService.TechnicianName + " chăm sóc.";
                     return result;
                 }
                 else
@@ -528,6 +534,109 @@ namespace GreeenGarden.Business.Service.TakecareService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
             }
+        }
+
+        public async Task<ResultModel> GetRequestOrderByTechnician(string token, PaginationRequestModel pagingModel, Guid technicianID)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            var result = new ResultModel();
+            try
+            {
+                var listRes = new List<ServiceByTechResModel>();
+                var listTblService = await _serCalendarRepo.GetServiceByTechnician(pagingModel, technicianID);
+                foreach (var i in listTblService.Results)
+                {
+                    int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(i.UserId);
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(i.Id);
+                    var tblUser = await _userRepo.Get(i.UserId);
+                    UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(tblUser.UserName);
+                    TblUser technicianGet = await _userRepo.Get((Guid)i.TechnicianId);
+                    ServiceOrderTechnician technicianRes = new()
+                    {
+                        TechnicianID = technicianGet.Id,
+                        TechnicianUserName = technicianGet.UserName,
+                        TechnicianFullName = technicianGet.FullName,
+                        TechnicianAddress = technicianGet.Address,
+                        TechnicianMail = technicianGet.Mail,
+                        TechnicianPhone = technicianGet.Phone
+                    };
+
+                    var res = new ServiceByTechResModel()
+                    {
+                        ID = i.Id,
+                        ServiceCode = i.ServiceCode,
+                        StartDate = (DateTime)i.StartDate,
+                        EndDate = (DateTime)i.EndDate,
+                        UserCurrentPoint = userCurrentPoint,
+                        Name = i.Name,
+                        Phone = i.Phone,
+                        Email = i.Email,
+                        Address = i.Address,
+                        Status = i.Status,
+                        DistrictID = (int)i.DistrictId,
+                        User = userCurrResModel,
+                        CreateDate = (DateTime)i.CreateDate,
+                        TechnicianName = i.TechnicianName,
+                        IsTransport = (bool)i.IsTransport,
+                        TransportFee = (double)i.TransportFee,
+                        Rules = i.Rules,
+                        RewardPointUsed = (int)i.RewardPointUsed,
+                        Technician = technicianRes,
+                        ServiceDetailList = resServiceDetail,
+                    };
+                    listRes.Add(res);
+
+                }
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(listTblService.PageSize)
+                    .CurPage(listTblService.CurrentPage)
+                    .RecordCount(listTblService.RecordCount)
+                    .PageCount(listTblService.PageCount);
+
+                var newRequest = new RequestListRes()
+                {
+                    Paging = paging,
+                    RequestList = listRes
+                };
+
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = newRequest;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
 
         public async Task<ResultModel> UpdateRequestStatus(string token, ServiceStatusModel serviceStatusModel)

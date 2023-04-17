@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Business.Service.TakecareService;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ServiceModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,15 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             Data.Models.ResultModel.ResultModel result = await _takecareService.GetAllRequest(token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-request-order-by-technician")]
+        [SwaggerOperation(Summary = "Get all service request")]
+        [Authorize(Roles = "Staff, Manager, Admin, Technician")]
+        public async Task<IActionResult> GetRequestOrderByTechnician([FromQuery]PaginationRequestModel pagingModel, Guid technicianID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.GetRequestOrderByTechnician(token, pagingModel, technicianID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-user-service-request")]
