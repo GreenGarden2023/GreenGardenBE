@@ -1640,7 +1640,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     }
                     else
                     {
-                        totalAmountPerDay = (double)(item.Quantity * itemDetail.SalePrice);
+                        totalAmountPerDay += (double)(item.Quantity * itemDetail.SalePrice);
                         totalQuantity += item.Quantity;
                         if (saleOrderModel.IsTransport == true)
                         {
