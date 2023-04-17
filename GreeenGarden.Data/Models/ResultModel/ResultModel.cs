@@ -15,6 +15,11 @@
         public object? Paging { get; set; }
         public object? Result { get; set; }
     }
+    public class UserResult
+    {
+        public object? Paging { get; set; }
+        public object? Users { get; set; }
+    }
 
     public class ProductResponseResult
     {
