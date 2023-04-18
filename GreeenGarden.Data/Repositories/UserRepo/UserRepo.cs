@@ -94,10 +94,6 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             {
                 user.Favorite = userUpdateModel.Favorite;
             }
-            if (!string.IsNullOrEmpty(userUpdateModel.Mail) && !userUpdateModel.Mail.Equals(user.Mail))
-            {
-                user.Mail = userUpdateModel.Mail;
-            }
             _ = _context.Update(user);
             _ = await _context.SaveChangesAsync();
             return user;
