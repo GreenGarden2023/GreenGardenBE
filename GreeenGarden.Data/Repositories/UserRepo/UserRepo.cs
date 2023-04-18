@@ -335,6 +335,24 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             }
             return 0;
         }
+
+        public async Task<bool> UpdateUserByAdmin(TblUser user)
+        {
+            var mail = await _context.TblEmailOtpcodes.ToListAsync();
+            if (mail.Any())
+            {
+                foreach (var i in mail)
+                {
+                    _context.TblEmailOtpcodes.Remove(i);
+                }
+            }
+             _context.SaveChanges();
+
+
+            _context.TblUsers.Update(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
 

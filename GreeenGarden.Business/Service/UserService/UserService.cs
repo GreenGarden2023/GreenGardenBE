@@ -9,6 +9,7 @@ using GreeenGarden.Data.Repositories.DistrictRepo;
 using GreeenGarden.Data.Repositories.RewardRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit.Cryptography;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -101,6 +102,28 @@ namespace GreeenGarden.Business.Service.UserService
                     IsSuccess = false,
                     Code = 400,
                     Message = "Username Duplicated"
+                };
+
+            }
+            var userModeCheckMail = await _userRepo.GetUserByEmail(userInsertModel.Mail);
+            if (userModeCheckMail != null)
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Địa chỉ mail này đã tồn tại"
+                };
+
+            }
+            var userModeCheckPhone = await _userRepo.GetUserByPhone(userInsertModel.Phone);
+            if (userModeCheckPhone != null)
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 400,
+                    Message = "Sp61 điện thoại này đã tồn tại"
                 };
 
             }
@@ -729,6 +752,79 @@ namespace GreeenGarden.Business.Service.UserService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
+        }
+
+        public async Task<ResultModel> UpdateUserByAdmin(string token, UserUpdateByAdminModel model)
+        {
+            ResultModel result = new();
+            string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+            if (!userRole.Equals(Commons.ADMIN)
+                && !userRole.Equals(Commons.MANAGER))
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed."
+                };
+            }
+            bool shippingIDCheck = false;
+            for (int i = 1; i <= 19; i++)
+            {
+                if (model.DistrictID == i)
+                {
+                    shippingIDCheck = true;
+                }
+            }
+            if (model.DistrictID != null && shippingIDCheck == false)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = "District ID invalid.";
+                return result;
+            }
+            try
+            {
+                var roleID = await _userRepo.GetRoleID(model.RoleName);
+
+                var newTblUser = await _userRepo.Get(model.UserID);
+                newTblUser.FullName = model.FullName;
+                newTblUser.Address = model.Address;
+                newTblUser.DistrictId = model.DistrictID;
+                newTblUser.Phone = model.Phone;
+                newTblUser.Favorite = model.Favorite;
+                newTblUser.RoleId = roleID;
+                newTblUser.Mail = model.Mail;
+
+
+                var updateUser = await _userRepo.UpdateUserByAdmin(newTblUser);
+                if (updateUser == false)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "User not found.";
+                    return result;
+                }
+                else
+                {
+                    UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(newTblUser.UserName);
+                    int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
+                    userCurrResModel.CurrentPoint = rewardPoint;
+
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = userCurrResModel;
+                    result.Message = "Update user successful.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = e.ToString();
+                return result;
+            }
         }
     }
 }

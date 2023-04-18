@@ -128,6 +128,22 @@ namespace GreeenGarden.API.Controllers
             }
 
         }
+        [HttpPost("update-user-by-admin")]
+        public async Task<ActionResult<ResultModel>> UpdateUserByAdmin(UserUpdateByAdminModel userUpdateModel)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.UpdateUserByAdmin(token, userUpdateModel);
+                return result;
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+
+        }
         [HttpPost("assign-user-role")]
         public async Task<ActionResult<ResultModel>> AssignRole(UserAssignRoleModel model)
         {
