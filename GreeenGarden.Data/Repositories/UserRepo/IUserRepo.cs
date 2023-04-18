@@ -17,6 +17,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
         public Task<UserCurrResModel> GetCurrentUser(string userName);
         public Task<bool> CheckUserEmail(string email);
         public Task<UserCurrResModel> GetUserByEmail(string email);
+        public Task<UserCurrResModel> GetUserByPhone(string phone);
         public Task<bool> UpdateUserStatus(Guid userID, string status);
         public Task<string> GetRoleName(Guid userID);
         public Task<Guid> GetRoleID(string roleName);
