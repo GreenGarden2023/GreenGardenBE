@@ -116,17 +116,6 @@ namespace GreeenGarden.Business.Service.UserService
                 };
 
             }
-            var userModeCheckPhone = await _userRepo.GetUserByPhone(userInsertModel.Phone);
-            if (userModeCheckPhone != null)
-            {
-                return new ResultModel()
-                {
-                    IsSuccess = false,
-                    Code = 400,
-                    Message = "Trùng sdt"
-                };
-
-            }
             bool shippingIDCheck = false;
             for (int i = 1; i <= 19; i++)
             {
@@ -706,16 +695,22 @@ namespace GreeenGarden.Business.Service.UserService
                     var checkUser = await _userRepo.CheckUserNamePhoneAndMail(model.UserName, model.Phone, model.Mail);
                     if (checkUser != 0)
                     {
-                        if (checkUser == 1) result.Message = "Tên tài khoản đã tồn tại";
-                        if (checkUser == 2) result.Message = "Số điện thoại đã đăng ký";
-                        if (checkUser == 3) result.Message = "Mail đã tồn tại";
+                        if (checkUser == 1) result.Message = "trùng tài khoản";
+                        if (checkUser == 3) result.Message = "trùng mail";
                         result.IsSuccess = false;
                         return result;
                     }
-                    if (model.DistrictId <= 19)
+                    if (model.DistrictId > 19)
                     {
 
-                    }
+
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "District ID invalid.",
+                    };
+                }
                 var roleID = await _userRepo.GetRoleID(model.RoleName);
                     CreatePasswordHash(model.Password, out byte[] passwordHash, out byte[] passwordSalt);
                     TblUser userModel = new()

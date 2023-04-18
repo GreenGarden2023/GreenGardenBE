@@ -323,7 +323,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
             }
             if (checkPhone != null)
             {
-                return 2;
+                return 0;
             }
             if (checkMail != null)
             {
