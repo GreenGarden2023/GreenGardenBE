@@ -101,7 +101,7 @@ namespace GreeenGarden.Business.Service.UserService
                 {
                     IsSuccess = false,
                     Code = 400,
-                    Message = "Username Duplicated"
+                    Message = "trùng tài khoản"
                 };
 
             }
@@ -112,7 +112,7 @@ namespace GreeenGarden.Business.Service.UserService
                 {
                     IsSuccess = false,
                     Code = 400,
-                    Message = "Địa chỉ mail này đã tồn tại"
+                    Message = "trùng mail"
                 };
 
             }
@@ -123,7 +123,7 @@ namespace GreeenGarden.Business.Service.UserService
                 {
                     IsSuccess = false,
                     Code = 400,
-                    Message = "Sp61 điện thoại này đã tồn tại"
+                    Message = "Trùng sdt"
                 };
 
             }
