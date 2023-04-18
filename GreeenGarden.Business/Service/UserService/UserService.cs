@@ -794,7 +794,6 @@ namespace GreeenGarden.Business.Service.UserService
                 newTblUser.Phone = model.Phone;
                 newTblUser.Favorite = model.Favorite;
                 newTblUser.RoleId = roleID;
-                newTblUser.Mail = model.Mail;
 
 
                 var updateUser = await _userRepo.UpdateUserByAdmin(newTblUser);
