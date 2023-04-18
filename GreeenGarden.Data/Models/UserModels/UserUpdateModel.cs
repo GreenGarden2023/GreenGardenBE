@@ -28,7 +28,6 @@
         public string? Favorite { get; set; }
         public string? RoleName { get; set; }
 
-        public string? Mail { get; set; }
     }
     public class OTPVerifyModel
     {
