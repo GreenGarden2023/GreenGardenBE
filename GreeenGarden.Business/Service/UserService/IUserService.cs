@@ -10,6 +10,7 @@ namespace GreeenGarden.Business.Service.UserService
         Task<ResultModel> Login(UserLoginReqModel userLoginReqModel);
         Task<ResultModel> GetCurrentUser(string token);
         Task<ResultModel> UpdateUser(string token, UserUpdateModel userUpdateModel);
+        Task<ResultModel> UpdateUserByAdmin(string token, UserUpdateByAdminModel model);
         Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel);
         Task<ResultModel> GetListUserByFullName(string token, string fullName);
         Task<ResultModel> GetUsersByRole(string token, string role);

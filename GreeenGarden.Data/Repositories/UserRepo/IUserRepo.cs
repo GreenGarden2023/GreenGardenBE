@@ -12,6 +12,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
         public Task<UserLoginResModel> GetUserByID(Guid userID);
         public Task<List<UserByRoleResModel>> GetUsersByRole(string role);
         public Task<TblUser> UpdateUser(string username, UserUpdateModel userUpdateModel);
+        public Task<bool> UpdateUserByAdmin(TblUser user);
         public Task<TblUser> ResetPassword(string email, byte[] passHash, byte[] passSalt);
         public Task<UserCurrResModel> GetCurrentUser(string userName);
         public Task<bool> CheckUserEmail(string email);

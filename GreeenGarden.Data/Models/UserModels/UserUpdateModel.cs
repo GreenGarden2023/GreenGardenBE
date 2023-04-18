@@ -14,6 +14,22 @@
 
         public string? Mail { get; set; }
     }
+    public class UserUpdateByAdminModel
+    {
+        public Guid UserID { get; set; }
+        public string? FullName { get; set; }
+
+        public string? Address { get; set; }
+
+        public int? DistrictID { get; set; }
+
+        public string? Phone { get; set; }
+
+        public string? Favorite { get; set; }
+        public string? RoleName { get; set; }
+
+        public string? Mail { get; set; }
+    }
     public class OTPVerifyModel
     {
         public string? Email { get; set; }
