@@ -518,14 +518,18 @@ namespace GreeenGarden.Business.Service.UserService
                     Message = "User not allowed."
                 };
             }
-            if (!userUpdateStatusModel.Equals(UserStatus.ENABLE) && !userUpdateStatusModel.Equals(UserStatus.DISABLED))
+            if (!userUpdateStatusModel.Status.Equals(UserStatus.ENABLE))
             {
-                return new ResultModel()
+                if (!userUpdateStatusModel.Status.Equals(UserStatus.DISABLED))
                 {
-                    IsSuccess = false,
-                    Code = 400,
-                    Message = "Status unknown."
-                };
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 400,
+                        Message = "Status unknown."
+                    };
+
+                }
             }
             ResultModel result = new();
             try

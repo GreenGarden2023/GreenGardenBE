@@ -47,7 +47,7 @@
     public class UserStatus
     {
         public static readonly string ENABLE = "enable";
-        public static readonly string DISABLED = "disabled";
+        public static readonly string DISABLED = "disabled"; 
 
     }
 }
