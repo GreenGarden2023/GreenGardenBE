@@ -21,7 +21,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             _rewardRepo = rewardRepo;
         }
 
-        public async Task<ResultModel> UpdateSaleOrderStatus(Guid SaleOrderID, string status)
+        public async Task<ResultModel> UpdateSaleOrderStatus(Guid SaleOrderID, string status, string? username)
         {
             ResultModel result = new();
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.Id.Equals(SaleOrderID)).FirstOrDefaultAsync();
@@ -30,6 +30,11 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
                 if (status.Trim().ToLower().Equals(Status.COMPLETED))
                 {
                     _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
+                }
+                if (status.Trim().ToLower().Equals(Status.CANCEL))
+                {
+                    var user = await _context.TblUsers.Where(x=>x.UserName.Equals(username)).FirstOrDefaultAsync();
+                    order.CancelBy = user.Id;
                 }
                 order.Status = status.Trim().ToLower();
                 _ = _context.Update(order);

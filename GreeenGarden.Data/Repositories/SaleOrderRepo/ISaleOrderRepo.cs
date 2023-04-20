@@ -12,7 +12,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
         Task<Page<TblSaleOrder>> GetAllSaleOrders(PaginationRequestModel paginationRequestModel);
         Task<Page<TblSaleOrder>> GetSaleOrders(PaginationRequestModel paginationRequestModel, Guid userID);
         Task<Page<TblSaleOrder>> GetSaleOrderByOrderCode(OrderFilterModel model, PaginationRequestModel pagingModel);
-        Task<ResultModel> UpdateSaleOrderStatus(Guid saleOrderID, string status);
+        Task<ResultModel> UpdateSaleOrderStatus(Guid saleOrderID, string status, string? username);
         Task<ResultModel> UpdateSaleOrderDeposit(Guid saleOrderID);
         Task<ResultModel> UpdateSaleOrderRemain(Guid saleOrderID, double amount);
         Task<bool> UpdateSaleOrder(TblSaleOrder entity);

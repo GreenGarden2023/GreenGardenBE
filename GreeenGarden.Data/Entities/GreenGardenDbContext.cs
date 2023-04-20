@@ -332,9 +332,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
-            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TblRentOrderCreatedByNavigations)
-                .HasForeignKey(d => d.CreatedBy)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.TblRentOrderCreatedByNavigations).HasForeignKey(d => d.CreatedBy);
 
             entity.HasOne(d => d.RecipientDistrictNavigation).WithMany(p => p.TblRentOrders)
                 .HasForeignKey(d => d.RecipientDistrict)
