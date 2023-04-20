@@ -285,6 +285,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                     Favorite= x.Favorite,
                     Mail = x.Mail,
                     RoleName = null, 
+                    DistrictID = x.DistrictId,
                     Status= x.Status,
 
                 }).
@@ -360,6 +361,27 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 RoleName = x.ur.RoleName,
             }).FirstOrDefaultAsync();
             return userModel;
+        }
+
+        public async Task<UserResByAdminModel> GetUserCreate(Guid userID)
+        {
+            var result = await _context.TblUsers.Where(x=>x.Id.Equals(userID)).
+                Select(x => new UserResByAdminModel
+                {
+                    ID = x.Id,
+                    UserName = x.UserName,
+                    FullName = x.FullName,
+                    Address = x.Address,
+                    DistrictName = null,
+                    Phone = x.Phone,
+                    Favorite = x.Favorite,
+                    Mail = x.Mail,
+                    RoleName = null,
+                    DistrictID = x.DistrictId,
+                    Status = x.Status,
+
+                }).FirstOrDefaultAsync();
+            return result;
         }
     }
 }

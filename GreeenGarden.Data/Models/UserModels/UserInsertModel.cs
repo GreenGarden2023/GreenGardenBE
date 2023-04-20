@@ -5,7 +5,7 @@ namespace GreeenGarden.Data.Models.UserModels
     public class UserInsertModel
     {
         [Required]
-        public string UserName { get; set; } = null!;
+        public string UserName { get; set; } = null!; 
         [Required]
         public string Password { get; set; } = null!;
 
