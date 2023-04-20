@@ -27,7 +27,12 @@ namespace GreeenGarden.Data.Repositories.DistrictRepo
 
         public async Task<string> GetNameDistrict(int id)
         {
-            return _context.TblDistricts.Where(x=>x.Id.Equals(id)).FirstOrDefault()?.DistrictName;
+            var result = await _context.TblDistricts.Where(x => x.Id.Equals(id)).FirstOrDefaultAsync();
+            if (result != null)
+            {
+                return result.DistrictName;
+            }
+            return null;
         }
     }
 }

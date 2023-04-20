@@ -101,7 +101,7 @@ namespace GreeenGarden.Business.Service.UserService
                 {
                     IsSuccess = false,
                     Code = 400,
-                    Message = "trùng tài khoản"
+                    Message = "Trùng tài khoản"
                 };
 
             }
@@ -739,10 +739,16 @@ namespace GreeenGarden.Business.Service.UserService
                 };
                 await _rewardRepo.Insert(newReward);
 
+                var data = await _userRepo.GetUserCreate(userModel.Id); 
+                var user = await _userRepo.Get(data.ID);
+                var roleName = await _userRepo.GetRoleName(data.ID);
+                var districtName = await _districtRepo.GetNameDistrict((int)user.DistrictId);
+                data.RoleName = roleName;
+                data.DistrictName = districtName;
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = await _userRepo.GetCurrentUser(userModel.UserName);
+                result.Data = data;
             }
             catch (Exception e)
             {
@@ -770,12 +776,12 @@ namespace GreeenGarden.Business.Service.UserService
             bool shippingIDCheck = false;
             for (int i = 1; i <= 19; i++)
             {
-                if (model.DistrictID == i)
+                if (model.DistrictId == i)
                 {
                     shippingIDCheck = true;
                 }
             }
-            if (model.DistrictID != null && shippingIDCheck == false)
+            if (model.DistrictId != null && shippingIDCheck == false)
             {
                 result.IsSuccess = false;
                 result.Code = 400;
@@ -785,11 +791,17 @@ namespace GreeenGarden.Business.Service.UserService
             try
             {
                 var roleID = await _userRepo.GetRoleID(model.RoleName);
+                if (roleID == null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Sai Role";
+                    return result;
+                }
 
                 var newTblUser = await _userRepo.Get(model.UserID);
                 newTblUser.FullName = model.FullName;
                 newTblUser.Address = model.Address;
-                newTblUser.DistrictId = model.DistrictID;
+                newTblUser.DistrictId = model.DistrictId;
                 newTblUser.Phone = model.Phone;
                 newTblUser.Favorite = model.Favorite;
                 newTblUser.RoleId = roleID;
@@ -805,14 +817,16 @@ namespace GreeenGarden.Business.Service.UserService
                 }
                 else
                 {
-                    UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(newTblUser.UserName);
-                    int rewardPoint = await _rewardRepo.GetUserRewardPoint(userCurrResModel.Id);
-                    userCurrResModel.CurrentPoint = rewardPoint;
+                    var data = await _userRepo.GetUserCreate(model.UserID);
+                    var user = await _userRepo.Get(data.ID);
+                    var roleName = await _userRepo.GetRoleName(data.ID);
+                    var districtName = await _districtRepo.GetNameDistrict((int)user.DistrictId);
+                    data.RoleName = roleName;
+                    data.DistrictName = districtName;
 
-                    result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = userCurrResModel;
-                    result.Message = "Update user successful.";
+                    result.IsSuccess = true;
+                    result.Data = data;
                     return result;
                 }
             }

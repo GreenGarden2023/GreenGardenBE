@@ -24,6 +24,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
         public Task<bool> UpdateTblUser(TblUser entity);
         public Task<int> CheckUserNamePhoneAndMail(string username, string phone, string mail);
         public Task<Page<UserResByAdminModel>> GetListUser(PaginationRequestModel pagingModel);
+        public Task<UserResByAdminModel> GetUserCreate(Guid userID);
     }
 }
 
