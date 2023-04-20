@@ -112,7 +112,7 @@ namespace GreeenGarden.Business.Service.UserService
                 {
                     IsSuccess = false,
                     Code = 400,
-                    Message = "trùng mail"
+                    Message = "Trùng mail"
                 };
 
             }
@@ -695,8 +695,8 @@ namespace GreeenGarden.Business.Service.UserService
                     var checkUser = await _userRepo.CheckUserNamePhoneAndMail(model.UserName, model.Phone, model.Mail);
                     if (checkUser != 0)
                     {
-                        if (checkUser == 1) result.Message = "trùng tài khoản";
-                        if (checkUser == 3) result.Message = "trùng mail";
+                        if (checkUser == 1) result.Message = "Trùng tài khoản";
+                        if (checkUser == 3) result.Message = "Trùng mail";
                         result.IsSuccess = false;
                         return result;
                     }
