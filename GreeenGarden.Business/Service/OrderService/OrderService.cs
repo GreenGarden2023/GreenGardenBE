@@ -202,9 +202,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
-
             }
-
         }
 
         public async Task<ResultModel> UpdateSaleOrderStatus(string token, Guid saleOrderID, string status)
@@ -2073,6 +2071,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
+                            CancelBy = order.CancelBy,
                             Reason = order.Description,
                             Service = serviceResModel
                         };
@@ -2201,6 +2200,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             Technician = technicianRes,
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
+                            CancelBy = order.CancelBy,
                             Status = order.Status,
                             Reason = order.Description,
                             Service = serviceResModel
@@ -2328,6 +2328,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RewardPointUsed = (int)order.RewardPointUsed,
                             Technician = technicianRes,
                             UserID = order.UserId,
+                            CancelBy= order.CancelBy,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
                             Reason = order.Description,
@@ -2453,6 +2454,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointGain = (int)order.RewardPointGain,
                         RewardPointUsed = (int)order.RewardPointUsed,
                         Technician = technicianRes,
+                        CancelBy = order.CancelBy,
                         UserID = order.UserId,
                         TransportFee = (double)order.TransportFee,
                         Status = order.Status,
@@ -2690,10 +2692,13 @@ namespace GreeenGarden.Business.Service.OrderService
                         RemainAmount = (double)order.RemainAmount,
                         RewardPointGain = (int)order.RewardPointGain,
                         RewardPointUsed = (int)order.RewardPointUsed,
+                        
                         Technician = technicianRes,
                         UserID = order.UserId,
                         TransportFee = (double)order.TransportFee,
                         Status = order.Status,
+                        Reason = order.Description,
+                        CancelBy = order.CancelBy,
                         Service = serviceResModel
                     };
                     result.IsSuccess = true;
@@ -3028,6 +3033,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
                             Reason = order.Description,
+                            CancelBy= order.CancelBy,
                             Service = serviceResModel
                         };
                         resList.Add(serviceOrderGetResModel);
