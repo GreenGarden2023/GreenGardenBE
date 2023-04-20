@@ -10,6 +10,7 @@
         public static readonly string COMPLETED = "completed"; //Order, addendum: Đã hoàn cọc, order kết thúc hoặc thêm 1 addendum mới, sale: thanh toán đủ
         public static readonly string CANCEL = "cancel"; //Order, addendum: bị hủy
         public static readonly string DELIVERY = "delivery"; //Order: Dăng vận chuyển
+        public static readonly string RENTING = "renting"; //Order: Dăng vận chuyển
 
     }
     public class TreeStatus

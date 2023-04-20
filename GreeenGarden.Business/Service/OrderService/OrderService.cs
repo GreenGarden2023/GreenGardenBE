@@ -126,59 +126,71 @@ namespace GreeenGarden.Business.Service.OrderService
             try
             {
                 ResultModel updateResult = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, status);
-                if (updateResult.IsSuccess == true)
+                if (status == Status.READY || status == Status.ACTIVE || status == Status.DISABLE 
+                    || status == Status.UNPAID || status == Status.PAID || status == Status.COMPLETED 
+                    || status == Status.CANCEL || status == Status.DELIVERY || status == Status.RENTING)
                 {
-                    TblRentOrder rentOrder = await _rentOrderRepo.Get(rentOrderID);
-                    var listRentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(rentOrderID);
-                    List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
-                    if (status.Equals(Status.COMPLETED) || status.Equals(Status.CANCEL))
+                    if (updateResult.IsSuccess == true)
                     {
-                        foreach (var i in listRentOrderDetail)
+                        TblRentOrder rentOrder = await _rentOrderRepo.Get(rentOrderID);
+                        var listRentOrderDetail = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(rentOrderID);
+                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderID);
+                        if (status.Equals(Status.COMPLETED) || status.Equals(Status.CANCEL))
                         {
-                            var productItemDetail = await _productItemDetailRepo.Get((Guid)i.ProductItemDetailId);
-                            productItemDetail.Quantity += i.Quantity;
-                            await _productItemDetailRepo.UpdateProductItemDetail(productItemDetail);
+                            foreach (var i in listRentOrderDetail)
+                            {
+                                var productItemDetail = await _productItemDetailRepo.Get((Guid)i.ProductItemDetailId);
+                                productItemDetail.Quantity += i.Quantity;
+                                await _productItemDetailRepo.UpdateProductItemDetail(productItemDetail);
+                            }
                         }
+
+                        RentOrderResModel rentOrderResModel = new()
+                        {
+                            Id = rentOrder.Id,
+                            IsTransport = rentOrder.IsTransport,
+                            TransportFee = rentOrder.TransportFee,
+                            StartRentDate = rentOrder.StartDateRent,
+                            EndRentDate = rentOrder.EndDateRent,
+                            CreatedBy = rentOrder.CreatedBy,
+                            UserId = rentOrder.UserId,
+                            Deposit = rentOrder.Deposit,
+                            TotalPrice = rentOrder.TotalPrice,
+                            Status = rentOrder.Status,
+                            RemainMoney = rentOrder.RemainMoney,
+                            RewardPointGain = rentOrder.RewardPointGain,
+                            RewardPointUsed = rentOrder.RewardPointUsed,
+                            RentOrderGroupID = rentOrder.RentOrderGroupId,
+                            DiscountAmount = rentOrder.DiscountAmount,
+                            RecipientAddress = rentOrder.RecipientAddress,
+                            RecipientDistrict = rentOrder.RecipientDistrict,
+                            RecipientName = rentOrder.RecipientName,
+                            RecipientPhone = rentOrder.RecipientPhone,
+                            RentOrderDetailList = rentOrderDetailResModels,
+                            Reason = rentOrder.Description,
+                            OrderCode = rentOrder.OrderCode
+
+                        };
+
+                        result.Code = 200;
+                        result.IsSuccess = true;
+                        result.Data = rentOrderResModel;
+                        result.Message = "Update rent order success.";
+                        return result;
                     }
-
-                    RentOrderResModel rentOrderResModel = new()
+                    else
                     {
-                        Id = rentOrder.Id,
-                        IsTransport = rentOrder.IsTransport,
-                        TransportFee = rentOrder.TransportFee,
-                        StartRentDate = rentOrder.StartDateRent,
-                        EndRentDate = rentOrder.EndDateRent,
-                        CreatedBy = rentOrder.CreatedBy,
-                        UserId = rentOrder.UserId,
-                        Deposit = rentOrder.Deposit,
-                        TotalPrice = rentOrder.TotalPrice,
-                        Status = rentOrder.Status,
-                        RemainMoney = rentOrder.RemainMoney,
-                        RewardPointGain = rentOrder.RewardPointGain,
-                        RewardPointUsed = rentOrder.RewardPointUsed,
-                        RentOrderGroupID = rentOrder.RentOrderGroupId,
-                        DiscountAmount = rentOrder.DiscountAmount,
-                        RecipientAddress = rentOrder.RecipientAddress,
-                        RecipientDistrict = rentOrder.RecipientDistrict,
-                        RecipientName = rentOrder.RecipientName,
-                        RecipientPhone = rentOrder.RecipientPhone,
-                        RentOrderDetailList = rentOrderDetailResModels,
-                        Reason = rentOrder.Description,
-                        OrderCode = rentOrder.OrderCode
-
-                    };
-
-                    result.Code = 200;
-                    result.IsSuccess = true;
-                    result.Data = rentOrderResModel;
-                    result.Message = "Update rent order success.";
-                    return result;
+                        result.Code = 400;
+                        result.IsSuccess = false;
+                        result.Message = "Update rent order failed.";
+                        return result;
+                    }
                 }
                 else
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
-                    result.Message = "Update rent order failed.";
+                    result.Message = "Status invalid";
                     return result;
                 }
             }
