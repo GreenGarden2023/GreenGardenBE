@@ -41,6 +41,8 @@ public partial class TblSaleOrder
 
     public string? Description { get; set; }
 
+    public Guid? CancelBy { get; set; }
+
     public virtual TblDistrict? RecipientDistrictNavigation { get; set; }
 
     public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();

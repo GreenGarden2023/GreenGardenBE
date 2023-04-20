@@ -39,6 +39,8 @@ public partial class TblServiceOrder
 
     public string? Description { get; set; }
 
+    public Guid? CancelBy { get; set; }
+
     public virtual TblService Service { get; set; } = null!;
 
     public virtual ICollection<TblServiceCalendar> TblServiceCalendars { get; } = new List<TblServiceCalendar>();

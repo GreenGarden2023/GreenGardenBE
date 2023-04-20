@@ -45,11 +45,13 @@ public partial class TblRentOrder
 
     public bool? IsTransport { get; set; }
 
-    public Guid CreatedBy { get; set; }
+    public Guid? CreatedBy { get; set; }
 
     public string? Description { get; set; }
 
-    public virtual TblUser CreatedByNavigation { get; set; } = null!;
+    public Guid? CancelBy { get; set; }
+
+    public virtual TblUser? CreatedByNavigation { get; set; }
 
     public virtual TblDistrict? RecipientDistrictNavigation { get; set; }
 

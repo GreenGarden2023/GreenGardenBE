@@ -21,8 +21,9 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
             _rewardRepo = rewardRepo;   
         }
 
-        public async Task<ResultModel> UpdateRentOrderStatus(Guid RentOrderID, string status)
+        public async Task<ResultModel> UpdateRentOrderStatus(Guid RentOrderID, string status, string username = null)
         {
+
             ResultModel result = new();
             TblRentOrder order = await _context.TblRentOrders.Where(x => x.Id.Equals(RentOrderID)).FirstOrDefaultAsync();
             if (order != null)
@@ -30,6 +31,11 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 if (status.Trim().ToLower().Equals(Status.COMPLETED))
                 {
                     _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
+                }
+                if (status.Trim().ToLower().Equals(Status.CANCEL))
+                {
+                    var user = await _context.TblUsers.Where(x=>x.UserName.Equals(username)).FirstOrDefaultAsync();
+                    order.CancelBy = user.Id;
                 }
                 order.Status = status.Trim().ToLower();
                 _ = _context.Update(order);
