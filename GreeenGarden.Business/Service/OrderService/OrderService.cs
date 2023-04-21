@@ -145,8 +145,16 @@ namespace GreeenGarden.Business.Service.OrderService
                                 await _productItemDetailRepo.UpdateProductItemDetail(productItemDetail);
                             }
                         }
-
-                        RentOrderResModel rentOrderResModel = new()
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)rentOrder.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
+                            RentOrderResModel rentOrderResModel = new()
                         {
                             Id = rentOrder.Id,
                             IsTransport = rentOrder.IsTransport,
@@ -170,7 +178,8 @@ namespace GreeenGarden.Business.Service.OrderService
                             RentOrderDetailList = rentOrderDetailResModels,
                             Reason = rentOrder.Description,
                             OrderCode = rentOrder.OrderCode,
-                            CancelBy = rentOrder.CancelBy                           
+                            CancelBy = rentOrder.CancelBy     ,
+                            NameCancelBy = userCancelBy
 
                         };
 
@@ -242,6 +251,15 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     TblSaleOrder saleOrder = await _saleOrderRepo.Get(saleOrderID);
                     List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
+                    string userCancelBy = null;
+                    try
+                    {
+                        userCancelBy = await _userRepo.GetFullNameByID((Guid)saleOrder.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        userCancelBy = null;
+                    }
                     SaleOrderResModel saleOrderResModel = new()
                     {
                         Id = saleOrder.Id,
@@ -262,6 +280,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         RentOrderDetailList = saleOrderDetailResModels,
                         Reason = saleOrder.Description,
                         CancelBy = saleOrder.CancelBy,
+                        IsTransport = saleOrder.IsTransport,
+                        NameCancelBy = userCancelBy,
                         OrderCode = saleOrder.OrderCode
                     };
 
@@ -503,6 +523,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     return result;
                 }
                 List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
+                string userCancelBy = null;
+                try
+                {
+                    userCancelBy = await _userRepo.GetFullNameByID((Guid)tblRentOrder.CancelBy);
+                }
+                catch (Exception)
+                {
+                    userCancelBy = null;
+                }
                 RentOrderResModel rentOrderResModel = new()
                 {
                     Id = tblRentOrder.Id,
@@ -526,6 +555,9 @@ namespace GreeenGarden.Business.Service.OrderService
                     RecipientPhone = tblRentOrder.RecipientPhone,
                     OrderCode = tblRentOrder.OrderCode,
                     CreateDate = tblRentOrder.CreateDate,
+                    CancelBy = tblRentOrder.CancelBy,
+                    NameCancelBy = userCancelBy,
+                    Reason = tblRentOrder.Description,
                     RentOrderDetailList = rentOrderDetailResModels,
 
                 };
@@ -717,6 +749,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     return result;
                 }
                 List<SaleOrderDetailResModel> rentOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(tblSaleOrder.Id);
+                string userCancelBy = null;
+                try
+                {
+                    userCancelBy = await _userRepo.GetFullNameByID((Guid)tblSaleOrder.CancelBy);
+                }
+                catch (Exception)
+                {
+                    userCancelBy = null;
+                }
                 SaleOrderResModel saleOrderResModel = new()
                 {
                     Id = tblSaleOrder.Id,
@@ -737,6 +778,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     RecipientPhone = tblSaleOrder.RecipientPhone,
                     OrderCode = tblSaleOrder.OrderCode,
                     CancelBy = tblSaleOrder.CancelBy,
+                    NameCancelBy = userCancelBy,
                     Reason = tblSaleOrder.Description,
                     RentOrderDetailList = rentOrderDetailResModels
                 };
@@ -790,6 +832,15 @@ namespace GreeenGarden.Business.Service.OrderService
                 if (tblRentOrder != null)
                 {
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(rentOrderId);
+                    string userCancelBy = null;
+                    try
+                    {
+                        userCancelBy = await _userRepo.GetFullNameByID((Guid)tblRentOrder.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        userCancelBy = null;
+                    }
                     RentOrderResModel rentOrderResModel = new()
                     {
                         Id = tblRentOrder.Id,
@@ -815,6 +866,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         CreateDate = tblRentOrder.CreateDate,
                         Reason = tblRentOrder.Description,
                         CancelBy = tblRentOrder.CancelBy,
+                        NameCancelBy = userCancelBy,
                         RentOrderDetailList = rentOrderDetailResModels
                     };
                     result.IsSuccess = true;
@@ -888,6 +940,15 @@ namespace GreeenGarden.Business.Service.OrderService
                             foreach (TblRentOrder order in listTblRentOrder)
                             {
                                 List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                                string userCancelBy = null;
+                                try
+                                {
+                                    userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                                }
+                                catch (Exception)
+                                {
+                                    userCancelBy = null;
+                                }
                                 RentOrderResModel rentOrderResModel = new()
                                 {
                                     Id = order.Id,
@@ -913,6 +974,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     CreateDate = order.CreateDate,
                                     Reason = order.Description,
                                     CancelBy = order.CancelBy,
+                                    NameCancelBy = userCancelBy,
                                     RentOrderDetailList = rentOrderDetailResModels
                                 };
                                 resList.Add(rentOrderResModel);
@@ -1003,6 +1065,15 @@ namespace GreeenGarden.Business.Service.OrderService
                 if (tblSaleOrder != null)
                 {
                     List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
+                    string userCancelBy = null;
+                    try
+                    {
+                        userCancelBy = await _userRepo.GetFullNameByID((Guid)tblSaleOrder.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        userCancelBy = null;
+                    }
                     SaleOrderResModel saleOrderResModel = new()
                     {
                         Id = tblSaleOrder.Id,
@@ -1023,6 +1094,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientPhone = tblSaleOrder.RecipientPhone,
                         OrderCode = tblSaleOrder.OrderCode,
                         Reason = tblSaleOrder.Description,
+                        NameCancelBy = userCancelBy,
                         CancelBy = tblSaleOrder.CancelBy,
                         
                         RentOrderDetailList = saleOrderDetailResModels
@@ -1089,6 +1161,15 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     foreach (TblSaleOrder order in listTblSaleOrder.Results)
                     {
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(order.Id);
                         SaleOrderResModel saleOrderResModel = new()
                         {
@@ -1110,6 +1191,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
                             Reason = order.Description,
+                            NameCancelBy = userCancelBy,
                             CancelBy= order.CancelBy,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
@@ -1199,6 +1281,15 @@ namespace GreeenGarden.Business.Service.OrderService
                             foreach (TblRentOrder order in listTblRentOrder)
                             {
                                 List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                                string userCancelBy = null;
+                                try
+                                {
+                                    userCancelBy =await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                                }
+                                catch (Exception)
+                                {
+                                    userCancelBy = null;
+                                }
                                 RentOrderResModel rentOrderResModel = new()
                                 {
                                     Id = order.Id,
@@ -1222,6 +1313,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientName = order.RecipientName,
                                     RecipientPhone = order.RecipientPhone,
                                     CancelBy= order.CancelBy,
+                                     NameCancelBy = userCancelBy,
                                     OrderCode = order.OrderCode,
                                     Reason = order.Description,
 
@@ -1318,6 +1410,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     foreach (TblSaleOrder order in listTblSaleOrder.Results)
                     {
                         List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(order.Id);
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         SaleOrderResModel saleOrderResModel = new()
                         {
                             Id = order.Id,
@@ -1339,6 +1440,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             OrderCode = order.OrderCode,
                             Reason = order.Description,
                             CancelBy= order.CancelBy,
+                            NameCancelBy = userCancelBy,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
@@ -1440,6 +1542,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     foreach (TblRentOrder order in listTblRentOrder)
                     {
                         List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         RentOrderResModel rentOrderResModel = new()
                         {
                             Id = order.Id,
@@ -1462,6 +1573,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientName = order.RecipientName,
                             RecipientPhone = order.RecipientPhone,
                             CancelBy = order.CancelBy,
+                            NameCancelBy = userCancelBy,
                             OrderCode = order.OrderCode,
                             CreateDate = order.CreateDate,
                             Reason = order.Description,
@@ -1782,6 +1894,15 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
 
                     List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
+                    string userCancelBy = null;
+                    try
+                    {
+                        userCancelBy = await _userRepo.GetFullNameByID((Guid)tblRentOrder.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        userCancelBy = null;
+                    }
                     RentOrderResModel rentOrderResModel = new()
                     {
                         Id = tblRentOrder.Id,
@@ -1803,6 +1924,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientDistrict = tblRentOrder.RecipientDistrict,
                         RecipientName = tblRentOrder.RecipientName,
                         CancelBy= tblRentOrder.CancelBy,
+                        NameCancelBy = userCancelBy,
                         RecipientPhone = tblRentOrder.RecipientPhone,
                         OrderCode = tblRentOrder.OrderCode,
                         CreateDate = tblRentOrder.CreateDate,
@@ -2054,6 +2176,15 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
                         };
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         ServiceOrderGetResModel serviceOrderGetResModel = new()
                         {
                             Id = order.Id,
@@ -2072,6 +2203,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
                             CancelBy = order.CancelBy,
+                            NameCancelBy = userCancelBy,
                             Reason = order.Description,
                             Service = serviceResModel
                         };
@@ -2184,6 +2316,15 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
                         };
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         ServiceOrderGetResModel serviceOrderGetResModel = new()
                         {
                             Id = order.Id,
@@ -2201,6 +2342,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             CancelBy = order.CancelBy,
+                            NameCancelBy = userCancelBy,
                             Status = order.Status,
                             Reason = order.Description,
                             Service = serviceResModel
@@ -2313,6 +2455,15 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
                         };
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         ServiceOrderGetResModel serviceOrderGetResModel = new()
                         {
                             Id = order.Id,
@@ -2329,6 +2480,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             Technician = technicianRes,
                             UserID = order.UserId,
                             CancelBy= order.CancelBy,
+                            NameCancelBy = userCancelBy,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
                             Reason = order.Description,
@@ -2439,7 +2591,16 @@ namespace GreeenGarden.Business.Service.OrderService
                         TechnicianAddress = technicianGet.Address,
                         TechnicianMail = technicianGet.Mail,
                         TechnicianPhone = technicianGet.Phone
-                    };
+                    }; 
+                    string userCancelBy = null;
+                    try
+                    {
+                        userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        userCancelBy = null;
+                    }
                     ServiceOrderGetResModel serviceOrderGetResModel = new()
                     {
                         Id = order.Id,
@@ -2455,6 +2616,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointUsed = (int)order.RewardPointUsed,
                         Technician = technicianRes,
                         CancelBy = order.CancelBy,
+                        NameCancelBy = userCancelBy,
                         UserID = order.UserId,
                         TransportFee = (double)order.TransportFee,
                         Status = order.Status,
@@ -2679,6 +2841,15 @@ namespace GreeenGarden.Business.Service.OrderService
                         TechnicianMail = technicianGet.Mail,
                         TechnicianPhone = technicianGet.Phone
                     };
+                    string userCancelBy = null;
+                    try
+                    {
+                        userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        userCancelBy = null;
+                    }
                     ServiceOrderGetResModel serviceOrderGetResModel = new()
                     {
                         Id = order.Id,
@@ -2692,7 +2863,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RemainAmount = (double)order.RemainAmount,
                         RewardPointGain = (int)order.RewardPointGain,
                         RewardPointUsed = (int)order.RewardPointUsed,
-                        
+                        NameCancelBy = userCancelBy,
                         Technician = technicianRes,
                         UserID = order.UserId,
                         TransportFee = (double)order.TransportFee,
@@ -2772,6 +2943,15 @@ namespace GreeenGarden.Business.Service.OrderService
                         var rentOrderList = new List<RentOrderResModel>();
                         var tblRentGroup = await _rentOrderGroupRepo.Get((Guid)tblRentOrder.RentOrderGroupId);
                         List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)tblRentOrder.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         RentOrderResModel rentOrderResModel = new()
                         {
                             Id = tblRentOrder.Id,
@@ -2787,6 +2967,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RemainMoney = tblRentOrder.RemainMoney,
                             RewardPointGain = tblRentOrder.RewardPointGain,
                             RewardPointUsed = tblRentOrder.RewardPointUsed,
+                            NameCancelBy = userCancelBy,
                             RentOrderGroupID = tblRentOrder.RentOrderGroupId,
                             DiscountAmount = tblRentOrder.DiscountAmount,
                             RecipientAddress = tblRentOrder.RecipientAddress,
@@ -2883,6 +3064,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     foreach (TblSaleOrder order in listTblSaleOrder.Results)
                     {
                         List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(order.Id);
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         SaleOrderResModel saleOrderResModel = new()
                         {
                             Id = order.Id,
@@ -2904,6 +3094,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             OrderCode = order.OrderCode,
                             Reason = order.Description,
                             CancelBy= order.CancelBy,
+                            NameCancelBy = userCancelBy,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
@@ -3015,6 +3206,15 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianMail = technicianGet.Mail,
                             TechnicianPhone = technicianGet.Phone
                         };
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         ServiceOrderGetResModel serviceOrderGetResModel = new()
                         {
                             Id = order.Id,
@@ -3034,6 +3234,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             Status = order.Status,
                             Reason = order.Description,
                             CancelBy= order.CancelBy,
+                            NameCancelBy = userCancelBy,
                             Service = serviceResModel
                         };
                         resList.Add(serviceOrderGetResModel);
@@ -3144,6 +3345,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         var rentOrderList = new List<RentOrderResModel>();
                         var tblRentGroup = await _rentOrderGroupRepo.Get((Guid)tblRentOrder.RentOrderGroupId);
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)tblRentOrder.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
                         List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
                         RentOrderResModel rentOrderResModel = new()
                         {
@@ -3157,6 +3367,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             Deposit = tblRentOrder.Deposit,
                             TotalPrice = tblRentOrder.TotalPrice,
                             Status = tblRentOrder.Status,
+                            NameCancelBy = userCancelBy,
                             RemainMoney = tblRentOrder.RemainMoney,
                             RewardPointGain = tblRentOrder.RewardPointGain,
                             RewardPointUsed = tblRentOrder.RewardPointUsed,

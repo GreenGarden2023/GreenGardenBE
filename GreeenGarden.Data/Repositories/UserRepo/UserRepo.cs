@@ -383,6 +383,16 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 }).FirstOrDefaultAsync();
             return result;
         }
+
+        public async Task<string> GetFullNameByID(Guid? userID)
+        {
+            var user = await _context.TblUsers.Where(x => x.Id.Equals(userID)).FirstOrDefaultAsync();
+            if (user == null)
+            {
+                return null;
+            }
+            return user.FullName;
+        }
     }
 }
 
