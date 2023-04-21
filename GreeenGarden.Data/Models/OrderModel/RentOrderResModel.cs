@@ -47,7 +47,8 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public string? OrderCode { get; set; } = "";
         public string? Reason { get; set; } = "";
-        public Guid? CancelBy { get; set; } 
+        public Guid? CancelBy { get; set; }
+        public string? NameCancelBy { get; set; } = null;
 
         public List<RentOrderDetailResModel>? RentOrderDetailList { get; set; }
     }
