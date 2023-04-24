@@ -32,6 +32,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetARentOrder(string token, Guid rentOrderID);
 
         Task<ResultModel> UpdateSaleOrderStatus(string token, Guid saleOrderID, string status);
+        Task<ResultModel> UpdateServiceOrderStatus(string token, Guid orderID, string status);
         Task<ResultModel> CancelSaleOrderById(string token, Guid saleOrderID, string reason);
 
         Task<ResultModel> CompleteServiceOrderStatus(string token, Guid serviceOrderID);

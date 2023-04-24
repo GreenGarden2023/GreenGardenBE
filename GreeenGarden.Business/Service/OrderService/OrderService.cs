@@ -3453,7 +3453,68 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
+        public async Task<ResultModel> UpdateServiceOrderStatus(string token, Guid orderID, string status)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            var result = new ResultModel();
+            try
+            {
+                var order = await _serviceOrderRepo.Get(orderID);
 
-        
+                if (order == null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Không tìm thấy đơn hàng";
+                    return result;
+                }
+                if (!status.Equals(ServiceOrderStatus.UNPAID) 
+                    && !status.Equals(ServiceOrderStatus.READY) 
+                    && !status.Equals(ServiceOrderStatus.PAID) 
+                    && !status.Equals(ServiceOrderStatus.COMPLETED) 
+                    && !status.Equals(ServiceOrderStatus.CANCEL))
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Status wrong!";
+                    return result;
+                }
+
+                order.Status = status;
+                await _serviceOrderRepo.UpdateServiceOrder(order);
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Cập nhật thành công";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }
