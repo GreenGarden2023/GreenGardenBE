@@ -28,6 +28,7 @@
         public static readonly string CONFIRMED = "confirmed";
         public static readonly string REPROCESS = "reprocess";
         public static readonly string COMPLETED = "completed";
+        public static readonly string CANCEL = "cancel";
     }
 
     public class ServiceOrderStatus

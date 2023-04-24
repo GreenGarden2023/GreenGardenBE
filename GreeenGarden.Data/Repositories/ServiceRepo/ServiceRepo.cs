@@ -135,6 +135,13 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
 
         }
 
+        public async Task<bool> UpdateService(TblService entity)
+        {
+            _context.TblServices.Update(entity);
+            await _context.SaveChangesAsync();
+            return true;    
+        }
+
         public async Task<bool> UpdateServiceUserInfo(ServiceUpdateModelManager serviceUpdateModelManager)
         {
             try
