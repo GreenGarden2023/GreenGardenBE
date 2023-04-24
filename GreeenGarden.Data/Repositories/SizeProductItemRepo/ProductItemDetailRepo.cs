@@ -1,4 +1,6 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.SizeModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
@@ -144,6 +146,40 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             _ = _context.TblProductItemDetails.Update(entity);
             _ = await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<List<ProductItemDetailResModel>> GetSizeProductItemsActive(Guid productItemId)
+        {
+            List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemId) && x.Quantity > 0 && x.Status.Equals(Status.ACTIVE)).ToListAsync();
+            List<ProductItemDetailResModel> listSizeProd = new();
+            foreach (TblProductItemDetail item in result)
+            {
+                TblSize? sizeGet = await _sizeRepo.Get(item.SizeId);
+                List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
+                if (sizeGet != null)
+                {
+                    SizeResModel size = new()
+                    {
+                        Id = sizeGet.Id,
+                        SizeName = sizeGet.Name,
+                        SizeType = sizeGet.Type
+                    };
+                    ProductItemDetailResModel sizeProd = new()
+                    {
+                        Id = item.Id,
+                        Size = size,
+                        RentPrice = item.RentPrice,
+                        SalePrice = item.SalePrice,
+                        Quantity = item.Quantity,
+                        TransportFee = item.TransportFee,
+                        Status = item.Status,
+                        ImagesURL = imgGet
+                    };
+                    listSizeProd.Add(sizeProd);
+                }
+
+            }
+            return listSizeProd;
         }
     }
 }

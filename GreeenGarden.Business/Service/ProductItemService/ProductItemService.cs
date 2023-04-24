@@ -361,6 +361,85 @@ namespace GreeenGarden.Business.Service.ProductItemService
             }
         }
 
+        public async Task<ResultModel> GetDetailProductItemActive(Guid productItemID)
+        {
+            ResultModel result = new();
+            if (productItemID != Guid.Empty)
+            {
+                TblProductItem? prodItem = await _proItemRepo.Get(productItemID);
+                if (prodItem != null)
+                {
+                    List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItemsActive(productItemID);
+                    TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(productItemID);
+                    string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                    ProductItemResModel productItemResModel = new()
+                    {
+                        Id = prodItem.Id,
+                        Name = prodItem.Name,
+                        Description = prodItem.Description,
+                        Content = prodItem.Content,
+                        ProductId = prodItem.ProductId,
+                        Type = prodItem.Type,
+                        ImageURL = prodItemImgURL,
+                        Rule = prodItem.Rule,
+                        ProductItemDetail = sizeGet
+                    };
+                    TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
+                    TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productItemResModel.ProductId);
+                    string? prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    ProductModel productModel = new()
+                    {
+                        Id = productGet.Id,
+                        Name = productGet.Name,
+                        Description = productGet.Description,
+                        Status = productGet.Status,
+                        CategoryId = productGet.CategoryId,
+                        ImgUrl = prodImgURL,
+                        IsForRent = productGet.IsForRent,
+                        IsForSale = productGet.IsForSale
+                    };
+                    ///
+                    TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                    string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    CategoryModel categoryModel = new()
+                    {
+                        Id = cateGet.Id,
+                        Name = cateGet.Name,
+                        Description = cateGet.Description,
+                        Status = cateGet.Status,
+                        ImgUrl = cateImgURL,
+
+                    };
+                    ProductItemDetailResponseResult productItemDetailResponseResult = new()
+                    {
+                        Category = categoryModel,
+                        Product = productModel,
+                        ProductItem = productItemResModel
+                    };
+                    result.Message = "Get Detail successful.";
+                    result.IsSuccess = true;
+                    result.Data = productItemDetailResponseResult;
+                    result.Code = 200;
+                    return result;
+                }
+                else
+                {
+                    result.Message = "Get Detail failed.";
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    return result;
+                }
+            }
+            else
+            {
+                result.Message = "Get Detail failed.";
+                result.IsSuccess = false;
+                result.Code = 400;
+                return result;
+            }
+        }
+
         public async Task<ResultModel> GetProductItem(PaginationRequestModel pagingModel, Guid productID, string? status, string? type)
         {
             ResultModel result = new();

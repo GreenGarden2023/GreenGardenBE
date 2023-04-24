@@ -1,4 +1,4 @@
-using EntityFrameworkPaginateCore;
+﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Business.Service.CartService;
 using GreeenGarden.Business.Utilities.Convert;
 using GreeenGarden.Business.Utilities.TokenService;
@@ -3424,162 +3424,25 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-
-        /*public async Task<ResultModel> GetRentOrderDetailByRangeDate(string token, OrderRangeDateReqModel model, PaginationRequestModel pagingModel)
+        public async Task<ResultModel> UpdateDateTakecare(string token, Guid orderID, string endDate)
         {
             var result = new ResultModel();
             try
             {
-                if (!string.IsNullOrEmpty(token))
+                DateTime serviceEndDate = ConvertUtil.convertStringToDateTime(endDate);
+                var order = await _serviceOrderRepo.Get(orderID);
+                if (order == null)
                 {
-                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                    if (!userRole.Equals(Commons.MANAGER)
-                        && !userRole.Equals(Commons.STAFF)
-                        && !userRole.Equals(Commons.ADMIN)
-                        && !userRole.Equals(Commons.CUSTOMER))
-                    {
-                        return new ResultModel()
-                        {
-                            IsSuccess = false,
-                            Code = 403,
-                            Message = "User not allowed"
-                        };
-                    }
-                }
-                else
-                {
-                    return new ResultModel()
-                    {
-                        IsSuccess = false,
-                        Code = 403,
-                        Message = "User not allowed"
-                    };
-                }
-                if (model.fromDate == null)
-                {
-                    result.IsSuccess = false;
-                    result.Message = "Error: fromDate null";
+                    result.IsSuccess = true;
+                    result.Message = "Không tìm thấy đơn hàng";
                     return result;
                 }
-                var fromDate = ConvertUtil.convertStringToDateTime(model.fromDate);
-                var toDate = new DateTime();
-                if (model.toDate == null)
-                {
-                    toDate = fromDate.AddDays(1);
-                }
-                else
-                {
-                    toDate = ConvertUtil.convertStringToDateTime(model.toDate);
-                }
+                order.ServiceEndDate = serviceEndDate;
 
-                if (fromDate > toDate)
-                {
-                    result.IsSuccess = false;
-                    result.Message = "Error: fromDate > endDate";
-                    return result;
-                }
-
-                Page<TblRentOrder> tblRentOrder = await _rentOrderRepo.GetRentOrderByDate(fromDate, toDate, pagingModel);
-                List<RentOrderByDateResModel> resList = new();
-                if (tblRentOrder.Results.Any())
-                {
-                    foreach (var order in tblRentOrder.Results)
-                    {
-                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
-
-                        TblRentOrderGroup rentOrderGroup = await _rentOrderGroupRepo.Get((Guid)order.RentOrderGroupId);
-                        List<TblRentOrder> listRentOrder = await _rentOrderRepo.GetRentOrdersByGroup(rentOrderGroup.Id);
-                        RentOrderGroupModel rentOrderGroupModel = new();
-                        if (listRentOrder.Any())
-                        {
-                            foreach (var o in listRentOrder)
-                            {
-                                List<RentOrderDetailResModel> rentOrderDetailModels = await _rentOrderDetailRepo.GetRentOrderDetails(o.Id);
-                                rentOrderGroupModel.RentOrderList = new List<RentOrderResModel>();
-                                RentOrderResModel rentOrderModel = new()
-                                {
-                                    Id = o.Id,
-                                    UserId = o.UserId,
-                                    CreatedBy = o.CreatedBy,
-                                    CreateDate = o.CreateDate,
-                                    IsTransport = o.IsTransport,
-                                    TransportFee = o.TransportFee,
-                                    StartRentDate = o.StartDateRent,
-                                    EndRentDate = o.EndDateRent,
-                                    Deposit = o.Deposit,
-                                    TotalPrice = o.TotalPrice,
-                                    Status = o.Status,
-                                    RemainMoney = o.RemainMoney,
-                                    RewardPointGain = o.RewardPointGain,
-                                    RewardPointUsed = o.RewardPointUsed,
-                                    RentOrderGroupID = o.RentOrderGroupId,
-                                    DiscountAmount = o.DiscountAmount,
-                                    RecipientAddress = o.RecipientAddress,
-                                    RecipientDistrict = o.RecipientDistrict,
-                                    RecipientName = o.RecipientName,
-                                    RecipientPhone = o.RecipientPhone,
-                                    OrderCode = o.OrderCode,
-                                    RentOrderDetailList = rentOrderDetailModels
-                                };
-                                rentOrderGroupModel.RentOrderList.Add(rentOrderModel);
-                            }
-                        }
-
-                        rentOrderGroupModel.ID = rentOrderGroup.Id;
-                        rentOrderGroupModel.NumberOfOrder = (int)rentOrderGroup.NumberOfOrders;
-                        rentOrderGroupModel.TotalGroupAmount = (double)rentOrderGroup.GroupTotalAmount;
-
-                        RentOrderByDateResModel rentOrderbyDate = new()
-                        {
-                            Id = order.Id,
-                            UserId = order.UserId,
-                            CreatedBy = order.CreatedBy,
-                            CreateDate = order.CreateDate,
-                            IsTransport = order.IsTransport,
-                            TransportFee = order.TransportFee,
-                            StartRentDate = order.StartDateRent,
-                            EndRentDate = order.EndDateRent,
-                            Deposit = order.Deposit,
-                            TotalPrice = order.TotalPrice,
-                            Status = order.Status,
-                            RemainMoney = order.RemainMoney,
-                            RewardPointGain = order.RewardPointGain,
-                            RewardPointUsed = order.RewardPointUsed,
-                            RentOrderGroupID = order.RentOrderGroupId,
-                            DiscountAmount = order.DiscountAmount,
-                            RecipientAddress = order.RecipientAddress,
-                            RecipientDistrict = order.RecipientDistrict,
-                            RecipientName = order.RecipientName,
-                            RecipientPhone = order.RecipientPhone,
-                            OrderCode = order.OrderCode,
-
-                            RentOrderDetailList = rentOrderDetailResModels,
-                            RentOrderGroupModel = rentOrderGroupModel
-                        };
-                        resList.Add(rentOrderbyDate);                     
-                    }
-                }
-                PaginationResponseModel paging = new PaginationResponseModel()
-                            .PageSize(tblRentOrder.PageSize)
-                            .CurPage(tblRentOrder.CurrentPage)
-                            .RecordCount(tblRentOrder.RecordCount)
-                            .PageCount(tblRentOrder.PageCount);
-
-                resList.Sort((x, y) => y.EndRentDate.CompareTo(x.EndRentDate));
-
-                RentOrderByRangeDateResModel rentOrderGroupResModel = new()
-                {
-                    Paging = paging,
-                    RentOrderGroups = resList
-                };
-
-
-                result.IsSuccess = true;
+                await _serviceOrderRepo.UpdateServiceOrder(order);
                 result.Code = 200;
-                result.Data = rentOrderGroupResModel;
-                result.Message = "Get rent orders successful.";
-                return result;
-
+                result.IsSuccess = true;
+                result.Message = "Cập nhật thành công";
             }
             catch (Exception e)
             {
@@ -3588,6 +3451,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
-        }*/
+        }
+
+
+        
     }
 }
