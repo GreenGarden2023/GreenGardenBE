@@ -27,40 +27,46 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 
         public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID, string? type)
         {
-            /*List<Guid> listProductItemID = new List<Guid>();
+            var result = new Page<TblProductItem>();
+
+            var listResult = new List<TblProductItem>();
+            var listResultCop = new List<TblProductItem>();
             if (string.IsNullOrEmpty(type))
             {
-                var tblProItem = await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).ToListAsync();
-                foreach (var i in tblProItem)
-                {
-                    var listProductItemDetail = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(i.Id)).ToListAsync();
-                    foreach (var productItemDetail in listProductItemDetail)
-                    {
-                        if (productItemDetail.Quantity > 0)
-                        {
-                            foreach (var productItemID in listProductItemID)
-                            {
-                                if (productItemID != productItemDetail.ProductItemId)
-                                {
-                                    listProductItemID.Add(productItemDetail.ProductItemId);
-                                }
-                            }
-                        }
-                    }
-                }
+                listResult = await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).ToListAsync();
             }
-            var listResult  = new List<TblProductItem>();
-            foreach (var item in listProductItemID)
+            else
             {
-                var proItemRecord = await _context.TblProductItems.Where(x => x.Id.Equals(item)).FirstOrDefaultAsync();
-                listResult.Add(proItemRecord);
-            }*/
-                
+                listResult = await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)&&x.Type.Equals(type)).ToListAsync();
+            }
+            foreach (var a in listResult)
+            {
+                var quantity = 0;
+                var proItemDetail = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(a.Id)).ToListAsync();
+                if (proItemDetail.Any())
+                {
+                    foreach (var b in proItemDetail)
+                    {
+                        quantity += (int)b.Quantity;
+                    }
+                    if (quantity != 0)
+                    {
+                        listResultCop.Add(a);
+                    }
+                }              
+            }
 
+            var listResultPaging = listResultCop.Skip((paginationRequestModel.curPage - 1) * paginationRequestModel.pageSize).Take(paginationRequestModel.pageSize);
 
-            return string.IsNullOrEmpty(type)
-                ? await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize)
-                : await _context.TblProductItems.Where(x => x.Type.Trim().ToLower().Equals(type.Trim().ToLower()) && x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            result.PageSize = paginationRequestModel.pageSize;
+            result.CurrentPage = paginationRequestModel.curPage;
+            result.RecordCount = listResultCop.Count();
+            result.PageCount = (int)Math.Ceiling((double)result.RecordCount / result.PageSize);
+
+            result.Results = listResultPaging.ToList();
+
+            return result;
+
         }
 
         public async Task<bool> UpdateProductItem(ProductItemModel productItemModel)
