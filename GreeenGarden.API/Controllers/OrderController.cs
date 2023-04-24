@@ -230,18 +230,18 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("update-end-date-takecare-order")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
-        public async Task<IActionResult> UpdateDateTakecare(Guid orderID, string endDate)
+        public async Task<IActionResult> UpdateDateTakecare(UpdateDateTakecareModel model)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.UpdateDateTakecare(token, orderID, endDate);
+            ResultModel result = await _orderService.UpdateDateTakecare(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpPost("update-service-order-status")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
-        public async Task<IActionResult> UpdateServiceOrderStatus(Guid orderID, string status)
+        public async Task<IActionResult> UpdateServiceOrderStatus(UpdateServiceOrderStatusModel model)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            ResultModel result = await _orderService.UpdateServiceOrderStatus(token, orderID, status);
+            ResultModel result = await _orderService.UpdateServiceOrderStatus(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
