@@ -17,7 +17,7 @@ namespace GreeenGarden.API.Controllers
             _takecareService = takecareService;
         }
         [HttpPost("create-service-request")]
-        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> CreateServiceRequest(ServiceInsertModel serviceInsertModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -26,7 +26,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("update-service-request-status")]
         [SwaggerOperation(Summary = "accepted/rejected")]
-        [Authorize(Roles = "Staff, Manager, Admin, Customer")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> UpdateServiceRequestStatus(ServiceStatusModel serviceStatusModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
