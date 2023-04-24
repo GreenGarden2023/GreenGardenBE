@@ -44,6 +44,11 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public Guid? TechnicianID { get; set; }
 
         public string? TechnicianName { get; set; }
+        public Guid? CancelBy { get; set; }
+        public string? NameCancelBy { get; set; }
+        public string? Reason { get; set; }
+
+
 
         public List<ServiceDetailResModel>? ServiceDetailList { get; set; }
 
@@ -90,6 +95,9 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public double TransportFee { get; set; }
         public string Rules { get; set; }
         public int RewardPointUsed { get; set; }
+        public Guid? CancelBy { get; set; }
+        public string? NameCancelBy { get; set; }
+        public string? Reason { get; set; }
         public ServiceOrderTechnician Technician { get; set; }
         public List<ServiceDetailResModel>? ServiceDetailList { get; set; }
     }

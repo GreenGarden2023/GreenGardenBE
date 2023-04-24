@@ -471,6 +471,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.EndDate).HasColumnType("datetime");
             entity.Property(e => e.Name).HasMaxLength(200);
             entity.Property(e => e.Phone).HasMaxLength(50);
+            entity.Property(e => e.Reason).HasMaxLength(500);
             entity.Property(e => e.Rules).HasMaxLength(1000);
             entity.Property(e => e.ServiceCode).HasMaxLength(20);
             entity.Property(e => e.StartDate).HasColumnType("datetime");
@@ -664,9 +665,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
-            entity.Property(e => e.Description)
-                .HasMaxLength(500)
-                .IsUnicode(false);
+            entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.TreeName).HasMaxLength(50);
             entity.Property(e => e.UserId).HasColumnName("UserID");

@@ -41,6 +41,10 @@ public partial class TblService
 
     public string? Rules { get; set; }
 
+    public Guid? CancelBy { get; set; }
+
+    public string? Reason { get; set; }
+
     public virtual TblDistrict? District { get; set; }
 
     public virtual ICollection<TblServiceDetail> TblServiceDetails { get; } = new List<TblServiceDetail>();

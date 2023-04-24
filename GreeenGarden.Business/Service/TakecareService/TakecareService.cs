@@ -91,6 +91,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (assign == true)
                 {
                     TblService resService = await _serviceRepo.Get(serviceAssignModelManager.ServiceID);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)resService.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
                     ServiceResModel serviceResModel = new()
                     {
@@ -101,6 +110,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
+                        Reason = resService.Reason,
+                        CancelBy = resService.CancelBy,
+                        NameCancelBy = nameCancelBy,
                         Name = resService.Name,
                         Phone = resService.Phone,
                         Email = resService.Email,
@@ -243,6 +255,15 @@ namespace GreeenGarden.Business.Service.TakecareService
 
                     }
                     TblService resService = await _serviceRepo.Get(tblService.Id);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)resService.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
                     ServiceResModel serviceResModel = new()
                     {
@@ -253,6 +274,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         CreateDate = resService.CreateDate ?? DateTime.MinValue,
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
+                        Reason = resService.Reason,
+                        CancelBy = resService.CancelBy,
+                        NameCancelBy = nameCancelBy,
                         Name = resService.Name,
                         Phone = resService.Phone,
                         Email = resService.Email,
@@ -325,6 +349,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                 List<ServiceResModel> resModels = new();
                 foreach (TblService service in tblServices)
                 {
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)service.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(service.UserId);
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
                     ServiceResModel serviceResModel = new()
@@ -333,6 +366,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         ServiceCode = service.ServiceCode,
                         UserId = service.UserId,
                         Rules = service.Rules,
+                        Reason = service.Reason,
+                        CancelBy = service.CancelBy,
+                        NameCancelBy = nameCancelBy,
                         UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
@@ -407,6 +443,16 @@ namespace GreeenGarden.Business.Service.TakecareService
                     orderID = tblServiceOrder.Id;
                 }
                 TblService tblService = await _serviceRepo.Get(serviceID);
+                string nameCancelBy = null;
+                try
+                {
+                    nameCancelBy = await _userRepo.GetFullNameByID((Guid)tblService.CancelBy);
+                }
+                catch (Exception)
+                {
+                    nameCancelBy = null;
+                }
+
                 List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(serviceID);
                 ServiceResModel serviceResModel = new()
                 {
@@ -415,6 +461,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                     UserId = tblService.UserId,
                     Rules = tblService.Rules,
                     ServiceOrderID = orderID,
+                    Reason = tblService.Reason,
+                    CancelBy = tblService.CancelBy,
+                    NameCancelBy = nameCancelBy,
                     UserCurrentPoint = 0,
                     CreateDate = tblService.CreateDate ?? DateTime.MinValue,
                     StartDate = tblService.StartDate,
@@ -487,6 +536,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                 {
                     Guid orderID = Guid.Empty;
                     TblServiceOrder tblServiceOrder = await _serviceOrderRepo.GetServiceOrderByServiceID(service.Id);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)service.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     if (tblServiceOrder != null)
                     {
                         orderID = tblServiceOrder.Id;
@@ -500,6 +558,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         UserId = service.UserId,
                         Rules = service.Rules,
                         ServiceOrderID = orderID,
+                        Reason = service.Reason,
+                        CancelBy = service.CancelBy,
+                        NameCancelBy = nameCancelBy,
                         UserCurrentPoint = userCurrentPoint,
                         CreateDate = service.CreateDate ?? DateTime.MinValue,
                         StartDate = service.StartDate,
@@ -576,6 +637,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                     var tblUser = await _userRepo.Get(i.UserId);
                     UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(tblUser.UserName);
                     TblUser technicianGet = await _userRepo.Get((Guid)i.TechnicianId);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)i.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     ServiceOrderTechnician technicianRes = new()
                     {
                         TechnicianID = technicianGet.Id,
@@ -605,6 +675,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         IsTransport = (bool)i.IsTransport,
                         TransportFee = (double)i.TransportFee,
                         Rules = i.Rules,
+                        CancelBy = i.CancelBy,
+                        NameCancelBy = nameCancelBy,
+                        Reason = i.Reason,
                         RewardPointUsed = (int)i.RewardPointUsed,
                         Technician = technicianRes,
                         ServiceDetailList = resServiceDetail,
@@ -682,6 +755,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                 if (update == true)
                 {
                     TblService resService = await _serviceRepo.Get(tblService.Id);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)resService.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
                     ServiceResModel serviceResModel = new()
                     {
@@ -692,6 +774,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         StartDate = resService.StartDate,
                         EndDate = resService.EndDate,
                         Name = resService.Name,
+                        Reason = resService.Reason,
+                        CancelBy = resService.CancelBy,
+                        NameCancelBy = nameCancelBy,
                         Phone = resService.Phone,
                         Address = resService.Address,
                         DistrictID = resService.DistrictId,
@@ -795,6 +880,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                     }
 
                     TblService getResService = await _serviceRepo.Get(serviceID);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)getResService.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
                     ServiceResModel serviceResModel = new()
                     {
@@ -809,6 +903,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Phone = getResService.Phone,
                         Email = getResService.Email,
                         Address = getResService.Address,
+                        Reason = getResService.Reason,
+                        CancelBy = getResService.CancelBy,
+                        NameCancelBy = nameCancelBy,
                         DistrictID = getResService.DistrictId,
                         Status = getResService.Status,
                         IsTransport = getResService.IsTransport,
@@ -828,6 +925,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                 else
                 {
                     TblService getResService = await _serviceRepo.Get(serviceUpdateModelManager.ServiceID);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)getResService.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(getResService.Id);
                     ServiceResModel serviceResModel = new()
                     {
@@ -844,6 +950,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                         Address = getResService.Address,
                         DistrictID = getResService.DistrictId,
                         Status = getResService.Status,
+                        Reason = getResService.Reason,
+                        CancelBy = getResService.CancelBy,
+                        NameCancelBy = nameCancelBy,
                         IsTransport = getResService.IsTransport,
                         TechnicianID = getResService.TechnicianId,
                         TechnicianName = getResService.TechnicianName,
@@ -923,6 +1032,15 @@ namespace GreeenGarden.Business.Service.TakecareService
                     orderID = tblServiceOrder.Id;
                 }
                 TblService tblService = await _serviceRepo.GetServiceByServiceCode(serviceOrder);
+                string nameCancelBy = null;
+                try
+                {
+                    nameCancelBy = await _userRepo.GetFullNameByID((Guid)tblService.CancelBy);
+                }
+                catch (Exception)
+                {
+                    nameCancelBy = null;
+                }
                 if (tblService == null)
                 {
                     result.Message = "Service not found.";
@@ -947,6 +1065,9 @@ namespace GreeenGarden.Business.Service.TakecareService
                     Address = tblService.Address,
                     DistrictID = tblService.DistrictId,
                     Status = tblService.Status,
+                    Reason = tblService.Reason,
+                    CancelBy = tblService.CancelBy,
+                    NameCancelBy = nameCancelBy,
                     IsTransport = tblService.IsTransport,
                     TransportFee = tblService.TransportFee,
                     RewardPointUsed = tblService.RewardPointUsed,
@@ -959,6 +1080,65 @@ namespace GreeenGarden.Business.Service.TakecareService
                 result.Data = serviceResModel;
                 result.Message = "Get request success.";
                 return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> CancelRequest(string token, string reason, Guid serviceID)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            var result = new ResultModel();
+            try
+            {
+                string userName = _decodeToken.Decode(token, "username");
+                var user = await _userRepo.GetCurrentUser(userName);
+
+                var service = await _serviceRepo.Get(serviceID);
+                if (service ==  null)
+                {
+                    result.IsSuccess = false;
+                    result.Message = "Không tìm thấy yêu cầu";
+                    return result;
+                }
+                service.Status = ServiceStatus.CANCEL;
+                service.CancelBy = user.Id;
+                service.Reason = reason;
+                await _serviceRepo.UpdateService(service);
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Cập nhật trạng thái thành công";
             }
             catch (Exception e)
             {
