@@ -27,6 +27,37 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 
         public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID, string? type)
         {
+            /*List<Guid> listProductItemID = new List<Guid>();
+            if (string.IsNullOrEmpty(type))
+            {
+                var tblProItem = await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).ToListAsync();
+                foreach (var i in tblProItem)
+                {
+                    var listProductItemDetail = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(i.Id)).ToListAsync();
+                    foreach (var productItemDetail in listProductItemDetail)
+                    {
+                        if (productItemDetail.Quantity > 0)
+                        {
+                            foreach (var productItemID in listProductItemID)
+                            {
+                                if (productItemID != productItemDetail.ProductItemId)
+                                {
+                                    listProductItemID.Add(productItemDetail.ProductItemId);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            var listResult  = new List<TblProductItem>();
+            foreach (var item in listProductItemID)
+            {
+                var proItemRecord = await _context.TblProductItems.Where(x => x.Id.Equals(item)).FirstOrDefaultAsync();
+                listResult.Add(proItemRecord);
+            }*/
+                
+
+
             return string.IsNullOrEmpty(type)
                 ? await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize)
                 : await _context.TblProductItems.Where(x => x.Type.Trim().ToLower().Equals(type.Trim().ToLower()) && x.ProductId.Equals(productID)).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
