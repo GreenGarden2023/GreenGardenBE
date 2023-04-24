@@ -37,7 +37,6 @@
     <Folder Include="Models\UserTreeModel\" />
     <Folder Include="Repositories\ServiceRepo\" />
     <Folder Include="Repositories\ServiceDetailRepo\" />
-    <Folder Include="Models\ServiceModel\" />
     <Folder Include="Repositories\ServiceOrderRepo\" />
     <Folder Include="Models\TransactionModel\" />
     <Folder Include="Repositories\ServiceCalendarRepo\" />

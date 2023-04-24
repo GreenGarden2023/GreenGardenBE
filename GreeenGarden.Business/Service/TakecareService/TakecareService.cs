@@ -1090,7 +1090,7 @@ namespace GreeenGarden.Business.Service.TakecareService
             return result;
         }
 
-        public async Task<ResultModel> CancelRequest(string token, string reason, Guid serviceID)
+        public async Task<ResultModel> CancelRequest(string token, CancelRequestModel model)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -1124,7 +1124,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 string userName = _decodeToken.Decode(token, "username");
                 var user = await _userRepo.GetCurrentUser(userName);
 
-                var service = await _serviceRepo.Get(serviceID);
+                var service = await _serviceRepo.Get(model.serviceID);
                 if (service ==  null)
                 {
                     result.IsSuccess = false;
@@ -1133,7 +1133,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 }
                 service.Status = ServiceStatus.CANCEL;
                 service.CancelBy = user.Id;
-                service.Reason = reason;
+                service.Reason = model.reason;
                 await _serviceRepo.UpdateService(service);
 
                 result.Code = 200;

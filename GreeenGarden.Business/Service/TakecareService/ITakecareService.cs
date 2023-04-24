@@ -13,7 +13,7 @@ namespace GreeenGarden.Business.Service.TakecareService
         Task<ResultModel> GetRequestOrderByTechnician(string token, PaginationRequestModel pagingModel, Guid technicianID);
         Task<ResultModel> GetUserRequest(string token);
         Task<ResultModel> GetAllRequest(string token);
-        Task<ResultModel> CancelRequest(string token, string reason, Guid serviceID);
+        Task<ResultModel> CancelRequest(string token, CancelRequestModel model);
         Task<ResultModel> GetARequestDetail(string token, Guid serviceID);
         Task<ResultModel> GetRequestDetailByServiceOrder(string token, string serviceOrder);
     }

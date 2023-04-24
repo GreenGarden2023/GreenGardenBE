@@ -99,10 +99,10 @@ namespace GreeenGarden.API.Controllers
 
         [HttpPost("cancel-request")]
         [Authorize(Roles = "Manager, Admin, Customer, Technician")]
-        public async Task<IActionResult> CancelRequest(string reason, Guid serviceID)
+        public async Task<IActionResult> CancelRequest(CancelRequestModel model)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _takecareService.CancelRequest(token, reason, serviceID);
+            Data.Models.ResultModel.ResultModel result = await _takecareService.CancelRequest(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
