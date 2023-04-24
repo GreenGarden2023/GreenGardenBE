@@ -11,5 +11,15 @@
         public string? orderType { get; set; }
         public string? reason { get; set; }
     }
+    public class UpdateDateTakecareModel
+    {
+        public Guid orderID { get; set; }
+        public string? endDate { get; set; }
+    }
+    public class UpdateServiceOrderStatusModel
+    {
+        public Guid orderID { get; set; }
+        public string? status { get; set; }
+    }
 }
 

@@ -3497,13 +3497,13 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> UpdateDateTakecare(string token, Guid orderID, string endDate)
+        public async Task<ResultModel> UpdateDateTakecare(string token, UpdateDateTakecareModel model)
         {
             var result = new ResultModel();
             try
             {
-                DateTime serviceEndDate = ConvertUtil.convertStringToDateTime(endDate);
-                var order = await _serviceOrderRepo.Get(orderID);
+                DateTime serviceEndDate = ConvertUtil.convertStringToDateTime(model.endDate);
+                var order = await _serviceOrderRepo.Get(model.orderID);
                 if (order == null)
                 {
                     result.IsSuccess = true;
@@ -3526,7 +3526,7 @@ namespace GreeenGarden.Business.Service.OrderService
             return result;
         }
 
-        public async Task<ResultModel> UpdateServiceOrderStatus(string token, Guid orderID, string status)
+        public async Task<ResultModel> UpdateServiceOrderStatus(string token, UpdateServiceOrderStatusModel model)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -3555,7 +3555,7 @@ namespace GreeenGarden.Business.Service.OrderService
             var result = new ResultModel();
             try
             {
-                var order = await _serviceOrderRepo.Get(orderID);
+                var order = await _serviceOrderRepo.Get(model.orderID);
 
                 if (order == null)
                 {
@@ -3563,18 +3563,18 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Không tìm thấy đơn hàng";
                     return result;
                 }
-                if (!status.Equals(ServiceOrderStatus.UNPAID) 
-                    && !status.Equals(ServiceOrderStatus.READY) 
-                    && !status.Equals(ServiceOrderStatus.PAID) 
-                    && !status.Equals(ServiceOrderStatus.COMPLETED) 
-                    && !status.Equals(ServiceOrderStatus.CANCEL))
+                if (!model.status.Equals(ServiceOrderStatus.UNPAID) 
+                    && !model.status.Equals(ServiceOrderStatus.READY) 
+                    && !model.status.Equals(ServiceOrderStatus.PAID) 
+                    && !model.status.Equals(ServiceOrderStatus.COMPLETED) 
+                    && !model.status.Equals(ServiceOrderStatus.CANCEL))
                 {
                     result.IsSuccess = false;
                     result.Message = "Status wrong!";
                     return result;
                 }
 
-                order.Status = status;
+                order.Status = model.status;
                 await _serviceOrderRepo.UpdateServiceOrder(order);
 
                 result.Code = 200;
