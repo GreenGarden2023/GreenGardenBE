@@ -3533,7 +3533,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
-                    && !userRole.Equals(Commons.ADMIN))
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
