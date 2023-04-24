@@ -61,7 +61,7 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
 
         public async Task<Page<TblService>> GetServiceByTechnician(PaginationRequestModel paginationRequestModel, Guid technicianID)
         {
-            return await _context.TblServices.Where(x => x.TechnicianId.Equals(technicianID)).OrderBy(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            return await _context.TblServices.Where(x => x.TechnicianId.Equals(technicianID)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
         }
 
         public async Task<List<ServiceCalendarUserGetModel>> GetServiceCalendarsByUser(Guid userID, DateTime startDate, DateTime endDate)
