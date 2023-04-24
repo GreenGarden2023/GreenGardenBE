@@ -52,7 +52,7 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
 
         public async Task<Page<TblServiceOrder>> GetAllServiceOrders(PaginationRequestModel paginationRequestModel)
         {
-            Page<TblServiceOrder> listTblOrder = await _context.TblServiceOrders.OrderBy(x=>x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            Page<TblServiceOrder> listTblOrder = await _context.TblServiceOrders.OrderByDescending(x=>x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             return listTblOrder;
         }
 
