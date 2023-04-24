@@ -26,6 +26,7 @@
         public string? Description { get; set; }
         public string? Type { get; set; }
         public string? Content { get; set; }
+        public string? Rule { get; set; }
     }
 
 

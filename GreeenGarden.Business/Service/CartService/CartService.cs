@@ -168,7 +168,8 @@ namespace GreeenGarden.Business.Service.CartService
                                     Description = productItem.Description,
                                     Id = productItem.Id,
                                     Name = productItem.Name,
-                                    Type = productItem.Type
+                                    Type = productItem.Type,
+                            Rule = productItem.Rule
                                 };
 
 
@@ -231,7 +232,8 @@ namespace GreeenGarden.Business.Service.CartService
                                     Description = productItem.Description,
                                     Id = productItem.Id,
                                     Name = productItem.Name,
-                                    Type = productItem.Type
+                                    Type = productItem.Type,
+                                    Rule = productItem.Rule
                                 };
                                 ItemRequest ItemRequest = new()
                                 {
@@ -434,7 +436,8 @@ namespace GreeenGarden.Business.Service.CartService
                             Description = productItem.Description,
                             Id = productItem.Id,
                             Name = productItem.Name,
-                            Type = productItem.Type
+                            Type = productItem.Type,
+                            Rule= productItem.Rule,
                         };
                         ItemRequest ItemRequest = new()
                         {
@@ -456,7 +459,8 @@ namespace GreeenGarden.Business.Service.CartService
                             Description = productItem.Description,
                             Id = productItem.Id,
                             Name = productItem.Name,
-                            Type = productItem.Type
+                            Type = productItem.Type,
+                            Rule = productItem.Rule
                         };
                         ItemRequest ItemRequest = new()
                         {
