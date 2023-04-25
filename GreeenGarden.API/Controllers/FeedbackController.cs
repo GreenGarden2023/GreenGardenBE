@@ -42,7 +42,7 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        [HttpPost("get-list-feedback-by-product-item")]
+        [HttpGet("get-list-feedback-by-product-item")]
         public async Task<IActionResult> getListFeedback([FromQuery] PaginationRequestModel pagingModel, Guid productItemID)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
@@ -50,7 +50,7 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        [HttpPost("get-list-feedback-by-order")]
+        [HttpGet("get-list-feedback-by-order")]
         public async Task<IActionResult> getListFeedbackByOrder([FromQuery] PaginationRequestModel pagingModel, Guid orderID)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
