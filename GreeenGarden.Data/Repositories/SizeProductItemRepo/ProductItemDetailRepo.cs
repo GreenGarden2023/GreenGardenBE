@@ -26,7 +26,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
         {
             if (string.IsNullOrEmpty(status))
             {
-                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID)).ToListAsync();
+                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Quantity != 0).ToListAsync();
                 List<ProductItemDetailResModel> listSizeProd = new();
                 foreach (TblProductItemDetail item in result)
                 {
@@ -59,7 +59,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
             else
             {
-                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
+                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Quantity != 0 && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
                 List<ProductItemDetailResModel> listSizeProd = new();
                 foreach (TblProductItemDetail item in result)
                 {
