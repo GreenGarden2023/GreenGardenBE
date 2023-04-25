@@ -10,7 +10,7 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
     {
         Task<bool> ChangeStatus(FeedbackChangeStatusModel model);
         Task<List<TblFeedBack>> GetFeedBackByProductItemDetail(Guid productItemDetailID);
-        Task<Page<TblFeedBack>> GetFeedBackByOrderID(Guid orderID, PaginationRequestModel pagingModel);
+        Task<List<TblFeedBack>> GetFeedBackByOrderID(Guid orderID);
         Task<List<FeedbackOrderResModel>> GetFeedBackOrderDetail(Guid orderId, Guid productItemDetailID);
         Task<bool> UpdateFeedback(TblFeedBack entity);
     }

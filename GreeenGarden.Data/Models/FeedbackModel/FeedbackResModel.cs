@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Data.Models.ProductItemDetailModel;
+﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.UserModels;
 
 namespace GreeenGarden.Data.Models.FeedbackModel
@@ -12,7 +13,7 @@ namespace GreeenGarden.Data.Models.FeedbackModel
         public DateTime? UpdateDate { get; set; }
         public string? Status { get; set; }
         public UserCurrResModel? User { get; set; }
-        public ProductItemDetailResModel? ProductItemDetail { get; set; }
+        public TblProductItemDetail? ProductItemDetail { get; set; }
         public List<string>? ImageURL { get; set; }
     }
 

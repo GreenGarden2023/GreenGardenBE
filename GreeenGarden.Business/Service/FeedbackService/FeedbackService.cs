@@ -80,26 +80,6 @@ namespace GreeenGarden.Business.Service.FeedbackService
             try
             {
                 bool flag = false;
-                if (!string.IsNullOrEmpty(token))
-                {
-                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                    if (!userRole.Equals(Commons.CUSTOMER))
-                    {
-                        return new ResultModel()
-                        {
-                            IsSuccess = false,
-                            Message = "User not allowed"
-                        };
-                    }
-                }
-                else
-                {
-                    return new ResultModel()
-                    {
-                        IsSuccess = false,
-                        Message = "User not allowed"
-                    };
-                }
 
                 TblProductItemDetail? productItemDetail = await _proItemDetailRepo.Get(model.ProductItemDetailID);
                 string userID = _decodeToken.Decode(token, "userid");
@@ -261,38 +241,31 @@ namespace GreeenGarden.Business.Service.FeedbackService
             throw new NotImplementedException();
         }
 
-        public async Task<ResultModel> getListFeedbackByOrder(string token, PaginationRequestModel pagingModel, Guid orderID)
+        public async Task<ResultModel> getListFeedbackByOrder(Guid orderID)
         {
             ResultModel result = new();
             try
             {
-                if (!string.IsNullOrEmpty(token))
+                var res = new List<FeedbackOrderResModel>();
+                var listFeedback = await _fbRepo.GetFeedBackByOrderID(orderID);
+                foreach (var item in listFeedback)
                 {
-                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                    if (!userRole.Equals(Commons.CUSTOMER))
-                    {
-                        return new ResultModel()
-                        {
-                            IsSuccess = false,
-                            Message = "User not allowed"
-                        };
-                    }
+                    var ImageURL = await _imgRepo.GetImgUrlFeedback(item.Id);
+                    var FeedbackOrder = new FeedbackOrderResModel();
+                    FeedbackOrder.ID = item.Id;
+                    FeedbackOrder.Rating = item.Rating;
+                    FeedbackOrder.Comment = item.Comment;
+                    FeedbackOrder.CreateDate = item.CreateDate;
+                    FeedbackOrder.UpdateDate = item.UpdateDate;
+                    FeedbackOrder.Status = item.Status;
+                    FeedbackOrder.ImageURL = ImageURL;
+                    res.Add(FeedbackOrder);
                 }
-                else
-                {
-                    return new ResultModel()
-                    {
-                        IsSuccess = false,
-                        Message = "User not allowed"
-                    };
-                }
-
-                var feedback = await _fbRepo.GetFeedBackByOrderID(orderID, pagingModel);
                 
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = feedback;
+                result.Data = res;
             }
             catch (Exception e)
             {
@@ -303,69 +276,56 @@ namespace GreeenGarden.Business.Service.FeedbackService
             return result;
         }
 
-        public async Task<ResultModel> getListFeedbackByProductItem(string token, PaginationRequestModel pagingModel, Guid productItemID)
+        public async Task<ResultModel> getListFeedbackByProductItem(Guid productItemDetailId)
         {
             ResultModel result = new();
             try
             {
-                List<Data.Models.ProductItemDetailModel.ProductItemDetailResModel> listProductItemDetail = await _proItemDetailRepo.GetSizeProductItems(productItemID, Status.ACTIVE);
+                var productItemDetail = await _proItemDetailRepo.Get(productItemDetailId);
+                var listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(productItemDetailId);
                 List<FeedbackResModel> listFeedback = new();
+                foreach (TblFeedBack fb in listFeedbackRecord)
+                {
+                    FeedbackResModel fbRes = new();
+                    TblUser? user = await _userRepo.Get(fb.UserId);
+                    List<string> listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
+                    fbRes.CreateDate = fb.CreateDate;
+                    fbRes.UpdateDate = fb.UpdateDate;
+                    fbRes.ID = fb.Id;
+                    fbRes.Rating = fb.Rating;
+                    fbRes.Comment = fb.Comment;
+                    fbRes.Status = fb.Status;
+                    fbRes.User = new UserCurrResModel
+                    {
+                        FullName = user.FullName,
+                        UserName = user.UserName,
+                        Id = user.Id,
+                        Phone = user.Phone
+                    };
+                    fbRes.ProductItemDetail = productItemDetail;
+                    fbRes.ProductItemDetail.TblFeedBacks.Clear();
+                    fbRes.ProductItemDetail.TblCartDetails.Clear();
+                    fbRes.ProductItemDetail.TblImages.Clear();
+                    fbRes.ProductItemDetail.TblRentOrderDetails.Clear();
+
+                    fbRes.ImageURL = new List<string>();
+                    fbRes.ImageURL = listImgUrl;
+
+                    listFeedback.Add(fbRes);
+                }
+
+                /*List<Data.Models.ProductItemDetailModel.ProductItemDetailResModel> listProductItemDetail = await _proItemDetailRepo.GetSizeProductItems(productItemID, Status.ACTIVE);
+                
                 foreach (Data.Models.ProductItemDetailModel.ProductItemDetailResModel i in listProductItemDetail)
                 {
                     List<TblFeedBack> listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(i.Id);
-                    foreach (TblFeedBack fb in listFeedbackRecord)
-                    {
-                        FeedbackResModel fbRes = new();
-                        TblUser? user = await _userRepo.Get(fb.UserId);
-                        TblSize? size = await _sizeRepo.Get(i.Size.Id);
-                        List<string> listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
-                        fbRes.CreateDate = fb.CreateDate;
-                        fbRes.UpdateDate = fb.UpdateDate;
-                        fbRes.ID = fb.Id;
-                        fbRes.Rating = fb.Rating;
-                        fbRes.Comment = fb.Comment;
-                        fbRes.Status = fb.Status;
-                        fbRes.User = new UserCurrResModel
-                        {
-                            FullName = user.FullName,
-                            UserName = user.UserName,
-                            Id = user.Id,
-                            Phone = user.Phone
-                        };
-                        fbRes.ProductItemDetail = new Data.Models.ProductItemDetailModel.ProductItemDetailResModel
-                        {
-                            Id = i.Id,
-                            Size = new Data.Models.SizeModel.SizeResModel
-                            {
-                                Id = size.Id,
-                                SizeName = size.Name,
-                                SizeType = size.Type
-                            }
-                        };
-                        fbRes.ImageURL = new List<string>();
-                        fbRes.ImageURL = listImgUrl;
+                    
+                }*/
 
-                        listFeedback.Add(fbRes);
-                    }
-                }
-                PaginationResponseModel pag = new PaginationResponseModel().CurPage(pagingModel.curPage)
-                    .PageSize(pagingModel.pageSize)
-                    .RecordCount(listFeedback.Count)
-                    .PageCount((int)Math.Ceiling((double)listFeedback.Count / pagingModel.pageSize));
-
-                List<FeedbackResModel> pageFeedback = listFeedback.OrderByDescending(y => y.CreateDate)
-                    .Skip((pagingModel.curPage - 1) * pagingModel.pageSize)
-                    .Take(pagingModel.pageSize).ToList();
-
-                FeedbackRes res = new()
-                {
-                    FeedbackList = pageFeedback,
-                    Paging = pag,
-                };
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = res;
+                result.Data = listFeedback;
             }
             catch (Exception e)
             {
@@ -381,26 +341,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
             var result = new ResultModel();
             try
             {
-                if (!string.IsNullOrEmpty(token))
-                {
-                    string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                    if (!userRole.Equals(Commons.CUSTOMER))
-                    {
-                        return new ResultModel()
-                        {
-                            IsSuccess = false,
-                            Message = "User not allowed"
-                        };
-                    }
-                }
-                else
-                {
-                    return new ResultModel()
-                    {
-                        IsSuccess = false,
-                        Message = "User not allowed"
-                    };
-                }
+                
                 var feedback = await _fbRepo.Get(model.FeedbackID);
                 if (feedback.UpdateDate != null)
                 {

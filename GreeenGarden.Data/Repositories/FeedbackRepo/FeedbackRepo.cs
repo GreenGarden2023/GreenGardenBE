@@ -28,10 +28,10 @@ namespace GreeenGarden.Data.Repositories.FeedbackRepo
             return true;
         }
 
-        public async Task<Page<TblFeedBack>> GetFeedBackByOrderID(Guid orderID, PaginationRequestModel pagingModel)
+        public async Task<List<TblFeedBack>> GetFeedBackByOrderID(Guid orderID)
         {
-            var result = await _context.TblFeedBacks.Where(x => x.OrderId.Equals(orderID)).OrderBy(x => x.CreateDate).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
-            foreach (var i in result.Results)
+            var result = await _context.TblFeedBacks.Where(x => x.OrderId.Equals(orderID)).OrderBy(x => x.CreateDate).ToListAsync();
+            foreach (var i in result)
             {
                 var listImg = await _imageRepo.GetImgUrlFeedback(i.Id);
             }
