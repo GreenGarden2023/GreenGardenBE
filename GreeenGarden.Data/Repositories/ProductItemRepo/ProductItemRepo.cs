@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductItemModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
@@ -42,7 +43,7 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             foreach (var a in listResult)
             {
                 var quantity = 0;
-                var proItemDetail = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(a.Id)).ToListAsync();
+                var proItemDetail = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(a.Id) && x.Status.Equals(Status.ACTIVE)).ToListAsync();
                 if (proItemDetail.Any())
                 {
                     foreach (var b in proItemDetail)
