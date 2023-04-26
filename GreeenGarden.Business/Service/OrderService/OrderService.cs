@@ -31,6 +31,12 @@ using MailKit.Search;
 using Org.BouncyCastle.Asn1.X509;
 using System.Net.NetworkInformation;
 using System.Security.Claims;
+using PdfSharpCore;
+using PdfSharpCore.Pdf;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
+using GreeenGarden.Data.Models.FileModel;
+using TheArtOfDev.HtmlRenderer.Adapters;
+using Microsoft.IdentityModel.Tokens;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -2561,7 +2567,6 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
         }
-
         
         public async Task<ResultModel> GetServiceOrderById(string token, Guid orderID)
         {
@@ -3582,6 +3587,158 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Message = "Cập nhật thành công";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GeneratePDF(Guid orderCode)
+        {
+            var result = new ResultModel();
+            try
+            {
+                TblRentOrder tblRentOrder = await _rentOrderRepo.Get(orderCode);
+                if (tblRentOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "OrderID invalid.";
+                    return result;
+                }
+                TblUser tblUser = await _userRepo.Get((Guid)tblRentOrder.UserId);
+                List<TblRentOrderDetail> tblRentOrderDetails = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(tblRentOrder.Id);
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h2>";
+                htmlContent += "<h3 style='width:100%; text-align:center'>Độc lập – Tự do – Hạnh phúc</h3>";
+                htmlContent += "<p style='width:100%; text-align:right'>Hồ Chí Minh, " + tblRentOrder.CreateDate.Value.ToShortDateString() + "</p>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HỢP ĐỒNG THUÊ CÂY </h2>";
+
+                htmlContent += "<p style='width:100%;'>Các bên tham gia hợp đồng gồm:</p>";
+
+                htmlContent += "<table style='width:100%'>";
+                htmlContent += "<tr>";
+
+                htmlContent += "<td style='vertical-align: top;'>";
+                htmlContent += "<h3 style='width:100%;'>BÊN CHO THUÊ (Bên A)</h3>";
+                htmlContent += "<p>Tên: Green Garden</p>";
+                htmlContent += "<p>Địa chỉ: Đại Học FPT</p>";
+                htmlContent += "<p>Điện thoại: 0909000999</p>";
+                htmlContent += "</td>";
+
+                htmlContent += "<td style=' vertical-align: top;'>";
+                htmlContent += "<h3 style='width:100%;'>BÊN THUÊ (Bên B) </h3>";
+                htmlContent += "<p>Tên khách hàng: "+tblUser.FullName+" </p>";
+                htmlContent += "<p>Địa chỉ: "+ tblUser.Address +" </p>";
+                htmlContent += "<p>Điện thoại:"+tblUser.Phone+ " <br></p>";
+                htmlContent += "</td>";
+
+                htmlContent += "</tr>";
+                htmlContent += "</table>";
+
+                htmlContent += "<p>Hai bên thống nhất thỏa thuận nội dung hợp đồng như sau:</p>";
+                htmlContent += "<h3>Điều 1: Điều khoản chung</h3>";
+                htmlContent += "<p>- Nếu trong quá trình thuê cây có vấn đề như hư, héo, chết, .... thì bên B sẽ chịu trách nhiệm hoàn toàn tuỳ thuộc vào tình trạng của cây.<br>" +
+                    "- Bên B phải kiểm tra kĩ cây trước khi nhận. Nếu có vấn đề thì phải báo cho bên A, cây sẽ được đổi cây mới không phụ thu bất kì chi phí nào.<br>" +
+                    "- Nếu bên B không kiểm tra kĩ cây trước khi nhận thì khi cây có vấn đề thì bên B phải chịu trách nhiệm.<br>" +
+                    "- Nếu cây không được trả đúng hạn thì sẽ phụ thu thêm tiền cho các ngày tiếp theo đến khi nào cây được trả.<br>" +
+                    "- Bên B có thể tự mình gia hạn thêm thời gian thuê trên hệ thống.<br>" +
+                    "- Khi gia hạn thuê thì chỉ được chọn những cây đang thuê, không được thêm bất cứ cây nào khác nếu thêm thì sẽ tạo đơn hàng mới.<br>" +
+                    "- Khi thuê cây bên B phải cọc 20% giá trị đơn hàng. Khi trả cây thì bên A sẽ trả lại cọc cho bên B.<br>" +
+                    "- Bên B đặt đơn xong vui lòng thanh toán cọc. Đơn hàng chỉ được giao khi bên B đã thanh toán cọc.<br>" +
+                    "- Nếu trong quá trình thuê cây có vấn đề thì phải báo gấp cho bên A biết để kịp thời cứu chữa.<br></p>";
+                int count = 2;
+                foreach(TblRentOrderDetail tblRentOrderDetail in tblRentOrderDetails)
+                {
+                    TblProductItemDetail tblProductItemDetail = await _productItemDetailRepo.Get((Guid)tblRentOrderDetail.ProductItemDetailId);
+                    TblProductItem tblProductItem = await _productItemRepo.Get(tblProductItemDetail.ProductItemId);
+                    if (!String.IsNullOrEmpty(tblProductItem.Rule))
+                    {
+                        htmlContent += "<h3>Điều " + count + ": Đối với cây " + tblProductItem.Name + "</h3>";
+                        htmlContent += "<p>" + tblProductItem.Rule + "</p>";
+                        count++;
+                    }
+                }
+
+                htmlContent += "<h3>Những điều khoản trên được áp dụng với những sản phẩm:</h3>";
+
+
+                htmlContent += "<table style ='width:100%; border: 1px solid #000; border-collapse: collapse'>";
+                htmlContent += "<thead style='font-weight:bold; border-collapse: collapse'>";
+                htmlContent += "<tr>";
+                htmlContent += "<td style='border:1px solid #000; border-collapse: collapse; text-align:center'> Tên sản phẩm </td>";
+                htmlContent += "<td style='border:1px solid #000;border-collapse: collapse; text-align:center'> Kích thước </td>";
+                htmlContent += "<td style='border:1px solid #000;border-collapse: collapse; text-align:center'>Giá thuê 1 ngày</td>";
+                htmlContent += "<td style='border:1px solid #000;border-collapse: collapse; text-align:center'>Số lượng</td >";
+                htmlContent += "<td style='border:1px solid #000;border-collapse: collapse; text-align:center'>Tổng tiền 1 ngày</td>";
+                htmlContent += "</tr>";
+                htmlContent += "</thead >";
+                htmlContent += "<tbody>";
+
+                foreach (TblRentOrderDetail tblRentOrderDetail in tblRentOrderDetails)
+                {
+                    TblProductItemDetail tblProductItemDetail = await _productItemDetailRepo.Get((Guid)tblRentOrderDetail.ProductItemDetailId);
+                    TblSize tblSize = await _sizeRepo.Get(tblProductItemDetail.SizeId);
+                    TblProductItem tblProductItem = await _productItemRepo.Get(tblProductItemDetail.ProductItemId);
+                    htmlContent += "<tr>";
+                    htmlContent += "<td style='border:1px solid #000; border-collapse: collapse; text-align:center'>" + tblProductItem.Name + "</td>";
+                    htmlContent += "<td style='border:1px solid #000; border-collapse: collapse; text-align:center'>" + tblSize.Name + "</td>";
+                    htmlContent += "<td style='border:1px solid #000; border-collapse: collapse; text-align:center'>" + tblRentOrderDetail.RentPricePerUnit + "</td >";
+                    htmlContent += "<td style='border:1px solid #000; border-collapse: collapse; text-align:center'>" + tblRentOrderDetail.Quantity + "</td>";
+                    htmlContent += "<td style='border:1px solid #000; border-collapse: collapse; text-align:center'>" + tblRentOrderDetail.TotalPrice + "</td >";
+                    htmlContent += "</tr>";
+                }
+                htmlContent += "</tbody>";
+                htmlContent += "</table>";
+
+                htmlContent += "<p style='text-align:right;'>Thuê từ " + tblRentOrder.StartDateRent.ToShortDateString() + " đến: "+tblRentOrder.EndDateRent.ToShortDateString() + "</p>";
+                htmlContent += "<p style='text-align:right;'>Số tiền được giảm: " + tblRentOrder.DiscountAmount+ "đ</p>";
+                htmlContent += "<p style='text-align:right;'>Phí vận chuyển: " + tblRentOrder.TransportFee+ "đ</p>";
+                htmlContent += "<p style='text-align:right;'>Tổng cộng: " + tblRentOrder.TotalPrice+ "đ</p>";
+                htmlContent += "<p style='text-align:right;'>Tiền cọc: " + tblRentOrder.Deposit+ "đ</p>";
+
+
+                htmlContent += "<table style='width:100%'>";
+                htmlContent += "<tr>";
+
+                htmlContent += "<td style='text-align:center;'>";
+                htmlContent += "<h3 style='width:100%;'>ĐẠI DIỆN BÊN A</h3>";
+                htmlContent += "<p> Green Garden  </p>";
+                htmlContent += "</td>";
+
+                htmlContent += "<td style=' text-align:center;'>";
+                htmlContent += "<h3 style='width:100%;'> ĐẠI DIỆN BÊN B </h3>";
+                htmlContent += "<p>" + tblUser.FullName + "</p>";
+                htmlContent += "</td>";
+
+                htmlContent += "</tr>";
+                htmlContent += "</table>";
+
+
+
+                htmlContent += "</div>";
+                htmlContent += "</body>";
+                htmlContent += "</html>";
+                PdfGenerator.AddPdfPages(document, htmlContent, PageSize.A4);
+                byte[]? response = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    document.Save(ms);
+                    response = ms.ToArray();
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = new FileData(response, "application/pdf", Guid.NewGuid().ToString() + ".pdf");
+                result.Message = "Generate PDF successful.";
             }
             catch (Exception e)
             {

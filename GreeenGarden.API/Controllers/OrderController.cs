@@ -1,9 +1,11 @@
 ﻿using GreeenGarden.Business.Service.OrderService;
+using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 
@@ -195,7 +197,6 @@ namespace GreeenGarden.API.Controllers
                 return BadRequest("Order type unknown.");
             }
         }
-
         [HttpGet("get-rent-order-detail-by-order-code")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> GetRentOrderDetailByOrderCode([FromQuery] OrderFilterModel model, [FromQuery] PaginationRequestModel pagingModel)
@@ -243,6 +244,14 @@ namespace GreeenGarden.API.Controllers
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             ResultModel result = await _orderService.UpdateServiceOrderStatus(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpPost("generate-pdf")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GeneratePDF(Guid orderID)
+        {
+            ResultModel result = await _orderService.GeneratePDF(orderID);
+            FileData file = (FileData)result.Data;
+            return result.IsSuccess ? File(file.bytes, file.contenType, file.name) : BadRequest(result);
         }
     }
 }
