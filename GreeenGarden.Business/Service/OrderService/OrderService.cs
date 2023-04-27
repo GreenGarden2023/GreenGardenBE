@@ -3651,7 +3651,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 htmlContent += "<div style='width:100%; font: bold'>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h2>";
                 htmlContent += "<h3 style='width:100%; text-align:center'>Độc lập – Tự do – Hạnh phúc</h3>";
-                htmlContent += "<p style='width:100%; text-align:right'>Hồ Chí Minh, " + tblRentOrder.CreateDate.Value.ToShortDateString() + "</p>";
+                htmlContent += "<p style='width:100%; text-align:right'>Hồ Chí Minh, " + tblRentOrder.CreateDate.Value.ToString("dd/MM/yyyy") + "</p>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>HỢP ĐỒNG THUÊ CÂY </h2>";
 
                 htmlContent += "<p style='width:100%;'>Các bên tham gia hợp đồng gồm:</p>";
@@ -3743,7 +3743,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 htmlContent += "</tbody>";
                 htmlContent += "</table>";
 
-                htmlContent += "<p style='text-align:right;'>Thuê từ " + tblRentOrder.StartDateRent.ToShortDateString() + " đến: " + tblRentOrder.EndDateRent.ToShortDateString() + "</p>";
+                htmlContent += "<p style='text-align:right;'>Thuê từ " + tblRentOrder.StartDateRent.ToString("dd/MM/yyyy") + " đến: " + tblRentOrder.EndDateRent.ToString("dd/MM/yyyy") + "</p>";
                 htmlContent += "<p style='text-align:right;'>Số tiền được giảm: " + tblRentOrder.DiscountAmount + "đ</p>";
                 htmlContent += "<p style='text-align:right;'>Phí vận chuyển: " + tblRentOrder.TransportFee + "đ</p>";
                 htmlContent += "<p style='text-align:right;'>Tổng cộng: " + tblRentOrder.TotalPrice + "đ</p>";
