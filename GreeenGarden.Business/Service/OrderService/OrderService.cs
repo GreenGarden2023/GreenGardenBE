@@ -497,10 +497,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 ResultModel contractURLResult = await _imageService.UploadAPDF(fileData);
                 _ = await _rentOrderRepo.UpdateRentOrderContractUrl(tblRentOrder.Id, contractURLResult.Data.ToString());
 
-                TblUser tblUser = await _userRepo.Get(Guid.Parse(userID));
-                ResultModel resultGen = await GeneratePDF(tblRentOrder.Id);
-                FileData file = (FileData)resultGen.Data;
-                _ = await _eMailService.SendEmailRentOrderContract(tblUser.Mail, tblRentOrder.Id, file);
+       
 
                 if (insertRentOrder != Guid.Empty)
                 {
@@ -542,6 +539,10 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                     }
                     _ = await _rewardRepo.RemoveUserRewardPoint(userName, (int)rentOrderModel.RewardPointUsed);
+                    TblUser tblUser = await _userRepo.Get(Guid.Parse(userID));
+                    ResultModel resultGen = await GeneratePDF(tblRentOrder.Id);
+                    FileData file = (FileData)resultGen.Data;
+                    _ = await _eMailService.SendEmailRentOrderContract(tblUser.Mail, tblRentOrder.Id, file);
                 }
                 else
                 {
@@ -550,6 +551,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Create rent order failed.";
                     return result;
                 }
+
                 List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
                 string userCancelBy = null;
                 try
