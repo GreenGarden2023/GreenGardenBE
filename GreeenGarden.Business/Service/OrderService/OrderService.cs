@@ -37,6 +37,7 @@ using TheArtOfDev.HtmlRenderer.PdfSharp;
 using GreeenGarden.Data.Models.FileModel;
 using TheArtOfDev.HtmlRenderer.Adapters;
 using Microsoft.IdentityModel.Tokens;
+using GreeenGarden.Business.Service.ImageService;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -61,6 +62,7 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly IUserRepo _userRepo;
         private readonly ITransactionRepo _transactionRepo;
         private readonly IServiceCalendarRepo _serCalendarRepo;
+        private readonly IImageService _imageService;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             IServiceRepo serviceRepo,
             IServiceDetailRepo serviceDetailRepo,
@@ -78,7 +80,8 @@ namespace GreeenGarden.Business.Service.OrderService
             IServiceOrderRepo serviceOrderRepo,
             ITransactionRepo transactionRepo,
             IServiceCalendarRepo serCalendarRepo,
-            IUserRepo userRepo)
+            IUserRepo userRepo,
+            IImageService imageService)
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -99,6 +102,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _userRepo = userRepo;
             _transactionRepo = transactionRepo;
             _serCalendarRepo = serCalendarRepo;
+            _imageService = imageService;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -180,6 +184,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientAddress = rentOrder.RecipientAddress,
                             RecipientDistrict = rentOrder.RecipientDistrict,
                             RecipientName = rentOrder.RecipientName,
+                            ContractURL = rentOrder.ContractUrl,
                             RecipientPhone = rentOrder.RecipientPhone,
                             RentOrderDetailList = rentOrderDetailResModels,
                             Reason = rentOrder.Description,
@@ -455,6 +460,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     }
                     ResultModel resultModel = await _rentOrderGroupRepo.UpdateRentOrderGroup((Guid)rentOrderModel.RentOrderGroupID, totalOrderAmount);
                 }
+
+                
                 TblRentOrder tblRentOrder = new()
                 {
                     Id = Guid.NewGuid(),
@@ -480,6 +487,10 @@ namespace GreeenGarden.Business.Service.OrderService
                     OrderCode = await GenerateOrderCode()
                 };
                 Guid insertRentOrder = await _rentOrderRepo.Insert(tblRentOrder);
+
+                FileData fileData = (FileData)GeneratePDF(tblRentOrder.Id).Result.Data;
+                ResultModel contractURLResult= await _imageService.UploadAPDF(fileData);
+                _ = await _rentOrderRepo.UpdateRentOrderContractUrl(tblRentOrder.Id, contractURLResult.Data.ToString());
                 if (insertRentOrder != Guid.Empty)
                 {
 
@@ -558,6 +569,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     RecipientAddress = tblRentOrder.RecipientAddress,
                     RecipientDistrict = tblRentOrder.RecipientDistrict,
                     RecipientName = tblRentOrder.RecipientName,
+                    ContractURL = tblRentOrder.ContractUrl,
                     RecipientPhone = tblRentOrder.RecipientPhone,
                     OrderCode = tblRentOrder.OrderCode,
                     CreateDate = tblRentOrder.CreateDate,
@@ -867,6 +879,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientAddress = tblRentOrder.RecipientAddress,
                         RecipientDistrict = tblRentOrder.RecipientDistrict,
                         RecipientName = tblRentOrder.RecipientName,
+                        ContractURL = tblRentOrder.ContractUrl,
                         RecipientPhone = tblRentOrder.RecipientPhone,
                         OrderCode = tblRentOrder.OrderCode,
                         CreateDate = tblRentOrder.CreateDate,
@@ -975,6 +988,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientAddress = order.RecipientAddress,
                                     RecipientDistrict = order.RecipientDistrict,
                                     RecipientName = order.RecipientName,
+                                    ContractURL = order.ContractUrl,
                                     RecipientPhone = order.RecipientPhone,
                                     OrderCode = order.OrderCode,
                                     CreateDate = order.CreateDate,
@@ -1317,6 +1331,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientAddress = order.RecipientAddress,
                                     RecipientDistrict = order.RecipientDistrict,
                                     RecipientName = order.RecipientName,
+                                    ContractURL = order.ContractUrl,
                                     RecipientPhone = order.RecipientPhone,
                                     CancelBy= order.CancelBy,
                                      NameCancelBy = userCancelBy,
@@ -1577,6 +1592,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientAddress = order.RecipientAddress,
                             RecipientDistrict = order.RecipientDistrict,
                             RecipientName = order.RecipientName,
+                            ContractURL = order.ContractUrl,
                             RecipientPhone = order.RecipientPhone,
                             CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
@@ -1929,6 +1945,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientAddress = tblRentOrder.RecipientAddress,
                         RecipientDistrict = tblRentOrder.RecipientDistrict,
                         RecipientName = tblRentOrder.RecipientName,
+                        ContractURL = tblRentOrder.ContractUrl,
                         CancelBy= tblRentOrder.CancelBy,
                         NameCancelBy = userCancelBy,
                         RecipientPhone = tblRentOrder.RecipientPhone,
@@ -3039,6 +3056,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientAddress = tblRentOrder.RecipientAddress,
                             RecipientDistrict = tblRentOrder.RecipientDistrict,
                             RecipientName = tblRentOrder.RecipientName,
+                            ContractURL = tblRentOrder.ContractUrl,
                             RecipientPhone = tblRentOrder.RecipientPhone,
                             OrderCode = tblRentOrder.OrderCode,
                             CreateDate = tblRentOrder.CreateDate,
@@ -3454,6 +3472,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientAddress = tblRentOrder.RecipientAddress,
                             RecipientDistrict = tblRentOrder.RecipientDistrict,
                             RecipientName = tblRentOrder.RecipientName,
+                            ContractURL = tblRentOrder.ContractUrl,
                             RecipientPhone = tblRentOrder.RecipientPhone,
                             OrderCode = tblRentOrder.OrderCode,
                             CreateDate = tblRentOrder.CreateDate,

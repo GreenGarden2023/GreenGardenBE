@@ -322,6 +322,9 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.ContractUrl)
+                .HasMaxLength(2048)
+                .HasColumnName("ContractURL");
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Description).HasMaxLength(500);
             entity.Property(e => e.OrderCode).HasMaxLength(20);

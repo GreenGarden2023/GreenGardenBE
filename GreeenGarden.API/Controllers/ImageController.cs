@@ -1,4 +1,6 @@
 ﻿using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Business.Service.OrderService;
+using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
@@ -13,9 +15,11 @@ namespace GreeenGarden.API.Controllers
     {
 
         private readonly IImageService _imageService;
-        public ImageController(IImageService imageService)
+        private readonly IOrderService _orderService;
+        public ImageController(IImageService imageService, IOrderService orderService)
         {
             _imageService = imageService;
+            _orderService = orderService;
         }
         [HttpPost("upload-images")]
         public async Task<ActionResult<ResultModel>> Upload([Required][FromForm] List<IFormFile> files)
@@ -99,7 +103,6 @@ namespace GreeenGarden.API.Controllers
                 });
             }
         }
-
         [HttpPost("re-upload-image")]
         public async Task<ActionResult<string>> ReUpload(string oldImageURL)
         {
@@ -120,6 +123,7 @@ namespace GreeenGarden.API.Controllers
                 });
             }
         }
+
     }
 }
 

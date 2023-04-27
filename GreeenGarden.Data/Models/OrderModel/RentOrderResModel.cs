@@ -45,6 +45,8 @@ namespace GreeenGarden.Data.Models.OrderModel
 
         public string? RecipientName { get; set; }
 
+        public string? ContractURL { get; set; }
+
         public string? OrderCode { get; set; } = "";
         public string? Reason { get; set; } = "";
         public Guid? CancelBy { get; set; }

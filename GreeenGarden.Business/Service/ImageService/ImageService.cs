@@ -1,4 +1,6 @@
-﻿using Azure.Storage.Blobs;
+﻿using System.Collections;
+using Azure.Storage.Blobs;
+using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using Microsoft.AspNetCore.Http;
@@ -280,6 +282,43 @@ namespace GreeenGarden.Business.Service.ImageService
             catch
             {
                 return "";
+            }
+        }
+
+        public async Task<ResultModel> UploadAPDF(FileData file)
+        {
+            ResultModel resultsModel = new();
+            string url = "";
+            try
+            {
+
+                BlobContainerClient blobContainerClient = new(SecretService.SecretService.GetIMGConn(), "greengardensimages");
+
+                using (MemoryStream stream = new())
+                {
+                    Guid id = Guid.NewGuid();
+                    string format = Path.GetExtension(file.name);
+                    Stream streamArr = new MemoryStream(file.bytes);
+                    _ = await blobContainerClient.UploadBlobAsync($"{id}{format}", streamArr);
+                    url = defaultURL + id + format;
+                }
+
+                resultsModel.IsSuccess = true;
+                resultsModel.Code = 200;
+                resultsModel.Data = url;
+                resultsModel.Message = "Upload Success";
+
+
+                return resultsModel;
+            }
+            catch (Exception ex)
+            {
+
+                resultsModel.IsSuccess = false;
+                resultsModel.Code = 400;
+                resultsModel.Data = ex.ToString();
+                resultsModel.Message = "Upload Failed";
+                return resultsModel;
             }
         }
     }

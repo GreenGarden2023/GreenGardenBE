@@ -219,6 +219,30 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<ResultModel> UpdateRentOrderContractUrl(Guid rentOrderID, string contracURL)
+        {
+            ResultModel result = new();
+            TblRentOrder order = await _context.TblRentOrders.Where(x => x.Id.Equals(rentOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                order.ContractUrl = contracURL;
+                _ = _context.Update(order);
+                _ = await _context.SaveChangesAsync();
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = order.Deposit;
+                result.Message = "Update deposit success.";
+                return result;
+            }
+            else
+            {
+                result.Code = 400;
+                result.IsSuccess = false;
+                result.Message = "Update deposit failed.";
+                return result;
+            }
+        }
     }
 }
 

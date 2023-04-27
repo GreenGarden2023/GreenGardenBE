@@ -18,6 +18,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
         Task<ResultModel> UpdateRentOrderRemain(Guid rentOrderID, double amount);
         Task<bool> UpdateRentOrder(TblRentOrder entity);
         Task<bool> CheckOrderCode(string Code);
+        Task<ResultModel> UpdateRentOrderContractUrl(Guid rentOrderID, string contracURL);
     }
 }
 
