@@ -3706,7 +3706,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             {
                                 htmlContent += "<p>-" + b + ".</p>";
                             }
-                            
+
                         }
                         count++;
                     }
