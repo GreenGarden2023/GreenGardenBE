@@ -52,6 +52,13 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.GetRentOrders(token, pagingModel);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-rent-order-group-by-order")]
+        public async Task<IActionResult> GetRentOrderGroupByOrderID(Guid orderID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetRentOrderGroupByOrderID(token, orderID);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpGet("get-all-rent-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> GetAllRentOrders([FromQuery] PaginationRequestModel pagingModel)
