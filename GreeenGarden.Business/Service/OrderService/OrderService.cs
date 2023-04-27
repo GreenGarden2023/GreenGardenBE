@@ -3873,5 +3873,183 @@ namespace GreeenGarden.Business.Service.OrderService
             }
             return result;
         }
+
+        public async Task<ResultModel> GetServiceOrderDetailByRangeDate(string token, OrderRangeDateReqModel model, PaginationRequestModel pagingModel)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+
+            ResultModel result = new();
+
+
+            if (model.fromDate == null)
+            {
+                result.IsSuccess = false;
+                result.Message = "Error: fromDate null";
+                return result;
+            }
+            var fromDate = ConvertUtil.convertStringToDateTime(model.fromDate);
+            var toDate = new DateTime();
+            if (model.toDate == null)
+            {
+                toDate = fromDate.AddDays(1);
+            }
+            else
+            {
+                toDate = ConvertUtil.convertStringToDateTime(model.toDate);
+            }
+
+            if (fromDate > toDate)
+            {
+                result.IsSuccess = false;
+                result.Message = "Error: fromDate > endDate";
+                return result;
+            }
+
+            try
+            {
+                Page<TblServiceOrder> listTblServiceOrders = await _serviceOrderRepo.GetAllServiceOrderByRangDate(pagingModel, fromDate, toDate);
+                List<ServiceOrderGetResModel> resList = new();
+                if (listTblServiceOrders != null)
+                {
+                    foreach (TblServiceOrder order in listTblServiceOrders.Results)
+                    {
+                        TblService resService = await _serviceRepo.Get(order.ServiceId);
+                        List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(resService.Id);
+                        string nameCancelBy = null;
+                        try
+                        {
+                            nameCancelBy = await _userRepo.GetFullNameByID((Guid)resService.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            nameCancelBy = null;
+                        }
+                        ServiceResModel serviceResModel = new()
+                        {
+                            ID = resService.Id,
+                            ServiceCode = resService.ServiceCode,
+                            UserId = resService.UserId,
+                            Rules = resService.Rules,
+                            CreateDate = resService.CreateDate ?? DateTime.MinValue,
+                            StartDate = resService.StartDate,
+                            EndDate = resService.EndDate,
+                            Name = resService.Name,
+                            Phone = resService.Phone,
+                            Email = resService.Email,
+                            Address = resService.Address,
+                            Status = resService.Status,
+                            TechnicianID = resService.TechnicianId,
+                            Reason = resService.Reason,
+                            CancelBy = resService.CancelBy,
+                            NameCancelBy = nameCancelBy,
+                            TechnicianName = resService.TechnicianName,
+                            ServiceDetailList = resServiceDetail
+                        };
+
+                        TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
+                        ServiceOrderTechnician technicianRes = new()
+                        {
+                            TechnicianID = technicianGet.Id,
+                            TechnicianUserName = technicianGet.UserName,
+                            TechnicianFullName = technicianGet.FullName,
+                            TechnicianAddress = technicianGet.Address,
+                            TechnicianMail = technicianGet.Mail,
+                            TechnicianPhone = technicianGet.Phone
+                        };
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
+                        ServiceOrderGetResModel serviceOrderGetResModel = new()
+                        {
+                            Id = order.Id,
+                            OrderCode = order.OrderCode,
+                            CreateDate = order.CreateDate,
+                            ServiceStartDate = (DateTime)order.ServiceStartDate,
+                            ServiceEndDate = (DateTime)order.ServiceEndDate,
+                            Deposit = (double)order.Deposit,
+                            TotalPrice = (double)order.TotalPrice,
+                            DiscountAmount = (double)order.DiscountAmount,
+                            RemainAmount = (double)order.RemainAmount,
+                            RewardPointGain = (int)order.RewardPointGain,
+                            RewardPointUsed = (int)order.RewardPointUsed,
+                            Technician = technicianRes,
+                            UserID = order.UserId,
+                            TransportFee = (double)order.TransportFee,
+                            CancelBy = order.CancelBy,
+                            NameCancelBy = userCancelBy,
+                            Status = order.Status,
+                            Reason = order.Description,
+                            Service = serviceResModel
+                        };
+                        resList.Add(serviceOrderGetResModel);
+                    }
+                    PaginationResponseModel paging = new PaginationResponseModel()
+                        .PageSize(listTblServiceOrders.PageSize)
+                        .CurPage(listTblServiceOrders.CurrentPage)
+                        .RecordCount(listTblServiceOrders.RecordCount)
+                        .PageCount(listTblServiceOrders.PageCount);
+
+                    resList.Sort((x, y) => y.ServiceEndDate.CompareTo(x.ServiceEndDate));
+
+                    ServiceOrderListRes serviceOrderListRes = new()
+                    {
+                        Paging = paging,
+                        ServiceOrderList = resList
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = serviceOrderListRes;
+                    result.Message = "Get service orders success.";
+                    return result;
+
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Get service orders failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
     }
 }

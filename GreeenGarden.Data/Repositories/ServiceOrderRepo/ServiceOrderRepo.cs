@@ -219,6 +219,13 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
                 return null;
             }
         }
+
+        public async Task<Page<TblServiceOrder>> GetAllServiceOrderByRangDate(PaginationRequestModel paginationRequestModel, DateTime fromDate, DateTime toDate)
+        {
+            return await _context.TblServiceOrders.Where(x => x.ServiceEndDate >= fromDate && x.ServiceEndDate <= toDate)
+                .OrderBy(x=> x.ServiceEndDate)
+                .PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+        }
     }
 }
 
