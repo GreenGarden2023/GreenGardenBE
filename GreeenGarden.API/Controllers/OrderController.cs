@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Business.Service.OrderService;
+﻿using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Business.Service.OrderService;
 using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
@@ -16,9 +17,11 @@ namespace GreeenGarden.API.Controllers
     public class OrderController : Controller
     {
         private readonly IOrderService _orderService;
-        public OrderController(IOrderService orderService)
+        private readonly IEMailService _emailService;
+        public OrderController(IOrderService orderService, IEMailService eMailService)
         {
             _orderService = orderService;
+            _emailService = eMailService;
         }
         [HttpPost("create-order")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
@@ -259,6 +262,15 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.GeneratePDF(orderID);
             FileData file = (FileData)result.Data;
             return result.IsSuccess ? File(file.bytes, file.contenType, file.name) : BadRequest(result);
+        }
+        [HttpPost("send-contract-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SendContractEmail(string email, Guid orderID)
+        {
+            ResultModel resultGen = await _orderService.GeneratePDF(orderID);
+            FileData file = (FileData)resultGen.Data;
+            ResultModel result = await _emailService.SendEmailRentOrderContract(email ,orderID, file);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }

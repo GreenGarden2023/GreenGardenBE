@@ -1,4 +1,5 @@
-﻿using GreeenGarden.Data.Models.ResultModel;
+﻿using GreeenGarden.Data.Models.FileModel;
+using GreeenGarden.Data.Models.ResultModel;
 
 namespace GreeenGarden.Business.Service.EMailService
 {
@@ -9,6 +10,7 @@ namespace GreeenGarden.Business.Service.EMailService
         Task<ResultModel> SendEmailServiceUpdate(string email, string serviceCode);
         Task<ResultModel> SendEmailReportUpdate(string email, Guid serviceCalendarId);
         Task<ResultModel> VerifyEmailVerificationOTP(string email, string code);
+        Task<ResultModel> SendEmailRentOrderContract(string email, Guid orderID, FileData file);
     }
 }
 
