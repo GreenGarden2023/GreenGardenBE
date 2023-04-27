@@ -361,7 +361,10 @@ namespace GreeenGarden.Business.Service.EMailService
 
                         foreach (string b in splitted)
                         {
-                            htmlContent += "<p>-" + b + ".</p>";
+                            if (!b.Equals(splitted.Last()))
+                            {
+                                htmlContent += "<p>-" + b + ".</p>";
+                            }
                         }
                         count++;
                     }

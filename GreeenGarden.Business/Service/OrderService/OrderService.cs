@@ -3702,7 +3702,11 @@ namespace GreeenGarden.Business.Service.OrderService
 
                         foreach (string b in splitted)
                         {
-                            htmlContent += "<p>-" + b + ".</p>";
+                            if (!b.Equals(splitted.Last()))
+                            {
+                                htmlContent += "<p>-" + b + ".</p>";
+                            }
+                            
                         }
                         count++;
                     }
