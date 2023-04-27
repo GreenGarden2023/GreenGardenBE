@@ -181,6 +181,76 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
             return listSizeProd;
         }
+
+        public async Task<List<ProductItemDetailResModel>> GetSizeProductItemsByManager(Guid productItemId, string? status)
+        {
+            if (string.IsNullOrEmpty(status))
+            {
+                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemId)).ToListAsync();
+                List<ProductItemDetailResModel> listSizeProd = new();
+                foreach (TblProductItemDetail item in result)
+                {
+                    TblSize? sizeGet = await _sizeRepo.Get(item.SizeId);
+                    List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
+                    if (sizeGet != null)
+                    {
+                        SizeResModel size = new()
+                        {
+                            Id = sizeGet.Id,
+                            SizeName = sizeGet.Name,
+                            SizeType = sizeGet.Type
+                        };
+                        ProductItemDetailResModel sizeProd = new()
+                        {
+                            Id = item.Id,
+                            Size = size,
+                            RentPrice = item.RentPrice,
+                            SalePrice = item.SalePrice,
+                            Quantity = item.Quantity,
+                            TransportFee = item.TransportFee,
+                            Status = item.Status,
+                            ImagesURL = imgGet
+                        };
+                        listSizeProd.Add(sizeProd);
+                    }
+
+                }
+                return listSizeProd;
+            }
+            else
+            {
+                List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemId) && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
+                List<ProductItemDetailResModel> listSizeProd = new();
+                foreach (TblProductItemDetail item in result)
+                {
+                    TblSize? sizeGet = await _sizeRepo.Get(item.SizeId);
+                    List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(item.Id);
+                    if (sizeGet != null && imgGet != null)
+                    {
+                        SizeResModel size = new()
+                        {
+                            Id = sizeGet.Id,
+                            SizeName = sizeGet.Name,
+                            SizeType = sizeGet.Type
+                        };
+                        ProductItemDetailResModel sizeProd = new()
+                        {
+                            Id = item.Id,
+                            Size = size,
+                            RentPrice = item.RentPrice,
+                            SalePrice = item.SalePrice,
+                            Quantity = item.Quantity,
+                            Status = item.Status,
+                            TransportFee = item.TransportFee,
+                            ImagesURL = imgGet,
+                        };
+                        listSizeProd.Add(sizeProd);
+                    }
+
+                }
+                return listSizeProd;
+            }
+        }
     }
 }
 

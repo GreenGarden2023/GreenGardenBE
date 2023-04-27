@@ -10,6 +10,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
         Task<ResultModel> CreateProductItem(string token, ProductItemModel productItemInsertModel);
         Task<ResultModel> CreateProductItemDetail(string token, ProductItemDetailModel productItemDetailModel);
         Task<ResultModel> GetProductItem(PaginationRequestModel pagingModel, Guid productID, string? status, string? type);
+        Task<ResultModel> GetProductItemByManager(PaginationRequestModel pagingModel, Guid productID, string? status, string? type);
         Task<ResultModel> GetDetailProductItem(Guid productItemID, string? sizeProductItemStatus);
         Task<ResultModel> GetDetailProductItemActive(Guid productItemID);
         Task<ResultModel> UpdateProductItem(string token, ProductItemModel productItemModel);

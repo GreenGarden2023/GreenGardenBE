@@ -137,8 +137,8 @@ namespace GreeenGarden.Business.Service.OrderService
             {
                 string userName = _decodeToken.Decode(token, "username");
                 ResultModel updateResult = await _rentOrderRepo.UpdateRentOrderStatus(rentOrderID, status, userName);
-                if (status == Status.READY || status == Status.ACTIVE || status == Status.DISABLE 
-                    || status == Status.UNPAID || status == Status.PAID || status == Status.COMPLETED 
+                if (status == Status.READY || status == Status.ACTIVE || status == Status.DISABLE
+                    || status == Status.UNPAID || status == Status.PAID || status == Status.COMPLETED
                     || status == Status.CANCEL || status == Status.DELIVERY || status == Status.RENTING)
                 {
                     if (updateResult.IsSuccess == true)
@@ -164,7 +164,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             userCancelBy = null;
                         }
-                            RentOrderResModel rentOrderResModel = new()
+                        RentOrderResModel rentOrderResModel = new()
                         {
                             Id = rentOrder.Id,
                             IsTransport = rentOrder.IsTransport,
@@ -189,7 +189,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RentOrderDetailList = rentOrderDetailResModels,
                             Reason = rentOrder.Description,
                             OrderCode = rentOrder.OrderCode,
-                            CancelBy = rentOrder.CancelBy     ,
+                            CancelBy = rentOrder.CancelBy,
                             NameCancelBy = userCancelBy
 
                         };
@@ -415,7 +415,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 if (rentOrderModel.IsTransport == true)
                 {
                     TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(rentOrderModel.ShippingID);
-                    transportFee += + tblShippingFee.FeeAmount;
+                    transportFee += +tblShippingFee.FeeAmount;
                 }
 
 
@@ -461,7 +461,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     ResultModel resultModel = await _rentOrderGroupRepo.UpdateRentOrderGroup((Guid)rentOrderModel.RentOrderGroupID, totalOrderAmount);
                 }
 
-                
+
                 TblRentOrder tblRentOrder = new()
                 {
                     Id = Guid.NewGuid(),
@@ -489,7 +489,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 Guid insertRentOrder = await _rentOrderRepo.Insert(tblRentOrder);
 
                 FileData fileData = (FileData)GeneratePDF(tblRentOrder.Id).Result.Data;
-                ResultModel contractURLResult= await _imageService.UploadAPDF(fileData);
+                ResultModel contractURLResult = await _imageService.UploadAPDF(fileData);
                 _ = await _rentOrderRepo.UpdateRentOrderContractUrl(tblRentOrder.Id, contractURLResult.Data.ToString());
                 if (insertRentOrder != Guid.Empty)
                 {
@@ -628,7 +628,7 @@ namespace GreeenGarden.Business.Service.OrderService
             {
                 string userName = _decodeToken.Decode(token, "username");
                 double totalAmountPerDay = 0;
-                int totalQuantity = 0;  
+                int totalQuantity = 0;
                 double totalOrderAmount = 0;
                 double transportFee = 0;
                 double deposit = 0;
@@ -676,7 +676,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
                         if (saleOrderModel.IsTransport == true)
                         {
-                            transportFee += (double)((itemDetail.TransportFee * item.Quantity) );
+                            transportFee += (double)((itemDetail.TransportFee * item.Quantity));
                         }
                     }
                 }
@@ -1116,7 +1116,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         Reason = tblSaleOrder.Description,
                         NameCancelBy = userCancelBy,
                         CancelBy = tblSaleOrder.CancelBy,
-                        
+
                         RentOrderDetailList = saleOrderDetailResModels
                     };
                     result.IsSuccess = true;
@@ -1212,7 +1212,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             OrderCode = order.OrderCode,
                             Reason = order.Description,
                             NameCancelBy = userCancelBy,
-                            CancelBy= order.CancelBy,
+                            CancelBy = order.CancelBy,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
                         resList.Add(saleOrderResModel);
@@ -1304,7 +1304,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                 string userCancelBy = null;
                                 try
                                 {
-                                    userCancelBy =await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                                    userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
                                 }
                                 catch (Exception)
                                 {
@@ -1333,8 +1333,8 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RecipientName = order.RecipientName,
                                     ContractURL = order.ContractUrl,
                                     RecipientPhone = order.RecipientPhone,
-                                    CancelBy= order.CancelBy,
-                                     NameCancelBy = userCancelBy,
+                                    CancelBy = order.CancelBy,
+                                    NameCancelBy = userCancelBy,
                                     OrderCode = order.OrderCode,
                                     Reason = order.Description,
 
@@ -1460,7 +1460,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
                             Reason = order.Description,
-                            CancelBy= order.CancelBy,
+                            CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
@@ -1814,14 +1814,14 @@ namespace GreeenGarden.Business.Service.OrderService
                         totalQuantity += item.Quantity;
                         if (saleOrderModel.IsTransport == true)
                         {
-                           transportFee += (double)((itemDetail.TransportFee * item.Quantity));
+                            transportFee += (double)((itemDetail.TransportFee * item.Quantity));
                         }
                     }
                 }
-                if(saleOrderModel.IsTransport == true)
+                if (saleOrderModel.IsTransport == true)
                 {
                     TblShippingFee tblShippingFee = await _shippingFeeRepo.GetShippingFeeByDistrict(saleOrderModel.ShippingID);
-                    transportFee +=  tblShippingFee.FeeAmount;
+                    transportFee += tblShippingFee.FeeAmount;
                 }
 
                 discountAmount = (double)(saleOrderModel.RewardPointUsed * 1000);
@@ -1946,7 +1946,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientDistrict = tblRentOrder.RecipientDistrict,
                         RecipientName = tblRentOrder.RecipientName,
                         ContractURL = tblRentOrder.ContractUrl,
-                        CancelBy= tblRentOrder.CancelBy,
+                        CancelBy = tblRentOrder.CancelBy,
                         NameCancelBy = userCancelBy,
                         RecipientPhone = tblRentOrder.RecipientPhone,
                         OrderCode = tblRentOrder.OrderCode,
@@ -2078,7 +2078,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     TechnicianId = (Guid)tblService.TechnicianId,
                     ServiceId = serviceOrderCreateModel.ServiceId,
                     UserId = tblService.UserId,
-                    
+
                     TransportFee = tblService.TransportFee,
                 };
                 _ = await _rewardRepo.RemoveUserRewardPointByUserID(tblService.UserId, (int)tblService.RewardPointUsed);
@@ -2103,7 +2103,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceID = tblServiceOrderGet.ServiceId,
                         UserID = tblServiceOrderGet.UserId,
                         TransportFee = (double)tblServiceOrderGet.TransportFee,
-                        
+
                         Status = tblServiceOrderGet.Status
                     };
                     result.Message = "Create service order success.";
@@ -2194,7 +2194,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             Address = resService.Address,
                             Status = resService.Status,
                             TechnicianID = resService.TechnicianId,
-                            Reason= resService.Reason,
+                            Reason = resService.Reason,
                             CancelBy = resService.CancelBy,
                             NameCancelBy = nameCancelBy,
                             TechnicianName = resService.TechnicianName,
@@ -2538,7 +2538,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RewardPointUsed = (int)order.RewardPointUsed,
                             Technician = technicianRes,
                             UserID = order.UserId,
-                            CancelBy= order.CancelBy,
+                            CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
@@ -2584,7 +2584,7 @@ namespace GreeenGarden.Business.Service.OrderService
 
             }
         }
-        
+
         public async Task<ResultModel> GetServiceOrderById(string token, Guid orderID)
         {
             if (!string.IsNullOrEmpty(token))
@@ -2662,7 +2662,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         TechnicianAddress = technicianGet.Address,
                         TechnicianMail = technicianGet.Mail,
                         TechnicianPhone = technicianGet.Phone
-                    }; 
+                    };
                     string userCancelBy = null;
                     try
                     {
@@ -3061,7 +3061,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             OrderCode = tblRentOrder.OrderCode,
                             CreateDate = tblRentOrder.CreateDate,
                             Reason = tblRentOrder.Description,
-                            CancelBy= tblRentOrder.CancelBy,
+                            CancelBy = tblRentOrder.CancelBy,
                             RentOrderDetailList = rentOrderDetailResModels
                         };
                         rentOrderList.Add(rentOrderResModel);
@@ -3088,7 +3088,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     Paging = paging,
                     RentOrderGroups = listRes
                 };
-                
+
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = newRes;
@@ -3177,7 +3177,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientPhone = order.RecipientPhone,
                             OrderCode = order.OrderCode,
                             Reason = order.Description,
-                            CancelBy= order.CancelBy,
+                            CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
                             RentOrderDetailList = saleOrderDetailResModels
                         };
@@ -3329,7 +3329,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
                             Reason = order.Description,
-                            CancelBy= order.CancelBy,
+                            CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
                             Service = serviceResModel
                         };
@@ -3476,7 +3476,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientPhone = tblRentOrder.RecipientPhone,
                             OrderCode = tblRentOrder.OrderCode,
                             CreateDate = tblRentOrder.CreateDate,
-                            CancelBy= tblRentOrder.CancelBy,
+                            CancelBy = tblRentOrder.CancelBy,
                             Reason = tblRentOrder.Description,
 
                             RentOrderDetailList = rentOrderDetailResModels
@@ -3589,10 +3589,10 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Không tìm thấy đơn hàng";
                     return result;
                 }
-                if (!model.status.Equals(ServiceOrderStatus.UNPAID) 
-                    && !model.status.Equals(ServiceOrderStatus.READY) 
-                    && !model.status.Equals(ServiceOrderStatus.PAID) 
-                    && !model.status.Equals(ServiceOrderStatus.COMPLETED) 
+                if (!model.status.Equals(ServiceOrderStatus.UNPAID)
+                    && !model.status.Equals(ServiceOrderStatus.READY)
+                    && !model.status.Equals(ServiceOrderStatus.PAID)
+                    && !model.status.Equals(ServiceOrderStatus.COMPLETED)
                     && !model.status.Equals(ServiceOrderStatus.CANCEL))
                 {
                     result.IsSuccess = false;
@@ -3655,9 +3655,9 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 htmlContent += "<td style=' vertical-align: top;'>";
                 htmlContent += "<h3 style='width:100%;'>BÊN THUÊ (Bên B) </h3>";
-                htmlContent += "<p>Tên khách hàng: "+tblUser.FullName+" </p>";
-                htmlContent += "<p>Địa chỉ: "+ tblUser.Address +" </p>";
-                htmlContent += "<p>Điện thoại:"+tblUser.Phone+ " <br></p>";
+                htmlContent += "<p>Tên khách hàng: " + tblUser.FullName + " </p>";
+                htmlContent += "<p>Địa chỉ: " + tblUser.Address + " </p>";
+                htmlContent += "<p>Điện thoại:" + tblUser.Phone + " <br></p>";
                 htmlContent += "</td>";
 
                 htmlContent += "</tr>";
@@ -3675,7 +3675,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     "- Bên B đặt đơn xong vui lòng thanh toán cọc. Đơn hàng chỉ được giao khi bên B đã thanh toán cọc.<br>" +
                     "- Nếu trong quá trình thuê cây có vấn đề thì phải báo gấp cho bên A biết để kịp thời cứu chữa.<br></p>";
                 int count = 2;
-                foreach(TblRentOrderDetail tblRentOrderDetail in tblRentOrderDetails)
+                foreach (TblRentOrderDetail tblRentOrderDetail in tblRentOrderDetails)
                 {
                     TblProductItemDetail tblProductItemDetail = await _productItemDetailRepo.Get((Guid)tblRentOrderDetail.ProductItemDetailId);
                     TblProductItem tblProductItem = await _productItemRepo.Get(tblProductItemDetail.ProductItemId);
@@ -3718,11 +3718,11 @@ namespace GreeenGarden.Business.Service.OrderService
                 htmlContent += "</tbody>";
                 htmlContent += "</table>";
 
-                htmlContent += "<p style='text-align:right;'>Thuê từ " + tblRentOrder.StartDateRent.ToShortDateString() + " đến: "+tblRentOrder.EndDateRent.ToShortDateString() + "</p>";
-                htmlContent += "<p style='text-align:right;'>Số tiền được giảm: " + tblRentOrder.DiscountAmount+ "đ</p>";
-                htmlContent += "<p style='text-align:right;'>Phí vận chuyển: " + tblRentOrder.TransportFee+ "đ</p>";
-                htmlContent += "<p style='text-align:right;'>Tổng cộng: " + tblRentOrder.TotalPrice+ "đ</p>";
-                htmlContent += "<p style='text-align:right;'>Tiền cọc: " + tblRentOrder.Deposit+ "đ</p>";
+                htmlContent += "<p style='text-align:right;'>Thuê từ " + tblRentOrder.StartDateRent.ToShortDateString() + " đến: " + tblRentOrder.EndDateRent.ToShortDateString() + "</p>";
+                htmlContent += "<p style='text-align:right;'>Số tiền được giảm: " + tblRentOrder.DiscountAmount + "đ</p>";
+                htmlContent += "<p style='text-align:right;'>Phí vận chuyển: " + tblRentOrder.TransportFee + "đ</p>";
+                htmlContent += "<p style='text-align:right;'>Tổng cộng: " + tblRentOrder.TotalPrice + "đ</p>";
+                htmlContent += "<p style='text-align:right;'>Tiền cọc: " + tblRentOrder.Deposit + "đ</p>";
 
 
                 htmlContent += "<table style='width:100%'>";
@@ -3758,6 +3758,91 @@ namespace GreeenGarden.Business.Service.OrderService
                 result.IsSuccess = true;
                 result.Data = new FileData(response, "application/pdf", Guid.NewGuid().ToString() + ".pdf");
                 result.Message = "Generate PDF successful.";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GetRentOrderGroupByOrderID(string token, Guid orderID)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var tblRentOrder = await _rentOrderRepo.Get(orderID);
+
+
+                List<RentOrderGroupModel> listGroup = new();
+                var tblRentGroup = await _rentOrderGroupRepo.Get((Guid)tblRentOrder.RentOrderGroupId);
+                List<TblRentOrder> listRentOrders = await _rentOrderRepo.GetRentOrdersByGroup((Guid)tblRentOrder.RentOrderGroupId);
+                List<RentOrderResModel> resList = new();
+                if (listRentOrders.Any())
+                {
+                    foreach (TblRentOrder order in listRentOrders)
+                    {
+                        List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(order.Id);
+                        string userCancelBy = null;
+                        try
+                        {
+                            userCancelBy = await _userRepo.GetFullNameByID((Guid)order.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            userCancelBy = null;
+                        }
+                        RentOrderResModel rentOrderResModel = new()
+                        {
+                            Id = order.Id,
+                            UserId = order.UserId,
+                            CreatedBy = order.CreatedBy,
+                            CreateDate = order.CreateDate,
+                            IsTransport = order.IsTransport,
+                            TransportFee = order.TransportFee,
+                            StartRentDate = order.StartDateRent,
+                            EndRentDate = order.EndDateRent,
+                            Deposit = order.Deposit,
+                            TotalPrice = order.TotalPrice,
+                            Status = order.Status,
+                            RemainMoney = order.RemainMoney,
+                            RewardPointGain = order.RewardPointGain,
+                            RewardPointUsed = order.RewardPointUsed,
+                            RentOrderGroupID = order.RentOrderGroupId,
+                            DiscountAmount = order.DiscountAmount,
+                            RecipientAddress = order.RecipientAddress,
+                            RecipientDistrict = order.RecipientDistrict,
+                            RecipientName = order.RecipientName,
+                            ContractURL = order.ContractUrl,
+                            RecipientPhone = order.RecipientPhone,
+                            CancelBy = order.CancelBy,
+                            NameCancelBy = userCancelBy,
+                            OrderCode = order.OrderCode,
+                            Reason = order.Description,
+
+                            RentOrderDetailList = rentOrderDetailResModels
+                        };
+                        resList.Add(rentOrderResModel);
+                    }
+                }
+
+                var resListSortDate = resList.OrderBy(x=>x.CreateDate).ToList();
+
+                RentOrderGroupModel rentOrderGroupModel = new()
+                {
+                    ID = tblRentGroup.Id,
+                    NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
+                    TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
+                    RentOrderList = resListSortDate
+                };
+
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = rentOrderGroupModel;
             }
             catch (Exception e)
             {

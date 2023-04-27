@@ -41,6 +41,13 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.GetProductItem(pagingModel, productID, status, type);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-product-item-by-manager")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetProductItemByManager([FromQuery] PaginationRequestModel pagingModel, [Required] Guid productID, string? status, string? type)
+        {
+            Data.Models.ResultModel.ResultModel result = await _service.GetProductItemByManager(pagingModel, productID, status, type);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpPost("update-product-item")]
         [Authorize(Roles = "Staff, Manager, Admin")]
         public async Task<IActionResult> UpdateProductItem([FromBody] ProductItemModel model)

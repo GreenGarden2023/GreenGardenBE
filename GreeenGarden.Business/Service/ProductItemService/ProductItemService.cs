@@ -545,6 +545,111 @@ namespace GreeenGarden.Business.Service.ProductItemService
             }
         }
 
+        public async Task<ResultModel> GetProductItemByManager(PaginationRequestModel pagingModel, Guid productID, string? status, string? type)
+        {
+            ResultModel result = new();
+            try
+            {
+                TblProduct? productGet = await _proRepo.Get(productID);
+                if (productID == Guid.Empty || productGet == null)
+                {
+                    result.Message = "Can not find product.";
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    return result;
+                }
+                EntityFrameworkPaginateCore.Page<TblProductItem> prodItemList = await _proItemRepo.GetProductItemByTypeByManager(pagingModel, productID, type);
+                if (prodItemList != null)
+                {
+                    List<ProductItemResModel> dataList = new();
+                    foreach (TblProductItem pi in prodItemList.Results)
+                    {
+                        List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItemsByManager(pi.Id, status);
+                        TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
+                        string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                        ProductItemResModel pItem = new()
+                        {
+                            Id = pi.Id,
+                            Name = pi.Name,
+                            Description = pi.Description,
+                            Content = pi.Content,
+                            ProductId = pi.ProductId,
+                            Type = pi.Type,
+                            ImageURL = prodItemImgURL,
+                            Rule = pi.Rule,
+                            ProductItemDetail = sizeGet
+                        };
+
+                        dataList.Add(pItem);
+
+
+                    }
+                    ///
+                    PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(prodItemList.PageSize)
+                    .CurPage(prodItemList.CurrentPage)
+                    .RecordCount(prodItemList.RecordCount)
+                    .PageCount(prodItemList.PageCount);
+                    ///
+
+                    TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
+                    string? prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                    ProductModel productModel = new()
+                    {
+                        Id = productGet.Id,
+                        Name = productGet.Name,
+                        Description = productGet.Description,
+                        Status = productGet.Status,
+                        CategoryId = productGet.CategoryId,
+                        ImgUrl = prodImgURL,
+                        IsForRent = productGet.IsForRent,
+                        IsForSale = productGet.IsForSale
+                    };
+                    ///
+                    TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                    string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    CategoryModel categoryModel = new()
+                    {
+                        Id = cateGet.Id,
+                        Name = cateGet.Name,
+                        Description = cateGet.Description,
+                        Status = cateGet.Status,
+                        ImgUrl = cateImgURL,
+
+                    };
+                    ProductItemGetResponseResult productItemGetResponseResult = new()
+                    {
+                        Paging = paging,
+                        Category = categoryModel,
+                        Product = productModel,
+                        ProductItems = dataList
+
+                    };
+                    result.Message = "Get list successful.";
+                    result.IsSuccess = true;
+                    result.Data = productItemGetResponseResult;
+                    result.Code = 200;
+                    return result;
+
+                }
+                else
+                {
+                    result.Message = "List empty.";
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
         public async Task<ResultModel> UpdateProductItem(string token, ProductItemModel productItemModel)
         {
             ResultModel result = new();
