@@ -40,6 +40,7 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             {
                 listResult = await _context.TblProductItems.Where(x => x.ProductId.Equals(productID)&&x.Type.Equals(type)).ToListAsync();
             }
+            if (listResult == null) return null;
             foreach (var a in listResult)
             {
                 var quantity = 0;
@@ -54,8 +55,9 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                     {
                         listResultCop.Add(a);
                     }
-                }              
+                }
             }
+            if (listResultCop == null) return null;
 
             var listResultPaging = listResultCop.Skip((paginationRequestModel.curPage - 1) * paginationRequestModel.pageSize).Take(paginationRequestModel.pageSize);
 
@@ -68,6 +70,32 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
 
             return result;
 
+        }
+
+        public async Task<Page<TblProductItem>> GetProductItemByTypeByManager(PaginationRequestModel paginationRequestModel, Guid productId, string? type)
+        {
+            var result = new Page<TblProductItem>();
+
+            var listResult = new List<TblProductItem>();
+            if (string.IsNullOrEmpty(type))
+            {
+                listResult = await _context.TblProductItems.Where(x => x.ProductId.Equals(productId)).ToListAsync();
+            }
+            else
+            {
+                listResult = await _context.TblProductItems.Where(x => x.ProductId.Equals(productId) && x.Type.Equals(type)).ToListAsync();
+            }
+            if (listResult == null) return null;
+            var listResultPaging = listResult.Skip((paginationRequestModel.curPage - 1) * paginationRequestModel.pageSize).Take(paginationRequestModel.pageSize);
+
+            result.PageSize = paginationRequestModel.pageSize;
+            result.CurrentPage = paginationRequestModel.curPage;
+            result.RecordCount = listResult.Count();
+            result.PageCount = (int)Math.Ceiling((double)result.RecordCount / result.PageSize);
+
+            result.Results = listResultPaging.ToList();
+
+            return result;
         }
 
         public async Task<bool> UpdateProductItem(ProductItemModel productItemModel)
