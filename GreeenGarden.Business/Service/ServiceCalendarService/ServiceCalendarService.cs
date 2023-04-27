@@ -170,9 +170,9 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                         else
                         {
 
-                            bool updateOrder = await _serviceOrderRepo.CompleteServiceOrder(oldCalendarRes.ServiceOrderId);
+                            //bool updateOrder = await _serviceOrderRepo.CompleteServiceOrder(oldCalendarRes.ServiceOrderId);
                             TblServiceOrder tblServiceOrder = await _serviceOrderRepo.Get(oldCalendarRes.ServiceOrderId);
-                            bool updateService = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.COMPLETED);
+                            //bool updateService = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.COMPLETED);
                             ServiceCalendarUpdateResModel serviceCalendarUpdateResModel = new()
                             {
                                 PreviousCalendar = oldCalendarRes,
@@ -186,8 +186,6 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                             result.Message = "Update calendar success";
                             return result;
                         }
-
-
                     }
                     else
                     {
