@@ -38,6 +38,7 @@ using GreeenGarden.Data.Models.FileModel;
 using TheArtOfDev.HtmlRenderer.Adapters;
 using Microsoft.IdentityModel.Tokens;
 using GreeenGarden.Business.Service.ImageService;
+using GreeenGarden.Business.Service.EMailService;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -63,6 +64,7 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly ITransactionRepo _transactionRepo;
         private readonly IServiceCalendarRepo _serCalendarRepo;
         private readonly IImageService _imageService;
+        private readonly IEMailService _eMailService;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             IServiceRepo serviceRepo,
             IServiceDetailRepo serviceDetailRepo,
@@ -81,7 +83,9 @@ namespace GreeenGarden.Business.Service.OrderService
             ITransactionRepo transactionRepo,
             IServiceCalendarRepo serCalendarRepo,
             IUserRepo userRepo,
-            IImageService imageService)
+            IImageService imageService,
+            IEMailService eMailService
+            )
         {
             _decodeToken = new DecodeToken();
             _serviceRepo = serviceRepo;
@@ -103,6 +107,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _transactionRepo = transactionRepo;
             _serCalendarRepo = serCalendarRepo;
             _imageService = imageService;
+            _eMailService = eMailService;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -491,6 +496,9 @@ namespace GreeenGarden.Business.Service.OrderService
                 FileData fileData = (FileData)GeneratePDF(tblRentOrder.Id).Result.Data;
                 ResultModel contractURLResult = await _imageService.UploadAPDF(fileData);
                 _ = await _rentOrderRepo.UpdateRentOrderContractUrl(tblRentOrder.Id, contractURLResult.Data.ToString());
+
+       
+
                 if (insertRentOrder != Guid.Empty)
                 {
 
@@ -531,6 +539,10 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                     }
                     _ = await _rewardRepo.RemoveUserRewardPoint(userName, (int)rentOrderModel.RewardPointUsed);
+                    TblUser tblUser = await _userRepo.Get(Guid.Parse(userID));
+                    ResultModel resultGen = await GeneratePDF(tblRentOrder.Id);
+                    FileData file = (FileData)resultGen.Data;
+                    _ = await _eMailService.SendEmailRentOrderContract(tblUser.Mail, tblRentOrder.Id, file);
                 }
                 else
                 {
@@ -539,6 +551,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Create rent order failed.";
                     return result;
                 }
+
                 List<RentOrderDetailResModel> rentOrderDetailResModels = await _rentOrderDetailRepo.GetRentOrderDetails(tblRentOrder.Id);
                 string userCancelBy = null;
                 try
@@ -3682,7 +3695,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     if (!String.IsNullOrEmpty(tblProductItem.Rule))
                     {
                         htmlContent += "<h3>Điều " + count + ": Đối với cây " + tblProductItem.Name + "</h3>";
-                        htmlContent += "<p>" + tblProductItem.Rule + "</p>";
+
+
+                        string a = tblProductItem.Rule;
+                        List<string> splitted = a.Split('.').ToList();
+
+                        foreach (string b in splitted)
+                        {
+                            htmlContent += "<p>-" + b + ".</p>";
+                        }
                         count++;
                     }
                 }
