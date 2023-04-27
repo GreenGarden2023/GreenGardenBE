@@ -153,7 +153,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
 
         public async Task<Page<TblRentOrder>> GetRentOrderByDate(DateTime fromDate, DateTime toDate, PaginationRequestModel pagingModel)
         {
-            return await _context.TblRentOrders.Where(x => x.EndDateRent >= fromDate && x.EndDateRent <= toDate).OrderBy(y => y.EndDateRent).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            return await _context.TblRentOrders.Where(x => x.EndDateRent >= fromDate && x.EndDateRent <= toDate).OrderByDescending(y => y.EndDateRent).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
         }
         
         public async Task<List<TblRentOrder>> GetRentOrderBy(string phone, string status, string orderCode)
