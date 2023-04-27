@@ -3695,7 +3695,15 @@ namespace GreeenGarden.Business.Service.OrderService
                     if (!String.IsNullOrEmpty(tblProductItem.Rule))
                     {
                         htmlContent += "<h3>Điều " + count + ": Đối với cây " + tblProductItem.Name + "</h3>";
-                        htmlContent += "<p>" + tblProductItem.Rule + "</p>";
+
+
+                        string a = tblProductItem.Rule;
+                        List<string> splitted = a.Split('.').ToList();
+
+                        foreach (string b in splitted)
+                        {
+                            htmlContent += "<p>-" + b + ".</p>";
+                        }
                         count++;
                     }
                 }
