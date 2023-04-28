@@ -340,7 +340,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         result.Message = "Order is fully paid.";
                         return result;
                     }
-                    if (moMoPaymentModel.Amount < 1000 || moMoPaymentModel.Amount > tblRentOrder.RemainMoney)
+                    if (moMoPaymentModel.Amount < 1000)
                     {
                         result.IsSuccess = false;
                         result.Code = 400;
@@ -578,7 +578,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     resultModel.Message = "Rent order Id invalid.";
                     return resultModel;
                 }
-                if (tblRentOrder.RemainMoney < amount || amount < 1000)
+                if ( amount < 1000)
                 {
                     resultModel.Code = 400;
                     resultModel.IsSuccess = false;
