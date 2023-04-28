@@ -182,7 +182,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         };
                         result.Code = 200;
                         result.IsSuccess = true;
-                        result.Message = "Status of category is: " + category.Status;
+                        result.Message = "Status of category is: " + category.Status.ToLower();
                         return result;
 
                     }
