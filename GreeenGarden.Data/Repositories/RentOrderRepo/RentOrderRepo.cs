@@ -96,8 +96,11 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
             TblRentOrder order = await _context.TblRentOrders.Where(x => x.Id.Equals(rentOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
-
                 order.RemainMoney -= amount;
+                if (order.RemainMoney<0)
+                {
+                    order.RemainMoney = 0;
+                }
                 if (order.RemainMoney == 0)
                 {
                     order.Status = Status.PAID;
