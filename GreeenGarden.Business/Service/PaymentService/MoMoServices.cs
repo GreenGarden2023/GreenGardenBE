@@ -853,7 +853,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         resultModel.Message = "Rent order is fully paid.";
                         return resultModel;
                     }
-                    amount = (long)tblRentOrder.RemainMoney;
+                    amount = (long)(tblRentOrder.RemainMoney + tblRentOrder.Deposit);
                     JsonSerializerSettings jsonSerializerSettings = new()
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -1062,7 +1062,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 else if (moMoWholeOrderModel.OrderType.Trim().ToLower().Equals("sale"))
                 {
                     TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    double amount = (double)tblSaleOrder.RemainMoney;
+                    double amount = (double)(tblSaleOrder.RemainMoney + tblSaleOrder.Deposit);
                     if (tblSaleOrder.Status.Equals(Status.COMPLETED))
                     {
                         result.IsSuccess = false;
