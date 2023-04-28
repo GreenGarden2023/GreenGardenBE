@@ -178,7 +178,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         {
                             Paging = pagingRes,
                             Category = category,
-                            Result = null
+                            Result = new List<ProductModel>()
                         };
                         result.Code = 200;
                         result.IsSuccess = true;
