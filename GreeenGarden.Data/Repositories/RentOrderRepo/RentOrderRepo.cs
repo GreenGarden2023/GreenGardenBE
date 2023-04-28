@@ -97,7 +97,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
             if (order != null)
             {
                 order.RemainMoney -= amount;
-                if (order.RemainMoney<0)
+                if (order.RemainMoney <= 0)
                 {
                     order.RemainMoney = 0;
                 }
