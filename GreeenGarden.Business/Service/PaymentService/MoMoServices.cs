@@ -1062,7 +1062,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                 else if (moMoWholeOrderModel.OrderType.Trim().ToLower().Equals("sale"))
                 {
                     TblSaleOrder tblSaleOrder = await _saleOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    double amount = (double)(tblSaleOrder.RemainMoney + tblSaleOrder.Deposit);
+                    double amount = (double)tblSaleOrder.RemainMoney;
                     if (tblSaleOrder.Status.Equals(Status.COMPLETED))
                     {
                         result.IsSuccess = false;
