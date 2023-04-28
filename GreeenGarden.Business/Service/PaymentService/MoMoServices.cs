@@ -1025,7 +1025,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                     TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                     DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                     TblRentOrder tblRentOrder = await _rentOrderRepo.Get(moMoWholeOrderModel.OrderId);
-                    double amount = (double)tblRentOrder.RemainMoney;
+                    double amount = (double)(tblRentOrder.RemainMoney + tblRentOrder.Deposit);
                     if (tblRentOrder.Status.Equals(Status.PAID))
                     {
                         result.IsSuccess = false;
