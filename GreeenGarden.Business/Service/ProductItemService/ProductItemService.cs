@@ -323,6 +323,56 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
                     TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
                     string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+                    if (sizeProductItemStatus != null)
+                    {
+                        if (cateGet.Status.ToLower() != Status.ACTIVE)
+                        {
+                            var category = new CategoryModel()
+                            {
+                                Id = cateGet.Id,
+                                Name = cateGet.Name,
+                                Status = cateGet.Status.ToLower(),
+                                Description = cateGet.Description,
+                                ImgUrl = _imageRepo.GetImgUrlCategory(cateGet.Id).Result.ImageUrl
+                            };
+                            productItemResModel.ProductItemDetail.Clear();
+                            result.Data = new ProductItemDetailResponseResult()
+                            {
+                                Category = category,
+                                Product = null,
+                                ProductItem = null
+                            };
+                            result.Code = 200;
+                            result.IsSuccess = true;
+                            result.Message = "Status of category is: " + category.Status.ToLower();
+                            return result;
+
+                        }
+                        if (productGet.Status.ToLower() != Status.ACTIVE)
+                        {
+                            var category = new CategoryModel()
+                            {
+                                Id = cateGet.Id,
+                                Name = cateGet.Name,
+                                Status = cateGet.Status.ToLower(),
+                                Description = cateGet.Description,
+                                ImgUrl = _imageRepo.GetImgUrlCategory(cateGet.Id).Result.ImageUrl
+                            };
+                            productItemResModel.ProductItemDetail.Clear();
+                            result.Data = new ProductItemDetailResponseResult()
+                            {
+                                Category = category,
+                                Product = productModel,
+                                ProductItem = null
+                            };
+                            result.Code = 200;
+                            result.IsSuccess = true;
+                            result.Message = "Status of product is: " + productModel.Status.ToLower();
+                            return result;
+                        }
+
+                    } // check Category disable
+                    
                     CategoryModel categoryModel = new()
                     {
                         Id = cateGet.Id,
@@ -527,8 +577,8 @@ namespace GreeenGarden.Business.Service.ProductItemService
                             {
                                 Paging = paging,
                                 Category = category,
-                                Product = productModel,
-                                ProductItems = null
+                                Product = null,
+                                ProductItems = new List<ProductItemResModel>()
                             };
                             result.Code = 200;
                             result.IsSuccess = true;
@@ -572,7 +622,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                                 Paging = paging,
                                 Category = categoryModel,
                                 Product = product,
-                                ProductItems = null
+                                ProductItems =  new List<ProductItemResModel>()
                             };
                             result.Code = 200;
                             result.IsSuccess = true;
