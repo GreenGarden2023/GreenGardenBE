@@ -73,7 +73,6 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
             if (order != null)
             {
                 order.Status = Status.READY;
-                order.RemainMoney -= order.Deposit;
                 _ = _context.Update(order);
                 _ = await _context.SaveChangesAsync();
                 result.Code = 200;
