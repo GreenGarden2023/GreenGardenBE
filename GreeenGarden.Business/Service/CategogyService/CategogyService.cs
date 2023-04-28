@@ -120,7 +120,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                 {
                     Id = newCategory.Id,
                     Name = newCategory.Name,
-                    Status = newCategory.Status,
+                    Status = newCategory.Status.ToLower(),
                     ImgUrl = imgUploadUrl.Data.ToString(),
                     Description = newCategory.Description
                 };
@@ -163,7 +163,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     {
                         Id = c.Id,
                         Name = c.Name,
-                        Status = c.Status,
+                        Status = c.Status.ToLower(),
                         ImgUrl = "" + await _cateRepo.getImgByCategory(c.Id),
                         Description = c.Description ?? ""
 
@@ -218,7 +218,7 @@ namespace GreeenGarden.Business.Service.CategogyService
                     {
                         Id = c.Id,
                         Name = c.Name,
-                        Status = c.Status,
+                        Status = c.Status.ToLower(),
                         ImgUrl = "" + await _cateRepo.getImgByCategory(c.Id),
                         Description = c.Description
 

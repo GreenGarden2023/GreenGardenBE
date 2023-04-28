@@ -328,7 +328,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Id = cateGet.Id,
                         Name = cateGet.Name,
                         Description = cateGet.Description,
-                        Status = cateGet.Status,
+                        Status = cateGet.Status.ToLower(),
                         ImgUrl = cateImgURL,
 
                     };
@@ -407,7 +407,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Id = cateGet.Id,
                         Name = cateGet.Name,
                         Description = cateGet.Description,
-                        Status = cateGet.Status,
+                        Status = cateGet.Status.ToLower(),
                         ImgUrl = cateImgURL,
 
                     };
@@ -504,15 +504,82 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
                     TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
                     string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : "";
+
+                    if (status != null)
+                    {
+                        if (cateGet.Status.ToLower() != Status.ACTIVE)
+                        {
+                            var category = new CategoryModel()
+                            {
+                                Id = cateGet.Id,
+                                Name = cateGet.Name,
+                                Status = cateGet.Status.ToLower(),
+                                Description = cateGet.Description,
+                                ImgUrl = _imageRepo.GetImgUrlCategory(cateGet.Id).Result.ImageUrl
+                            };
+
+                            PaginationResponseModel pagingRes = new PaginationResponseModel()
+                                .PageSize(pagingModel.pageSize)
+                                .CurPage(pagingModel.curPage)
+                                .RecordCount(0)
+                                .PageCount(0);
+                            result.Data = new ProductItemGetResponseResult()
+                            {
+                                Paging = paging,
+                                Category = category,
+                                Product = productModel,
+                                ProductItems = null
+                            };
+                            result.Code = 200;
+                            result.IsSuccess = true;
+                            result.Message = "Status of category is: " + category.Status.ToLower();
+                            return result;
+                        }
+                    }
                     CategoryModel categoryModel = new()
                     {
                         Id = cateGet.Id,
                         Name = cateGet.Name,
                         Description = cateGet.Description,
-                        Status = cateGet.Status,
+                        Status = cateGet.Status.ToLower(),
                         ImgUrl = cateImgURL,
 
                     };
+                    // check product 
+                    if (status != null)
+                    {
+                        if (productGet.Status.ToLower() != Status.ACTIVE)
+                        {
+                            var product = new ProductModel()
+                            {
+                                Id = productGet.Id,
+                                Name = productGet.Name,
+                                Description = productGet.Description,
+                                Status = productGet.Status,
+                                CategoryId = productGet.CategoryId,
+                                ImgUrl = prodImgURL,
+                                IsForRent = productGet.IsForRent,
+                                IsForSale = productGet.IsForSale
+                            };
+
+                            PaginationResponseModel pagingRes = new PaginationResponseModel()
+                                .PageSize(pagingModel.pageSize)
+                                .CurPage(pagingModel.curPage)
+                                .RecordCount(0)
+                                .PageCount(0);
+                            result.Data = new ProductItemGetResponseResult()
+                            {
+                                Paging = paging,
+                                Category = categoryModel,
+                                Product = product,
+                                ProductItems = null
+                            };
+                            result.Code = 200;
+                            result.IsSuccess = true;
+                            result.Message = "Status of product is: " + product.Status.ToLower();
+                            return result;
+                        }
+                    }
                     ProductItemGetResponseResult productItemGetResponseResult = new()
                     {
                         Paging = paging,
@@ -614,7 +681,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Id = cateGet.Id,
                         Name = cateGet.Name,
                         Description = cateGet.Description,
-                        Status = cateGet.Status,
+                        Status = cateGet.Status.ToLower(),
                         ImgUrl = cateImgURL,
 
                     };
