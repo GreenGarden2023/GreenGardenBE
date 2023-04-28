@@ -853,7 +853,7 @@ namespace GreeenGarden.Business.Service.PaymentService
                         resultModel.Message = "Rent order is fully paid.";
                         return resultModel;
                     }
-                    amount = (long)(tblRentOrder.RemainMoney + tblRentOrder.Deposit);
+                    amount = (long)tblRentOrder.RemainMoney + (long)tblRentOrder.Deposit;
                     JsonSerializerSettings jsonSerializerSettings = new()
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
