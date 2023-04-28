@@ -156,39 +156,43 @@ namespace GreeenGarden.Business.Service.ProductService
                     .PageCount(listProdct.PageCount);
 
                 TblCategory getCategory = await _categoryRepo.selectDetailCategory(categoryID);
-                if (getCategory.Status != Status.ACTIVE)
+                if (status != null)
                 {
-                    var category = new CategoryModel()
+                    if (getCategory.Status.ToLower() != Status.ACTIVE)
                     {
-                        Id = getCategory.Id,
-                        Name = getCategory.Name,
-                        Status = getCategory.Status,
-                        Description = getCategory.Description,
-                        ImgUrl = _imageRepo.GetImgUrlCategory(categoryID).Result.ImageUrl
-                    };
+                        var category = new CategoryModel()
+                        {
+                            Id = getCategory.Id,
+                            Name = getCategory.Name,
+                            Status = getCategory.Status.ToLower(),
+                            Description = getCategory.Description,
+                            ImgUrl = _imageRepo.GetImgUrlCategory(categoryID).Result.ImageUrl
+                        };
 
-                    PaginationResponseModel pagingRes = new PaginationResponseModel()
-                        .PageSize(pagingModel.pageSize)
-                        .CurPage(pagingModel.curPage)
-                        .RecordCount(0)
-                        .PageCount(0);
-                    result.Data = new ProductResponseResult()
-                    {
-                        Paging = pagingRes,
-                        Category = category,
-                        Result = null
-                    };
-                    result.Code = 200;
-                    result.IsSuccess = true;
-                    result.Message = "Status of category is: " + category.Status;
-                    return result;
+                        PaginationResponseModel pagingRes = new PaginationResponseModel()
+                            .PageSize(pagingModel.pageSize)
+                            .CurPage(pagingModel.curPage)
+                            .RecordCount(0)
+                            .PageCount(0);
+                        result.Data = new ProductResponseResult()
+                        {
+                            Paging = pagingRes,
+                            Category = category,
+                            Result = null
+                        };
+                        result.Code = 200;
+                        result.IsSuccess = true;
+                        result.Message = "Status of category is: " + category.Status;
+                        return result;
+
+                    }
 
                 }
                 CategoryModel categoryModel = new()
                 {
                     Id = getCategory.Id,
                     Name = getCategory.Name,
-                    Status = getCategory.Status,
+                    Status = getCategory.Status.ToLower(),
                     Description = getCategory.Description,
                     ImgUrl = _imageRepo.GetImgUrlCategory(categoryID).Result.ImageUrl
                 };
