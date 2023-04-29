@@ -170,7 +170,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
                 else
                 {
                     result.Code = 200;
-                    result.IsSuccess = false;
+                    result.IsSuccess = true;
                     result.Message = "User tree null.";
                     return result;
                 }
