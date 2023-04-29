@@ -251,6 +251,11 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 return listSizeProd;
             }
         }
+
+        public async Task<List<TblProductItemDetail>> GetSizeProductItemByItemID(Guid productItemID)
+        {
+            return await _context.TblProductItemDetails.Where(x=>x.ProductItemId.Equals(productItemID)).ToListAsync();
+        }
     }
 }
 
