@@ -59,5 +59,11 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.getListFeedbackByOrder(orderID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-list-feedback-by-product-item-detail")]
+        public async Task<IActionResult> getListFeedbackByProductItemUnchange(Guid productItemDetailId)
+        {
+            Data.Models.ResultModel.ResultModel result = await _service.getListFeedbackByProductItemUnchange(productItemDetailId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
