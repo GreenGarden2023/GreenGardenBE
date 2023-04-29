@@ -1364,6 +1364,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             ID = tblRentGroup.Id,
                             NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
                             TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
+                            CreateDate = (DateTime) tblRentGroup.CreateDate,
                             RentOrderList = resList
                         };
                         listGroup.Add(rentOrderGroupModel);
@@ -3091,6 +3092,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             ID = tblRentGroup.Id,
                             NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
                             TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
+                            CreateDate = (DateTime)tblRentGroup.CreateDate,
                             RentOrderList = rentOrderList
                         };
                         listRes.Add(rentOrderGroupModel);
@@ -3507,6 +3509,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             ID = tblRentGroup.Id,
                             NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
+                            CreateDate = (DateTime)tblRentGroup.CreateDate,
                             TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
                             RentOrderList = rentOrderList
                         };
@@ -3866,6 +3869,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     ID = tblRentGroup.Id,
                     NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
+                    CreateDate = (DateTime)tblRentGroup.CreateDate,
                     TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
                     RentOrderList = resListSortDate
                 };
