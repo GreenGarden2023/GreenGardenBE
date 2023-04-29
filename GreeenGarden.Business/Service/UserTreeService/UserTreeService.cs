@@ -172,6 +172,7 @@ namespace GreeenGarden.Business.Service.UserTreeService
                     result.Code = 200;
                     result.IsSuccess = true;
                     result.Message = "User tree null.";
+                    result.Data = new List<UserTreeResModel>();
                     return result;
                 }
             }
