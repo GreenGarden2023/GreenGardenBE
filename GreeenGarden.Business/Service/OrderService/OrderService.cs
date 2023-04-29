@@ -2344,15 +2344,22 @@ namespace GreeenGarden.Business.Service.OrderService
                         {
                             nameCancelBy = null;
                         }
+                        int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(resService.UserId);
                         ServiceResModel serviceResModel = new()
                         {
                             ID = resService.Id,
                             ServiceCode = resService.ServiceCode,
                             UserId = resService.UserId,
+                            DistrictID = resService.DistrictId,
+                            IsTransport = resService.IsTransport,
+                            RewardPointUsed= resService.RewardPointUsed,
+                            TransportFee = resService.TransportFee,
+                            ServiceOrderID = order.Id,
                             Rules = resService.Rules,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
                             EndDate = resService.EndDate,
+                            UserCurrentPoint= userCurrentPoint,
                             Name = resService.Name,
                             Phone = resService.Phone,
                             Email = resService.Email,
