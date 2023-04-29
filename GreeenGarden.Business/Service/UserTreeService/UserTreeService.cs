@@ -169,9 +169,9 @@ namespace GreeenGarden.Business.Service.UserTreeService
                 }
                 else
                 {
-                    result.Code = 400;
-                    result.IsSuccess = false;
-                    result.Message = "Get user tree failed.";
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Message = "User tree null.";
                     return result;
                 }
             }
