@@ -90,7 +90,6 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     return result;
                 }
 
-                object order = new();
                 TblSaleOrder? saleOrder = await _saleOrdRepo.Get(model.OrderID);
                 if (saleOrder != null)
                 {
@@ -109,21 +108,21 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         result.Message = "Đã quá hạn để feedback";
                         return result;
                     }
+                    bool check = false;
                     foreach (Data.Models.OrderModel.SaleOrderDetailResModel i in listSaleOrderDetail)
                     {
-                        bool check = false;
                         if (model.ProductItemDetailID.Equals(i.ProductItemDetailID))
                         {
                             check = true;
                             saleOrderDetail = await _saleOrdDetailRepo.Get(i.ID);
                         } // get saleOrderDetailID
 
-                        if (check == false)
-                        {
-                            result.IsSuccess = false;
-                            result.Message = "Sản phẩm không có trong order";
-                            return result;
-                        }
+                    }
+                    if (check == false)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Sản phẩm không có trong order";
+                        return result;
                     }
                     if (saleOrderDetail.FeedbackStatus == true)
                     {
@@ -159,21 +158,21 @@ namespace GreeenGarden.Business.Service.FeedbackService
                         result.Message = "Đã quá hạn để feedback";
                         return result;
                     }
+                    bool check = false;
                     foreach (Data.Models.OrderModel.RentOrderDetailResModel i in listRentOrderDetail)
                     {
-                        bool check = false;
                         if (model.ProductItemDetailID.Equals(i.ProductItemDetail.Id))
                         {
                             check = true;
                             rentOrderDetail = await _rentOrdDetailRepo.Get(i.ID);
                         } // get saleOrderDetailID
 
-                        if (check == false)
-                        {
-                            result.IsSuccess = false;
-                            result.Message = "Sản phẩm không có trong order";
-                            return result;
-                        }
+                    }
+                    if (check == false)
+                    {
+                        result.IsSuccess = false;
+                        result.Message = "Sản phẩm không có trong order";
+                        return result;
                     }
                     if (rentOrderDetail.FeedbackStatus == true)
                     {
@@ -222,10 +221,21 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     };
                     _ = await _imgRepo.Insert(newImg);
                 }
+
+                var res = new FeedbackOrderResModel()
+                {
+                    Comment = newFeedback.Comment,
+                    CreateDate = newFeedback.CreateDate,
+                    ID = newFeedback.Id,
+                    ImageURL = model.ImagesUrls,
+                    Rating = newFeedback.Rating,
+                    UpdateDate = newFeedback.UpdateDate,
+                    Status = newFeedback.Status,
+                };
                 newFeedback.ProductItemDetail.TblRentOrderDetails.Clear();
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = newFeedback;
+                result.Data = res;
             }
             catch (Exception e)
             {
