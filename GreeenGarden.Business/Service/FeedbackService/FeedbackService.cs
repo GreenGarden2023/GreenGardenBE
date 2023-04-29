@@ -1,8 +1,10 @@
 ﻿using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.FeedbackModel;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.FeedbackRepo;
@@ -286,56 +288,59 @@ namespace GreeenGarden.Business.Service.FeedbackService
             return result;
         }
 
-        public async Task<ResultModel> getListFeedbackByProductItem(Guid productItemDetailId)
+        public async Task<ResultModel> getListFeedbackByProductItem(Guid productItemId)
         {
             ResultModel result = new();
             try
             {
-                var productItemDetail = await _proItemDetailRepo.Get(productItemDetailId);
-                var listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(productItemDetailId);
-                List<FeedbackResModel> listFeedback = new();
-                foreach (TblFeedBack fb in listFeedbackRecord)
+                var listProductItemDetail = await _proItemDetailRepo.GetSizeProductItemByItemID(productItemId);
+                var ress = new List<FeedbackByItemResModel>();
+                foreach (var productItemDetail in listProductItemDetail)
                 {
-                    FeedbackResModel fbRes = new();
-                    TblUser? user = await _userRepo.Get(fb.UserId);
-                    List<string> listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
-                    fbRes.CreateDate = fb.CreateDate;
-                    fbRes.UpdateDate = fb.UpdateDate;
-                    fbRes.ID = fb.Id;
-                    fbRes.Rating = fb.Rating;
-                    fbRes.Comment = fb.Comment;
-                    fbRes.Status = fb.Status;
-                    fbRes.User = new UserCurrResModel
+
+                    //var productItemDetail = await _proItemDetailRepo.Get(productItemDetailId);
+                    var listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(productItemDetail.Id);
+                    List<FeedbackResModel> listFeedback = new();
+                    foreach (TblFeedBack fb in listFeedbackRecord)
                     {
-                        FullName = user.FullName,
-                        UserName = user.UserName,
-                        Id = user.Id,
-                        Phone = user.Phone
+                        FeedbackResModel fbRes = new();
+                        TblUser? user = await _userRepo.Get(fb.UserId);
+                        List<string> listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
+                        fbRes.CreateDate = fb.CreateDate;
+                        fbRes.UpdateDate = fb.UpdateDate;
+                        fbRes.ID = fb.Id;
+                        fbRes.Rating = fb.Rating;
+                        fbRes.Comment = fb.Comment;
+                        fbRes.Status = fb.Status;
+                        fbRes.User = new UserCurrResModel
+                        {
+                            FullName = user.FullName,
+                            UserName = user.UserName,
+                            Id = user.Id,
+                            Phone = user.Phone
+                        };
+
+                        fbRes.ImageURL = new List<string>();
+                        fbRes.ImageURL = listImgUrl;
+
+                        listFeedback.Add(fbRes);
+                    }
+
+
+                    var resss = new FeedbackByItemResModel()
+                    {
+                        ListFeedback = listFeedback,
+                        ProductItemDetailID = productItemDetail.Id
                     };
-                    fbRes.ProductItemDetail = productItemDetail;
-                    fbRes.ProductItemDetail.TblFeedBacks.Clear();
-                    fbRes.ProductItemDetail.TblCartDetails.Clear();
-                    fbRes.ProductItemDetail.TblImages.Clear();
-                    fbRes.ProductItemDetail.TblRentOrderDetails.Clear();
-
-                    fbRes.ImageURL = new List<string>();
-                    fbRes.ImageURL = listImgUrl;
-
-                    listFeedback.Add(fbRes);
+                    ress.Add(resss);
                 }
 
-                /*List<Data.Models.ProductItemDetailModel.ProductItemDetailResModel> listProductItemDetail = await _proItemDetailRepo.GetSizeProductItems(productItemID, Status.ACTIVE);
-                
-                foreach (Data.Models.ProductItemDetailModel.ProductItemDetailResModel i in listProductItemDetail)
-                {
-                    List<TblFeedBack> listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(i.Id);
-                    
-                }*/
+
 
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = listFeedback;
+                result.Data = ress;
             }
             catch (Exception e)
             {

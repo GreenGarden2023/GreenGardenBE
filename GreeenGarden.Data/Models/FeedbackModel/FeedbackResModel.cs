@@ -4,7 +4,14 @@ using GreeenGarden.Data.Models.UserModels;
 
 namespace GreeenGarden.Data.Models.FeedbackModel
 {
-    public class FeedbackResModel
+    public class FeedbackByItemResModel
+    {
+        public Guid ProductItemDetailID { get; set; }
+        public List<FeedbackResModel> ListFeedback { get; set; }
+
+    }
+
+        public class FeedbackResModel
     {
         public Guid ID { get; set; }
         public double Rating { get; set; }
@@ -13,7 +20,6 @@ namespace GreeenGarden.Data.Models.FeedbackModel
         public DateTime? UpdateDate { get; set; }
         public string? Status { get; set; }
         public UserCurrResModel? User { get; set; }
-        public TblProductItemDetail? ProductItemDetail { get; set; }
         public List<string>? ImageURL { get; set; }
     }
 
