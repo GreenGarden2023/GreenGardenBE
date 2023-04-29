@@ -8,6 +8,7 @@ namespace GreeenGarden.Business.Service.FeedbackService
     {
         public Task<ResultModel> createFeedback(string token, FeedbackCreateModel model);
         public Task<ResultModel> getListFeedbackByProductItem(Guid productItemId);
+        public Task<ResultModel> getListFeedbackByProductItemUnchange(Guid productItemDetailId);
         public Task<ResultModel> getListFeedbackByManager(string token, PaginationRequestModel pagingModel);
         public Task<ResultModel> getListFeedbackByOrder( Guid orderID);
         public Task<ResultModel> changeStatus(string token, FeedbackChangeStatusModel model);

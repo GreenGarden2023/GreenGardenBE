@@ -351,6 +351,61 @@ namespace GreeenGarden.Business.Service.FeedbackService
             return result;
         }
 
+        public async Task<ResultModel> getListFeedbackByProductItemUnchange(Guid productItemDetailId)
+        {
+            ResultModel result = new();
+            try
+            {
+                var productItemDetail = await _proItemDetailRepo.Get(productItemDetailId);
+                var listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(productItemDetailId);
+                List<FeedbackResModel> listFeedback = new();
+                foreach (TblFeedBack fb in listFeedbackRecord)
+                {
+                    FeedbackResModel fbRes = new();
+                    TblUser? user = await _userRepo.Get(fb.UserId);
+                    List<string> listImgUrl = await _imgRepo.GetImgUrlFeedback(fb.Id);
+                    fbRes.CreateDate = fb.CreateDate;
+                    fbRes.UpdateDate = fb.UpdateDate;
+                    fbRes.ID = fb.Id;
+                    fbRes.Rating = fb.Rating;
+                    fbRes.Comment = fb.Comment;
+                    fbRes.Status = fb.Status;
+                    fbRes.User = new UserCurrResModel
+                    {
+                        FullName = user.FullName,
+                        UserName = user.UserName,
+                        Id = user.Id,
+                        Phone = user.Phone
+                    };
+
+                    fbRes.ImageURL = new List<string>();
+                    fbRes.ImageURL = listImgUrl;
+
+                    listFeedback.Add(fbRes);
+                }
+
+                /*List<Data.Models.ProductItemDetailModel.ProductItemDetailResModel> listProductItemDetail = await _proItemDetailRepo.GetSizeProductItems(productItemID, Status.ACTIVE);
+                
+                foreach (Data.Models.ProductItemDetailModel.ProductItemDetailResModel i in listProductItemDetail)
+                {
+                    List<TblFeedBack> listFeedbackRecord = await _fbRepo.GetFeedBackByProductItemDetail(i.Id);
+                    
+                }*/
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = listFeedback;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> updateFeedback(string token, FeedbackUpdateModel model)
         {
             var result = new ResultModel();
