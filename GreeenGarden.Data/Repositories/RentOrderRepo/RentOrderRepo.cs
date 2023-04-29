@@ -196,15 +196,15 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 }
                 if (phone != null && phone.Trim() != "")
                 {
-                    var user = await _context.TblUsers.Where(x => x.Phone.Equals(phone)).FirstOrDefaultAsync();
-                    var rentOrder = await _context.TblRentOrders.Where(x => x.UserId.Equals(user.Id)).ToListAsync();
-                    if (rentOrder.Any() == true)
-                    {
-                        foreach (var r in rentOrder)
+                        var rentOrder = await _context.TblRentOrders.Where(x => x.RecipientPhone.Equals(phone)).ToListAsync();
+                        if (rentOrder.Any() == true)
                         {
-                            result.Add(r);
+                            foreach (var r in rentOrder)
+                            {
+                                result.Add(r);
+                            }
                         }
-                    }
+
                 }
 
                 return result.OrderBy(x => x.CreateDate).ToList();
