@@ -311,7 +311,7 @@ namespace GreeenGarden.Business.Service.EMailService
                 htmlContent += "<div style='border:2px solid #000; padding: 20px'>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h2>";
                 htmlContent += "<h3 style='width:100%; text-align:center'>Độc lập – Tự do – Hạnh phúc</h3>";
-                htmlContent += "<p style='width:100%; text-align:right'>Hồ Chí Minh, " + tblRentOrder.CreateDate.Value.ToShortDateString() + "</p>";
+                htmlContent += "<p style='width:100%; text-align:right'>Hồ Chí Minh, " + tblRentOrder.CreateDate.Value.ToString("dd/MM/yyyy") + "</p>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>HỢP ĐỒNG THUÊ CÂY </h2>";
 
                 htmlContent += "<p style='width:100%;'>Các bên tham gia hợp đồng gồm:</p>";
