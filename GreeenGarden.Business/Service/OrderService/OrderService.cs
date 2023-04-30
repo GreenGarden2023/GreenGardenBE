@@ -493,12 +493,6 @@ namespace GreeenGarden.Business.Service.OrderService
                 };
                 Guid insertRentOrder = await _rentOrderRepo.Insert(tblRentOrder);
 
-                FileData fileData = (FileData)GeneratePDF(tblRentOrder.Id).Result.Data;
-                ResultModel contractURLResult = await _imageService.UploadAPDF(fileData);
-                _ = await _rentOrderRepo.UpdateRentOrderContractUrl(tblRentOrder.Id, contractURLResult.Data.ToString());
-
-       
-
                 if (insertRentOrder != Guid.Empty)
                 {
 
@@ -539,6 +533,9 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                     }
                     _ = await _rewardRepo.RemoveUserRewardPoint(userName, (int)rentOrderModel.RewardPointUsed);
+                    FileData fileData = (FileData)GeneratePDF(tblRentOrder.Id).Result.Data;
+                    ResultModel contractURLResult = await _imageService.UploadAPDF(fileData);
+                    _ = await _rentOrderRepo.UpdateRentOrderContractUrl(tblRentOrder.Id, contractURLResult.Data.ToString());
                     TblUser tblUser = await _userRepo.Get(Guid.Parse(userID));
                     ResultModel resultGen = await GeneratePDF(tblRentOrder.Id);
                     FileData file = (FileData)resultGen.Data;
