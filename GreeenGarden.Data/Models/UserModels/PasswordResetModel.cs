@@ -11,5 +11,12 @@ namespace GreeenGarden.Data.Models.UserModels
         [Required]
         public string? OTPCode { get; set; }
     }
+    public class UserSupportModel
+    {
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        public string Phone { get; set; }
+    }
 }
 
