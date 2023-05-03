@@ -171,8 +171,8 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 }
                 if (status != null && status.Trim() != "" && phone != null && phone.Trim() != "")
                 {
-                    var user = await _context.TblUsers.Where(x => x.Phone.Equals(phone)).FirstOrDefaultAsync();
-                    var rentOrderByPhone = await _context.TblRentOrders.Where(x => x.UserId.Equals(user.Id) && x.Status.Equals(status)).ToListAsync();
+                    
+                    var rentOrderByPhone = await _context.TblRentOrders.Where(x => x.RecipientPhone.Equals(phone) && x.Status.Equals(status)).ToListAsync();
                     if (rentOrderByPhone.Any() == true)
                     {
                         foreach (var r in rentOrderByPhone)
