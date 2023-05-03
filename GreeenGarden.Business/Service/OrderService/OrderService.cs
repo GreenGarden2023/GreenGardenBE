@@ -3084,14 +3084,13 @@ namespace GreeenGarden.Business.Service.OrderService
                         };
                         rentOrderList.Add(rentOrderResModel);
 
-                        RentOrderGroupModel rentOrderGroupModel = new()
-                        {
-                            ID = tblRentGroup.Id,
-                            NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
-                            TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
-                            CreateDate = (DateTime)tblRentGroup.CreateDate,
-                            RentOrderList = rentOrderList
-                        };
+                        RentOrderGroupModel rentOrderGroupModel = new();
+                        rentOrderGroupModel.ID = tblRentGroup.Id;
+                        rentOrderGroupModel.NumberOfOrder = (int)tblRentGroup.NumberOfOrders;
+                        rentOrderGroupModel.TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount;
+                        if (tblRentGroup.CreateDate != null)  rentOrderGroupModel.CreateDate = (DateTime)tblRentGroup.CreateDate;
+                        if (tblRentGroup.CreateDate == null)  rentOrderGroupModel.CreateDate = new DateTime();
+                        rentOrderGroupModel.RentOrderList = rentOrderList;
                         listRes.Add(rentOrderGroupModel);
                     }
                 }
