@@ -27,10 +27,6 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             TblSaleOrder order = await _context.TblSaleOrders.Where(x => x.Id.Equals(SaleOrderID)).FirstOrDefaultAsync();
             if (order != null)
             {
-                if (status.Trim().ToLower().Equals(Status.COMPLETED))
-                {
-                    _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
-                }
                 if (status.Trim().ToLower().Equals(Status.CANCEL))
                 {
                     var user = await _context.TblUsers.Where(x=>x.UserName.Equals(username)).FirstOrDefaultAsync();
