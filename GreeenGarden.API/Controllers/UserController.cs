@@ -35,7 +35,7 @@ namespace GreeenGarden.API.Controllers
             }
         }
         [HttpPost("create-user-by-admin")]
-        public async Task<ActionResult<ResultModel>> CreateUserByAdmin([FromBody]UserInsertModel model)
+        public async Task<ActionResult<ResultModel>> CreateUserByAdmin([FromBody] UserInsertModel model)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpGet("get-list-account-by-admin")]
         [Authorize(Roles = "Admin, Manager")]
-        public async Task<ActionResult<ResultModel>> GetListAccountByAdmin([FromQuery]PaginationRequestModel pagingModel)
+        public async Task<ActionResult<ResultModel>> GetListAccountByAdmin([FromQuery] PaginationRequestModel pagingModel)
         {
             try
             {
@@ -176,7 +176,6 @@ namespace GreeenGarden.API.Controllers
             }
 
         }
-
         [HttpPost("reset-password")]
         [AllowAnonymous]
         public async Task<ActionResult<ResultModel>> ResetPassword(PasswordResetModel passwordResetModel)
@@ -224,6 +223,23 @@ namespace GreeenGarden.API.Controllers
             }
 
         }
+        [HttpPost("user-support")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ResultModel>> UserSupport(UserSupportModel userSupportModel)
+        {
+            try
+            {
+                ResultModel result = await _eMailService.SendEmailSupport(userSupportModel.Name, userSupportModel.Phone);
+                return result.IsSuccess ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception e)
+            {
+
+                return BadRequest(e.ToString());
+            }
+
+        }
+
     }
 }
 
