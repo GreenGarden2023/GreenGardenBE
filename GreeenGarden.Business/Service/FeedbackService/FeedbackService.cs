@@ -199,12 +199,13 @@ namespace GreeenGarden.Business.Service.FeedbackService
                     return result;
                 }
 
-
+                TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                 TblFeedBack newFeedback = new()
                 {
                     Id = Guid.NewGuid(),
                     Comment = model.Comment,
-                    CreateDate = DateTime.Now,
+                    CreateDate = currentTime,
                     ProductItemDetailId = model.ProductItemDetailID,
                     OrderId = model.OrderID,
                     Rating = model.Rating,

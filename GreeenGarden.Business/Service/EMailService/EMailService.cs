@@ -311,7 +311,7 @@ namespace GreeenGarden.Business.Service.EMailService
                 htmlContent += "<div style='border:2px solid #000; padding: 20px'>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h2>";
                 htmlContent += "<h3 style='width:100%; text-align:center'>Độc lập – Tự do – Hạnh phúc</h3>";
-                htmlContent += "<p style='width:100%; text-align:right'>Hồ Chí Minh, " + tblRentOrder.CreateDate.Value.ToShortDateString() + "</p>";
+                htmlContent += "<p style='width:100%; text-align:right'>Hồ Chí Minh, " + tblRentOrder.CreateDate.Value.ToString("dd/MM/yyyy") + "</p>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>HỢP ĐỒNG THUÊ CÂY </h2>";
 
                 htmlContent += "<p style='width:100%;'>Các bên tham gia hợp đồng gồm:</p>";
@@ -463,6 +463,58 @@ namespace GreeenGarden.Business.Service.EMailService
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
+        }
+
+        public async Task<ResultModel> SendEmailSupport(string supportName, string supportPhone)
+        {
+            ResultModel result = new();
+            try
+            {
+                var listManager  = await _userRepo.GetUsersByRole("manager");
+                foreach (var manager in listManager)
+                {
+                    string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                    string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                    MimeMessage message = new();
+                    message.From.Add(MailboxAddress.Parse(from));
+                    message.Subject = "GreenGarden khách hàng yêu cầu hỗ trợ.";
+                    message.To.Add(MailboxAddress.Parse(manager.Email));
+                    message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                    {
+                        Text =
+                        "<html>" +
+                        "<body>" +
+                        "<h1>GreenGarden<h1>" +
+                        "<h3>Có khách hàng đã yêu cầu hỗ trợ hoặc tư vấn.</h3>" +
+                        "<p>Thông tin khách hàng:</p>" +
+                        "<p>-Tên khách hàng: " + supportName + ".</p>" +
+                        "<p>-Số điện thoại: " + supportPhone + ".</p>" +
+                        "<p>Vui lòng sấp xếp nhân viên hỗ trợ khách hàng.</p>" +
+                        "<p>Xin cảm ơn.</p>" +
+                        "<h3>GreenGarden.</h3>" +
+                        "</body>" +
+                        "</html>"
+                    };
+
+                    using SmtpClient smtp = new();
+                    await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                    await smtp.AuthenticateAsync(from, password);
+                    _ = await smtp.SendAsync(message);
+                    await smtp.DisconnectAsync(true);
+                }
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Email send successful";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = e.ToString();
+                return result;
+            }
         }
     }
 }

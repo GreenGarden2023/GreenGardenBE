@@ -21,7 +21,7 @@ public partial class TblUser
 
     public string? Phone { get; set; }
 
-    public string Favorite { get; set; } = null!;
+    public string? Favorite { get; set; }
 
     public string Mail { get; set; } = null!;
 
