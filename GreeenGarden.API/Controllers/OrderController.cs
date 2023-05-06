@@ -142,6 +142,14 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _orderService.GetServiceOrderByTechnician(token, pagingModel, technicianID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-service-orders-by-technician-today")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetServiceOrderByTechnicianToday([FromQuery] PaginationRequestModel pagingModel, string? takecareStatus, [Required] Guid technicianID)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.GetServiceOrderByTechnicianToday(token, pagingModel, technicianID, takecareStatus);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpGet("get-all-service-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> GetAllServiceOrders([FromQuery] PaginationRequestModel pagingModel)
