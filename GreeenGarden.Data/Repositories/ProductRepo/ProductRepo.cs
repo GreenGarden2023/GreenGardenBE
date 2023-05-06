@@ -1,5 +1,6 @@
 ﻿using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
@@ -106,6 +107,15 @@ namespace GreeenGarden.Data.Repositories.ProductRepo
             _ = await _context.SaveChangesAsync();
             res = true;
             return res;
+        }
+
+        public async Task<Page<TblProduct>> searchProductByCategoty(string searchText, Guid categoryID, PaginationRequestModel pagingModel)
+        {
+            var tblCategory = await _context.TblCategories.Where(x=>x.Id.Equals(categoryID)).FirstOrDefaultAsync();
+            if (tblCategory == null) return null;
+            return await _context.TblProducts.Where(x=>x.CategoryId.Equals(tblCategory.Id) 
+            && x.Status.Equals(Status.ACTIVE) 
+            && x.Name.Contains(searchText)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);            
         }
     }
 }

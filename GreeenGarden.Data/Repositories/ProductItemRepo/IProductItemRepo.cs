@@ -12,5 +12,6 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
         Task<Page<TblProductItem>> GetProductItemByTypeByManager(PaginationRequestModel paginationRequestModel, Guid productId, string? type);
         Task<bool> UpdateProductItem(ProductItemModel productItemModel);
         Task<bool> ChangeStatus(ProductItemDetailUpdateStatusModel model);
+        Task<Page<TblProductItem>> searchProductItem(Guid productID, PaginationRequestModel pagingModel);
     }
 }
