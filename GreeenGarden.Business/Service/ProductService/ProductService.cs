@@ -401,6 +401,13 @@ namespace GreeenGarden.Business.Service.ProductService
             var result = new ResultModel();
             try
             {
+                if (model.productID != null && model.categoryID != null)
+                {
+                    result.Message = "Input only 1 param";
+                    result.IsSuccess = true;
+                    return result;
+
+                }
                 if (model.productID == null && model.categoryID != null)
                 {
                     Guid categoryIDToSearch = (Guid) model.categoryID;
