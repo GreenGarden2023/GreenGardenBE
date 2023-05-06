@@ -8,7 +8,8 @@ namespace GreeenGarden.Business.Service.ProductService
     {
         Task<ResultModel> createProduct(ProductCreateModel model, string token);
         Task<ResultModel> getAllProduct(PaginationRequestModel pagingModel);
-        Task<ResultModel> searchProductOrProductItem(PaginationRequestModel pagingModel, ProductSearchModel model);
+        Task<ResultModel> searchProductItem(PaginationRequestModel pagingModel, ProductItemSearchModel model);
+        Task<ResultModel> searchProduct(PaginationRequestModel pagingModel, ProductSearchModel model);
         Task<ResultModel> UpdateProduct(ProductUpdateModel model, string token);
         Task<ResultModel> getAllProductByCategoryStatus(PaginationRequestModel pagingModel, Guid categoryID, string? status, string? rentSale);
         Task<ResultModel> ChangeStatus(string token, ProductUpdateStatusModel model);

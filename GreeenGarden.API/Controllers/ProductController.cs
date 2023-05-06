@@ -32,10 +32,16 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.getAllProduct(pagingModel);
             return result.IsSuccess && result.Code == 200 ? Ok(result) : BadRequest(result);
         }
-        [HttpGet("get-products-or-product-items-by-search-text")]
-        public async Task<IActionResult> searchProductOrProductItem([FromQuery] PaginationRequestModel pagingModel, [FromQuery] ProductSearchModel model)
+        [HttpGet("get-products-by-search-text")]
+        public async Task<IActionResult> searchProduct([FromQuery] PaginationRequestModel pagingModel, [FromQuery] ProductSearchModel model)
         {
-            Data.Models.ResultModel.ResultModel result = await _service.searchProductOrProductItem(pagingModel, model);
+            Data.Models.ResultModel.ResultModel result = await _service.searchProduct(pagingModel, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-product-items-by-search-text")]
+        public async Task<IActionResult> searchProductItem([FromQuery] PaginationRequestModel pagingModel, [FromQuery] ProductItemSearchModel model)
+        {
+            Data.Models.ResultModel.ResultModel result = await _service.searchProductItem(pagingModel, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
