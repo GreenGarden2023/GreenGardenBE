@@ -226,6 +226,49 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
                 .OrderByDescending(x=> x.ServiceEndDate)
                 .PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
         }
+
+        public async Task<Page<TblServiceOrder>> GetServiceOrderByTechnicianToday(PaginationRequestModel paginationRequestModel, Guid technicianID, string? status)
+        {
+
+            var serviceOrder = await _context.TblServiceOrders.ToListAsync();
+            var serviceCalendar = await _context.TblServiceCalendars.ToListAsync();
+            var dateNow = DateTime.Now.Date;
+            var listServiceOrder = new List<TblServiceOrder>();
+            if (status != null)
+            {
+                var query = from so in serviceOrder
+                            join sc in serviceCalendar
+                            on so.Id equals sc.ServiceOrderId
+                            where sc.ServiceDate.Equals(dateNow) && so.TechnicianId.Equals(technicianID) && sc.Status.Equals(status)
+                            select so;
+
+                listServiceOrder = query.ToList();
+            }
+            else
+            {
+                var query = from so in serviceOrder
+                            join sc in serviceCalendar
+                            on so.Id equals sc.ServiceOrderId
+                            where sc.ServiceDate.Equals(dateNow) && so.TechnicianId.Equals(technicianID)
+                            select so;
+
+                listServiceOrder = query.ToList();
+            }
+            if (listServiceOrder == null) return null; 
+           
+
+            var listResultPaging = listServiceOrder.Skip((paginationRequestModel.curPage - 1) * paginationRequestModel.pageSize).Take(paginationRequestModel.pageSize);
+
+            var result = new Page<TblServiceOrder>();
+            result.PageSize = paginationRequestModel.pageSize;
+            result.CurrentPage = paginationRequestModel.curPage;
+            result.RecordCount = listResultPaging.Count();
+            result.PageCount = (int)Math.Ceiling((double)result.RecordCount / result.PageSize);
+
+            result.Results = listResultPaging.ToList();
+
+            return result;
+        }
     }
 }
 
