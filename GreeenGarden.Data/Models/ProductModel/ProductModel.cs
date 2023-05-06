@@ -12,5 +12,11 @@
         public bool? IsForRent { get; set; }
     }
 
+    public class ProductSearchModel
+    {
+        public Guid? categoryID { get; set; }
+        public Guid? productID { get; set; }
+    }
+
 
 }

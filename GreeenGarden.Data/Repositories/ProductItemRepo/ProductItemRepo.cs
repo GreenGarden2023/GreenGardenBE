@@ -1,4 +1,5 @@
-﻿using EntityFrameworkPaginateCore;
+﻿using Azure.Core;
+using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
@@ -96,6 +97,13 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             result.Results = listResultPaging.ToList();
 
             return result;
+        }
+
+        public async Task<Page<TblProductItem>> searchProductItem(Guid productID, PaginationRequestModel pagingModel)
+        {
+            var product = await _context.TblProducts.Where(x => x.Id == productID).FirstOrDefaultAsync();
+            if (product == null) return null;
+            return await _context.TblProductItems.Where(x => x.ProductId.Equals(product.Id) && x.Name.Contains(pagingModel.searchText)).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
         }
 
         public async Task<bool> UpdateProductItem(ProductItemModel productItemModel)
