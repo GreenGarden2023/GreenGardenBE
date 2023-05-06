@@ -15,6 +15,9 @@
     public class ProductSearchModel
     {
         public Guid? categoryID { get; set; }
+    }
+    public class ProductItemSearchModel
+    {
         public Guid? productID { get; set; }
     }
 

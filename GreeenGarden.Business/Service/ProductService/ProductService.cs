@@ -26,7 +26,7 @@ namespace GreeenGarden.Business.Service.ProductService
         private readonly IImageRepo _imageRepo;
         private readonly ICategoryRepo _categoryRepo;
         private readonly IProductItemDetailRepo _productItemDetailRepo;
-        public ProductService(IProductRepo productRepo, IImageService imgService, 
+        public ProductService(IProductRepo productRepo, IImageService imgService,
             IImageRepo imageRepo, ICategoryRepo categoryRepo, IProductItemRepo productItemRepo, IProductItemDetailRepo productItemDetailRepo)
         {
             _productRepo = productRepo;
@@ -35,7 +35,7 @@ namespace GreeenGarden.Business.Service.ProductService
             _imageRepo = imageRepo;
             _categoryRepo = categoryRepo;
             _productItemRepo = productItemRepo;
-            _productItemDetailRepo= productItemDetailRepo;
+            _productItemDetailRepo = productItemDetailRepo;
 
         }
 
@@ -396,166 +396,163 @@ namespace GreeenGarden.Business.Service.ProductService
             return result;
         }
 
-        public async Task<ResultModel> searchProductOrProductItem(PaginationRequestModel pagingModel, ProductSearchModel model)
+        public async Task<ResultModel> searchProductItem(PaginationRequestModel pagingModel, ProductItemSearchModel model)
         {
             var result = new ResultModel();
             try
             {
-                if (model.productID != null && model.categoryID != null)
+                var productID = (Guid)model.productID;
+                var listProductItem = await _productItemRepo.searchProductItem(productID, pagingModel);
+                if (listProductItem == null)
                 {
-                    result.Message = "Input only 1 param";
+                    result.Message = "Not found product";
                     result.IsSuccess = true;
-                    return result;
-
-                }
-                if (model.productID == null && model.categoryID != null)
-                {
-                    Guid categoryIDToSearch = (Guid) model.categoryID;
-                    var listProduct = await _productRepo.searchProductByCategoty(pagingModel.searchText, categoryIDToSearch, pagingModel);
-
-                    if (listProduct == null)
-                    {
-                        result.Message = "Not found category";
-                        result.IsSuccess = true;
-                        result.Data = listProduct;
-                        return result;
-                    }
-
-                    List<ProductModel> dataList = new();
-                    foreach (TblProduct p in listProduct.Results)
-                    {
-                        TblImage img = await _imageRepo.GetImgUrlProduct(p.Id);
-                        string? imgURL = img != null ? img.ImageUrl : "";
-                        ProductModel productToShow = new()
-                        {
-                            Id = p.Id,
-                            Name = p.Name,
-                            Description = p.Description,
-                            Status = p.Status,
-                            CategoryId = p.CategoryId,
-                            ImgUrl = imgURL,
-                            IsForSale = p.IsForSale,
-                            IsForRent = p.IsForRent
-                        };
-                        dataList.Add(productToShow);
-                    }
-                    PaginationResponseModel paging = new PaginationResponseModel()
-                        .PageSize(listProduct.PageSize)
-                        .CurPage(listProduct.CurrentPage)
-                        .RecordCount(listProduct.RecordCount)
-                        .PageCount(listProduct.PageCount)
-                        .SearchText(pagingModel.searchText);
-
-                    TblCategory getCategory = await _categoryRepo.selectDetailCategory(categoryIDToSearch);
-                    CategoryModel categoryModel = new()
-                    {
-                        Id = getCategory.Id,
-                        Name = getCategory.Name,
-                        Status = getCategory.Status.ToLower(),
-                        Description = getCategory.Description,
-                        ImgUrl = _imageRepo.GetImgUrlCategory(categoryIDToSearch).Result.ImageUrl
-                    };
-                    ProductResponseResult response = new()
-                    {
-                        Paging = paging,
-                        Category = categoryModel,
-                        Result = dataList
-                    };
-
-                    result.IsSuccess = true;
-                    result.Code = 200;
-                    result.Message = "Search product successful.";
-                    result.Data = response;
+                    result.Data = listProductItem;
                     return result;
                 }
-
-                if (model.productID != null && model.categoryID == null)
+                List<ProductItemResModel> dataList = new();
+                foreach (TblProductItem pi in listProductItem.Results)
                 {
-                    var productID = (Guid) model.productID;
-                    var listProductItem = await _productItemRepo.searchProductItem(productID, pagingModel);
-                    if (listProductItem == null)
+                    List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(pi.Id, Status.ACTIVE);
+                    TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
+                    string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
+                    ProductItemResModel pItem = new()
                     {
-                        result.Message = "Not found product";
-                        result.IsSuccess = true;
-                        result.Data = listProductItem;
-                        return result;
-                    }
-                    List<ProductItemResModel> dataList = new();
-                    foreach (TblProductItem pi in listProductItem.Results)
-                    {
-                        List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(pi.Id, Status.ACTIVE);
-                        TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
-                        string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
-                        ProductItemResModel pItem = new()
-                        {
-                            Id = pi.Id,
-                            Name = pi.Name,
-                            Description = pi.Description,
-                            Content = pi.Content,
-                            ProductId = pi.ProductId,
-                            Type = pi.Type,
-                            ImageURL = prodItemImgURL,
-                            Rule = pi.Rule,
-                            ProductItemDetail = sizeGet
-                        };
-
-                        dataList.Add(pItem);
-
-
-                    }
-                    ///
-                    PaginationResponseModel paging = new PaginationResponseModel()
-                    .PageSize(listProductItem.PageSize)
-                    .CurPage(listProductItem.CurrentPage)
-                    .RecordCount(listProductItem.RecordCount)
-                    .PageCount(listProductItem.PageCount)
-                    .SearchText(pagingModel.searchText); ;
-                    ///
-
-                    TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
-                    string? prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
-                    TblProduct? productGet = await _productRepo.Get(productID);
-                    ProductModel productModel = new()
-                    {
-                        Id = productGet.Id,
-                        Name = productGet.Name,
-                        Description = productGet.Description,
-                        Status = productGet.Status,
-                        CategoryId = productGet.CategoryId,
-                        ImgUrl = prodImgURL,
-                        IsForRent = productGet.IsForRent,
-                        IsForSale = productGet.IsForSale
+                        Id = pi.Id,
+                        Name = pi.Name,
+                        Description = pi.Description,
+                        Content = pi.Content,
+                        ProductId = pi.ProductId,
+                        Type = pi.Type,
+                        ImageURL = prodItemImgURL,
+                        Rule = pi.Rule,
+                        ProductItemDetail = sizeGet
                     };
-                    ///
-                    TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
-                    TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
-                    string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : ""; CategoryModel categoryModel = new()
-                    {
-                        Id = cateGet.Id,
-                        Name = cateGet.Name,
-                        Description = cateGet.Description,
-                        Status = cateGet.Status.ToLower(),
-                        ImgUrl = cateImgURL,
 
-                    };
-                    ProductItemGetResponseResult productItemGetResponseResult = new()
-                    {
-                        Paging = paging,
-                        Category = categoryModel,
-                        Product = productModel,
-                        ProductItems = dataList
+                    dataList.Add(pItem);
 
-                    };
-                    result.Message = "Search productItem successful.";
+
+                }
+                ///
+                PaginationResponseModel paging = new PaginationResponseModel()
+                .PageSize(listProductItem.PageSize)
+                .CurPage(listProductItem.CurrentPage)
+                .RecordCount(listProductItem.RecordCount)
+                .PageCount(listProductItem.PageCount)
+                .SearchText(pagingModel.searchText); ;
+                ///
+
+                TblImage? getProdImgURL = await _imageRepo.GetImgUrlProduct(productID);
+                string? prodImgURL = getProdImgURL != null ? getProdImgURL.ImageUrl : "";
+                TblProduct? productGet = await _productRepo.Get(productID);
+                ProductModel productModel = new()
+                {
+                    Id = productGet.Id,
+                    Name = productGet.Name,
+                    Description = productGet.Description,
+                    Status = productGet.Status,
+                    CategoryId = productGet.CategoryId,
+                    ImgUrl = prodImgURL,
+                    IsForRent = productGet.IsForRent,
+                    IsForSale = productGet.IsForSale
+                };
+                ///
+                TblCategory? cateGet = await _categoryRepo.Get(productModel.CategoryId);
+                TblImage getCateImgURL = await _imageRepo.GetImgUrlCategory(cateGet.Id);
+                string? cateImgURL = getCateImgURL != null ? getProdImgURL.ImageUrl : ""; CategoryModel categoryModel = new()
+                {
+                    Id = cateGet.Id,
+                    Name = cateGet.Name,
+                    Description = cateGet.Description,
+                    Status = cateGet.Status.ToLower(),
+                    ImgUrl = cateImgURL,
+
+                };
+                ProductItemGetResponseResult productItemGetResponseResult = new()
+                {
+                    Paging = paging,
+                    Category = categoryModel,
+                    Product = productModel,
+                    ProductItems = dataList
+
+                };
+                result.Message = "Search productItem successful.";
+                result.IsSuccess = true;
+                result.Data = productItemGetResponseResult;
+                result.Code = 200;
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> searchProduct(PaginationRequestModel pagingModel, ProductSearchModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                Guid categoryIDToSearch = (Guid)model.categoryID;
+                var listProduct = await _productRepo.searchProductByCategoty(pagingModel.searchText, categoryIDToSearch, pagingModel);
+
+                if (listProduct == null)
+                {
+                    result.Message = "Not found category";
                     result.IsSuccess = true;
-                    result.Data = productItemGetResponseResult;
-                    result.Code = 200;
+                    result.Data = listProduct;
                     return result;
                 }
+
+                List<ProductModel> dataList = new();
+                foreach (TblProduct p in listProduct.Results)
+                {
+                    TblImage img = await _imageRepo.GetImgUrlProduct(p.Id);
+                    string? imgURL = img != null ? img.ImageUrl : "";
+                    ProductModel productToShow = new()
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        Status = p.Status,
+                        CategoryId = p.CategoryId,
+                        ImgUrl = imgURL,
+                        IsForSale = p.IsForSale,
+                        IsForRent = p.IsForRent
+                    };
+                    dataList.Add(productToShow);
+                }
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(listProduct.PageSize)
+                    .CurPage(listProduct.CurrentPage)
+                    .RecordCount(listProduct.RecordCount)
+                    .PageCount(listProduct.PageCount)
+                    .SearchText(pagingModel.searchText);
+
+                TblCategory getCategory = await _categoryRepo.selectDetailCategory(categoryIDToSearch);
+                CategoryModel categoryModel = new()
+                {
+                    Id = getCategory.Id,
+                    Name = getCategory.Name,
+                    Status = getCategory.Status.ToLower(),
+                    Description = getCategory.Description,
+                    ImgUrl = _imageRepo.GetImgUrlCategory(categoryIDToSearch).Result.ImageUrl
+                };
+                ProductResponseResult response = new()
+                {
+                    Paging = paging,
+                    Category = categoryModel,
+                    Result = dataList
+                };
 
                 result.IsSuccess = true;
-                result.Message = "Data null";
-                result.Data = null;
+                result.Code = 200;
+                result.Message = "Search product successful.";
+                result.Data = response;
+                return result;
             }
             catch (Exception e)
             {
