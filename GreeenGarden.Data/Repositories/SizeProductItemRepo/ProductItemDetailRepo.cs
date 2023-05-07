@@ -256,6 +256,28 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
         {
             return await _context.TblProductItemDetails.Where(x=>x.ProductItemId.Equals(productItemID)).ToListAsync();
         }
+
+        public async Task<double[]> getMinMaxItemPrice(Guid productItemID)
+        {
+            double[] arr = new double[4] { 0,0,0,0};
+            var listItemDetail = await _context.TblProductItemDetails.Where(x=>x.ProductItemId== productItemID).ToListAsync();
+            double[] rentPrice = new double[] { };
+            double[] salePrice = new double[] { };
+            foreach ( var item in listItemDetail )
+            {
+                Array.Resize(ref rentPrice, rentPrice.Length + 1);
+                rentPrice[rentPrice.Length - 1] = (double)item.RentPrice;
+
+                Array.Resize(ref salePrice, salePrice.Length + 1);
+                salePrice[salePrice.Length - 1] = (double)item.SalePrice;
+
+            }
+            arr[0] = salePrice.Min();
+            arr[1] = rentPrice.Min();
+            arr[2] = salePrice.Max();
+            arr[3] = rentPrice.Max();
+            return arr;
+        }
     }
 }
 
