@@ -426,6 +426,7 @@ namespace GreeenGarden.Business.Service.ProductService
                         Type = pi.Type,
                         ImageURL = prodItemImgURL,
                         Rule = pi.Rule,
+                        CareGuide= pi.CareGuide,
                         ProductItemDetail = sizeGet
                     };
 

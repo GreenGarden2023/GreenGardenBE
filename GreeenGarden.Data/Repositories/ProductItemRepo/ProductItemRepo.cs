@@ -143,6 +143,10 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
                 {
                     productItem.Rule = productItemModel.Rule;
                 }
+                if (!string.IsNullOrEmpty(productItemModel.CareGuide) && !productItemModel.CareGuide.Equals(productItem.CareGuide))
+                {
+                    productItem.CareGuide = productItemModel.CareGuide;
+                }
                 if ((productItemModel.ProductId != Guid.Empty) && !productItemModel.ProductId.Equals(productItem.ProductId))
                 {
                     productItem.ProductId = (Guid)productItemModel.ProductId;

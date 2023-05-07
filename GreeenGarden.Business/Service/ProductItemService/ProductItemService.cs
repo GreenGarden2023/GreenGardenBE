@@ -105,7 +105,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                     Rule = productItemInsertModel.Rule,
                     ProductId = (Guid)productItemInsertModel.ProductId,
                     Type = productItemInsertModel.Type,
-                    
+                    CareGuide= productItemInsertModel.CareGuide,
 
                 };
                 Guid insertProdItem = await _proItemRepo.Insert(productItemModel);
@@ -138,6 +138,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Content = productItemModel.Content,
                         ProductId = productItemModel.ProductId,
                         Type = productItemModel.Type,
+                        CareGuide= productItemModel.CareGuide,
                         ImageURL = prodItemImgURL,
                     };
 
@@ -303,6 +304,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Type = prodItem.Type,
                         ImageURL = prodItemImgURL,
                         Rule = prodItem.Rule,
+                        CareGuide= prodItem.CareGuide,
                         ProductItemDetail = sizeGet
                     };
                     TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
@@ -432,6 +434,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         Type = prodItem.Type,
                         ImageURL = prodItemImgURL,
                         Rule = prodItem.Rule,
+                        CareGuide= prodItem.CareGuide,  
                         ProductItemDetail = sizeGet
                     };
                     TblProduct? productGet = await _proRepo.Get(productItemResModel.ProductId);
@@ -524,6 +527,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                             ImageURL = prodItemImgURL,
                             Rule = pi.Rule,
                             ProductItemDetail = sizeGet,
+                            CareGuide = pi.CareGuide,
                             minSale = arrMinMax[0],
                             minRent = arrMinMax[1],
                             maxSale = arrMinMax[2],
@@ -699,6 +703,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                             Type = pi.Type,
                             ImageURL = prodItemImgURL,
                             Rule = pi.Rule,
+                            CareGuide= pi.CareGuide,
                             ProductItemDetail = sizeGet
                         };
 
@@ -804,6 +809,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         ProductId = updateResult.ProductId,
                         Type = updateResult.Type,
                         Rule = updateResult.Rule,
+                        CareGuide= updateResult.CareGuide,
                         ProductItemDetail = sizeGet
                     };
 
