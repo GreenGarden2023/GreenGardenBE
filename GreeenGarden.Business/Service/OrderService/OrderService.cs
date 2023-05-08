@@ -540,6 +540,11 @@ namespace GreeenGarden.Business.Service.OrderService
                     ResultModel resultGen = await GeneratePDF(tblRentOrder.Id);
                     FileData file = (FileData)resultGen.Data;
                     _ = await _eMailService.SendEmailRentOrderContract(tblUser.Mail, tblRentOrder.Id, file);
+
+                    ResultModel resultCareGuideGen = await GenerateCareGuidePDF(tblRentOrder.Id, 1);
+                    FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
+                    _ = await _eMailService.SendEmailCareGuide(tblUser.Mail, tblRentOrder.Id, fileCareGuide, 1);
+
                 }
                 else
                 {
@@ -768,6 +773,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         }
                     }
                     _ = await _rewardRepo.RemoveUserRewardPoint(userName, (int)saleOrderModel.RewardPointUsed);
+
+
                 }
                 else
                 {
@@ -811,6 +818,13 @@ namespace GreeenGarden.Business.Service.OrderService
                     RentOrderDetailList = rentOrderDetailResModels
                 };
                 _ = await _cartService.CleanSaleCart(token);
+
+
+                TblUser tblUser = await _userRepo.Get(Guid.Parse(userID));
+                ResultModel resultCareGuideGen = await GenerateCareGuidePDF(tblSaleOrder.Id, 2);
+                FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
+                _ = await _eMailService.SendEmailCareGuide(tblUser.Mail, tblSaleOrder.Id, fileCareGuide, 2);
+
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.Data = saleOrderResModel;
@@ -4221,6 +4235,93 @@ namespace GreeenGarden.Business.Service.OrderService
                 return result;
 
             }
+        }
+
+        public async Task<ResultModel> GenerateCareGuidePDF(Guid orderCode, int flag)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var itemDetails = new List<TblProductItemDetail>();
+                var productItems = new List<TblProductItem>();
+                if (flag == 1)
+                {
+                    TblRentOrder tblRentOrder = await _rentOrderRepo.Get(orderCode);
+                    if (tblRentOrder == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "OrderID invalid.";
+                        return result;
+                    }
+                    itemDetails =  await _productItemDetailRepo.GetItemDetailsByRentOrderID(orderCode);
+                    productItems = await _productItemRepo.GetItemsByItemDetail(itemDetails);
+                }
+                if (flag == 2)
+                {
+                    var tblSaleOrder = await _saleOrderRepo.Get(orderCode);
+                    if (tblSaleOrder == null)
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "OrderID invalid.";
+                        return result;
+                    }
+                    itemDetails = await _productItemDetailRepo.GetItemDetailsBySaleOrderID(orderCode);
+                    productItems = await _productItemRepo.GetItemsByItemDetail(itemDetails);
+                }
+
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";  
+                htmlContent += "<body>";  
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN CHĂM SÓC CÂY </h2>";
+
+                int count = 1;
+                foreach (var productItem in productItems)
+                {
+                    if (!String.IsNullOrEmpty(productItem.CareGuide))
+                    {
+                        htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + productItem.Name+"</h3>";
+
+
+                        string a = productItem.CareGuide;
+                        List<string> splitted = a.Split('.').ToList();
+
+                        foreach (string b in splitted)
+                        {
+                            if (!b.Equals(splitted.Last()))
+                            {
+                                htmlContent += "<p>-" + b + ".</p>";
+                            }
+
+                        }
+                    }
+                    count++;
+                }
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
+
+                PdfGenerator.AddPdfPages(document, htmlContent, PageSize.A4);
+                byte[]? response = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    document.Save(ms);
+                    response = ms.ToArray();
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = new FileData(response, "application/pdf", Guid.NewGuid().ToString() + ".pdf");
+                result.Message = "Generate PDF successful.";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }

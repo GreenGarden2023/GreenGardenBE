@@ -288,6 +288,30 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             }
             return arr;
         }
+
+        public async Task<List<TblProductItemDetail>> GetItemDetailsByRentOrderID(Guid orderID)
+        {
+            var result = new List<TblProductItemDetail>();
+            var rentOrderDdetails = await _context.TblRentOrderDetails.Where(x => x.RentOrderId.Equals(orderID)).ToListAsync();
+            foreach (var i in rentOrderDdetails)
+            {
+                var res = await _context.TblProductItemDetails.Where(x => x.Id.Equals(i.ProductItemDetailId)).FirstOrDefaultAsync();
+                if (res != null) result.Add(res);
+            }
+            return result;
+        }
+
+        public async Task<List<TblProductItemDetail>> GetItemDetailsBySaleOrderID(Guid orderID)
+        {
+            var result = new List<TblProductItemDetail>();
+            var saleOrderDdetails = await _context.TblSaleOrderDetails.Where(x => x.SaleOderId.Equals(orderID)).ToListAsync();
+            foreach (var i in saleOrderDdetails)
+            {
+                var res = await _context.TblProductItemDetails.Where(x => x.Id.Equals(i.ProductItemDetailId)).FirstOrDefaultAsync();
+                if (res != null) result.Add(res);
+            }
+            return result;
+        }
     }
 }
 

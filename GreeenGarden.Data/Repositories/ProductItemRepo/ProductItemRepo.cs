@@ -26,6 +26,29 @@ namespace GreeenGarden.Data.Repositories.ProductItemRepo
             return true;
         }
 
+        public async Task<List<TblProductItem>> GetItemsByItemDetail(List<TblProductItemDetail> itemDetails)
+        {
+            var listResult = new List<TblProductItem>();
+
+            foreach (var item in itemDetails)
+            {
+                var productItem = await _context.TblProductItems.Where(x => x.Id.Equals(item.ProductItemId)).FirstOrDefaultAsync();
+                listResult.Add(productItem);
+            }
+            // Add items to the listWithDuplicates
+
+            for (int i = 0; i < listResult.Count - 1; i++)
+            {
+                if (listResult[i].Equals(listResult[i + 1]))
+                {
+                    listResult.RemoveAt(i + 1);
+                    i--;
+                }
+            }
+
+
+            return listResult;
+        }
 
         public async Task<Page<TblProductItem>> GetProductItemByType(PaginationRequestModel paginationRequestModel, Guid productID, string? type)
         {
