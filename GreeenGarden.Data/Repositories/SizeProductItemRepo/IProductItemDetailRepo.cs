@@ -13,6 +13,8 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
         Task<bool> UpdateProductItemDetailQuantity(Guid productItemDetailID, int deductQuantity);
         Task<bool> UpdateProductItemDetail(TblProductItemDetail entity);
         Task<List<TblProductItemDetail>> GetSizeProductItemByItemID(Guid productItemID);
+        Task<List<TblProductItemDetail>> GetItemDetailsByRentOrderID(Guid orderID);
+        Task<List<TblProductItemDetail>> GetItemDetailsBySaleOrderID(Guid orderID);
         Task<double[]> getMinMaxItemPrice(Guid productItemID);
     }
 }

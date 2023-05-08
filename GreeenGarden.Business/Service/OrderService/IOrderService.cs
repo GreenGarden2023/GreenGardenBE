@@ -39,6 +39,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> CancelServiceOrderById(string token, Guid orderID, string reason);
         Task<ResultModel> UpdateDateTakecare(string token, UpdateDateTakecareModel model);
         Task<ResultModel> GeneratePDF(Guid orderCode);
+        Task<ResultModel> GenerateCareGuidePDF(Guid orderCode, int flag);
 
     }
 }

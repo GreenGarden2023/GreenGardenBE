@@ -20,6 +20,7 @@ namespace GreeenGarden.Data.Models.ProductItemModel
         public string? ImageURL { get; set; } = null!;
 
         public string? Rule { get; set; }
+        public string? CareGuide { get; set; }
     }
 }
 

@@ -265,18 +265,52 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
             double[] salePrice = new double[] { };
             foreach ( var item in listItemDetail )
             {
-                Array.Resize(ref rentPrice, rentPrice.Length + 1);
-                rentPrice[rentPrice.Length - 1] = (double)item.RentPrice;
-
-                Array.Resize(ref salePrice, salePrice.Length + 1);
-                salePrice[salePrice.Length - 1] = (double)item.SalePrice;
-
+                if (item.RentPrice != null)
+                {
+                    Array.Resize(ref rentPrice, rentPrice.Length + 1);
+                    rentPrice[rentPrice.Length - 1] = (double)item.RentPrice;
+                }
+                if (item.SalePrice != null)
+                {
+                    Array.Resize(ref salePrice, salePrice.Length + 1);
+                    salePrice[salePrice.Length - 1] = (double)item.SalePrice;
+                }
             }
-            arr[0] = salePrice.Min();
-            arr[1] = rentPrice.Min();
-            arr[2] = salePrice.Max();
-            arr[3] = rentPrice.Max();
+            if (rentPrice.Length > 0)
+            {
+                arr[1] = rentPrice.Min();
+                arr[3] = rentPrice.Max();
+            }
+            if (salePrice.Length > 0)
+            {
+                arr[0] = salePrice.Min();
+                arr[2] = salePrice.Max();
+            }
             return arr;
+        }
+
+        public async Task<List<TblProductItemDetail>> GetItemDetailsByRentOrderID(Guid orderID)
+        {
+            var result = new List<TblProductItemDetail>();
+            var rentOrderDdetails = await _context.TblRentOrderDetails.Where(x => x.RentOrderId.Equals(orderID)).ToListAsync();
+            foreach (var i in rentOrderDdetails)
+            {
+                var res = await _context.TblProductItemDetails.Where(x => x.Id.Equals(i.ProductItemDetailId)).FirstOrDefaultAsync();
+                if (res != null) result.Add(res);
+            }
+            return result;
+        }
+
+        public async Task<List<TblProductItemDetail>> GetItemDetailsBySaleOrderID(Guid orderID)
+        {
+            var result = new List<TblProductItemDetail>();
+            var saleOrderDdetails = await _context.TblSaleOrderDetails.Where(x => x.SaleOderId.Equals(orderID)).ToListAsync();
+            foreach (var i in saleOrderDdetails)
+            {
+                var res = await _context.TblProductItemDetails.Where(x => x.Id.Equals(i.ProductItemDetailId)).FirstOrDefaultAsync();
+                if (res != null) result.Add(res);
+            }
+            return result;
         }
     }
 }
