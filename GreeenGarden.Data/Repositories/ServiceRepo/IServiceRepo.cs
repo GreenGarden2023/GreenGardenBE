@@ -1,4 +1,6 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
@@ -14,6 +16,7 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         Task<bool> CheckServiceCode(string serviceCode);
         Task<TblService> GetServiceByServiceCode(string serviceCode);
         Task<bool> UpdateService(TblService entity);
+        Task<TblService> GetServiceByServiceCode(ServiceSearchByCodeModel model);
     }
 }
 

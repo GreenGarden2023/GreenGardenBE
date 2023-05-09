@@ -16,6 +16,7 @@ using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Security.Claims;
 
 namespace GreeenGarden.Business.Service.TakecareService
@@ -126,6 +127,10 @@ namespace GreeenGarden.Business.Service.TakecareService
                         TechnicianName = resService.TechnicianName,
                         ServiceDetailList = resServiceDetail
                     };
+
+
+                    _ = await _emailService.SendEmailAssignTechnician(tblUser.Mail, resService.ServiceCode);
+
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.Data = serviceResModel;
@@ -1148,6 +1153,118 @@ namespace GreeenGarden.Business.Service.TakecareService
             }
             return result;
         }
+
+        public async Task<ResultModel> GetRequestOrderByServiceCode(string token, PaginationRequestModel pagingModel, ServiceSearchByCodeModel model)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            var result = new ResultModel();
+            try
+            {
+                var listRes = new List<ServiceByTechResModel>();
+                var tblService = await _serviceRepo.GetServiceByServiceCode(model);
+                    int userCurrentPoint = await _rewardRepo.GetUserRewardPoint(tblService.UserId);
+                    List<ServiceDetailResModel> resServiceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(tblService.Id);
+                    var tblUser = await _userRepo.Get(tblService.UserId);
+                    UserCurrResModel userCurrResModel = await _userRepo.GetCurrentUser(tblUser.UserName);
+                    TblUser technicianGet = await _userRepo.Get((Guid)tblService.TechnicianId);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)tblService.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
+                    ServiceOrderTechnician technicianRes = new()
+                    {
+                        TechnicianID = technicianGet.Id,
+                        TechnicianUserName = technicianGet.UserName,
+                        TechnicianFullName = technicianGet.FullName,
+                        TechnicianAddress = technicianGet.Address,
+                        TechnicianMail = technicianGet.Mail,
+                        TechnicianPhone = technicianGet.Phone
+                    };
+
+                    var res = new ServiceByTechResModel()
+                    {
+                        ID = tblService.Id,
+                        ServiceCode = tblService    .ServiceCode,
+                        StartDate = (DateTime)tblService.StartDate,
+                        EndDate = (DateTime)tblService.EndDate,
+                        UserCurrentPoint = userCurrentPoint,
+                        Name = tblService.Name,
+                        Phone = tblService.Phone,
+                        Email = tblService.Email,
+                        Address = tblService.Address,
+                        Status = tblService.Status,
+                        DistrictID = (int)tblService.DistrictId,
+                        User = userCurrResModel,
+                        CreateDate = (DateTime)tblService.CreateDate,
+                        TechnicianName = tblService.TechnicianName,
+                        IsTransport = (bool)tblService.IsTransport,
+                        TransportFee = (double)tblService.TransportFee,
+                        Rules = tblService.Rules,
+                        CancelBy = tblService.CancelBy,
+                        NameCancelBy = nameCancelBy,
+                        Reason = tblService.Reason,
+                        RewardPointUsed = (int)tblService.RewardPointUsed,
+                        Technician = technicianRes,
+                        ServiceDetailList = resServiceDetail,
+                    };
+                    listRes.Add(res);
+
+
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(pagingModel.pageSize)
+                    .CurPage(1)
+                    .RecordCount(1)
+                    .PageCount(1);
+
+                var newRequest = new RequestListRes()
+                {
+                    Paging = paging,
+                    RequestList = listRes
+                };
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = newRequest;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
     }
 }
 

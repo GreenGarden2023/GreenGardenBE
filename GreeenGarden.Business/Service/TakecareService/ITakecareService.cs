@@ -11,6 +11,7 @@ namespace GreeenGarden.Business.Service.TakecareService
         Task<ResultModel> AssignTechnician(string token, ServiceAssignModelManager serviceAssignModelManager);
         Task<ResultModel> UpdateServicePrice(string token, ServiceUpdateModelManager? serviceUpdateModelManager, List<ServiceDetailUpdateModelManager>? serviceDetailUpdateModelManagers);
         Task<ResultModel> GetRequestOrderByTechnician(string token, PaginationRequestModel pagingModel, Guid technicianID);
+        Task<ResultModel> GetRequestOrderByServiceCode(string token, PaginationRequestModel pagingModel, ServiceSearchByCodeModel model);
         Task<ResultModel> GetUserRequest(string token);
         Task<ResultModel> GetAllRequest(string token);
         Task<ResultModel> CancelRequest(string token, CancelRequestModel model);

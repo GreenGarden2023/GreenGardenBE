@@ -1,5 +1,7 @@
-﻿using GreeenGarden.Data.Entities;
+﻿using EntityFrameworkPaginateCore;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.RewardRepo;
@@ -154,6 +156,11 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
             TblService tblService = await _context.TblServices.Where(x => x.ServiceCode.Equals(serviceCode)).FirstOrDefaultAsync();
             return tblService ?? null;
 
+        }
+
+        public async Task<TblService> GetServiceByServiceCode(ServiceSearchByCodeModel model)
+        {
+            return await _context.TblServices.Where(x => x.TechnicianId.Equals(model.TechnicianID) && x.ServiceCode.Equals(model.ServiceCode)).FirstOrDefaultAsync(); ;
         }
 
         public async Task<bool> UpdateService(TblService entity)

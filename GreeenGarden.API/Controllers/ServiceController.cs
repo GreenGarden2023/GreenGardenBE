@@ -51,6 +51,14 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _takecareService.GetRequestOrderByTechnician(token, pagingModel, technicianID);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-request-order-by-service-code")]
+        [Authorize(Roles = "Staff, Manager, Admin, Technician")]
+        public async Task<IActionResult> GetRequestOrderByServiceCode([FromQuery] PaginationRequestModel pagingModel, [FromQuery]ServiceSearchByCodeModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareService.GetRequestOrderByServiceCode(token, pagingModel,model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpGet("get-user-service-request")]
         [SwaggerOperation(Summary = "Get current user's service request")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
