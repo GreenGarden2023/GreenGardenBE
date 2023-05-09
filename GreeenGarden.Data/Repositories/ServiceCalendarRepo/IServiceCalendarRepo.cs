@@ -2,6 +2,7 @@
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ServiceCalendarModel;
+using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
 namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo

@@ -18,6 +18,7 @@ using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using MailKit.Net.Smtp;
+using MailKit.Search;
 using MailKit.Security;
 using MimeKit;
 using PdfSharpCore.Pdf;
@@ -716,6 +717,62 @@ namespace GreeenGarden.Business.Service.EMailService
                     _ = await smtp.SendAsync(message);
                     await smtp.DisconnectAsync(true);
                 }
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Email send successful";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> SendEmailAssignTechnician(string email, string serviceCode)
+        {
+            ResultModel result = new();
+            try
+            {
+                
+
+
+                string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                MimeMessage message = new();
+                message.From.Add(MailboxAddress.Parse(from));
+                message.Subject = "GreenGarden_Assign_Request";
+                message.To.Add(MailboxAddress.Parse(email));
+
+
+
+
+
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>Yêu cầu mới đã được giao cho bạn </h2>";
+                htmlContent += "<h3 style='width:100%;text-align:center'>Vui lòng kiểm tra yêu cầu: </h2>";
+                htmlContent += "<h3 style='width:100%;text-align:center'>Mã yêu cầu: "+serviceCode+"</h2>";
+
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
+
+
+                var multipart = new Multipart("mixed");
+                multipart.Add(new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlContent });
+                message.Body = multipart;
+
+
+                using SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, password);
+                _ = await smtp.SendAsync(message);
+                await smtp.DisconnectAsync(true);
 
                 result.IsSuccess = true;
                 result.Code = 200;
