@@ -21,6 +21,8 @@ public partial class TblServiceDetail
 
     public string? ManagerDescription { get; set; }
 
+    public string? CareGuide { get; set; }
+
     public virtual TblService? Service { get; set; }
 
     public virtual ICollection<TblImage> TblImages { get; } = new List<TblImage>();

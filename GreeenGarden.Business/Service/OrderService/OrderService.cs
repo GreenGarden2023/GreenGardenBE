@@ -39,6 +39,7 @@ using TheArtOfDev.HtmlRenderer.Adapters;
 using Microsoft.IdentityModel.Tokens;
 using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Data.Models.CartModel;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -2225,7 +2226,6 @@ namespace GreeenGarden.Business.Service.OrderService
                             TechnicianName = resService.TechnicianName,
                             ServiceDetailList = resServiceDetail
                         };
-
                         TblUser technicianGet = await _userRepo.Get(order.TechnicianId);
                         ServiceOrderTechnician technicianRes = new()
                         {
@@ -3636,6 +3636,19 @@ namespace GreeenGarden.Business.Service.OrderService
                 order.Status = model.status;
                 await _serviceOrderRepo.UpdateServiceOrder(order);
 
+
+                if (model.status == ServiceOrderStatus.COMPLETED)
+                {
+                    var user = await _userRepo.Get(order.UserId);
+                    var service = await _serviceRepo.Get(order.ServiceId);
+                    var serviceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
+
+                    ResultModel resultCareGuideGen = await GenerateCareGuidePDFForService(serviceDetail);
+                    FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
+                    _ = await _eMailService.SendEmailCareGuideForService(user.Mail, serviceDetail, fileCareGuide);
+
+                }
+
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Message = "Cập nhật thành công";
@@ -4287,6 +4300,65 @@ namespace GreeenGarden.Business.Service.OrderService
 
 
                         string a = productItem.CareGuide;
+                        List<string> splitted = a.Split('.').ToList();
+
+                        foreach (string b in splitted)
+                        {
+                            if (!b.Equals(splitted.Last()))
+                            {
+                                htmlContent += "<p>-" + b + ".</p>";
+                            }
+
+                        }
+                    }
+                    count++;
+                }
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
+
+                PdfGenerator.AddPdfPages(document, htmlContent, PageSize.A4);
+                byte[]? response = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    document.Save(ms);
+                    response = ms.ToArray();
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = new FileData(response, "application/pdf", Guid.NewGuid().ToString() + ".pdf");
+                result.Message = "Generate PDF successful.";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GenerateCareGuidePDFForService(List<ServiceDetailResModel> listItem)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN CHĂM SÓC CÂY </h2>";
+
+                int count = 1;
+                foreach (var item in listItem)
+                {
+                    var service = await _serviceRepo.Get(item.ServiceID);
+                    if (!String.IsNullOrEmpty(item.CareGuide))
+                    {
+                        htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + item.TreeName + "</h3>";
+
+
+                        string a = item.CareGuide;
                         List<string> splitted = a.Split('.').ToList();
 
                         foreach (string b in splitted)

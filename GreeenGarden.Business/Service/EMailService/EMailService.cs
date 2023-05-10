@@ -5,6 +5,7 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
@@ -551,7 +552,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     string password = SecretService.SecretService.GetEmailCred().EmailPassword;
                     MimeMessage message = new();
                     message.From.Add(MailboxAddress.Parse(from));
-                    message.Subject = "GreenGarden hợp đồng thuê cây";
+                    message.Subject = "GreenGarden hướng dẫn chăm sóc";
                     message.To.Add(MailboxAddress.Parse(email));
 
 
@@ -643,7 +644,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     string password = SecretService.SecretService.GetEmailCred().EmailPassword;
                     MimeMessage message = new();
                     message.From.Add(MailboxAddress.Parse(from));
-                    message.Subject = "GreenGarden hợp đồng thuê cây";
+                    message.Subject = "GreenGarden hướng dẫn chăm sóc";
                     message.To.Add(MailboxAddress.Parse(email));
 
 
@@ -667,7 +668,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     htmlContent += "<html>";
                     htmlContent += "<body>";
                     htmlContent += "<div style='width:100%; font: bold'>";
-                    htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN THUÊ CÂY </h2>";
+                    htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN CHĂM SÓC </h2>";
 
 
                     int count = 1;
@@ -778,6 +779,98 @@ namespace GreeenGarden.Business.Service.EMailService
                 result.Code = 200;
                 result.Message = "Email send successful";
                 return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> SendEmailCareGuideForService(string email, List<ServiceDetailResModel> listItem, FileData file)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (listItem == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Item invalid.";
+                    return result;
+                }
+
+
+                string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                MimeMessage message = new();
+                message.From.Add(MailboxAddress.Parse(from));
+                message.Subject = "GreenGarden hướng dẫn chăm sóc";
+                message.To.Add(MailboxAddress.Parse(email));
+
+
+
+
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN CHĂM SÓC </h2>";
+
+
+                int count = 1;
+                foreach (var item in listItem)
+                {
+                    if (!String.IsNullOrEmpty(item.CareGuide))
+                    {
+                        htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + item.TreeName + "</h3>";
+
+
+                        string a = item.CareGuide;
+                        List<string> splitted = a.Split('.').ToList();
+
+                        foreach (string b in splitted)
+                        {
+                            if (!b.Equals(splitted.Last()))
+                            {
+                                htmlContent += "<p>-" + b + ".</p>";
+                            }
+
+                        }
+                    }
+                    count++;
+                }
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
+
+
+
+                var pdfAttachment = new MimePart("application", "pdf")
+                {
+                    Content = new MimeContent(new MemoryStream(file.bytes)),
+                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                    ContentTransferEncoding = ContentEncoding.Base64,
+                    FileName = Path.GetFileName("HUONG_DAN_CHAM_SOC.pdf")
+                };
+
+
+                var multipart = new Multipart("mixed");
+                multipart.Add(new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlContent });
+                multipart.Add(pdfAttachment);
+                message.Body = multipart;
+
+
+                using SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, password);
+                _ = await smtp.SendAsync(message);
+                await smtp.DisconnectAsync(true);
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
             }
             catch (Exception e)
             {

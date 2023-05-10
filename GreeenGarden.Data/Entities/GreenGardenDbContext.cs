@@ -523,6 +523,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
+            entity.Property(e => e.CareGuide).HasMaxLength(500);
             entity.Property(e => e.Desciption).HasMaxLength(500);
             entity.Property(e => e.ManagerDescription).HasMaxLength(500);
             entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
