@@ -48,8 +48,6 @@ namespace GreeenGarden.Data.Models.ServiceModel
         public string? NameCancelBy { get; set; }
         public string? Reason { get; set; }
 
-
-
         public List<ServiceDetailResModel>? ServiceDetailList { get; set; }
 
     }
@@ -70,6 +68,7 @@ namespace GreeenGarden.Data.Models.ServiceModel
 
         public double? ServicePrice { get; set; }
 
+        public string? CareGuide { get; set; }
         public string? ManagerDescription { get; set; }
 
         public List<string>? ImgUrls { get; set; }

@@ -1,6 +1,7 @@
 ﻿using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.ServiceModel;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -40,6 +41,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> UpdateDateTakecare(string token, UpdateDateTakecareModel model);
         Task<ResultModel> GeneratePDF(Guid orderCode);
         Task<ResultModel> GenerateCareGuidePDF(Guid orderCode, int flag);
+        Task<ResultModel> GenerateCareGuidePDFForService(List<ServiceDetailResModel> listItem);
 
     }
 }

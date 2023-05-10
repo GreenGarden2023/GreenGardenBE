@@ -34,6 +34,7 @@
         public double? ServicePrice { get; set; }
 
         public string? ManagerDescription { get; set; }
+        public string? CareGuide { get; set; }
     }
     public class UpdateService
     {

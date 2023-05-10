@@ -34,6 +34,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                         Quantity = tblServiceDetail.Quantity ?? 0,
                         ServicePrice = tblServiceDetail.ServicePrice ?? 0,
                         ManagerDescription = tblServiceDetail.ManagerDescription,
+                        CareGuide = tblServiceDetail.CareGuide ?? null,
                         ImgUrls = imgs
                     };
                     return serviceDetail;
@@ -71,6 +72,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                             Quantity = detail.Quantity ?? 0,
                             ServicePrice = detail.ServicePrice ?? 0,
                             ManagerDescription = detail.ManagerDescription,
+                            CareGuide = detail.CareGuide ?? null,
                             ImgUrls = imgs
                         };
                         resList.Add(serviceDetail);
@@ -108,6 +110,10 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                     if (serviceDetail.ManagerDescription != null && serviceDetail.ManagerDescription != tblServiceDetail.ManagerDescription)
                     {
                         tblServiceDetail.ManagerDescription = serviceDetail.ManagerDescription;
+                    }
+                    if (serviceDetail.CareGuide != null && serviceDetail.CareGuide != tblServiceDetail.CareGuide)
+                    {
+                        tblServiceDetail.CareGuide = serviceDetail.CareGuide;
                     }
                     _ = _context.Update(tblServiceDetail);
                     _ = await _context.SaveChangesAsync();
