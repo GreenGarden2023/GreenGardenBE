@@ -227,12 +227,16 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
                 .PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
         }
 
-        public async Task<Page<TblServiceOrder>> GetServiceOrderByTechnicianToday(PaginationRequestModel paginationRequestModel, Guid technicianID, string? status)
+        public async Task<Page<TblServiceOrder>> GetServiceOrderByTechnicianToday(PaginationRequestModel paginationRequestModel, Guid technicianID, string? status, bool nextDate)
         {
 
             var serviceOrder = await _context.TblServiceOrders.ToListAsync();
             var serviceCalendar = await _context.TblServiceCalendars.ToListAsync();
             var dateNow = DateTime.Now.Date;
+            if (nextDate)
+            {
+                dateNow = dateNow.AddDays(1);
+            }
             var listServiceOrder = new List<TblServiceOrder>();
             if (status != null)
             {
