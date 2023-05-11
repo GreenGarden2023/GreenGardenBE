@@ -33,6 +33,8 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
                     imageURl = image.ImageUrl;
                 }
                 List<FeedbackOrderResModel> fbList = await _feedbackRepo.GetFeedBackOrderDetail(saleOrderId, (Guid)detail.ProductItemDetailId);
+                var itemDetail = await _context.TblProductItemDetails.Where(x => x.Id.Equals(detail.ProductItemDetailId)).FirstOrDefaultAsync();
+                var productItem = await _context.TblProductItems.Where(x=>x.Id.Equals(itemDetail.ProductItemId)).FirstOrDefaultAsync();
                 SaleOrderDetailResModel model = new()
                 {
                     ID = detail.Id,
@@ -41,6 +43,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
                     SalePricePerUnit = detail.SalePricePerUnit ?? null,
                     SizeName = "" + detail.SizeName,
                     ProductItemName = "" + detail.ProductItemName,
+                    CareGuide = productItem.CareGuide,
                     ProductItemDetailID = detail.ProductItemDetailId,
                     ImgURL = imageURl,
                     FeedbackList = fbList,
