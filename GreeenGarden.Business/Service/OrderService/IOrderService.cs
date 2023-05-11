@@ -34,7 +34,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> GetServiceOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetAllServiceOrders(string token, PaginationRequestModel pagingModel);
         Task<ResultModel> GetServiceOrderByTechnician(string token, PaginationRequestModel pagingModel, Guid technicianID);
-        Task<ResultModel> GetServiceOrderByTechnicianToday(string token, PaginationRequestModel pagingModel, Guid technicianID, string status);
+        Task<ResultModel> GetServiceOrderByTechnicianToday(string token, PaginationRequestModel pagingModel, Guid technicianID, string status, bool nextDay);
         Task<ResultModel> GetServiceOrderById(string token, Guid orderID);
         Task<ResultModel> GetServiceOrderDetailByOrderCode(string token, OrderFilterModel model, PaginationRequestModel pagingModel);
         Task<ResultModel> CancelServiceOrderById(string token, Guid orderID, string reason);

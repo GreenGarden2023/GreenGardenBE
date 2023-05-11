@@ -4090,7 +4090,7 @@ namespace GreeenGarden.Business.Service.OrderService
             }
         }
 
-        public async Task<ResultModel> GetServiceOrderByTechnicianToday(string token, PaginationRequestModel pagingModel, Guid technicianID, string status)
+        public async Task<ResultModel> GetServiceOrderByTechnicianToday(string token, PaginationRequestModel pagingModel, Guid technicianID, string status, bool nextDay)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -4121,7 +4121,7 @@ namespace GreeenGarden.Business.Service.OrderService
             ResultModel result = new();
             try
             {
-                Page<TblServiceOrder> listTblServiceOrders = await _serviceOrderRepo.GetServiceOrderByTechnicianToday(pagingModel, technicianID, status);
+                Page<TblServiceOrder> listTblServiceOrders = await _serviceOrderRepo.GetServiceOrderByTechnicianToday(pagingModel, technicianID, status, nextDay);
                 if (listTblServiceOrders == null)
                 {
                     result.IsSuccess = true;
