@@ -48,6 +48,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public Guid ID { get; set; }
         public Guid? ProductItemDetailID { get; set; }
         public string? ProductItemName { get; set; }
+        public string? CareGuide { get; set; }
         public int? Quantity { get; set; }
         public double? SalePricePerUnit { get; set; }
         public double? TotalPrice { get; set; }
