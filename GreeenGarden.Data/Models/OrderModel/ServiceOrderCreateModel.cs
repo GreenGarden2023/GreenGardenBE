@@ -39,5 +39,16 @@
         public string? Status { get; set; }
 
     }
+
+    public class UpdateCareGuideByTechnModel
+    {
+        public Guid OrderID { get; set;}
+        public List<UserTreeUpdateCareGuideModel> listCareGuide { get; set; }
+    }
+    public class UserTreeUpdateCareGuideModel
+    {
+        public Guid UserTreeID { get; set;}
+        public string CareGuide { get; set; }
+    }
 }
 

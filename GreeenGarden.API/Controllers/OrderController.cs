@@ -288,5 +288,13 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _emailService.SendEmailRentOrderContract(email ,orderID, file);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("update-care-guide-by-technician")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> UpdateCareGuideByTechnician(UpdateCareGuideByTechnModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _orderService.UpdateCareGuideByTechnician(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
