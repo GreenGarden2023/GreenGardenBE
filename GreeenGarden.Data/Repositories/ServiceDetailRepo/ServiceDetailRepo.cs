@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.OrderModel;
 using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
@@ -89,6 +90,32 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
                 return null;
             }
 
+        }
+
+        public async Task<bool> UpdateCareGuideByUserTree(UpdateCareGuideByTechnModel model)
+        {
+            try
+            {
+                var serviceOrder = await _context.TblServiceOrders.Where(x => x.Id.Equals(model.OrderID)).FirstOrDefaultAsync();
+                var service = await _context.TblServices.Where(x => x.Id.Equals(serviceOrder.ServiceId)).FirstOrDefaultAsync();
+                foreach (var m in model.listCareGuide)
+                {
+                    var serviceDetail = await _context.TblServiceDetails.Where(x=>x.ServiceId.Equals(service.Id) 
+                    && x.UserTreeId.Equals(m.UserTreeID)).FirstOrDefaultAsync();
+                    if (serviceDetail != null)
+                    {
+                        serviceDetail.CareGuide = m.CareGuide;
+                        _context.TblServiceDetails.Update(serviceDetail);
+                        await _context.SaveChangesAsync();  
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
         }
 
         public async Task<bool> UpdateServiceDetailManager(ServiceDetailUpdateModelManager serviceDetail)

@@ -4395,5 +4395,70 @@ namespace GreeenGarden.Business.Service.OrderService
             }
             return result;
         }
+
+        public async Task<ResultModel> UpdateCareGuideByTechnician(string token, UpdateCareGuideByTechnModel model)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            var result = new ResultModel();
+            try
+            {
+                string userID = _decodeToken.Decode(token, "userid");
+
+                var serviceOrder = await _serviceOrderRepo.Get(model.OrderID);
+                if (!serviceOrder.TechnicianId.Equals(Guid.Parse(userID)))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+                var check = await _serviceDetailRepo.UpdateCareGuideByUserTree(model);
+                if (check)
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = "Update successful";
+                }
+                else
+                {
+
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Data = "Update fail";
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }
