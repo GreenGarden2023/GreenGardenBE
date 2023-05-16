@@ -37,6 +37,8 @@ public partial class TblTakecareComboService
 
     public int NumberOfMonths { get; set; }
 
+    public bool? IsAtShop { get; set; }
+
     public virtual TblTakecareCombo TakecareCombo { get; set; } = null!;
 
     public virtual TblUser? Technician { get; set; }

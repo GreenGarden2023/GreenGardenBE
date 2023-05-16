@@ -39,9 +39,11 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
     {
         public Guid TakecareComboId { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public string StartDate { get; set; }
 
         public int NumOfMonth { get; set; }
+
+        public bool IsAtShop { get; set; }
 
         public string? Name { get; set; }
 
@@ -70,6 +72,12 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
         public Guid Id { get; set; }
 
         public Guid? TakecareComboId { get; set; }
+
+        public string? StartDate { get; set; }
+
+        public int? NumOfMonth { get; set; }
+
+        public bool? IsAtShop { get; set; }
 
         public string? Name { get; set; }
 

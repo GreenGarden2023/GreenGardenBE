@@ -122,6 +122,32 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
                 {
                     tblTakecareComboService.TreeQuantity = (int)takecareComboServiceUpdateModel.TreeQuantity;
                 }
+                if (takecareComboServiceUpdateModel.IsAtShop != null && takecareComboServiceUpdateModel.IsAtShop != tblTakecareComboService.IsAtShop)
+                {
+                    tblTakecareComboService.IsAtShop = takecareComboServiceUpdateModel.IsAtShop;
+                }
+                
+                    if (takecareComboServiceUpdateModel.StartDate!= null && takecareComboServiceUpdateModel.NumOfMonth == null)
+                    {
+                        tblTakecareComboService.StartDate = DateTime.Parse(takecareComboServiceUpdateModel.StartDate);
+                        tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
+
+                    }
+                    else if (takecareComboServiceUpdateModel.StartDate == null && takecareComboServiceUpdateModel.NumOfMonth != null)
+                    {
+                        tblTakecareComboService.NumberOfMonths = (int)takecareComboServiceUpdateModel.NumOfMonth ;
+                        tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
+
+                    }else if (takecareComboServiceUpdateModel.StartDate != null && takecareComboServiceUpdateModel.NumOfMonth != null)
+                    {
+                        tblTakecareComboService.StartDate = DateTime.Parse(takecareComboServiceUpdateModel.StartDate);
+                        tblTakecareComboService.NumberOfMonths = (int)takecareComboServiceUpdateModel.NumOfMonth;
+                        tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
+                }
+                else
+                {
+                }
+
                 _ = _context.Update(tblTakecareComboService);
                 _ = await _context.SaveChangesAsync();
                 return true;
