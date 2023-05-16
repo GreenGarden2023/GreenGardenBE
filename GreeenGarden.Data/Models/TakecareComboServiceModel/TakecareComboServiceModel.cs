@@ -41,7 +41,7 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 
         public DateTime StartDate { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public int NumOfMonth { get; set; }
 
         public string? Name { get; set; }
 
