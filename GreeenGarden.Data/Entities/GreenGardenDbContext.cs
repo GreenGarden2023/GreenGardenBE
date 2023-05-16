@@ -59,6 +59,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblSize> TblSizes { get; set; }
 
+    public virtual DbSet<TblTakecareCombo> TblTakecareCombos { get; set; }
+
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
@@ -588,6 +590,19 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.Name).HasMaxLength(200);
+        });
+
+        modelBuilder.Entity<TblTakecareCombo>(entity =>
+        {
+            entity.ToTable("tblTakecareCombo");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.Description).HasMaxLength(4000);
+            entity.Property(e => e.Guarantee).HasMaxLength(2000);
+            entity.Property(e => e.Name).HasMaxLength(500);
+            entity.Property(e => e.Status).HasDefaultValueSql("((1))");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

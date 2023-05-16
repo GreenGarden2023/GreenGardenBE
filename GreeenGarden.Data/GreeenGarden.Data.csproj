@@ -42,6 +42,8 @@
     <Folder Include="Repositories\ServiceCalendarRepo\" />
     <Folder Include="Models\ServiceCalendarModel\" />
     <Folder Include="Models\FileModel\" />
+    <Folder Include="Repositories\TakecareComboRepo\" />
+    <Folder Include="Models\TakecareComboModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -98,5 +100,7 @@
     <None Remove="Repositories\ServiceCalendarRepo\" />
     <None Remove="Models\ServiceCalendarModel\" />
     <None Remove="Models\FileModel\" />
+    <None Remove="Repositories\TakecareComboRepo\" />
+    <None Remove="Models\TakecareComboModel\" />
   </ItemGroup>
 </Project>
