@@ -16,4 +16,6 @@ public partial class TblTakecareCombo
     public string? Guarantee { get; set; }
 
     public bool? Status { get; set; }
+
+    public virtual ICollection<TblTakecareComboService> TblTakecareComboServices { get; } = new List<TblTakecareComboService>();
 }

@@ -12,6 +12,7 @@ using GreeenGarden.Business.Service.ServiceCalendarService;
 using GreeenGarden.Business.Service.ShippingFeeService;
 using GreeenGarden.Business.Service.SizeService;
 using GreeenGarden.Business.Service.TakecareComboService;
+using GreeenGarden.Business.Service.TakecareComboServiceServ;
 using GreeenGarden.Business.Service.TakecareService;
 using GreeenGarden.Business.Service.TransactionService;
 using GreeenGarden.Business.Service.UserService;
@@ -39,6 +40,7 @@ using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TakecareComboRepo;
+using GreeenGarden.Data.Repositories.TakecareComboServiceRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
@@ -75,6 +77,7 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IServiceCalendarService, ServiceCalendarService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<ITakecareComboService, TakecareComboService>();
+builder.Services.AddScoped<ITakecareComboServiceServ, TakecareComboServiceServ>();
 //
 builder.Services.AddTransient<IUserTreeRepo, UserTreeRepo>();
 builder.Services.AddTransient<IServiceCalendarRepo, ServiceCalendarRepo>();
@@ -102,6 +105,7 @@ builder.Services.AddTransient<IServiceRepo, ServiceRepo>();
 builder.Services.AddTransient<IServiceDetailRepo, ServiceDetailRepo>();
 builder.Services.AddTransient<IFeedbackRepo, FeedbackRepo>();
 builder.Services.AddTransient<ITakecareComboRepo, TakecareComboRepo>();
+builder.Services.AddTransient<ITakecareComboServiceRepo, TakecareComboServiceRepo>();
 //Swagger
 builder.Services.AddSwaggerGen(c =>
 {

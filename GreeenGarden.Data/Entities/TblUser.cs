@@ -48,4 +48,8 @@ public partial class TblUser
     public virtual ICollection<TblSaleOrder> TblSaleOrders { get; } = new List<TblSaleOrder>();
 
     public virtual ICollection<TblService> TblServices { get; } = new List<TblService>();
+
+    public virtual ICollection<TblTakecareComboService> TblTakecareComboServiceTechnicians { get; } = new List<TblTakecareComboService>();
+
+    public virtual ICollection<TblTakecareComboService> TblTakecareComboServiceUsers { get; } = new List<TblTakecareComboService>();
 }

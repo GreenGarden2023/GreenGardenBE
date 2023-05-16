@@ -51,6 +51,11 @@
     {
         public static readonly string ENABLE = "enable";
         public static readonly string DISABLED = "disabled"; 
-
+    }
+    public class TakecareComboServiceStatus
+    {
+        public static readonly string ACCEPTED = "accepted";
+        public static readonly string REJECTED = "rejected";
+        public static readonly string PENDING = "pending";
     }
 }

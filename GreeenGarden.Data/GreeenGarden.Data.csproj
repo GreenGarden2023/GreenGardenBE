@@ -44,6 +44,8 @@
     <Folder Include="Models\FileModel\" />
     <Folder Include="Repositories\TakecareComboRepo\" />
     <Folder Include="Models\TakecareComboModel\" />
+    <Folder Include="Repositories\TakecareComboServiceRepo\" />
+    <Folder Include="Models\TakecareComboServiceModel\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -102,5 +104,7 @@
     <None Remove="Models\FileModel\" />
     <None Remove="Repositories\TakecareComboRepo\" />
     <None Remove="Models\TakecareComboModel\" />
+    <None Remove="Repositories\TakecareComboServiceRepo\" />
+    <None Remove="Models\TakecareComboServiceModel\" />
   </ItemGroup>
 </Project>
