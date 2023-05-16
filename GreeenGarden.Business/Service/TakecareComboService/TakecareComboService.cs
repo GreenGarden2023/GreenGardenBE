@@ -41,9 +41,18 @@ namespace GreeenGarden.Business.Service.TakecareComboService
                 }
                 else
                 {
+                    TakecareComboModel takecareComboModel = new()
+                    {
+                        Id = tblTakecareCombo.Id,
+                        Name = tblTakecareCombo.Name,
+                        Description = tblTakecareCombo.Description,
+                        Guarantee = tblTakecareCombo.Guarantee,
+                        Price = tblTakecareCombo.Price,
+                        Status = tblTakecareCombo.Status,
+                    };
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = tblTakecareCombo;
+                    result.Data = takecareComboModel;
                     result.Message = "Get takece combo success.";
                     return result;
                 }
@@ -64,10 +73,23 @@ namespace GreeenGarden.Business.Service.TakecareComboService
             {
                 
                 List<TblTakecareCombo> tblTakecareCombos = await _takecareComboRepo.GetAllTakecareCombo(status);
-
+                List<TakecareComboModel> resList = new List<TakecareComboModel>();
+                foreach (var item in tblTakecareCombos)
+                {
+                    TakecareComboModel takecareComboModel = new()
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Description = item.Description,
+                        Guarantee = item.Guarantee,
+                        Price = item.Price,
+                        Status = item.Status,
+                    };
+                    resList.Add(takecareComboModel);
+                }
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.Data = tblTakecareCombos;
+                    result.Data = resList;
                     result.Message = "Get takecare combos success.";
                     return result;
             }
