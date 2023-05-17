@@ -61,6 +61,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblTakecareCombo> TblTakecareCombos { get; set; }
 
+    public virtual DbSet<TblTakecareComboOrder> TblTakecareComboOrders { get; set; }
+
     public virtual DbSet<TblTakecareComboService> TblTakecareComboServices { get; set; }
 
     public virtual DbSet<TblTakecareComboServiceDetail> TblTakecareComboServiceDetails { get; set; }
@@ -607,6 +609,41 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Guarantee).HasMaxLength(2000);
             entity.Property(e => e.Name).HasMaxLength(500);
             entity.Property(e => e.Status).HasDefaultValueSql("((1))");
+        });
+
+        modelBuilder.Entity<TblTakecareComboOrder>(entity =>
+        {
+            entity.ToTable("tblTakecareComboOrder");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.CreateDate).HasColumnType("datetime");
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.OrderCode).HasMaxLength(20);
+            entity.Property(e => e.ServiceEndDate).HasColumnType("datetime");
+            entity.Property(e => e.ServiceStartDate).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.TakecareComboServiceId).HasColumnName("TakecareComboServiceID");
+            entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+
+            entity.HasOne(d => d.CancelByNavigation).WithMany(p => p.TblTakecareComboOrderCancelByNavigations)
+                .HasForeignKey(d => d.CancelBy)
+                .HasConstraintName("FK_tblTakecareComboOrder_tblUserCancel");
+
+            entity.HasOne(d => d.TakecareComboService).WithMany(p => p.TblTakecareComboOrders)
+                .HasForeignKey(d => d.TakecareComboServiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblTakecareComboOrder_tblTakecareComboService");
+
+            entity.HasOne(d => d.Technician).WithMany(p => p.TblTakecareComboOrderTechnicians)
+                .HasForeignKey(d => d.TechnicianId)
+                .HasConstraintName("FK_tblTakecareComboOrder_tblUserTech");
+
+            entity.HasOne(d => d.User).WithMany(p => p.TblTakecareComboOrderUsers)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_tblTakecareComboOrder_tblUser");
         });
 
         modelBuilder.Entity<TblTakecareComboService>(entity =>

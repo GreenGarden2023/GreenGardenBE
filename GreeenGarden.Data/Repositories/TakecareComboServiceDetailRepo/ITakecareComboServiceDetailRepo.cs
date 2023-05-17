@@ -8,6 +8,8 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo
 	public interface ITakecareComboServiceDetailRepo : IRepository<TblTakecareComboServiceDetail>
     {
 		Task<TakecareComboServiceDetail> GetTakecareComboServiceDetail(Guid takecareComboServiceID);
-	}
+		Task<bool> UpdateTakecareComboServiceDetail(Guid takecareComboServiceID, Guid newTakecareComboID);
+
+    }
 }
 

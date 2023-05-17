@@ -41,6 +41,31 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo
                 return null;
             }
         }
+
+        public async Task<bool> UpdateTakecareComboServiceDetail(Guid takecareComboServiceID, Guid newTakecareComboID)
+        {
+            try
+            {
+                TblTakecareComboServiceDetail tblTakecareComboServiceDetail = await _context.TblTakecareComboServiceDetails.Where(x => x.TakecareComboServiceId.Equals(takecareComboServiceID)).FirstOrDefaultAsync();
+                if (tblTakecareComboServiceDetail != null)
+                {
+                    TblTakecareCombo tblTakecareCombo = await _context.TblTakecareCombos.Where(x => x.Id.Equals(newTakecareComboID)).FirstOrDefaultAsync();
+                    tblTakecareComboServiceDetail.TakecareComboName = tblTakecareCombo.Name;
+                    tblTakecareComboServiceDetail.TakecareComboPrice = tblTakecareCombo.Price;
+                    tblTakecareComboServiceDetail.TakecareComboGuarantee = tblTakecareCombo.Guarantee;
+                    tblTakecareComboServiceDetail.TakecareComboDescription = tblTakecareCombo.Description;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
 

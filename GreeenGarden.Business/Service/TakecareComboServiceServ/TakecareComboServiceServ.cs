@@ -474,7 +474,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         {
             TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-            string orderCode = "COMBO_"+currentTime.ToString("ddMMyyyy")+"_"; 
+            string orderCode = "COMBO_SERV_"+currentTime.ToString("ddMMyyyy")+"_"; 
             bool dup = true;
             while (dup == true)
             {

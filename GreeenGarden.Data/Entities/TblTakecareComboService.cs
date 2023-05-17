@@ -41,6 +41,8 @@ public partial class TblTakecareComboService
 
     public virtual TblTakecareCombo TakecareCombo { get; set; } = null!;
 
+    public virtual ICollection<TblTakecareComboOrder> TblTakecareComboOrders { get; } = new List<TblTakecareComboOrder>();
+
     public virtual ICollection<TblTakecareComboServiceDetail> TblTakecareComboServiceDetails { get; } = new List<TblTakecareComboServiceDetail>();
 
     public virtual TblUser? Technician { get; set; }
