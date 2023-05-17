@@ -63,6 +63,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblTakecareComboService> TblTakecareComboServices { get; set; }
 
+    public virtual DbSet<TblTakecareComboServiceDetail> TblTakecareComboServiceDetails { get; set; }
+
     public virtual DbSet<TblTransaction> TblTransactions { get; set; }
 
     public virtual DbSet<TblUser> TblUsers { get; set; }
@@ -643,6 +645,24 @@ public partial class GreenGardenDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_TakeceComboService_tblUser");
+        });
+
+        modelBuilder.Entity<TblTakecareComboServiceDetail>(entity =>
+        {
+            entity.ToTable("tblTakecareComboServiceDetail");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.TakecareComboDescription).HasMaxLength(4000);
+            entity.Property(e => e.TakecareComboGuarantee).HasMaxLength(2000);
+            entity.Property(e => e.TakecareComboName).HasMaxLength(500);
+            entity.Property(e => e.TakecareComboServiceId).HasColumnName("TakecareComboServiceID");
+
+            entity.HasOne(d => d.TakecareComboService).WithMany(p => p.TblTakecareComboServiceDetails)
+                .HasForeignKey(d => d.TakecareComboServiceId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblTakecareComboServiceDetail_tblTakecareCombo");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

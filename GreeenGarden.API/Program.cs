@@ -40,6 +40,7 @@ using GreeenGarden.Data.Repositories.ShippingFeeRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
 using GreeenGarden.Data.Repositories.TakecareComboRepo;
+using GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo;
 using GreeenGarden.Data.Repositories.TakecareComboServiceRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
@@ -106,6 +107,7 @@ builder.Services.AddTransient<IServiceDetailRepo, ServiceDetailRepo>();
 builder.Services.AddTransient<IFeedbackRepo, FeedbackRepo>();
 builder.Services.AddTransient<ITakecareComboRepo, TakecareComboRepo>();
 builder.Services.AddTransient<ITakecareComboServiceRepo, TakecareComboServiceRepo>();
+builder.Services.AddTransient<ITakecareComboServiceDetailRepo, TakecareComboServiceDetailRepo>();
 //Swagger
 builder.Services.AddSwaggerGen(c =>
 {

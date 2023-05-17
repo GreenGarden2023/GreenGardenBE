@@ -9,7 +9,7 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 
         public string Code { get; set; } = null!;
 
-        public Guid TakecareComboId { get; set; }
+        public TakecareComboServiceDetail? TakecareComboDetail { get; set; }
 
         public DateTime CreateDate { get; set; }
 
@@ -89,6 +89,16 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 
         public int? TreeQuantity { get; set; }
 
+    }
+    public class TakecareComboServiceDetail
+    {
+        public string? TakecareComboName { get; set; }
+
+        public double? TakecareComboPrice { get; set; }
+
+        public string? TakecareComboDescription { get; set; }
+
+        public string? TakecareComboGuarantee { get; set; }
     }
 }
 

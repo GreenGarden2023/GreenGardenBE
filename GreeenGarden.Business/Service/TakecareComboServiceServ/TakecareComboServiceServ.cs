@@ -9,6 +9,7 @@ using Newtonsoft.Json.Linq;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.TakecareComboRepo;
+using GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo;
 
 namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 {
@@ -17,13 +18,15 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         public readonly ITakecareComboServiceRepo _takecareComboServiceRepo;
         private readonly ITakecareComboRepo _takecareComboRepo;
         public readonly IUserRepo _userRepo;
+        private readonly ITakecareComboServiceDetailRepo _takecareComboServiceDetailRepo;
         private readonly DecodeToken _decodeToken;
-        public TakecareComboServiceServ(ITakecareComboServiceRepo takecareComboServiceRepo, IUserRepo userRepo, ITakecareComboRepo takecareComboRepo)
+        public TakecareComboServiceServ(ITakecareComboServiceRepo takecareComboServiceRepo, IUserRepo userRepo, ITakecareComboRepo takecareComboRepo, ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo)
 		{
             _takecareComboServiceRepo = takecareComboServiceRepo;
             _decodeToken = new DecodeToken();
             _takecareComboRepo = takecareComboRepo;
             _userRepo = userRepo;
+            _takecareComboServiceDetailRepo = takecareComboServiceDetailRepo;
         }
 
         public async Task<ResultModel> AssignTechnicianTakecareComboService(TakecareComboServiceAssignTechModel takecareComboServiceAssignTechModel, string token)
@@ -54,11 +57,13 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     if (assign == true)
                     {
                         TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
+                        TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+
                         TakecareComboServiceModel returnModel = new()
                         {
                             Id = tblTakecareComboServiceGet.Id,
                             Code = tblTakecareComboServiceGet.Code,
-                            TakecareComboId = tblTakecareComboServiceGet.TakecareComboId,
+                            TakecareComboDetail = takecareComboServiceDetailGet,
                             CreateDate = tblTakecareComboServiceGet.CreateDate,
                             StartDate = tblTakecareComboServiceGet.StartDate,
                             EndDate = tblTakecareComboServiceGet.EndDate,
@@ -68,7 +73,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                             Address = tblTakecareComboServiceGet.Address,
                             UserId = tblTakecareComboServiceGet.UserId,
                             TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
-                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "Not yet assign.",
+                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                             TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
                             Status = tblTakecareComboServiceGet.Status,
                         };
@@ -134,11 +139,13 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     if (change == true)
                     {
                         TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
+                        TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+
                         TakecareComboServiceModel returnModel = new()
                         {
                             Id = tblTakecareComboServiceGet.Id,
                             Code = tblTakecareComboServiceGet.Code,
-                            TakecareComboId = tblTakecareComboServiceGet.TakecareComboId,
+                            TakecareComboDetail = takecareComboServiceDetailGet,
                             CreateDate = tblTakecareComboServiceGet.CreateDate,
                             StartDate = tblTakecareComboServiceGet.StartDate,
                             EndDate = tblTakecareComboServiceGet.EndDate,
@@ -148,7 +155,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                             Address = tblTakecareComboServiceGet.Address,
                             UserId = tblTakecareComboServiceGet.UserId,
                             TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
-                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "Not yet assign.",
+                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                             TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
                             Status = tblTakecareComboServiceGet.Status,
                         };
@@ -223,12 +230,24 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 Guid insert = await _takecareComboServiceRepo.Insert(tblTakecareComboService);
                 if (insert != Guid.Empty)
                 {
+                    TblTakecareCombo tblTakecareCombo = await _takecareComboRepo.Get(tblTakecareComboService.TakecareComboId);
+                    TblTakecareComboServiceDetail takecareComboServiceDetail = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        TakecareComboServiceId = tblTakecareComboService.Id,
+                        TakecareComboName = tblTakecareCombo.Name,
+                        TakecareComboDescription = tblTakecareCombo.Description,
+                        TakecareComboGuarantee = tblTakecareCombo.Guarantee,
+                        TakecareComboPrice = tblTakecareCombo.Price
+                    };
+                    Guid insertDetail = await _takecareComboServiceDetailRepo.Insert(takecareComboServiceDetail);
                     TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
+                    TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
                     TakecareComboServiceModel returnModel = new()
                     {
                         Id = tblTakecareComboServiceGet.Id,
                         Code = tblTakecareComboServiceGet.Code,
-                        TakecareComboId = tblTakecareComboServiceGet.TakecareComboId,
+                        TakecareComboDetail = takecareComboServiceDetailGet,
                         CreateDate = tblTakecareComboServiceGet.CreateDate,
                         StartDate = tblTakecareComboServiceGet.StartDate,
                         EndDate = tblTakecareComboServiceGet.EndDate,
@@ -238,7 +257,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         Address = tblTakecareComboServiceGet.Address,
                         UserId = tblTakecareComboServiceGet.UserId,
                         TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
-                        TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "Not yet assign.",
+                        TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                         TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
                         Status = tblTakecareComboServiceGet.Status,
                     };
@@ -280,11 +299,12 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 List<TakecareComboServiceModel> resList = new List<TakecareComboServiceModel>();
                 foreach (var item in getList)
                 {
+                    TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
                     TakecareComboServiceModel returnModel = new()
                     {
                         Id = item.Id,
                         Code = item.Code,
-                        TakecareComboId = item.TakecareComboId,
+                        TakecareComboDetail = takecareComboServiceDetailGet,
                         CreateDate = item.CreateDate,
                         StartDate = item.StartDate,
                         EndDate = item.EndDate,
@@ -294,7 +314,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         Address = item.Address,
                         UserId = item.UserId,
                         TechnicianId = item.TechnicianId ?? Guid.Empty,
-                        TechnicianName = item.TechnicianName ?? "Not yet assign.",
+                        TechnicianName = item.TechnicianName ?? "",
                         TreeQuantity = item.TreeQuantity,
                         Status = item.Status,
                     };
@@ -328,13 +348,15 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     return result;
                 }
                 TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(takecareComboServiceId);
+                TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+
                 if (tblTakecareComboServiceGet != null)
                 {
                     TakecareComboServiceModel returnModel = new()
                     {
                         Id = tblTakecareComboServiceGet.Id,
                         Code = tblTakecareComboServiceGet.Code,
-                        TakecareComboId = tblTakecareComboServiceGet.TakecareComboId,
+                        TakecareComboDetail = takecareComboServiceDetailGet,
                         CreateDate = tblTakecareComboServiceGet.CreateDate,
                         StartDate = tblTakecareComboServiceGet.StartDate,
                         EndDate = tblTakecareComboServiceGet.EndDate,
@@ -344,7 +366,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         Address = tblTakecareComboServiceGet.Address,
                         UserId = tblTakecareComboServiceGet.UserId,
                         TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
-                        TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "Not yet assign.",
+                        TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                         TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
                         Status = tblTakecareComboServiceGet.Status,
                     };
@@ -405,11 +427,12 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     if (update == true)
                     {
                         TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
-                        TakecareComboServiceModel returnModel = new()
+                    TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+                    TakecareComboServiceModel returnModel = new()
                         {
                             Id = tblTakecareComboServiceGet.Id,
                             Code = tblTakecareComboServiceGet.Code,
-                            TakecareComboId = tblTakecareComboServiceGet.TakecareComboId,
+                            TakecareComboDetail = takecareComboServiceDetailGet,
                             CreateDate = tblTakecareComboServiceGet.CreateDate,
                             StartDate = tblTakecareComboServiceGet.StartDate,
                             EndDate = tblTakecareComboServiceGet.EndDate,
@@ -419,7 +442,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                             Address = tblTakecareComboServiceGet.Address,
                             UserId = tblTakecareComboServiceGet.UserId,
                             TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
-                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "Not yet assign.",
+                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                             TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
                             Status = tblTakecareComboServiceGet.Status,
                         };
