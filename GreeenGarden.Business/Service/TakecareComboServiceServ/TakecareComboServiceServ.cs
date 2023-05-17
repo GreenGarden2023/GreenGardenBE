@@ -200,6 +200,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
                 TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                 DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                var test1 = DateTime.ParseExact(takecareComboServiceInsertModel.StartDate, "dd/MM/yyyy", null);
+                var test2 = DateTime.ParseExact(takecareComboServiceInsertModel.StartDate, "dd/MM/yyyy", null).AddMonths(takecareComboServiceInsertModel.NumOfMonth);
                 TblTakecareComboService tblTakecareComboService = new()
                 {
                     Id = Guid.NewGuid(),
