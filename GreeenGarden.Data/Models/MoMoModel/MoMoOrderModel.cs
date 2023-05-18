@@ -18,5 +18,16 @@
         public string? OrderType { get; set; }
         public string? PaymentType { get; set; }
     }
+    public class TakecareComboOrderDepositPaymentModel
+    {
+        public Guid OrderId { get; set; }
+        public string PaymentMethod { get; set; }
+    }
+    public class TakecareComboOrderPaymentModel
+    {
+        public Guid OrderId { get; set; }
+        public string PaymentMethod { get; set; }
+        public string PaymentType { get; set; }
+    }
 }
 

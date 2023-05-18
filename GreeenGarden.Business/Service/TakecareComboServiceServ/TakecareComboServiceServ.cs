@@ -59,7 +59,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
                         TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
 
-                        TakecareComboServiceModel returnModel = new()
+                        TakecareComboServiceViewModel returnModel = new()
                         {
                             Id = tblTakecareComboServiceGet.Id,
                             Code = tblTakecareComboServiceGet.Code,
@@ -143,7 +143,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
                         TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
 
-                        TakecareComboServiceModel returnModel = new()
+                        TakecareComboServiceViewModel returnModel = new()
                         {
                             Id = tblTakecareComboServiceGet.Id,
                             Code = tblTakecareComboServiceGet.Code,
@@ -248,7 +248,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     Guid insertDetail = await _takecareComboServiceDetailRepo.Insert(takecareComboServiceDetail);
                     TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
-                    TakecareComboServiceModel returnModel = new()
+                    TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = tblTakecareComboServiceGet.Id,
                         Code = tblTakecareComboServiceGet.Code,
@@ -303,11 +303,11 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     return result;
                 }
                 List<TblTakecareComboService> getList = await _takecareComboServiceRepo.GetAllTakecareComboService(status);
-                List<TakecareComboServiceModel> resList = new List<TakecareComboServiceModel>();
+                List<TakecareComboServiceViewModel> resList = new List<TakecareComboServiceViewModel>();
                 foreach (var item in getList)
                 {
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
-                    TakecareComboServiceModel returnModel = new()
+                    TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = item.Id,
                         Code = item.Code,
@@ -361,7 +361,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 
                 if (tblTakecareComboServiceGet != null)
                 {
-                    TakecareComboServiceModel returnModel = new()
+                    TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = tblTakecareComboServiceGet.Id,
                         Code = tblTakecareComboServiceGet.Code,
@@ -439,7 +439,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     {
                         TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
-                    TakecareComboServiceModel returnModel = new()
+                    TakecareComboServiceViewModel returnModel = new()
                         {
                             Id = tblTakecareComboServiceGet.Id,
                             Code = tblTakecareComboServiceGet.Code,

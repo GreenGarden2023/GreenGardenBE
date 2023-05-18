@@ -1155,5 +1155,45 @@ namespace GreeenGarden.Business.Service.PaymentService
 
             }
         }
+
+        public Task<ResultModel> TakecareComboOrderDepositPaymentCash(Guid orderID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultModel> TakecareComboOrderDepositPaymentMoMo(Guid orderID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultModel> TakecareComboOrderPaymentCash(Guid orderID, double amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultModel> TakecareComboOrderPaymentMoMo(Guid orderID, double amount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultModel> TakecareComboOrderWholePaymentCash(Guid orderID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ResultModel> TakecareComboOrderWholePaymentMoMo(Guid orderID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> ProcessTakecareComboOrderDepositPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> ProcessTakecareComboOrderPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

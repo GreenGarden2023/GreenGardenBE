@@ -18,5 +18,18 @@ namespace GreeenGarden.Business.Service.PaymentService
         Task<ResultModel> OrderPaymentCash(MoMoPaymentModel moMoPaymentModel);
 
         Task<ResultModel> WholeOrderPaymentCash(MoMoPaymentModel moMoPaymentModel);
+
+        //--Takecare combo order--//
+        Task<ResultModel> TakecareComboOrderDepositPaymentCash(Guid orderID);
+        Task<ResultModel> TakecareComboOrderDepositPaymentMoMo(Guid orderID);
+
+        Task<ResultModel> TakecareComboOrderPaymentCash(Guid orderID, double amount);
+        Task<ResultModel> TakecareComboOrderPaymentMoMo(Guid orderID, double amount);
+
+        Task<ResultModel> TakecareComboOrderWholePaymentCash(Guid orderID);
+        Task<ResultModel> TakecareComboOrderWholePaymentMoMo(Guid orderID);
+
+        Task<bool> ProcessTakecareComboOrderDepositPaymentMoMo(MoMoResponseModel moMoResponseModel);
+        Task<bool> ProcessTakecareComboOrderPaymentMoMo(MoMoResponseModel moMoResponseModel);
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System;
-using GreeenGarden.Data.Entities;
-
 namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 {
-	public class TakecareComboServiceModel
+	public class TakecareComboServiceViewModel
 	{
         public Guid Id { get; set; }
 
