@@ -702,13 +702,19 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.TakecareComboDescription).HasMaxLength(4000);
             entity.Property(e => e.TakecareComboGuarantee).HasMaxLength(2000);
+            entity.Property(e => e.TakecareComboId).HasColumnName("TakecareComboID");
             entity.Property(e => e.TakecareComboName).HasMaxLength(500);
             entity.Property(e => e.TakecareComboServiceId).HasColumnName("TakecareComboServiceID");
+
+            entity.HasOne(d => d.TakecareCombo).WithMany(p => p.TblTakecareComboServiceDetails)
+                .HasForeignKey(d => d.TakecareComboId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblTakecareComboServiceDetail_tblTakecareCombo");
 
             entity.HasOne(d => d.TakecareComboService).WithMany(p => p.TblTakecareComboServiceDetails)
                 .HasForeignKey(d => d.TakecareComboServiceId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_tblTakecareComboServiceDetail_tblTakecareCombo");
+                .HasConstraintName("FK_tblTakecareComboServiceDetail_tblTakecareComboService");
         });
 
         modelBuilder.Entity<TblTransaction>(entity =>

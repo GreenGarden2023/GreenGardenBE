@@ -33,6 +33,10 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 
         public int TreeQuantity { get; set; }
 
+        public bool IsAtShop { get; set; }
+
+        public int NumOfMonths { get; set; }
+
         public string Status { get; set; } = null!;
     }
     public class TakecareComboServiceInsertModel
@@ -92,6 +96,8 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
     }
     public class TakecareComboServiceDetail
     {
+        public Guid? TakecareComboID { get; set; }
+
         public string? TakecareComboName { get; set; }
 
         public double? TakecareComboPrice { get; set; }

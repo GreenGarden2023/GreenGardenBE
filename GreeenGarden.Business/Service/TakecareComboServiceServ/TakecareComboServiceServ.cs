@@ -75,6 +75,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                             TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
                             TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                             TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                            IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                            NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                             Status = tblTakecareComboServiceGet.Status,
                         };
                         result.Code = 200;
@@ -157,6 +159,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                             TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
                             TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                             TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                            IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                            NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                             Status = tblTakecareComboServiceGet.Status,
                         };
                         result.Code = 200;
@@ -235,6 +239,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     {
                         Id = Guid.NewGuid(),
                         TakecareComboServiceId = tblTakecareComboService.Id,
+                        TakecareComboId = takecareComboServiceInsertModel.TakecareComboId,
                         TakecareComboName = tblTakecareCombo.Name,
                         TakecareComboDescription = tblTakecareCombo.Description,
                         TakecareComboGuarantee = tblTakecareCombo.Guarantee,
@@ -259,6 +264,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
                         TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                         TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                        IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                        NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                         Status = tblTakecareComboServiceGet.Status,
                     };
                     result.IsSuccess = true;
@@ -316,6 +323,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         TechnicianId = item.TechnicianId ?? Guid.Empty,
                         TechnicianName = item.TechnicianName ?? "",
                         TreeQuantity = item.TreeQuantity,
+                        IsAtShop = (bool)item.IsAtShop,
+                        NumOfMonths = item.NumberOfMonths,
                         Status = item.Status,
                     };
                     resList.Add(returnModel);
@@ -368,6 +377,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
                         TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                         TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                        IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                        NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                         Status = tblTakecareComboServiceGet.Status,
                     };
                     result.IsSuccess = true;
@@ -444,6 +455,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                             TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
                             TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
                             TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                            IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                            NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                             Status = tblTakecareComboServiceGet.Status,
                         };
                         result.Code = 200;
