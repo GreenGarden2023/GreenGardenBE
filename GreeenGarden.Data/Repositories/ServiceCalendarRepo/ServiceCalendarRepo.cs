@@ -84,7 +84,7 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
             {
                 Id = x.sc.Id,
                 ServiceOrderId = x.so.Id,
-                TechnicianId = x.so.TechnicianId,
+                TechnicianId = (Guid)x.so.TechnicianId,
                 ServiceDate = x.sc.ServiceDate,
                 NextServiceDate = x.sc.NextServiceDate,
                 Sumary = x.sc.Sumary,

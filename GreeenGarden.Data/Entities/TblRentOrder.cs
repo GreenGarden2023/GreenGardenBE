@@ -53,6 +53,8 @@ public partial class TblRentOrder
 
     public string? ContractUrl { get; set; }
 
+    public string? CareGuideUrl { get; set; }
+
     public virtual TblUser? CreatedByNavigation { get; set; }
 
     public virtual TblDistrict? RecipientDistrictNavigation { get; set; }

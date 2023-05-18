@@ -43,6 +43,8 @@ public partial class TblSaleOrder
 
     public Guid? CancelBy { get; set; }
 
+    public string? CareGuideUrl { get; set; }
+
     public virtual TblDistrict? RecipientDistrictNavigation { get; set; }
 
     public virtual ICollection<TblSaleOrderDetail> TblSaleOrderDetails { get; } = new List<TblSaleOrderDetail>();

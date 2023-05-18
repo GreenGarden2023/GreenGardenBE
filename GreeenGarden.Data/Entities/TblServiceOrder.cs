@@ -27,7 +27,7 @@ public partial class TblServiceOrder
 
     public int? RewardPointUsed { get; set; }
 
-    public Guid TechnicianId { get; set; }
+    public Guid? TechnicianId { get; set; }
 
     public Guid ServiceId { get; set; }
 
@@ -40,6 +40,8 @@ public partial class TblServiceOrder
     public string? Description { get; set; }
 
     public Guid? CancelBy { get; set; }
+
+    public string? CareGuideUrl { get; set; }
 
     public virtual TblService Service { get; set; } = null!;
 

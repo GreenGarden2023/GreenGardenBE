@@ -245,6 +245,40 @@ namespace GreeenGarden.Data.Repositories.RentOrderRepo
                 return result;
             }
         }
+
+        public async Task<bool> checkCodeDup(string code, int flag)
+        {
+            var check = false;
+            if (flag == 1)
+            {
+                var result = await _context.TblSaleOrders.Where(x => x.OrderCode.Equals(code)).FirstOrDefaultAsync();
+                if (result != null) return true;
+            }
+            if (flag == 2)
+            {
+                var result = await _context.TblRentOrders.Where(x => x.OrderCode.Equals(code)).FirstOrDefaultAsync();
+                if (result != null) return true;
+            }
+            if (flag == 3)
+            {
+                var result = await _context.TblServiceOrders.Where(x => x.OrderCode.Equals(code)).FirstOrDefaultAsync();
+                if (result != null) return true;
+            }
+            return check;
+        }
+
+        public async Task<bool> UpdateRentOrderCareGuideUrl(Guid rentOrderID, string careGuideURL)
+        {
+            var order = await _context.TblRentOrders.Where(x=>x.Id.Equals(rentOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                order.CareGuideUrl = careGuideURL;
+                _context.TblRentOrders.Update(order);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
     }
 }
 
