@@ -40,6 +40,7 @@ using Microsoft.IdentityModel.Tokens;
 using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Data.Models.CartModel;
+using GreeenGarden.Data.Repositories.UserTreeRepo;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -66,6 +67,7 @@ namespace GreeenGarden.Business.Service.OrderService
         private readonly IServiceCalendarRepo _serCalendarRepo;
         private readonly IImageService _imageService;
         private readonly IEMailService _eMailService;
+        private readonly IUserTreeRepo _userTreeRepo;
         public OrderService(IRentOrderGroupRepo rentOrderGroupRepo,
             IServiceRepo serviceRepo,
             IServiceDetailRepo serviceDetailRepo,
@@ -85,7 +87,8 @@ namespace GreeenGarden.Business.Service.OrderService
             IServiceCalendarRepo serCalendarRepo,
             IUserRepo userRepo,
             IImageService imageService,
-            IEMailService eMailService
+            IEMailService eMailService,
+            IUserTreeRepo userTreeRepo
             )
         {
             _decodeToken = new DecodeToken();
@@ -109,6 +112,7 @@ namespace GreeenGarden.Business.Service.OrderService
             _serCalendarRepo = serCalendarRepo;
             _imageService = imageService;
             _eMailService = eMailService;
+            _userTreeRepo = userTreeRepo;
         }
 
         public async Task<ResultModel> UpdateRentOrderStatus(string token, Guid rentOrderID, string status)
@@ -191,6 +195,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RecipientDistrict = rentOrder.RecipientDistrict,
                             RecipientName = rentOrder.RecipientName,
                             ContractURL = rentOrder.ContractUrl,
+                            CareGuideURL = rentOrder.CareGuideUrl,
                             RecipientPhone = rentOrder.RecipientPhone,
                             RentOrderDetailList = rentOrderDetailResModels,
                             Reason = rentOrder.Description,
@@ -293,6 +298,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RecipientAddress = saleOrder.RecipientAddress,
                         RecipientDistrict = saleOrder.RecipientDistrict,
                         RecipientName = saleOrder.RecipientName,
+                        CareGuideURL = saleOrder.CareGuideUrl,
                         RecipientPhone = saleOrder.RecipientPhone,
                         RentOrderDetailList = saleOrderDetailResModels,
                         Reason = saleOrder.Description,
@@ -587,6 +593,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     RecipientAddress = tblRentOrder.RecipientAddress,
                     RecipientDistrict = tblRentOrder.RecipientDistrict,
                     RecipientName = tblRentOrder.RecipientName,
+                    CareGuideURL = tblRentOrder.CareGuideUrl,
                     ContractURL = tblRentOrder.ContractUrl,
                     RecipientPhone = tblRentOrder.RecipientPhone,
                     OrderCode = tblRentOrder.OrderCode,
@@ -786,6 +793,17 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Message = "Create sale order failed.";
                     return result;
                 }
+
+
+                TblUser tblUser = await _userRepo.Get(Guid.Parse(userID));
+                ResultModel resultCareGuideGen = await GenerateCareGuidePDF(tblSaleOrder.Id, 2);
+                FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
+                _ = await _eMailService.SendEmailCareGuide(tblUser.Mail, tblSaleOrder.Id, fileCareGuide, 2);
+
+
+                ResultModel careGuideURLResult = await _imageService.UploadAPDF(fileCareGuide);
+                _ = await _saleOrderRepo.UpdateSaleOrderCareGuideURL(tblSaleOrder.Id, careGuideURLResult.Data.ToString());
+
                 List<SaleOrderDetailResModel> rentOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(tblSaleOrder.Id);
                 string userCancelBy = null;
                 try
@@ -812,6 +830,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     DiscountAmount = tblSaleOrder.DiscountAmount,
                     RecipientAddress = tblSaleOrder.RecipientAddress,
                     RecipientDistrict = tblSaleOrder.RecipientDistrict,
+                    CareGuideURL = tblSaleOrder.CareGuideUrl,
                     RecipientName = tblSaleOrder.RecipientName,
                     RecipientPhone = tblSaleOrder.RecipientPhone,
                     OrderCode = tblSaleOrder.OrderCode,
@@ -823,10 +842,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 _ = await _cartService.CleanSaleCart(token);
 
 
-                TblUser tblUser = await _userRepo.Get(Guid.Parse(userID));
-                ResultModel resultCareGuideGen = await GenerateCareGuidePDF(tblSaleOrder.Id, 2);
-                FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
-                _ = await _eMailService.SendEmailCareGuide(tblUser.Mail, tblSaleOrder.Id, fileCareGuide, 2);
+
 
                 result.IsSuccess = true;
                 result.Code = 200;
@@ -905,6 +921,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         DiscountAmount = tblRentOrder.DiscountAmount,
                         RecipientAddress = tblRentOrder.RecipientAddress,
                         RecipientDistrict = tblRentOrder.RecipientDistrict,
+                        CareGuideURL = tblRentOrder.CareGuideUrl,
                         RecipientName = tblRentOrder.RecipientName,
                         ContractURL = tblRentOrder.ContractUrl,
                         RecipientPhone = tblRentOrder.RecipientPhone,
@@ -1013,6 +1030,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RentOrderGroupID = order.RentOrderGroupId,
                                     DiscountAmount = order.DiscountAmount,
                                     RecipientAddress = order.RecipientAddress,
+                                    CareGuideURL = order.CareGuideUrl,
                                     RecipientDistrict = order.RecipientDistrict,
                                     RecipientName = order.RecipientName,
                                     ContractURL = order.ContractUrl,
@@ -1136,6 +1154,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointUsed = tblSaleOrder.RewardPointUsed,
                         DiscountAmount = tblSaleOrder.DiscountAmount,
                         RecipientAddress = tblSaleOrder.RecipientAddress,
+                        CareGuideURL = tblSaleOrder.CareGuideUrl,
                         RecipientDistrict = tblSaleOrder.RecipientDistrict,
                         RecipientName = tblSaleOrder.RecipientName,
                         RecipientPhone = tblSaleOrder.RecipientPhone,
@@ -1232,6 +1251,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RewardPointGain = order.RewardPointGain,
                             RewardPointUsed = order.RewardPointUsed,
                             DiscountAmount = order.DiscountAmount,
+                            CareGuideURL = order.CareGuideUrl,
                             RecipientAddress = order.RecipientAddress,
                             RecipientDistrict = order.RecipientDistrict,
                             RecipientName = order.RecipientName,
@@ -1355,6 +1375,7 @@ namespace GreeenGarden.Business.Service.OrderService
                                     RewardPointUsed = order.RewardPointUsed,
                                     RentOrderGroupID = order.RentOrderGroupId,
                                     DiscountAmount = order.DiscountAmount,
+                                    CareGuideURL = order.CareGuideUrl,
                                     RecipientAddress = order.RecipientAddress,
                                     RecipientDistrict = order.RecipientDistrict,
                                     RecipientName = order.RecipientName,
@@ -1378,7 +1399,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             ID = tblRentGroup.Id,
                             NumberOfOrder = (int)tblRentGroup.NumberOfOrders,
                             TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount,
-                            CreateDate = (DateTime) tblRentGroup.CreateDate,
+                            CreateDate = (DateTime)tblRentGroup.CreateDate,
                             RentOrderList = resList
                         };
                         listGroup.Add(rentOrderGroupModel);
@@ -1481,6 +1502,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RemainMoney = order.RemainMoney,
                             RewardPointGain = order.RewardPointGain,
                             RewardPointUsed = order.RewardPointUsed,
+                            CareGuideURL = order.CareGuideUrl,
                             DiscountAmount = order.DiscountAmount,
                             RecipientAddress = order.RecipientAddress,
                             RecipientDistrict = order.RecipientDistrict,
@@ -1626,6 +1648,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RewardPointGain = order.RewardPointGain,
                             RewardPointUsed = order.RewardPointUsed,
                             RentOrderGroupID = order.RentOrderGroupId,
+                            CareGuideURL = order.CareGuideUrl,
                             DiscountAmount = order.DiscountAmount,
                             RecipientAddress = order.RecipientAddress,
                             RecipientDistrict = order.RecipientDistrict,
@@ -1978,6 +2001,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RemainMoney = tblRentOrder.RemainMoney,
                         RewardPointGain = tblRentOrder.RewardPointGain,
                         RewardPointUsed = tblRentOrder.RewardPointUsed,
+                        CareGuideURL = tblRentOrder.CareGuideUrl,
                         RentOrderGroupID = tblRentOrder.RentOrderGroupId,
                         DiscountAmount = tblRentOrder.DiscountAmount,
                         RecipientAddress = tblRentOrder.RecipientAddress,
@@ -2124,6 +2148,17 @@ namespace GreeenGarden.Business.Service.OrderService
                 _ = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.CONFIRMED);
                 if (insert != Guid.Empty)
                 {
+
+                    //
+                    TblUser tblUser = await _userRepo.Get(tblService.UserId);
+                    ResultModel resultCareGuideGen = await GenerateServiceCareGuidePDF(tblServiceOrder.Id);
+                    FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
+                    _ = await _eMailService.SendEmailServiceCareGuide(tblUser.Mail, tblServiceOrder.Id, fileCareGuide);
+
+
+                    ResultModel careGuideURLResult = await _imageService.UploadAPDF(fileCareGuide);
+                    _ = await _serviceOrderRepo.UpdateServiceOrderCareGuide(tblServiceOrder.Id, careGuideURLResult.Data.ToString());
+
                     TblServiceOrder tblServiceOrderGet = await _serviceOrderRepo.Get(tblServiceOrder.Id);
                     ServiceOrderCreateResModel resModel = new()
                     {
@@ -2141,7 +2176,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         ServiceID = tblServiceOrderGet.ServiceId,
                         UserID = tblServiceOrderGet.UserId,
                         TransportFee = (double)tblServiceOrderGet.TransportFee,
-
+                        CareGuideURL = tblServiceOrderGet.CareGuideUrl,
                         Status = tblServiceOrderGet.Status
                     };
                     result.Message = "Create service order success.";
@@ -2274,6 +2309,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
+                            CareGuide = order.CareGuideUrl,
                             CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
                             Reason = order.Description,
@@ -2376,14 +2412,14 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserId = resService.UserId,
                             DistrictID = resService.DistrictId,
                             IsTransport = resService.IsTransport,
-                            RewardPointUsed= resService.RewardPointUsed,
+                            RewardPointUsed = resService.RewardPointUsed,
                             TransportFee = resService.TransportFee,
                             ServiceOrderID = order.Id,
                             Rules = resService.Rules,
                             CreateDate = resService.CreateDate ?? DateTime.MinValue,
                             StartDate = resService.StartDate,
                             EndDate = resService.EndDate,
-                            UserCurrentPoint= userCurrentPoint,
+                            UserCurrentPoint = userCurrentPoint,
                             Name = resService.Name,
                             Phone = resService.Phone,
                             Email = resService.Email,
@@ -2434,6 +2470,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             TransportFee = (double)order.TransportFee,
                             CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
+                            CareGuide = order.CareGuideUrl,
                             Status = order.Status,
                             Reason = order.Description,
                             Service = serviceResModel
@@ -2584,6 +2621,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             UserID = order.UserId,
                             CancelBy = order.CancelBy,
                             NameCancelBy = userCancelBy,
+                            CareGuide = order.CareGuideUrl,
                             TransportFee = (double)order.TransportFee,
                             Status = order.Status,
                             Reason = order.Description,
@@ -2732,6 +2770,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         Technician = technicianRes,
                         CancelBy = order.CancelBy,
                         NameCancelBy = userCancelBy,
+                        CareGuide = order.CareGuideUrl,
                         UserID = order.UserId,
                         TransportFee = (double)order.TransportFee,
                         Status = order.Status,
@@ -2992,6 +3031,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         RewardPointUsed = (int)order.RewardPointUsed,
                         NameCancelBy = userCancelBy,
                         Technician = technicianRes,
+                        CareGuide = order.CareGuideUrl,
                         UserID = order.UserId,
                         TransportFee = (double)order.TransportFee,
                         Status = order.Status,
@@ -3094,6 +3134,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RemainMoney = tblRentOrder.RemainMoney,
                             RewardPointGain = tblRentOrder.RewardPointGain,
                             RewardPointUsed = tblRentOrder.RewardPointUsed,
+                            CareGuideURL = tblRentOrder.CareGuideUrl,
                             NameCancelBy = userCancelBy,
                             RentOrderGroupID = tblRentOrder.RentOrderGroupId,
                             DiscountAmount = tblRentOrder.DiscountAmount,
@@ -3114,8 +3155,8 @@ namespace GreeenGarden.Business.Service.OrderService
                         rentOrderGroupModel.ID = tblRentGroup.Id;
                         rentOrderGroupModel.NumberOfOrder = (int)tblRentGroup.NumberOfOrders;
                         rentOrderGroupModel.TotalGroupAmount = (double)tblRentGroup.GroupTotalAmount;
-                        if (tblRentGroup.CreateDate != null)  rentOrderGroupModel.CreateDate = (DateTime)tblRentGroup.CreateDate;
-                        if (tblRentGroup.CreateDate == null)  rentOrderGroupModel.CreateDate = new DateTime();
+                        if (tblRentGroup.CreateDate != null) rentOrderGroupModel.CreateDate = (DateTime)tblRentGroup.CreateDate;
+                        if (tblRentGroup.CreateDate == null) rentOrderGroupModel.CreateDate = new DateTime();
                         rentOrderGroupModel.RentOrderList = rentOrderList;
                         listRes.Add(rentOrderGroupModel);
                     }
@@ -3214,6 +3255,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RemainMoney = order.RemainMoney,
                             RewardPointGain = order.RewardPointGain,
                             RewardPointUsed = order.RewardPointUsed,
+                            CareGuideURL = order.CareGuideUrl,
                             DiscountAmount = order.DiscountAmount,
                             RecipientAddress = order.RecipientAddress,
                             RecipientDistrict = order.RecipientDistrict,
@@ -3367,6 +3409,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             DiscountAmount = (double)order.DiscountAmount,
                             RemainAmount = (double)order.RemainAmount,
                             RewardPointGain = (int)order.RewardPointGain,
+                            CareGuide = order.CareGuideUrl,
                             RewardPointUsed = (int)order.RewardPointUsed,
                             Technician = technicianRes,
                             UserID = order.UserId,
@@ -3509,6 +3552,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             Status = tblRentOrder.Status,
                             NameCancelBy = userCancelBy,
                             RemainMoney = tblRentOrder.RemainMoney,
+                            CareGuideURL = tblRentOrder.CareGuideUrl,
                             RewardPointGain = tblRentOrder.RewardPointGain,
                             RewardPointUsed = tblRentOrder.RewardPointUsed,
                             RentOrderGroupID = tblRentOrder.RentOrderGroupId,
@@ -3877,6 +3921,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             Deposit = order.Deposit,
                             TotalPrice = order.TotalPrice,
                             Status = order.Status,
+                            CareGuideURL = order.CareGuideUrl,
                             RemainMoney = order.RemainMoney,
                             RewardPointGain = order.RewardPointGain,
                             RewardPointUsed = order.RewardPointUsed,
@@ -3898,7 +3943,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     }
                 }
 
-                var resListSortDate = resList.OrderBy(x=>x.CreateDate).ToList();
+                var resListSortDate = resList.OrderBy(x => x.CreateDate).ToList();
 
                 RentOrderGroupModel rentOrderGroupModel = new()
                 {
@@ -4054,6 +4099,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             RewardPointGain = (int)order.RewardPointGain,
                             RewardPointUsed = (int)order.RewardPointUsed,
                             Technician = technicianRes,
+                            CareGuide = order.CareGuideUrl,
                             UserID = order.UserId,
                             TransportFee = (double)order.TransportFee,
                             CancelBy = order.CancelBy,
@@ -4212,6 +4258,7 @@ namespace GreeenGarden.Business.Service.OrderService
                             DiscountAmount = (double)order.DiscountAmount,
                             RemainAmount = (double)order.RemainAmount,
                             RewardPointGain = (int)order.RewardPointGain,
+                            CareGuide = order.CareGuideUrl,
                             RewardPointUsed = (int)order.RewardPointUsed,
                             Technician = technicianRes,
                             UserID = order.UserId,
@@ -4279,7 +4326,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         result.Message = "OrderID invalid.";
                         return result;
                     }
-                    itemDetails =  await _productItemDetailRepo.GetItemDetailsByRentOrderID(orderCode);
+                    itemDetails = await _productItemDetailRepo.GetItemDetailsByRentOrderID(orderCode);
                     productItems = await _productItemRepo.GetItemsByItemDetail(itemDetails);
                 }
                 if (flag == 2)
@@ -4298,8 +4345,8 @@ namespace GreeenGarden.Business.Service.OrderService
 
                 var document = new PdfDocument();
                 string htmlContent = "";
-                htmlContent += "<html>";  
-                htmlContent += "<body>";  
+                htmlContent += "<html>";
+                htmlContent += "<body>";
                 htmlContent += "<div style='width:100%; font: bold'>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN CHĂM SÓC CÂY </h2>";
 
@@ -4308,7 +4355,7 @@ namespace GreeenGarden.Business.Service.OrderService
                 {
                     if (!String.IsNullOrEmpty(productItem.CareGuide))
                     {
-                        htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + productItem.Name+"</h3>";
+                        htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + productItem.Name + "</h3>";
 
 
                         string a = productItem.CareGuide;
@@ -4463,6 +4510,78 @@ namespace GreeenGarden.Business.Service.OrderService
                     result.Data = "Update fail";
                 }
 
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GenerateServiceCareGuidePDF(Guid orderCode)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var tblServiceOrder = await _serviceOrderRepo.Get(orderCode);
+                if (tblServiceOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "OrderID invalid.";
+                    return result;
+                }
+                var service = await _serviceRepo.GetServiceByServiceOrderID(orderCode);
+                var serviceDetails = await _serviceDetailRepo.GetServiceDetailsByServiceID(service.Id);
+
+
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN CHĂM SÓC CÂY </h2>";
+
+                int count = 1;
+                foreach (var serviceDetail in serviceDetails)
+                {
+                    if (!String.IsNullOrEmpty(serviceDetail.CareGuide))
+                    {
+                        var userTree = await _userTreeRepo.Get((Guid)serviceDetail.UserTreeId);
+
+                        htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + userTree.TreeName + "</h3>";
+
+
+                        string a = serviceDetail.CareGuide;
+                        List<string> splitted = a.Split('.').ToList();
+
+                        foreach (string b in splitted)
+                        {
+                            if (!b.Equals(splitted.Last()))
+                            {
+                                htmlContent += "<p>-" + b + ".</p>";
+                            }
+
+                        }
+                    }
+                    count++;
+                }
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
+
+                PdfGenerator.AddPdfPages(document, htmlContent, PageSize.A4);
+                byte[]? response = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    document.Save(ms);
+                    response = ms.ToArray();
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = new FileData(response, "application/pdf", Guid.NewGuid().ToString() + ".pdf");
+                result.Message = "Generate PDF successful.";
             }
             catch (Exception e)
             {

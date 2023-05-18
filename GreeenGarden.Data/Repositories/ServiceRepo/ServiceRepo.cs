@@ -1,4 +1,5 @@
-﻿using EntityFrameworkPaginateCore;
+﻿using Azure.Storage.Blobs.Models;
+using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
@@ -161,6 +162,16 @@ namespace GreeenGarden.Data.Repositories.ServiceRepo
         public async Task<TblService> GetServiceByServiceCode(ServiceSearchByCodeModel model)
         {
             return await _context.TblServices.Where(x => x.TechnicianId.Equals(model.TechnicianID) && x.ServiceCode.Equals(model.ServiceCode)).FirstOrDefaultAsync(); ;
+        }
+
+        public async Task<TblService> GetServiceByServiceOrderID(Guid serviceOrderID)
+        {
+            var serviceOrder = await _context.TblServiceOrders.Where(x=>x.Id.Equals(serviceOrderID) && x.Status != Status.CANCEL).FirstOrDefaultAsync();
+            if (serviceOrder != null)
+            {
+                return await _context.TblServices.Where(x => x.Id.Equals(serviceOrder.ServiceId)).FirstOrDefaultAsync();
+            }
+            return null;
         }
 
         public async Task<bool> UpdateService(TblService entity)

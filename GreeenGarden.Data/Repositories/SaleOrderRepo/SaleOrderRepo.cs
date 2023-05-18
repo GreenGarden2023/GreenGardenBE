@@ -6,6 +6,7 @@ using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.RewardRepo;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 
@@ -205,6 +206,19 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
             _context.TblSaleOrders.Update(entity); 
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<bool> UpdateSaleOrderCareGuideURL(Guid saleOrderID, string careGudieUrl)
+        {
+            var order = await _context.TblSaleOrders.Where(x=>x.Id.Equals(saleOrderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                order.CareGuideUrl= careGudieUrl;
+                _context.TblSaleOrders.Update(order);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
         }
     }
 }

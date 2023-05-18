@@ -92,6 +92,11 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
 
         }
 
+        public async Task<List<TblServiceDetail>> GetServiceDetailsByServiceID(Guid serviceID)
+        {
+            return await _context.TblServiceDetails.Where(x => x.ServiceId.Equals(serviceID)).ToListAsync();
+        }
+
         public async Task<bool> UpdateCareGuideByUserTree(UpdateCareGuideByTechnModel model)
         {
             try

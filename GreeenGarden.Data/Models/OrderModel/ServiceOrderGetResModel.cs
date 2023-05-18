@@ -33,6 +33,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public double TransportFee { get; set; }
 
         public string? Status { get; set; }
+        public string? CareGuide { get; set; }
         public string? Reason { get; set; }
         public Guid? CancelBy { get; set; }
         public string? NameCancelBy { get; set; } =null;

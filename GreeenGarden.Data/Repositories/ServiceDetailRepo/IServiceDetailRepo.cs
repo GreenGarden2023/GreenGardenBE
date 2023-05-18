@@ -11,6 +11,7 @@ namespace GreeenGarden.Data.Repositories.ServiceDetailRepo
         Task<ServiceDetailResModel> GetServiceDetailByID(Guid serviceDetailID);
         Task<bool> UpdateServiceDetailManager(ServiceDetailUpdateModelManager serviceDetail);
         Task<bool> UpdateCareGuideByUserTree(UpdateCareGuideByTechnModel model);
+        Task<List<TblServiceDetail>> GetServiceDetailsByServiceID(Guid serviceID);
 
     }
 }

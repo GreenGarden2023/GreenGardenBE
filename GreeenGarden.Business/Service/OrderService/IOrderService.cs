@@ -42,6 +42,7 @@ namespace GreeenGarden.Business.Service.OrderService
         Task<ResultModel> UpdateCareGuideByTechnician(string token, UpdateCareGuideByTechnModel model);
         Task<ResultModel> GeneratePDF(Guid orderCode);
         Task<ResultModel> GenerateCareGuidePDF(Guid orderCode, int flag);
+        Task<ResultModel> GenerateServiceCareGuidePDF(Guid orderCode);
         Task<ResultModel> GenerateCareGuidePDFForService(List<ServiceDetailResModel> listItem);
 
     }

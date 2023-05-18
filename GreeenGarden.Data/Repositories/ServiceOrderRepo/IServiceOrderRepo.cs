@@ -21,6 +21,7 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
         Task<Page<TblServiceOrder>> GetServiceOrderByTechnicianToday(PaginationRequestModel paginationRequestModel, Guid technicianID, string? status, bool nextDate);
         Task<TblServiceOrder> GetServiceOrderByServiceID(Guid serviceId);
         Task<bool> UpdateServiceOrder(TblServiceOrder entity);
+        Task<bool> UpdateServiceOrderCareGuide(Guid orderID, string careGuideURL);
         Task<bool> CompleteServiceOrder(Guid serviceOrderID);
     }
 }

@@ -273,6 +273,19 @@ namespace GreeenGarden.Data.Repositories.ServiceOrderRepo
 
             return result;
         }
+
+        public async Task<bool> UpdateServiceOrderCareGuide(Guid orderID, string careGuideURL)
+        {
+            var order = await _context.TblServiceOrders.Where(x=>x.Id.Equals(orderID)).FirstOrDefaultAsync();
+            if (order != null)
+            {
+                order.CareGuideUrl = careGuideURL;
+                _context.TblServiceOrders.Update(order); 
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
     }
 }
 

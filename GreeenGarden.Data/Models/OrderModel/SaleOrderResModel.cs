@@ -35,6 +35,7 @@ namespace GreeenGarden.Data.Models.OrderModel
         public string? RecipientPhone { get; set; }
 
         public string? RecipientName { get; set; }
+        public string? CareGuideURL { get; set; }
 
         public string? OrderCode { get; set; }
         public string? Reason { get; set; }
