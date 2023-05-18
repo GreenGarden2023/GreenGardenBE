@@ -129,7 +129,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
                 
                     if (takecareComboServiceUpdateModel.StartDate!= null && takecareComboServiceUpdateModel.NumOfMonth == null)
                     {
-                        tblTakecareComboService.StartDate = DateTime.Parse(takecareComboServiceUpdateModel.StartDate);
+                        tblTakecareComboService.StartDate = DateTime.ParseExact(takecareComboServiceUpdateModel.StartDate, "dd/MM/yyyy", null);
                         tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
 
                     }
@@ -140,7 +140,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
 
                     }else if (takecareComboServiceUpdateModel.StartDate != null && takecareComboServiceUpdateModel.NumOfMonth != null)
                     {
-                        tblTakecareComboService.StartDate = DateTime.Parse(takecareComboServiceUpdateModel.StartDate);
+                        tblTakecareComboService.StartDate = DateTime.ParseExact(takecareComboServiceUpdateModel.StartDate, "dd/MM/yyyy", null);
                         tblTakecareComboService.NumberOfMonths = (int)takecareComboServiceUpdateModel.NumOfMonth;
                         tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
                 }
@@ -152,8 +152,9 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
                 _ = await _context.SaveChangesAsync();
                 return true;
             }
-            catch
+            catch(Exception e)
             {
+                e.ToString();
                 return false;
             }
         }
