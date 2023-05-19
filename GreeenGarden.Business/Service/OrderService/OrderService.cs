@@ -41,6 +41,7 @@ using GreeenGarden.Business.Service.ImageService;
 using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -2021,6 +2022,7 @@ namespace GreeenGarden.Business.Service.OrderService
                     {
                         TblProductItemDetail detail = await _productItemDetailRepo.Get(model.ProductItemDetail.Id);
                         TblSize? sizeGet = await _sizeRepo.Get(detail.SizeId);
+                        var tblProductItem = await _productItemRepo.Get(detail.ProductItemId);
                         List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(detail.Id);
                         SizeResModel size = new()
                         {
@@ -2035,6 +2037,8 @@ namespace GreeenGarden.Business.Service.OrderService
                             SalePrice = detail.SalePrice,
                             Quantity = detail.Quantity,
                             Status = detail.Status,
+                            CareGuide = tblProductItem.CareGuide,
+                            TransportFee = detail.TransportFee,
                             ImagesURL = imgGet
                         };
                         productItems.Add(sizeProd);

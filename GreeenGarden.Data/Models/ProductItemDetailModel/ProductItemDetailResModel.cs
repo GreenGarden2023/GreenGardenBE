@@ -17,6 +17,7 @@ namespace GreeenGarden.Data.Models.ProductItemDetailModel
         public double? TransportFee { get; set; }
 
         public string Status { get; set; } = null!;
+        public string? CareGuide { get; set; } = null!;
 
         public List<string>? ImagesURL { get; set; }
 

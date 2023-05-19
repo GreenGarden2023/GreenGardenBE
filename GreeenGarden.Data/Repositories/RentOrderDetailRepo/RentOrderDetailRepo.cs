@@ -39,6 +39,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
             {
 
                 TblProductItemDetail tblProductItemDetail = await _productItemDetailRepo.Get((Guid)detail.ProductItemDetailId);
+                var tblProductItem = await _context.TblProductItems.Where(x => x.Id.Equals(tblProductItemDetail.ProductItemId)).FirstOrDefaultAsync();
                 TblSize? sizeGet = await _sizeRepo.Get(tblProductItemDetail.SizeId);
                 List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(tblProductItemDetail.Id);
                 SizeResModel size = new()
@@ -56,6 +57,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderDetailRepo
                     Quantity = tblProductItemDetail.Quantity,
                     Status = tblProductItemDetail.Status,
                     TransportFee = tblProductItemDetail.TransportFee,
+                    CareGuide = tblProductItem.CareGuide,
                     ImagesURL = imgGet
                 };
                 TblImage image = await _imageRepo.GetImgUrlRentOrderDetail(detail.Id);

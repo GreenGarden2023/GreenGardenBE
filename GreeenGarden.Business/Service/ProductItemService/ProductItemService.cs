@@ -881,6 +881,7 @@ namespace GreeenGarden.Business.Service.ProductItemService
                         SalePrice = updateResult.SalePrice,
                         Quantity = updateResult.Quantity,
                         Status = updateResult.Status,
+                        TransportFee= updateResult.TransportFee,
                         ImagesURL = imgGet
                     };
 
