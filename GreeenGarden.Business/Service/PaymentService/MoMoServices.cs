@@ -7,6 +7,7 @@ using GreeenGarden.Data.Repositories.SaleOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.TakecareComboOrderRepo;
 using GreeenGarden.Data.Repositories.TransactionRepo;
+using MailKit.Search;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -1355,19 +1356,27 @@ namespace GreeenGarden.Business.Service.PaymentService
                 MoMoTakecareComboOrderPaymentModel? orderModel = JsonConvert.DeserializeObject<MoMoTakecareComboOrderPaymentModel>(orderJson);
                 if (orderModel != null && moMoResponseModel.resultCode == 0)
                 {
-                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-                    TblTransaction tblTransaction = new()
+                    ResultModel updateDeposit = await _takecareComboOrderRepo.UpdateOrderDeposit(orderModel.OrderId);
+                    if (updateDeposit.IsSuccess == true)
                     {
-                        TakecareComboOrderId = orderModel.OrderId,
-                        Amount = orderModel.PayAmount,
-                        DatetimePaid = currentTime,
-                        Status = TransactionStatus.RECEIVED,
-                        PaymentId = PaymentMethod.MOMO,
-                        Type = TransactionType.COMBO_DEPOSIT
-                    };
-                    _ = await _transactionRepo.Insert(tblTransaction);
-                    return true;
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                        TblTransaction tblTransaction = new()
+                        {
+                            TakecareComboOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
+                            PaymentId = PaymentMethod.MOMO,
+                            Type = TransactionType.COMBO_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
