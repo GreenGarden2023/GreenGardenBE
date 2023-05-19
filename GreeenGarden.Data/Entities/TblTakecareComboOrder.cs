@@ -37,6 +37,8 @@ public partial class TblTakecareComboOrder
 
     public virtual TblTakecareComboService TakecareComboService { get; set; } = null!;
 
+    public virtual ICollection<TblTransaction> TblTransactions { get; } = new List<TblTransaction>();
+
     public virtual TblUser? Technician { get; set; }
 
     public virtual TblUser? User { get; set; }

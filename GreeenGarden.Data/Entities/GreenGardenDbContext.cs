@@ -733,6 +733,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.SaleOrderId).HasColumnName("SaleOrderID");
             entity.Property(e => e.ServiceOrderId).HasColumnName("ServiceOrderID");
             entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.TakecareComboOrderId).HasColumnName("TakecareComboOrderID");
             entity.Property(e => e.Type).HasMaxLength(50);
 
             entity.HasOne(d => d.Payment).WithMany(p => p.TblTransactions)
@@ -751,6 +752,10 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.ServiceOrder).WithMany(p => p.TblTransactions)
                 .HasForeignKey(d => d.ServiceOrderId)
                 .HasConstraintName("FK_tblTransaction_tblServiceOrder");
+
+            entity.HasOne(d => d.TakecareComboOrder).WithMany(p => p.TblTransactions)
+                .HasForeignKey(d => d.TakecareComboOrderId)
+                .HasConstraintName("FK_tblTransaction_tblTakecareComboOrder");
         });
 
         modelBuilder.Entity<TblUser>(entity =>

@@ -29,5 +29,10 @@
         public string PaymentMethod { get; set; }
         public string PaymentType { get; set; }
     }
+    public class MoMoTakecareComboOrderPaymentModel
+    {
+        public Guid OrderId { get; set; }
+        public double PayAmount { get; set; }
+    }
 }
 

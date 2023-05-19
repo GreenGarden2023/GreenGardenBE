@@ -25,6 +25,8 @@ public partial class TblTransaction
 
     public string? Description { get; set; }
 
+    public Guid? TakecareComboOrderId { get; set; }
+
     public virtual TblPayment Payment { get; set; } = null!;
 
     public virtual TblRentOrder? RentOrder { get; set; }
@@ -32,4 +34,6 @@ public partial class TblTransaction
     public virtual TblSaleOrder? SaleOrder { get; set; }
 
     public virtual TblServiceOrder? ServiceOrder { get; set; }
+
+    public virtual TblTakecareComboOrder? TakecareComboOrder { get; set; }
 }
