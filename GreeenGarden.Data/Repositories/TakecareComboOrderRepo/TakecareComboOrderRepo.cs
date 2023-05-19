@@ -64,6 +64,34 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
 
             }
         }
+
+        public async Task<ResultModel> UpdateOrderRemain(Guid orderID, double payAmount)
+        {
+            ResultModel result = new();
+            try
+            {
+                TblTakecareComboOrder tblTakecareComboOrder = await _context.TblTakecareComboOrders.Where(x => x.Id.Equals(orderID)).FirstOrDefaultAsync();
+                tblTakecareComboOrder.RemainAmount -= payAmount;
+                if (tblTakecareComboOrder.RemainAmount == 0)
+                {
+                    tblTakecareComboOrder.Status = Status.PAID;
+                }
+                _ = _context.Update(tblTakecareComboOrder);
+                _ = await _context.SaveChangesAsync();
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Update order remain amount success.";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
+        }
     }
 }
 

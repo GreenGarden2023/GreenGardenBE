@@ -1327,24 +1327,333 @@ namespace GreeenGarden.Business.Service.PaymentService
             }
         }
 
-        public Task<ResultModel> TakecareComboOrderPaymentCash(Guid orderID, double amount)
+        public async Task<ResultModel> TakecareComboOrderPaymentCash(Guid orderID, double amount)
         {
-            throw new NotImplementedException();
+            ResultModel result = new();
+            try
+            {
+                TblTakecareComboOrder takecareComboOrder = await _takecareComboOrderRepo.Get(orderID);
+                if (takecareComboOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Id invalid.";
+                    return result;
+                }
+                if (amount > takecareComboOrder.RemainAmount)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "You can't pay more than " + takecareComboOrder.RemainAmount;
+                    return result;
+                }
+                if (!takecareComboOrder.Status.Equals(Status.READY))
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Please pay deposit first.";
+                    return result;
+                }
+                ResultModel updateDeposit = await _takecareComboOrderRepo.UpdateOrderRemain(orderID, amount);
+                if (updateDeposit.IsSuccess == true)
+                {
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new()
+                    {
+                        TakecareComboOrderId = takecareComboOrder.Id,
+                        Amount = amount,
+                        DatetimePaid = currentTime,
+                        Status = TransactionStatus.RECEIVED,
+                        PaymentId = PaymentMethod.CASH,
+                        Type = TransactionType.COMBO_ORDER
+                    };
+                    _ = await _transactionRepo.Insert(tblTransaction);
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Message = "Update order payment success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Update order payment failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
         }
 
-        public Task<ResultModel> TakecareComboOrderPaymentMoMo(Guid orderID, double amount)
+        public async Task<ResultModel> TakecareComboOrderPaymentMoMo(Guid orderID, double amount)
         {
-            throw new NotImplementedException();
+            ResultModel result = new();
+            try
+            {
+                TblTakecareComboOrder takecareComboOrder = await _takecareComboOrderRepo.Get(orderID);
+                if (takecareComboOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Id invalid.";
+                    return result;
+                }
+                if (takecareComboOrder.Status.Equals(Status.READY))
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Order deposit has been paid.";
+                    return result;
+                }
+
+                MoMoTakecareComboOrderPaymentModel moMoTakecareComboOrderPaymentModel = new()
+                {
+                    OrderId = orderID,
+                };
+                string base64OrderString;
+
+                amount = (long)takecareComboOrder.Deposit;
+                JsonSerializerSettings jsonSerializerSettings = new()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                moMoTakecareComboOrderPaymentModel.PayAmount = amount;
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoTakecareComboOrderPaymentModel, Formatting.Indented,
+                    jsonSerializerSettings);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
+                List<string> secrets = SecretService.SecretService.GetPaymentSecrets();
+                string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+                string partnerCode = secrets[0];
+                string accessKey = secrets[1];
+                string serectkey = secrets[2];
+                string orderInfo = "GreenGarden Payment";
+                string redirectUrl = "https://ggarden.shop/thanks";
+                string ipnUrl = "https://greengarden2023.azurewebsites.net/takecare-combo-order-payment/receive-order-payment-momo";
+                string requestType = "captureWallet";
+                string orderId = Guid.NewGuid().ToString();
+                string requestId = Guid.NewGuid().ToString();
+                string extraData = base64OrderString;
+
+                string rawHash = "accessKey=" + accessKey +
+                    "&amount=" + amount +
+                    "&extraData=" + extraData +
+                    "&ipnUrl=" + ipnUrl +
+                    "&orderId=" + orderId +
+                    "&orderInfo=" + orderInfo +
+                    "&partnerCode=" + partnerCode +
+                    "&redirectUrl=" + redirectUrl +
+                    "&requestId=" + requestId +
+                    "&requestType=" + requestType
+                    ;
+
+                Console.WriteLine("rawHash = " + rawHash);
+
+                MoMoSecurity crypto = new();
+                string signature = crypto.signSHA256(rawHash, serectkey);
+                Console.WriteLine("Signature = " + signature);
+
+                JObject message = new()
+            {
+                { "partnerCode", partnerCode },
+                { "partnerName", "Test" },
+                { "storeId", "MomoTestStore" },
+                { "requestId", requestId },
+                { "amount", amount },
+                { "orderId", orderId },
+                { "orderInfo", orderInfo },
+                { "redirectUrl", redirectUrl },
+                { "ipnUrl", ipnUrl },
+                { "lang", "en" },
+                { "extraData", extraData },
+                { "requestType", requestType },
+                { "signature", signature }
+
+            };
+                Console.WriteLine("Json request to MoMo: " + message.ToString());
+                string responseFromMomo = await Task.FromResult(PaymentRequest.sendPaymentRequest(endpoint, message.ToString()));
+                Console.WriteLine("Response from MoMo: " + responseFromMomo.ToString());
+                JObject resJSON = JObject.Parse(responseFromMomo);
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Create combo payment success.";
+                result.Data = resJSON;
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
         }
 
-        public Task<ResultModel> TakecareComboOrderWholePaymentCash(Guid orderID)
+        public async Task<ResultModel> TakecareComboOrderWholePaymentCash(Guid orderID)
         {
-            throw new NotImplementedException();
+            ResultModel result = new();
+            try
+            {
+                TblTakecareComboOrder takecareComboOrder = await _takecareComboOrderRepo.Get(orderID);
+                if (takecareComboOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Id invalid.";
+                    return result;
+                }
+                ResultModel updateDeposit = await _takecareComboOrderRepo.UpdateOrderRemain(orderID, takecareComboOrder.RemainAmount);
+                if (updateDeposit.IsSuccess == true)
+                {
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new()
+                    {
+                        TakecareComboOrderId = takecareComboOrder.Id,
+                        Amount = takecareComboOrder.RemainAmount,
+                        DatetimePaid = currentTime,
+                        Status = TransactionStatus.RECEIVED,
+                        PaymentId = PaymentMethod.CASH,
+                        Type = TransactionType.COMBO_ORDER
+                    };
+                    _ = await _transactionRepo.Insert(tblTransaction);
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Message = "Update order payment success.";
+                    return result;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Update order payment failed.";
+                    return result;
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
         }
 
-        public Task<ResultModel> TakecareComboOrderWholePaymentMoMo(Guid orderID)
+        public async Task<ResultModel> TakecareComboOrderWholePaymentMoMo(Guid orderID)
         {
-            throw new NotImplementedException();
+            ResultModel result = new();
+            try
+            {
+                TblTakecareComboOrder takecareComboOrder = await _takecareComboOrderRepo.Get(orderID);
+                if (takecareComboOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Id invalid.";
+                    return result;
+                }
+                if (takecareComboOrder.Status.Equals(Status.READY))
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Order deposit has been paid.";
+                    return result;
+                }
+
+                MoMoTakecareComboOrderPaymentModel moMoTakecareComboOrderPaymentModel = new()
+                {
+                    OrderId = orderID,
+                };
+                long amount;
+                string base64OrderString;
+
+                amount = (long)takecareComboOrder.RemainAmount;
+                JsonSerializerSettings jsonSerializerSettings = new()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                moMoTakecareComboOrderPaymentModel.PayAmount = amount;
+                string orderJsonStringRaw = JsonConvert.SerializeObject(moMoTakecareComboOrderPaymentModel, Formatting.Indented,
+                    jsonSerializerSettings);
+                byte[] orderTextBytes = System.Text.Encoding.UTF8.GetBytes(orderJsonStringRaw);
+                base64OrderString = Convert.ToBase64String(orderTextBytes);
+                List<string> secrets = SecretService.SecretService.GetPaymentSecrets();
+                string endpoint = "https://test-payment.momo.vn/v2/gateway/api/create";
+                string partnerCode = secrets[0];
+                string accessKey = secrets[1];
+                string serectkey = secrets[2];
+                string orderInfo = "GreenGarden Payment";
+                string redirectUrl = "https://ggarden.shop/thanks";
+                string ipnUrl = "https://greengarden2023.azurewebsites.net/takecare-combo-order-payment/receive-order-payment-momo";
+                string requestType = "captureWallet";
+                string orderId = Guid.NewGuid().ToString();
+                string requestId = Guid.NewGuid().ToString();
+                string extraData = base64OrderString;
+
+                string rawHash = "accessKey=" + accessKey +
+                    "&amount=" + amount +
+                    "&extraData=" + extraData +
+                    "&ipnUrl=" + ipnUrl +
+                    "&orderId=" + orderId +
+                    "&orderInfo=" + orderInfo +
+                    "&partnerCode=" + partnerCode +
+                    "&redirectUrl=" + redirectUrl +
+                    "&requestId=" + requestId +
+                    "&requestType=" + requestType
+                    ;
+
+                Console.WriteLine("rawHash = " + rawHash);
+
+                MoMoSecurity crypto = new();
+                string signature = crypto.signSHA256(rawHash, serectkey);
+                Console.WriteLine("Signature = " + signature);
+
+                JObject message = new()
+            {
+                { "partnerCode", partnerCode },
+                { "partnerName", "Test" },
+                { "storeId", "MomoTestStore" },
+                { "requestId", requestId },
+                { "amount", amount },
+                { "orderId", orderId },
+                { "orderInfo", orderInfo },
+                { "redirectUrl", redirectUrl },
+                { "ipnUrl", ipnUrl },
+                { "lang", "en" },
+                { "extraData", extraData },
+                { "requestType", requestType },
+                { "signature", signature }
+
+            };
+                Console.WriteLine("Json request to MoMo: " + message.ToString());
+                string responseFromMomo = await Task.FromResult(PaymentRequest.sendPaymentRequest(endpoint, message.ToString()));
+                Console.WriteLine("Response from MoMo: " + responseFromMomo.ToString());
+                JObject resJSON = JObject.Parse(responseFromMomo);
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Message = "Create combo payment success.";
+                result.Data = resJSON;
+                return result;
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+
+            }
         }
 
         public async Task<bool> ProcessTakecareComboOrderDepositPaymentMoMo(MoMoResponseModel moMoResponseModel)
@@ -1389,9 +1698,46 @@ namespace GreeenGarden.Business.Service.PaymentService
             }
         }
 
-        public Task<bool> ProcessTakecareComboOrderPaymentMoMo(MoMoResponseModel moMoResponseModel)
+        public async Task<bool> ProcessTakecareComboOrderPaymentMoMo(MoMoResponseModel moMoResponseModel)
         {
-            throw new NotImplementedException();
+            try
+            {
+                byte[] base64OrderBytes = Convert.FromBase64String(moMoResponseModel.extraData ?? "");
+                string orderJson = System.Text.Encoding.UTF8.GetString(base64OrderBytes);
+                MoMoTakecareComboOrderPaymentModel? orderModel = JsonConvert.DeserializeObject<MoMoTakecareComboOrderPaymentModel>(orderJson);
+                if (orderModel != null && moMoResponseModel.resultCode == 0)
+                {
+                    ResultModel updateDeposit = await _takecareComboOrderRepo.UpdateOrderRemain(orderModel.OrderId, orderModel.PayAmount);
+                    if (updateDeposit.IsSuccess == true)
+                    {
+                        TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                        DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                        TblTransaction tblTransaction = new()
+                        {
+                            TakecareComboOrderId = orderModel.OrderId,
+                            Amount = orderModel.PayAmount,
+                            DatetimePaid = currentTime,
+                            Status = TransactionStatus.RECEIVED,
+                            PaymentId = PaymentMethod.MOMO,
+                            Type = TransactionType.COMBO_DEPOSIT
+                        };
+                        _ = await _transactionRepo.Insert(tblTransaction);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
