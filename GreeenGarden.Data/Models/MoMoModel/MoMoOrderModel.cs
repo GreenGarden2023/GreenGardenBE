@@ -1,4 +1,6 @@
-﻿namespace GreeenGarden.Data.Models.MoMoModel
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GreeenGarden.Data.Models.MoMoModel
 {
     public class MoMoOrderModel
     {
@@ -21,14 +23,12 @@
     public class TakecareComboOrderDepositPaymentModel
     {
         public Guid OrderId { get; set; }
-        public string PaymentMethod { get; set; }
     }
     public class TakecareComboOrderPaymentModel
     {
         public Guid OrderId { get; set; }
         public double? Amount { get; set; }
-        public string? PaymentMethod { get; set; }
-        public string? PaymentType { get; set; }
+        public string PaymentType { get; set; }
     }
     public class MoMoTakecareComboOrderPaymentModel
     {

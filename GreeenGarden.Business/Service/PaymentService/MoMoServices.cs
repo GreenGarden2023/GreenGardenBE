@@ -1405,11 +1405,18 @@ namespace GreeenGarden.Business.Service.PaymentService
                     result.Message = "Id invalid.";
                     return result;
                 }
-                if (takecareComboOrder.Status.Equals(Status.READY))
+                if (amount > takecareComboOrder.RemainAmount)
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Order deposit has been paid.";
+                    result.Message = "You can't pay more than " + takecareComboOrder.RemainAmount;
+                    return result;
+                }
+                if (!takecareComboOrder.Status.Equals(Status.READY))
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Please pay deposit first.";
                     return result;
                 }
 
@@ -1419,7 +1426,6 @@ namespace GreeenGarden.Business.Service.PaymentService
                 };
                 string base64OrderString;
 
-                amount = (long)takecareComboOrder.Deposit;
                 JsonSerializerSettings jsonSerializerSettings = new()
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
