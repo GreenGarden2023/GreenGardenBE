@@ -1,9 +1,7 @@
 ﻿using System;
-using GreeenGarden.Data.Entities;
-
 namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 {
-	public class TakecareComboServiceModel
+	public class TakecareComboServiceViewModel
 	{
         public Guid Id { get; set; }
 
@@ -32,6 +30,10 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
         public string? TechnicianName { get; set; }
 
         public int TreeQuantity { get; set; }
+
+        public bool IsAtShop { get; set; }
+
+        public int NumOfMonths { get; set; }
 
         public string Status { get; set; } = null!;
     }
@@ -92,6 +94,8 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
     }
     public class TakecareComboServiceDetail
     {
+        public Guid? TakecareComboID { get; set; }
+
         public string? TakecareComboName { get; set; }
 
         public double? TakecareComboPrice { get; set; }

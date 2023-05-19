@@ -24,6 +24,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo
                 {
                     TakecareComboServiceDetail takecareComboServiceDetail = new()
                     {
+                        TakecareComboID = tblTakecareComboServiceDetail.TakecareComboId,
                         TakecareComboDescription = tblTakecareComboServiceDetail.TakecareComboDescription,
                         TakecareComboGuarantee = tblTakecareComboServiceDetail.TakecareComboGuarantee,
                         TakecareComboName = tblTakecareComboServiceDetail.TakecareComboName,
@@ -50,6 +51,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo
                 if (tblTakecareComboServiceDetail != null)
                 {
                     TblTakecareCombo tblTakecareCombo = await _context.TblTakecareCombos.Where(x => x.Id.Equals(newTakecareComboID)).FirstOrDefaultAsync();
+                    tblTakecareComboServiceDetail.TakecareComboId = newTakecareComboID;
                     tblTakecareComboServiceDetail.TakecareComboName = tblTakecareCombo.Name;
                     tblTakecareComboServiceDetail.TakecareComboPrice = tblTakecareCombo.Price;
                     tblTakecareComboServiceDetail.TakecareComboGuarantee = tblTakecareCombo.Guarantee;

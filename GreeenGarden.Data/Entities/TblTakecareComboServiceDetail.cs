@@ -9,6 +9,8 @@ public partial class TblTakecareComboServiceDetail
 
     public Guid TakecareComboServiceId { get; set; }
 
+    public Guid TakecareComboId { get; set; }
+
     public string? TakecareComboName { get; set; }
 
     public double? TakecareComboPrice { get; set; }
@@ -16,6 +18,8 @@ public partial class TblTakecareComboServiceDetail
     public string? TakecareComboDescription { get; set; }
 
     public string? TakecareComboGuarantee { get; set; }
+
+    public virtual TblTakecareCombo TakecareCombo { get; set; } = null!;
 
     public virtual TblTakecareComboService TakecareComboService { get; set; } = null!;
 }
