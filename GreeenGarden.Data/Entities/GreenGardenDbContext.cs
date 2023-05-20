@@ -665,6 +665,7 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.CancelReason).HasMaxLength(500);
             entity.Property(e => e.Code).HasMaxLength(50);
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(200);
@@ -677,6 +678,10 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.TakecareComboId).HasColumnName("TakecareComboID");
             entity.Property(e => e.TechnicianId).HasColumnName("TechnicianID");
             entity.Property(e => e.TechnicianName).HasMaxLength(200);
+
+            entity.HasOne(d => d.CancelByNavigation).WithMany(p => p.TblTakecareComboServiceCancelByNavigations)
+                .HasForeignKey(d => d.CancelBy)
+                .HasConstraintName("FK_tblTakecareComboService_tblUserCancel");
 
             entity.HasOne(d => d.TakecareCombo).WithMany(p => p.TblTakecareComboServices)
                 .HasForeignKey(d => d.TakecareComboId)

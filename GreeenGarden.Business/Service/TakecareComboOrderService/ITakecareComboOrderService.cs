@@ -11,6 +11,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
 		Task<ResultModel> GetTakecareComboOrderByID(Guid takecareComboOdderID, string token);
 		Task<ResultModel> GetAllTakcareComboOrder(PaginationRequestModel pagingModel, string status, string token);
 		Task<ResultModel> ChangeTakecareComboOrderStatus(Guid id, string status, string token);
-	}
+        Task<ResultModel> CancelTakecareComboOrder(Guid id, string cancelReason, string token);
+    }
 }
 

@@ -40,6 +40,24 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             }
         }
 
+        public async Task<bool> CancelService(Guid takecareComboServiceID, string cancelReason, Guid cancelBy)
+        {
+            try
+            {
+                TblTakecareComboService tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Id.Equals(takecareComboServiceID)).FirstOrDefaultAsync();
+                tblTakecareComboService.Status = TakecareComboServiceStatus.CANCEL;
+                tblTakecareComboService.CancelReason = cancelReason;
+                tblTakecareComboService.CancelBy = cancelBy;
+                _ = _context.Update(tblTakecareComboService);
+                _ = await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> ChangeTakecareComboServiceStatus(Guid takecareComboServiceID, string status)
         {
             try

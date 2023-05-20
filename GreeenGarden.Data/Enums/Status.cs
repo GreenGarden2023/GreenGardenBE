@@ -57,5 +57,7 @@
         public static readonly string ACCEPTED = "accepted";
         public static readonly string REJECTED = "rejected";
         public static readonly string PENDING = "pending";
+        public static readonly string CANCEL = "cancel";
+
     }
 }

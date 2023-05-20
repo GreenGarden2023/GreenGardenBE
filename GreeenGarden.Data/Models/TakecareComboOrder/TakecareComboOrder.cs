@@ -48,5 +48,10 @@ namespace GreeenGarden.Data.Models.TakecareComboOrder
         public Guid TakecareComboOrderId { get; set; }
         public string Status { get; set; }
     }
+    public class TakecareComboOrderCancelModel
+    {
+        public Guid TakecareComboOrderId { get; set; }
+        public string CancelReason { get; set; }
+    }
 }
 

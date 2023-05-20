@@ -12,6 +12,7 @@ using GreeenGarden.Data.Models.TakecareComboServiceModel;
 using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Models.PaginationModel;
 using Newtonsoft.Json.Linq;
+using System.Net.NetworkInformation;
 
 namespace GreeenGarden.Business.Service.TakecareComboOrderService
 {
@@ -27,6 +28,65 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
 			_takecareComboServiceRepo = takecareComboServiceRepo;
             _decodeToken = new DecodeToken();
             _takecareComboServiceDetailRepo = takecareComboServiceDetailRepo;
+        }
+
+        public async Task<ResultModel> CancelTakecareComboOrder(Guid id, string cancelReason, string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
+                bool update = await _takecareComboOrderRepo.CancelOrder(id, cancelReason, userID);
+                if (update != true)
+                {
+                    TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(id);
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = takecareComboOrderModel;
+                    result.Message = "Cancel Takecare combo service order success.";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Cancel Takecare combo service order failed.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
         }
 
         public async Task<ResultModel> ChangeTakecareComboOrderStatus(Guid id, string status, string token)

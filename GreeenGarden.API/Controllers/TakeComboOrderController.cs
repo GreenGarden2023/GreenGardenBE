@@ -51,6 +51,15 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _takecareComboOrderService.ChangeTakecareComboOrderStatus(orderUpdateModel.TakecareComboOrderId, orderUpdateModel.Status, token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
+        [HttpPost("cancel-order")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> CancelOrder(TakecareComboOrderCancelModel takecareComboOrderCancelModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _takecareComboOrderService.CancelTakecareComboOrder(takecareComboOrderCancelModel.TakecareComboOrderId, takecareComboOrderCancelModel.CancelReason, token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
 

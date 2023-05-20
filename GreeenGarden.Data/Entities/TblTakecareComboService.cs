@@ -39,6 +39,12 @@ public partial class TblTakecareComboService
 
     public bool? IsAtShop { get; set; }
 
+    public Guid? CancelBy { get; set; }
+
+    public string? CancelReason { get; set; }
+
+    public virtual TblUser? CancelByNavigation { get; set; }
+
     public virtual TblTakecareCombo TakecareCombo { get; set; } = null!;
 
     public virtual ICollection<TblTakecareComboOrder> TblTakecareComboOrders { get; } = new List<TblTakecareComboOrder>();

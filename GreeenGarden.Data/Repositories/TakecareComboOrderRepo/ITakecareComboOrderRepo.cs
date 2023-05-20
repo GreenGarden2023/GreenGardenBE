@@ -13,6 +13,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
         Task<bool> ChangeTakecareComboOrderStatus(Guid id, string status);
         Task<ResultModel> UpdateOrderDeposit(Guid orderID);
         Task<ResultModel> UpdateOrderRemain(Guid orderID, double payAmount);
+        Task<bool> CancelOrder(Guid orderID, string cancelReason, Guid cancelBy);
     }
 }
 

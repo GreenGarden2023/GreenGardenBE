@@ -499,6 +499,78 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 
             return orderCode;
         }
+
+        public async Task<ResultModel> CancelService(TakecareComboServiceCancelModel takecareComboServiceCancelModel, string token)
+        {
+            ResultModel result = new();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.CUSTOMER) && !userRole.Equals(Commons.MANAGER) && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    result.Code = 403;
+                    result.IsSuccess = false;
+                    result.Message = "User role invalid";
+                    return result;
+                }
+                TblTakecareComboService tblTakecareComboService = await _takecareComboServiceRepo.Get(takecareComboServiceCancelModel.TakecareComboServiceId);
+                if (tblTakecareComboService == null)
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Takecare Combo Service Id invalid.";
+                    return result;
+                }
+                Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
+                bool change = await _takecareComboServiceRepo.CancelService(takecareComboServiceCancelModel.TakecareComboServiceId, takecareComboServiceCancelModel.CancelReason, userID);
+                    if (change == true)
+                    {
+                        TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
+                        TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+
+                        TakecareComboServiceViewModel returnModel = new()
+                        {
+                            Id = tblTakecareComboServiceGet.Id,
+                            Code = tblTakecareComboServiceGet.Code,
+                            TakecareComboDetail = takecareComboServiceDetailGet,
+                            CreateDate = tblTakecareComboServiceGet.CreateDate,
+                            StartDate = tblTakecareComboServiceGet.StartDate,
+                            EndDate = tblTakecareComboServiceGet.EndDate,
+                            Name = tblTakecareComboServiceGet.Name,
+                            Phone = tblTakecareComboServiceGet.Phone,
+                            Email = tblTakecareComboServiceGet.Email,
+                            Address = tblTakecareComboServiceGet.Address,
+                            UserId = tblTakecareComboServiceGet.UserId,
+                            TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
+                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
+                            TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                            IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                            NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
+                            Status = tblTakecareComboServiceGet.Status,
+                        };
+                        result.Code = 200;
+                        result.IsSuccess = true;
+                        result.Data = returnModel;
+                        result.Message = "Cancel Takecare Combo Service status successful";
+                        return result;
+                    }
+                    else
+                    {
+                        result.Code = 400;
+                        result.IsSuccess = false;
+                        result.Message = "Cancel Takecare Combo Service status failed.";
+                        return result;
+                    }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.NetworkInformation;
 using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
@@ -16,6 +17,24 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
         public TakecareComboOrderRepo(GreenGardenDbContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<bool> CancelOrder(Guid orderID, string cancelReason, Guid cancelBy)
+        {
+            try
+            {
+                TblTakecareComboOrder tblTakecareComboOrder = await _context.TblTakecareComboOrders.Where(x => x.Id.Equals(orderID)).FirstOrDefaultAsync();
+                tblTakecareComboOrder.Status = Status.CANCEL;
+                tblTakecareComboOrder.Description = cancelReason;
+                tblTakecareComboOrder.CancelBy = cancelBy;
+                _ = _context.Update(tblTakecareComboOrder);
+                _ = await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<bool> ChangeTakecareComboOrderStatus(Guid id, string status)

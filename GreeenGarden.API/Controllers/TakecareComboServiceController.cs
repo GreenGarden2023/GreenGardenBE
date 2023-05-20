@@ -74,6 +74,15 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.UpdateTakecareComboService(takecareComboServiceUpdateModel,token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("cancel-takecare-combo-service")]
+        [Authorize(Roles = "Technician, Manager, Customer")]
+        [SwaggerOperation(Summary = "pending/accepted/rejected")]
+        public async Task<IActionResult> CancelTakecareComboService(TakecareComboServiceCancelModel takecareComboServiceCancelModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.CancelService(takecareComboServiceCancelModel, token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
 
