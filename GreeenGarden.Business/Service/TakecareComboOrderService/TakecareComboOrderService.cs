@@ -62,7 +62,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             {
                 Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
                 bool update = await _takecareComboOrderRepo.CancelOrder(id, cancelReason, userID);
-                if (update != true)
+                if (update == true)
                 {
                     TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(id);
                     result.Code = 200;

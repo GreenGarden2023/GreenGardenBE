@@ -76,7 +76,6 @@ namespace GreeenGarden.API.Controllers
         }
         [HttpPost("cancel-takecare-combo-service")]
         [Authorize(Roles = "Technician, Manager, Customer")]
-        [SwaggerOperation(Summary = "pending/accepted/rejected")]
         public async Task<IActionResult> CancelTakecareComboService(TakecareComboServiceCancelModel takecareComboServiceCancelModel)
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
