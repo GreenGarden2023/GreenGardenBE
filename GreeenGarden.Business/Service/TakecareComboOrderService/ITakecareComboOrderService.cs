@@ -9,7 +9,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
 	{
 		Task<ResultModel> CreateTakecareComboOrder(TakecareComboOrderCreateModel takecareComboOrderCreateModel, string token);
 		Task<ResultModel> GetTakecareComboOrderByID(Guid takecareComboOdderID, string token);
-		Task<ResultModel> GetAllTakcareComboOrder(PaginationRequestModel pagingModel, string token);
+		Task<ResultModel> GetAllTakcareComboOrder(PaginationRequestModel pagingModel, string status, string token);
 		Task<ResultModel> ChangeTakecareComboOrderStatus(Guid id, string status, string token);
 	}
 }

@@ -176,7 +176,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             }
         }
 
-        public async Task<ResultModel> GetAllTakcareComboOrder(PaginationRequestModel pagingModel, string token)
+        public async Task<ResultModel> GetAllTakcareComboOrder(PaginationRequestModel pagingModel,string status, string token)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -206,7 +206,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             ResultModel result = new();
             try
             {
-                Page<TblTakecareComboOrder> takecareComboOrders = await _takecareComboOrderRepo.GetAllTakecreComboOrder(pagingModel);
+                Page<TblTakecareComboOrder> takecareComboOrders = await _takecareComboOrderRepo.GetAllTakecreComboOrder(pagingModel, status);
                 if (takecareComboOrders != null)
                 {
                     List<TakecareComboOrderModel> takecareComboOrderModelList = new();

@@ -9,7 +9,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
 {
 	public interface ITakecareComboOrderRepo : IRepository<TblTakecareComboOrder>
     {
-		Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrder(PaginationRequestModel paginationRequestModel);
+		Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrder(PaginationRequestModel paginationRequestModel, string status);
         Task<bool> ChangeTakecareComboOrderStatus(Guid id, string status);
         Task<ResultModel> UpdateOrderDeposit(Guid orderID);
         Task<ResultModel> UpdateOrderRemain(Guid orderID, double payAmount);

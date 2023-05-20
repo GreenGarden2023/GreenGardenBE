@@ -34,9 +34,9 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
             }
         }
 
-        public async Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrder(PaginationRequestModel paginationRequestModel)
+        public async Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrder(PaginationRequestModel paginationRequestModel, string status)
         {
-            Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(status)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             return listTblOrder;
         }
 
