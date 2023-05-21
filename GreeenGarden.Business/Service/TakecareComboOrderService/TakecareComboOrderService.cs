@@ -65,6 +65,8 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 if (update == true)
                 {
                     TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(id);
+                    var updateTakecareComboServiceStatus = await _takecareComboServiceRepo.ChangeTakecareComboServiceStatus(takecareComboOrderModel.TakecareComboService.Id, TakecareComboServiceStatus.REPROCESS);
+
                     result.Code = 200;
                     result.IsSuccess = true;
                     result.Data = takecareComboOrderModel;
@@ -204,6 +206,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     Guid insert = await _takecareComboOrderRepo.Insert(tblTakecareComboOrder);
                     if (insert != Guid.Empty)
                     {
+                        var updateTakecareComboServiceStatus = await _takecareComboServiceRepo.ChangeTakecareComboServiceStatus(tblTakecareComboOrder.TakecareComboServiceId, TakecareComboServiceStatus.TAKINGCARE);
                         result.Code = 200;
                         result.IsSuccess = true;
                         result.Data = await GetTakecareComboOrder(tblTakecareComboOrder.Id);
