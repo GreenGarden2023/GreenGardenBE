@@ -42,6 +42,28 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
             return result;
         }
 
+        public async Task<List<string>> GetImgUrlComboServiceCalendar(Guid serviceCalendarID)
+        {
+            List<string> urls = new();
+            if (serviceCalendarID != Guid.Empty)
+            {
+                List<TblImage> result = await _context.TblImages.Where(x => x.ComboServiceCalendarId.Equals(serviceCalendarID)).ToListAsync();
+                if (result != null)
+                {
+
+                    foreach (TblImage image in result)
+                    {
+                        if (!string.IsNullOrEmpty(image.ImageUrl))
+                        {
+                            urls.Add(image.ImageUrl);
+                        }
+                    }
+
+                }
+            }
+            return urls;
+        }
+
         public async Task<List<string>> GetImgUrlFeedback(Guid feedbackID)
         {
             List<string>? result = new();
@@ -224,6 +246,46 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
                 _ = await _context.SaveChangesAsync();
             }
             return imgCategory;
+        }
+
+        public async Task<bool> UpdateImgForComboServiceCalendar(Guid serviceCalendarID, List<string> ImgUrls)
+        {
+            bool success = false;
+            List<TblImage> oldImgList = await _context.TblImages.Where(x => x.ComboServiceCalendarId.Equals(serviceCalendarID)).ToListAsync();
+            foreach (TblImage tblImage in oldImgList)
+            {
+                try
+                {
+                    _ = _context.Remove(tblImage);
+                    _ = await _context.SaveChangesAsync();
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            foreach (string url in ImgUrls)
+            {
+                try
+                {
+                    TblImage newProdIMG = new()
+                    {
+                        ImageUrl = url,
+                        ComboServiceCalendarId = serviceCalendarID
+                    };
+                    _ = _context.Add(newProdIMG);
+                    _ = await _context.SaveChangesAsync();
+                    success = true;
+                }
+                catch
+                {
+                    success = false;
+                    return success;
+                }
+            }
+            return success;
         }
 
         public async Task<TblImage> UpdateImgForProduct(Guid ProductID, string ImgUrl)

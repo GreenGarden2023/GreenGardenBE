@@ -3,12 +3,10 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ServiceCalendarModel;
-using GreeenGarden.Data.Models.ServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography.X509Certificates;
 
 namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
 {

@@ -20,7 +20,9 @@ namespace GreeenGarden.Data.Repositories.ImageRepo
         Task<List<string>> GetImgUrlServiceDetail(Guid serviceDetailId);
         Task<List<string>> GetImgUrlFeedback(Guid feedbackID);
         Task<List<string>> GetImgUrlServiceCalendar(Guid serviceCalendarID);
+        Task<List<string>> GetImgUrlComboServiceCalendar(Guid serviceCalendarID);
         Task<bool> UpdateImgForServiceCalendar(Guid serviceCalendarID, List<string> ImgUrls);
+        Task<bool> UpdateImgForComboServiceCalendar(Guid serviceCalendarID, List<string> ImgUrls);
         Task<bool> DeleteImage(string imgURL);
     }
 }

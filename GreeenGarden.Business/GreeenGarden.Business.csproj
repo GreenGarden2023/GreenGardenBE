@@ -51,6 +51,7 @@
     <Folder Include="Service\TakecareComboService\" />
     <Folder Include="Service\TakecareComboServiceServ\" />
     <Folder Include="Service\TakecareComboOrderService\" />
+    <Folder Include="Service\TakecareComboCalendarService\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -73,5 +74,6 @@
     <None Remove="Service\TakecareComboService\" />
     <None Remove="Service\TakecareComboServiceServ\" />
     <None Remove="Service\TakecareComboOrderService\" />
+    <None Remove="Service\TakecareComboCalendarService\" />
   </ItemGroup>
 </Project>
