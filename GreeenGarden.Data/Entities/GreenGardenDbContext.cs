@@ -17,6 +17,8 @@ public partial class GreenGardenDbContext : DbContext
 
     public virtual DbSet<TblCategory> TblCategories { get; set; }
 
+    public virtual DbSet<TblComboServiceCalendar> TblComboServiceCalendars { get; set; }
+
     public virtual DbSet<TblDistrict> TblDistricts { get; set; }
 
     public virtual DbSet<TblEmailOtpcode> TblEmailOtpcodes { get; set; }
@@ -128,6 +130,25 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Status).HasMaxLength(50);
         });
 
+        modelBuilder.Entity<TblComboServiceCalendar>(entity =>
+        {
+            entity.ToTable("tblComboServiceCalendar");
+
+            entity.Property(e => e.Id)
+                .HasDefaultValueSql("(newid())")
+                .HasColumnName("ID");
+            entity.Property(e => e.NextServiceDate).HasColumnType("datetime");
+            entity.Property(e => e.ServiceDate).HasColumnType("datetime");
+            entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.Sumary).HasMaxLength(500);
+            entity.Property(e => e.TakecareComboOrderId).HasColumnName("TakecareComboOrderID");
+
+            entity.HasOne(d => d.TakecareComboOrder).WithMany(p => p.TblComboServiceCalendars)
+                .HasForeignKey(d => d.TakecareComboOrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_tblComboServiceCalendar_tblTakecareComboOrder");
+        });
+
         modelBuilder.Entity<TblDistrict>(entity =>
         {
             entity.ToTable("tblDistrict");
@@ -195,6 +216,7 @@ public partial class GreenGardenDbContext : DbContext
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
             entity.Property(e => e.CategoryId).HasColumnName("CategoryID");
+            entity.Property(e => e.ComboServiceCalendarId).HasColumnName("ComboServiceCalendarID");
             entity.Property(e => e.FeedbackId).HasColumnName("FeedbackID");
             entity.Property(e => e.ImageUrl)
                 .HasMaxLength(2048)
@@ -210,6 +232,10 @@ public partial class GreenGardenDbContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("FK_tblImages_tblCategories");
+
+            entity.HasOne(d => d.ComboServiceCalendar).WithMany(p => p.TblImages)
+                .HasForeignKey(d => d.ComboServiceCalendarId)
+                .HasConstraintName("FK_tblImage_tblComboServiceCalendar");
 
             entity.HasOne(d => d.Feedback).WithMany(p => p.TblImages)
                 .HasForeignKey(d => d.FeedbackId)

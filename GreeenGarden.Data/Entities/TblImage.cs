@@ -29,7 +29,11 @@ public partial class TblImage
 
     public Guid? ServiceCalendarId { get; set; }
 
+    public Guid? ComboServiceCalendarId { get; set; }
+
     public virtual TblCategory? Category { get; set; }
+
+    public virtual TblComboServiceCalendar? ComboServiceCalendar { get; set; }
 
     public virtual TblFeedBack? Feedback { get; set; }
 
