@@ -37,6 +37,11 @@ namespace GreeenGarden.Data.Repositories.TransactionRepo
                 tblTransactions = await _context.TblTransactions.Where(x => x.ServiceOrderId.Equals(orderId)).ToListAsync();
                 return tblTransactions;
             }
+            else if (orderType.Trim().ToLower().Equals("combo"))
+            {
+                tblTransactions = await _context.TblTransactions.Where(x => x.TakecareComboOrderId.Equals(orderId)).ToListAsync();
+                return tblTransactions;
+            }
             else
             {
                 return null;

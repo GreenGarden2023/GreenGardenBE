@@ -388,6 +388,10 @@ namespace GreeenGarden.Business.Service.TransactionService
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
                         }
+                        if (transaction.TakecareComboOrderId != null)
+                        {
+                            orderId = (Guid)transaction.TakecareComboOrderId;
+                        }
                         TransactionResModel transactionResModel = new()
                         {
                             Id = transaction.Id,
@@ -481,6 +485,10 @@ namespace GreeenGarden.Business.Service.TransactionService
                         if (transaction.ServiceOrderId != null)
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
+                        }
+                        if (transaction.TakecareComboOrderId != null)
+                        {
+                            orderId = (Guid)transaction.TakecareComboOrderId;
                         }
                         TransactionResModel transactionResModel = new()
                         {
