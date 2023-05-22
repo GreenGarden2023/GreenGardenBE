@@ -122,7 +122,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             try
             {
                 bool update = await _takecareComboOrderRepo.ChangeTakecareComboOrderStatus(id, status);
-                if (update != true)
+                if (update == true)
                 {
                     TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(id);
                     result.Code = 200;
