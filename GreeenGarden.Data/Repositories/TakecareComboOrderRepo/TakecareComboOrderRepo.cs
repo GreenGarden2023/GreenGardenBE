@@ -55,8 +55,14 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
 
         public async Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrder(PaginationRequestModel paginationRequestModel, string status)
         {
-            Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(status)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
-            return listTblOrder;
+		if(status.Trim().ToLower().Equals("all"))
+		{
+			Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            		return listTblOrder;
+		}else{
+		        Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(status)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            		return listTblOrder;
+		}
         }
 
         public async Task<ResultModel> UpdateOrderDeposit(Guid orderID)
