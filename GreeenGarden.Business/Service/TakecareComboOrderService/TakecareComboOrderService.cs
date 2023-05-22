@@ -312,6 +312,79 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             }
         }
 
+        public async Task<ResultModel> GetAllTakcareComboOrderForTechnician(PaginationRequestModel pagingModel, TakecareComboOrderTechnicianReqModel model, string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+                Page<TblTakecareComboOrder> takecareComboOrders = await _takecareComboOrderRepo.GetAllTakecreComboOrderForTech(pagingModel, model);
+                if (takecareComboOrders != null)
+                {
+                    List<TakecareComboOrderModel> takecareComboOrderModelList = new();
+                    foreach (var item in takecareComboOrders.Results)
+                    {
+                        TakecareComboOrderModel takecareComboOrderModelAdd = await GetTakecareComboOrder(item.Id);
+                        takecareComboOrderModelList.Add(takecareComboOrderModelAdd);
+                    }
+                    PaginationResponseModel paging = new PaginationResponseModel()
+                        .PageSize(takecareComboOrders.PageSize)
+                        .CurPage(takecareComboOrders.CurrentPage)
+                        .RecordCount(takecareComboOrders.RecordCount)
+                        .PageCount(takecareComboOrders.PageCount);
+                    GetTakecareComboOrderResModel getTakecareComboOrderResModel = new()
+                    {
+                        Paging = paging,
+                        TakecareComboOrderList = takecareComboOrderModelList
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = getTakecareComboOrderResModel;
+                    result.Message = "Get Takecare combo service orders success.";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Get Takecare combo service orders failed.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
         public async Task<ResultModel> GetTakecareComboOrderByID(Guid takecareComboOdderID, string token)
         {
             if (!string.IsNullOrEmpty(token))

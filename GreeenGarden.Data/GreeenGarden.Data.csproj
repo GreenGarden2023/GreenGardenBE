@@ -48,7 +48,6 @@
     <Folder Include="Models\TakecareComboServiceModel\" />
     <Folder Include="Repositories\TakecareComboServiceDetailRepo\" />
     <Folder Include="Repositories\TakecareComboOrderRepo\" />
-    <Folder Include="Models\TakecareComboOrder\" />
     <Folder Include="Repositories\ComboServiceCalendarRepo\" />
     <Folder Include="Models\TakecareComboCalendarModel\" />
   </ItemGroup>

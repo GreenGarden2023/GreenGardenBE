@@ -5,13 +5,14 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.TakecareComboOrder;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
 {
-	public class TakecareComboOrderRepo : Repository<TblTakecareComboOrder>, ITakecareComboOrderRepo
+    public class TakecareComboOrderRepo : Repository<TblTakecareComboOrder>, ITakecareComboOrderRepo
     {
         private readonly GreenGardenDbContext _context;
         public TakecareComboOrderRepo(GreenGardenDbContext context) : base(context)
@@ -55,14 +56,30 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
 
         public async Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrder(PaginationRequestModel paginationRequestModel, string status)
         {
-		if(status.Trim().ToLower().Equals("all"))
-		{
-			Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
-            		return listTblOrder;
-		}else{
-		        Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(status)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
-            		return listTblOrder;
-		}
+            if (status.Trim().ToLower().Equals("all"))
+            {
+                Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return listTblOrder;
+            }
+            else
+            {
+                Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(status)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return listTblOrder;
+            }
+        }
+
+        public async Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrderForTech(PaginationRequestModel paginationRequestModel, TakecareComboOrderTechnicianReqModel model)
+        {
+            if (model.status.Trim().ToLower().Equals("all"))
+            {
+                Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x=>x.TechnicianId.Equals(model.technicianId)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return listTblOrder;
+            }
+            else
+            {
+                Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(model.status)&&x.TechnicianId.Equals(model.technicianId)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return listTblOrder;
+            }
         }
 
         public async Task<ResultModel> UpdateOrderDeposit(Guid orderID)
