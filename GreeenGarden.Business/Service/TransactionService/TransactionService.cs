@@ -18,6 +18,7 @@ namespace GreeenGarden.Business.Service.TransactionService
             _transactionRepo = transactionRepo;
         }
 
+
         public async Task<ResultModel> CreateATransaction(string token, TransactionOrderCancelModel transactionOrderCancelModel)
         {
             if (!string.IsNullOrEmpty(token))
@@ -153,6 +154,75 @@ namespace GreeenGarden.Business.Service.TransactionService
                         if (transaction.ServiceOrderId != null)
                         {
                             orderId = (Guid)transaction.ServiceOrderId;
+                        }
+                        TransactionResModel transactionResModel = new()
+                        {
+                            Id = transaction.Id,
+                            OrderID = orderId,
+                            Amount = (double)transaction.Amount,
+                            PaidDate = (DateTime)transaction.DatetimePaid,
+                            Type = transaction.Type,
+                            Status = transaction.Status,
+                            PaymentType = paymentType
+                        };
+
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = transactionResModel;
+                        result.Message = "Create transaction success";
+                        return result;
+                    }
+                    else
+                    {
+                        result.IsSuccess = false;
+                        result.Code = 400;
+                        result.Message = "Create transaction failed";
+                        return result;
+                    }
+                }
+                else if (transactionOrderCancelModel.OrderType.Trim().ToLower().Equals("combo"))
+                {
+                    Guid paymentID = Guid.Empty;
+                    paymentID = transactionOrderCancelModel.PaymentType.Equals("momo") ? PaymentMethod.MOMO : PaymentMethod.CASH;
+                    TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+                    TblTransaction tblTransaction = new()
+                    {
+                        Id = Guid.NewGuid(),
+                        TakecareComboOrderId = transactionOrderCancelModel.OrderID,
+                        Amount = transactionOrderCancelModel.Amount,
+                        DatetimePaid = currentTime,
+                        Description = transactionOrderCancelModel.Description,
+                        PaymentId = paymentID,
+                        Type = transactionOrderCancelModel.TransactionType,
+                        Status = transactionOrderCancelModel.Status
+
+                    };
+                    Guid insert = await _transactionRepo.Insert(tblTransaction);
+                    if (insert != Guid.Empty)
+                    {
+                        TblTransaction transaction = await _transactionRepo.Get(tblTransaction.Id);
+                        PaymentType paymentType = new()
+                        {
+                            Id = transaction.PaymentId,
+                            PaymentName = transaction.PaymentId.Equals(PaymentMethod.MOMO) ? "MoMo" : "Cash"
+                        };
+                        Guid orderId = Guid.Empty;
+                        if (transaction.RentOrderId != null)
+                        {
+                            orderId = (Guid)transaction.RentOrderId;
+                        }
+                        if (transaction.SaleOrderId != null)
+                        {
+                            orderId = (Guid)transaction.SaleOrderId;
+                        }
+                        if (transaction.ServiceOrderId != null)
+                        {
+                            orderId = (Guid)transaction.ServiceOrderId;
+                        }
+                        if (transaction.TakecareComboOrderId != null)
+                        {
+                            orderId = (Guid)transaction.TakecareComboOrderId;
                         }
                         TransactionResModel transactionResModel = new()
                         {
