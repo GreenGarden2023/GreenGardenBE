@@ -111,6 +111,30 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             }
         }
 
+        public async Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByTech(string status, Guid technician)
+        {
+            if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.PENDING))
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Status.Equals(TakecareComboServiceStatus.PENDING) && x.TechnicianId.Equals(technician)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+            else if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.ACCEPTED))
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Status.Equals(TakecareComboServiceStatus.ACCEPTED) && x.TechnicianId.Equals(technician)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+            else if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.REJECTED))
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Status.Equals(TakecareComboServiceStatus.REJECTED) && x.TechnicianId.Equals(technician)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+            else
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x=>x.TechnicianId.Equals(technician)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+        }
+
         public async Task<bool> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel)
         {
             try

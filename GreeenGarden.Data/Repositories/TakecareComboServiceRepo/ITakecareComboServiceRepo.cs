@@ -9,6 +9,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
     {
 		Task<bool> CheckCodeDup(string code);
 		Task<List<TblTakecareComboService>> GetAllTakecareComboService(string status);
+		Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByTech(string status, Guid technician);
 		Task<bool> ChangeTakecareComboServiceStatus(Guid takecareComboServiceID, string status);
 		Task<bool> AssignTechnicianTakecareComboService(Guid takecareComboServiceID, Guid technicianID);
 		Task<bool> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel);

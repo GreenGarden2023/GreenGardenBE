@@ -1,10 +1,13 @@
 ﻿using GreeenGarden.Business.Utilities.Convert;
 using GreeenGarden.Business.Utilities.TokenService;
+using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.RevenueModel;
 using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
+using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Repositories.RevenueRepo;
+using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,12 +20,73 @@ namespace GreeenGarden.Business.Service.RevenueService
     {
         private readonly DecodeToken _decodeToken;
         private readonly IRevenueRepo _revenueRepo;
+        private readonly IRentOrderDetailRepo _rentOrderDetailRepo;
+        private readonly IProductItemDetailRepo _productItemDetailRepo;
 
-        public RevenueService(IRevenueRepo revenueRepo)
+        public RevenueService(IRevenueRepo revenueRepo, IRentOrderDetailRepo rentOrderDetailRepo, IProductItemDetailRepo productItemDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _revenueRepo = revenueRepo;
+            _rentOrderDetailRepo= rentOrderDetailRepo;
+            _productItemDetailRepo= productItemDetailRepo;
         }
+
+        public async Task<ResultModel> GetBestProductDetailByDateRange(string token, RevenueReqByDateModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                DateTime fromDate = ConvertUtil.convertStringToDateTime(model.fromDate);
+                DateTime toDate = ConvertUtil.convertStringToDateTime(model.toDate);
+
+                var tblRentOrder = await _revenueRepo.getTotalRentOrderCompletedByDateRange(fromDate, toDate);
+                var tblSaleOrder = await _revenueRepo.getTotalSaleOrderCompletedByDateRange(fromDate, toDate);
+
+                var newRes = new List<ProductItemDetailRevenueResModel>();
+
+                foreach (var rentOrder in tblRentOrder)
+                {
+                    var rentOrderDetails = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(rentOrder.Id);
+                    foreach (var rentOrderDetail in rentOrderDetails)
+                    {
+                        var tblItemDetail = await _productItemDetailRepo.Get((Guid)rentOrderDetail.ProductItemDetailId);
+
+                        var itemDetailRecord = new ProductItemDetailRevenueResModel();
+                        itemDetailRecord.productItemDetail = tblItemDetail;
+                        itemDetailRecord.quantity = (int)rentOrderDetail.Quantity;
+                        itemDetailRecord.revenueProductItemDetail = rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity;
+                        newRes.Add(itemDetailRecord);
+                    }
+                }
+                /*foreach (var saleOrder in tblSaleOrder)
+                {
+                    var rentOrderDetails = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(saleOrder.Id);
+                    foreach (var rentOrderDetail in rentOrderDetails)
+                    {
+                        var tblItemDetail = await _productItemDetailRepo.Get((Guid)rentOrderDetail.ProductItemDetailId);
+
+                        var itemDetailRecord = new ProductItemDetailRevenueResModel();
+                        itemDetailRecord.productItemDetail = tblItemDetail;
+                        itemDetailRecord.quantity = (int)rentOrderDetail.Quantity;
+                        itemDetailRecord.revenueProductItemDetail = rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity;
+                        newRes.Add(itemDetailRecord);
+                    }
+                }*/
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = "";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> GetRevenueByDateRange(string token, RevenueReqByDateModel model)
         {
             var result = new ResultModel();
