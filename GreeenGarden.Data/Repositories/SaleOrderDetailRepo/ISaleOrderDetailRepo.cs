@@ -8,6 +8,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
     {
         Task<List<SaleOrderDetailResModel>> GetSaleOrderDetails(Guid saleOrderId);
         Task<bool> UpdateSaleOrderDetails(TblSaleOrderDetail entity);
+        Task<List<TblSaleOrderDetail>> GetSaleOrderDetailByOrderId(Guid saleOrderId);
     }
 }
 

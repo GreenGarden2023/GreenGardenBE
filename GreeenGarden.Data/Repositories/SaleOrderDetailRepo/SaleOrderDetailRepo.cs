@@ -20,6 +20,11 @@ namespace GreeenGarden.Data.Repositories.SaleOrderDetailRepo
             _feedbackRepo = feedbackRepo;   
         }
 
+        public async Task<List<TblSaleOrderDetail>> GetSaleOrderDetailByOrderId(Guid saleOrderId)
+        {
+            return await _context.TblSaleOrderDetails.Where(x=>x.SaleOderId.Equals(saleOrderId)).ToListAsync();
+        }
+
         public async Task<List<SaleOrderDetailResModel>> GetSaleOrderDetails(Guid saleOrderId)
         {
             List<TblSaleOrderDetail> list = await _context.TblSaleOrderDetails.Where(x => x.SaleOderId.Equals(saleOrderId)).ToListAsync();

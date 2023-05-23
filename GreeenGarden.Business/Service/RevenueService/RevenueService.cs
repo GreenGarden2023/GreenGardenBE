@@ -7,6 +7,7 @@ using GreeenGarden.Data.Repositories.CartRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Repositories.RevenueRepo;
+using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using System;
 using System.Collections.Generic;
@@ -21,14 +22,17 @@ namespace GreeenGarden.Business.Service.RevenueService
         private readonly DecodeToken _decodeToken;
         private readonly IRevenueRepo _revenueRepo;
         private readonly IRentOrderDetailRepo _rentOrderDetailRepo;
+        private readonly ISaleOrderDetailRepo _saleOrderDetailRepo;
         private readonly IProductItemDetailRepo _productItemDetailRepo;
 
-        public RevenueService(IRevenueRepo revenueRepo, IRentOrderDetailRepo rentOrderDetailRepo, IProductItemDetailRepo productItemDetailRepo)
+        public RevenueService(IRevenueRepo revenueRepo, IRentOrderDetailRepo rentOrderDetailRepo
+            , IProductItemDetailRepo productItemDetailRepo, ISaleOrderDetailRepo saleOrderDetailRepo)
         {
             _decodeToken = new DecodeToken();
             _revenueRepo = revenueRepo;
-            _rentOrderDetailRepo= rentOrderDetailRepo;
-            _productItemDetailRepo= productItemDetailRepo;
+            _rentOrderDetailRepo = rentOrderDetailRepo;
+            _productItemDetailRepo = productItemDetailRepo;
+            _saleOrderDetailRepo = saleOrderDetailRepo;
         }
 
         public async Task<ResultModel> GetBestProductDetailByDateRange(string token, RevenueReqByDateModel model)
@@ -58,20 +62,20 @@ namespace GreeenGarden.Business.Service.RevenueService
                         newRes.Add(itemDetailRecord);
                     }
                 }
-                /*foreach (var saleOrder in tblSaleOrder)
+                foreach (var saleOrder in tblSaleOrder)
                 {
-                    var rentOrderDetails = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(saleOrder.Id);
-                    foreach (var rentOrderDetail in rentOrderDetails)
+                    var saleOrderDetails = await _saleOrderDetailRepo.GetSaleOrderDetailByOrderId(saleOrder.Id);
+                    foreach (var saleOrderDetail in saleOrderDetails)
                     {
-                        var tblItemDetail = await _productItemDetailRepo.Get((Guid)rentOrderDetail.ProductItemDetailId);
+                        var tblItemDetail = await _productItemDetailRepo.Get((Guid)saleOrderDetail.ProductItemDetailId);
 
                         var itemDetailRecord = new ProductItemDetailRevenueResModel();
                         itemDetailRecord.productItemDetail = tblItemDetail;
-                        itemDetailRecord.quantity = (int)rentOrderDetail.Quantity;
-                        itemDetailRecord.revenueProductItemDetail = rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity;
+                        itemDetailRecord.quantity = (int)saleOrderDetail.Quantity;
+                        itemDetailRecord.revenueProductItemDetail = saleOrderDetail.SalePricePerUnit * (int)saleOrderDetail.Quantity;
                         newRes.Add(itemDetailRecord);
                     }
-                }*/
+                }
 
 
                 result.Code = 200;
@@ -101,8 +105,8 @@ namespace GreeenGarden.Business.Service.RevenueService
                 var tblTakeCareComboOrder = await _revenueRepo.getTotalServiceComboOrderCompletedByDateRange(fromDate, toDate);
 
                 double? totalRevenue = 0;
-                double? rentRevenue=0;
-                double? saleRevenue=0;
+                double? rentRevenue = 0;
+                double? saleRevenue = 0;
                 double? serviceRevenue = 0;
                 double? serviceComboRevenue = 0;
 
@@ -130,9 +134,9 @@ namespace GreeenGarden.Business.Service.RevenueService
                 {
                     totalRevenue = totalRevenue,
                     rentRevenue = rentRevenue,
-                    saleRevenue= saleRevenue,
+                    saleRevenue = saleRevenue,
                     serviceRevenue = serviceRevenue,
-                    serviceComboRevenue= serviceComboRevenue,
+                    serviceComboRevenue = serviceComboRevenue,
                 };
 
 
