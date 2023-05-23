@@ -415,6 +415,7 @@ namespace GreeenGarden.Business.Service.ProductService
                 {
                     List<ProductItemDetailResModel> sizeGet = await _productItemDetailRepo.GetSizeProductItems(pi.Id, Status.ACTIVE);
                     TblImage getProdItemImgURL = await _imageRepo.GetImgUrlProductItem(pi.Id);
+                    var arrMinMax = await _productItemDetailRepo.getMinMaxItemPrice(pi.Id);
                     string? prodItemImgURL = getProdItemImgURL != null ? getProdItemImgURL.ImageUrl : "";
                     ProductItemResModel pItem = new()
                     {
@@ -427,6 +428,10 @@ namespace GreeenGarden.Business.Service.ProductService
                         ImageURL = prodItemImgURL,
                         Rule = pi.Rule,
                         CareGuide= pi.CareGuide,
+                        minSale = arrMinMax[0],
+                        minRent = arrMinMax[1],
+                        maxSale = arrMinMax[2],
+                        maxRent = arrMinMax[3],
                         ProductItemDetail = sizeGet
                     };
 
