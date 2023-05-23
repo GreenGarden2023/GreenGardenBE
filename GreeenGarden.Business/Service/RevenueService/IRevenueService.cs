@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Models.ResultModel;
+using GreeenGarden.Data.Models.RevenueModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace GreeenGarden.Business.Service.RevenueService
 {
     public interface IRevenueService
     {
-       // Task<ResultModel> GetCart(string token);
+        Task<ResultModel> GetRevenueByDateRange(string token, RevenueReqByDateModel model);
     }
 }

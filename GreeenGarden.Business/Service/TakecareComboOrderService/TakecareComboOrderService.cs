@@ -38,6 +38,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.TECHNICIAN)
                     && !userRole.Equals(Commons.CUSTOMER))
                 {
                     return new ResultModel()
@@ -98,6 +99,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.TECHNICIAN)
                     && !userRole.Equals(Commons.ADMIN)
                     && !userRole.Equals(Commons.CUSTOMER))
                 {
@@ -157,6 +159,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.TECHNICIAN)
                     && !userRole.Equals(Commons.CUSTOMER))
                 {
                     return new ResultModel()
@@ -247,6 +250,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.TECHNICIAN)
                     && !userRole.Equals(Commons.CUSTOMER))
                 {
                     return new ResultModel()
@@ -394,6 +398,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.TECHNICIAN)
                     && !userRole.Equals(Commons.CUSTOMER))
                 {
                     return new ResultModel()

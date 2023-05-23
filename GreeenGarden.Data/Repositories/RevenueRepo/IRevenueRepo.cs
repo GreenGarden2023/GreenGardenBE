@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GreeenGarden.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace GreeenGarden.Data.Repositories.RevenueRepo
 {
     public interface IRevenueRepo
     {
+        Task<List<TblRentOrder>> getTotalRentOrderCompletedByDateRange(DateTime startDate, DateTime endDate);
     }
 }
