@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace GreeenGarden.Data.Models.RevenueModel
 {
-    internal class RevenueReqModel
+    public class RevenueReqModel
     {
+    }
+    public class RevenueReqByDateModel
+    {
+        public string fromDate { get; set; }
+        public string toDate { get; set; }
+
     }
 }
