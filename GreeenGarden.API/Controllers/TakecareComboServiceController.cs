@@ -49,6 +49,15 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.GetAllTakecareComboService(status, token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-all-takecare-combo-service-by-tech")]
+        [Authorize(Roles = "Technician, Manager, Customer")]
+        [SwaggerOperation(Summary = "pending/accepted/rejected/all")]
+        public async Task<IActionResult> GetAllTakecareComboServiceForTechnician(string status, Guid technicianId)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.GetAllTakecareComboServiceForTechnician(status, token, technicianId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpPost("change-takecare-combo-service-status")]
         [Authorize(Roles = "Technician, Manager, Customer")]
         [SwaggerOperation(Summary = "pending/accepted/rejected")]

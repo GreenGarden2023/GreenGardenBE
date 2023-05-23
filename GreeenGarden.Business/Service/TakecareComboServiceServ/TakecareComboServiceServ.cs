@@ -571,6 +571,60 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 return result;
             }
         }
+
+        public async Task<ResultModel> GetAllTakecareComboServiceForTechnician(string status, string token, Guid technician)
+        {
+            ResultModel result = new();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.CUSTOMER) && !userRole.Equals(Commons.MANAGER) && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    result.Code = 403;
+                    result.IsSuccess = false;
+                    result.Message = "User role invalid";
+                    return result;
+                }
+                List<TblTakecareComboService> getList = await _takecareComboServiceRepo.GetAllTakecareComboServiceByTech(status, technician);
+                List<TakecareComboServiceViewModel> resList = new List<TakecareComboServiceViewModel>();
+                foreach (var item in getList)
+                {
+                    TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
+                    TakecareComboServiceViewModel returnModel = new()
+                    {
+                        Id = item.Id,
+                        Code = item.Code,
+                        TakecareComboDetail = takecareComboServiceDetailGet,
+                        CreateDate = item.CreateDate,
+                        StartDate = item.StartDate,
+                        EndDate = item.EndDate,
+                        Name = item.Name,
+                        Phone = item.Phone,
+                        Email = item.Email,
+                        Address = item.Address,
+                        UserId = item.UserId,
+                        TechnicianId = item.TechnicianId ?? Guid.Empty,
+                        TechnicianName = item.TechnicianName ?? "",
+                        TreeQuantity = item.TreeQuantity,
+                        IsAtShop = (bool)item.IsAtShop,
+                        NumOfMonths = item.NumberOfMonths,
+                        Status = item.Status,
+                    };
+                    resList.Add(returnModel);
+                }
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Data = resList;
+                result.Message = "Get takecare combo services successful.";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GreeenGarden.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,12 @@ namespace GreeenGarden.Data.Models.RevenueModel
         public double? saleRevenue { get; set; }
         public double? serviceRevenue { get; set; }
         public double? serviceComboRevenue { get; set; }
+    }
 
+    public class ProductItemDetailRevenueResModel
+    {
+        public TblProductItemDetail? productItemDetail { get; set; }
+        public int quantity { get; set; }
+        public double? revenueProductItemDetail { get; set; }
     }
 }
