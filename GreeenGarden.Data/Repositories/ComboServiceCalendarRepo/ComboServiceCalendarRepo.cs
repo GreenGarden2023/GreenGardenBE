@@ -119,7 +119,14 @@ namespace GreeenGarden.Data.Repositories.ComboServiceCalendarRepo
             TblComboServiceCalendar tblServiceCalendar = await _context.TblComboServiceCalendars.Where(x => x.Id.Equals(takecareComboCalendarUpdateModel.ServiceCalendarId)).FirstOrDefaultAsync();
             if (tblServiceCalendar != null)
             {
-                tblServiceCalendar.NextServiceDate = DateTime.ParseExact(takecareComboCalendarUpdateModel.NextServiceDate, "dd/MM/yyyy", null);
+                if (takecareComboCalendarUpdateModel.NextServiceDate == null)
+                {
+                    tblServiceCalendar.NextServiceDate = null;
+                }
+                else
+                {
+                    tblServiceCalendar.NextServiceDate = DateTime.ParseExact(takecareComboCalendarUpdateModel.NextServiceDate, "dd/MM/yyyy", null);
+                }
                 tblServiceCalendar.Sumary = takecareComboCalendarUpdateModel.Sumary;
                 tblServiceCalendar.Status = ServiceCalendarStatus.DONE;
                 _ = _context.Update(tblServiceCalendar);
