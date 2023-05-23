@@ -21,7 +21,7 @@ namespace GreeenGarden.Data.Models.RevenueModel
 
     public class ProductItemDetailRevenueResModel
     {
-        public TblProductItemDetail? productItemDetail { get; set; }
+        public Guid? productItemDetailId { get; set; }
         public int quantity { get; set; }
         public double? revenueProductItemDetail { get; set; }
     }

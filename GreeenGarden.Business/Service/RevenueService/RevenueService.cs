@@ -9,6 +9,7 @@ using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Repositories.RevenueRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
+using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +57,7 @@ namespace GreeenGarden.Business.Service.RevenueService
                         var tblItemDetail = await _productItemDetailRepo.Get((Guid)rentOrderDetail.ProductItemDetailId);
 
                         var itemDetailRecord = new ProductItemDetailRevenueResModel();
-                        itemDetailRecord.productItemDetail = tblItemDetail;
+                        itemDetailRecord.productItemDetailId = tblItemDetail.Id;
                         itemDetailRecord.quantity = (int)rentOrderDetail.Quantity;
                         itemDetailRecord.revenueProductItemDetail = rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity;
                         newRes.Add(itemDetailRecord);
@@ -70,17 +71,23 @@ namespace GreeenGarden.Business.Service.RevenueService
                         var tblItemDetail = await _productItemDetailRepo.Get((Guid)saleOrderDetail.ProductItemDetailId);
 
                         var itemDetailRecord = new ProductItemDetailRevenueResModel();
-                        itemDetailRecord.productItemDetail = tblItemDetail;
+                        itemDetailRecord.productItemDetailId = tblItemDetail.Id;
                         itemDetailRecord.quantity = (int)saleOrderDetail.Quantity;
                         itemDetailRecord.revenueProductItemDetail = saleOrderDetail.SalePricePerUnit * (int)saleOrderDetail.Quantity;
                         newRes.Add(itemDetailRecord);
                     }
                 }
-
+                var groupedItems = newRes.GroupBy(x => x.productItemDetailId)
+                        .Select(g => new ProductItemDetailRevenueResModel
+                        {
+                            productItemDetailId = g.Key,
+                            quantity = g.Sum(x => x.quantity),
+                            revenueProductItemDetail = g.Sum(x => x.revenueProductItemDetail)
+                        });
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Data = groupedItems;
             }
             catch (Exception e)
             {
