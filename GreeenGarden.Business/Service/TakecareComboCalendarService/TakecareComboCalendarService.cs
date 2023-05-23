@@ -10,6 +10,7 @@ using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.TakecareComboOrderRepo;
 using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Business.Utilities.Convert;
 
 namespace GreeenGarden.Business.Service.TakecareComboCalendarService
 {
@@ -62,13 +63,14 @@ namespace GreeenGarden.Business.Service.TakecareComboCalendarService
             ResultModel result = new();
             try
             {
+
                 if (serviceCalendarInsertModel.CalendarInitial != null && serviceCalendarInsertModel.CalendarUpdate == null)
                 {
                     TblComboServiceCalendar tblServiceCalendar = new()
                     {
                         Id = Guid.NewGuid(),
                         TakecareComboOrderId = serviceCalendarInsertModel.CalendarInitial.ServiceOrderId,
-                        ServiceDate = serviceCalendarInsertModel.CalendarInitial.ServiceDate,
+                        ServiceDate = DateTime.ParseExact(serviceCalendarInsertModel.CalendarInitial.ServiceDate, "dd/MM/yyyy", null),
                         Status = ServiceCalendarStatus.PENDING
                     };
                     Guid insert = await _comboServiceCalendarRepo.Insert(tblServiceCalendar);
@@ -125,7 +127,7 @@ namespace GreeenGarden.Business.Service.TakecareComboCalendarService
                             {
                                 Id = Guid.NewGuid(),
                                 TakecareComboOrderId = oldCalendarRes.ServiceOrderId,
-                                ServiceDate = serviceCalendarInsertModel.CalendarUpdate.NextServiceDate,
+                                ServiceDate = DateTime.ParseExact(serviceCalendarInsertModel.CalendarUpdate.NextServiceDate, "dd/MM/yyyy", null),
                                 Status = ServiceCalendarStatus.PENDING
                             };
                             Guid insert = await _comboServiceCalendarRepo.Insert(tblServiceCalendar);
