@@ -320,6 +320,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 if (!userRole.Equals(Commons.MANAGER)
                     && !userRole.Equals(Commons.STAFF)
                     && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.TECHNICIAN)
                     && !userRole.Equals(Commons.CUSTOMER))
                 {
                     return new ResultModel()
