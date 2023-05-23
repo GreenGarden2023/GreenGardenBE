@@ -254,16 +254,16 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 
         public async Task<List<TblProductItemDetail>> GetSizeProductItemByItemID(Guid productItemID)
         {
-            return await _context.TblProductItemDetails.Where(x=>x.ProductItemId.Equals(productItemID)).ToListAsync();
+            return await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(productItemID)).ToListAsync();
         }
 
         public async Task<double[]> getMinMaxItemPrice(Guid productItemID)
         {
-            double[] arr = new double[4] { 0,0,0,0};
-            var listItemDetail = await _context.TblProductItemDetails.Where(x=>x.ProductItemId== productItemID).ToListAsync();
+            double[] arr = new double[4] { 0, 0, 0, 0 };
+            var listItemDetail = await _context.TblProductItemDetails.Where(x => x.ProductItemId == productItemID).ToListAsync();
             double[] rentPrice = new double[] { };
             double[] salePrice = new double[] { };
-            foreach ( var item in listItemDetail )
+            foreach (var item in listItemDetail)
             {
                 if (item.RentPrice != null)
                 {
@@ -311,6 +311,34 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
                 if (res != null) result.Add(res);
             }
             return result;
+        }
+
+        public async Task<ProductItemDetailResModel> GetItemDetailsByID(Guid productItemDetailID)
+        {
+            TblProductItemDetail result = await _context.TblProductItemDetails.Where(x => x.Id.Equals(productItemDetailID)).FirstOrDefaultAsync();
+            TblSize? sizeGet = await _sizeRepo.Get(result.SizeId);
+            var record = new ProductItemDetailResModel();
+            List<string> imgGet = await _imageRepo.GetImgUrlProductItemDetail(result.Id);
+            if (sizeGet != null)
+            {
+                SizeResModel size = new()
+                {
+                    Id = sizeGet.Id,
+                    SizeName = sizeGet.Name,
+                    SizeType = sizeGet.Type
+                };
+                record.Id = result.Id;
+                record.Size = size;
+                record.RentPrice = result.RentPrice;
+                record.SalePrice = result.SalePrice;
+                record.Quantity = result.Quantity;
+                record.TransportFee = result.TransportFee;
+                record.Status = result.Status;
+                record.ImagesURL = imgGet;
+
+
+            }
+            return record;
         }
     }
 }

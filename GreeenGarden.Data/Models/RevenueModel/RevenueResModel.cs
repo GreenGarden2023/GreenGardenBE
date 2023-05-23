@@ -1,4 +1,5 @@
 ﻿using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,12 @@ namespace GreeenGarden.Data.Models.RevenueModel
     public class ProductItemDetailRevenueResModel
     {
         public Guid? productItemDetailId { get; set; }
+        public int quantity { get; set; }
+        public double? revenueProductItemDetail { get; set; }
+    }
+    public class TblProductItemDetailRevenueResModel
+    {
+        public ProductItemDetailResModel? productItemDetail { get; set; }
         public int quantity { get; set; }
         public double? revenueProductItemDetail { get; set; }
     }

@@ -48,6 +48,7 @@ namespace GreeenGarden.Business.Service.RevenueService
                 var tblSaleOrder = await _revenueRepo.getTotalSaleOrderCompletedByDateRange(fromDate, toDate);
 
                 var newRes = new List<ProductItemDetailRevenueResModel>();
+                var newRess = new List<TblProductItemDetailRevenueResModel>();
 
                 foreach (var rentOrder in tblRentOrder)
                 {
@@ -85,9 +86,20 @@ namespace GreeenGarden.Business.Service.RevenueService
                             revenueProductItemDetail = g.Sum(x => x.revenueProductItemDetail)
                         });
 
+                foreach (var i in groupedItems)
+                {
+                    var productItemDetail = await _productItemDetailRepo.GetItemDetailsByID((Guid)i.productItemDetailId);
+
+                    var record = new TblProductItemDetailRevenueResModel();
+                    record.productItemDetail = productItemDetail;
+                    record.quantity = i.quantity;
+                    record.revenueProductItemDetail = i.revenueProductItemDetail;
+                    newRess.Add(record);         
+                }
+
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = groupedItems;
+                result.Data = newRess;
             }
             catch (Exception e)
             {
