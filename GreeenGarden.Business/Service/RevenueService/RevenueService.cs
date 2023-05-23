@@ -96,10 +96,10 @@ namespace GreeenGarden.Business.Service.RevenueService
                     record.revenueProductItemDetail = i.revenueProductItemDetail;
                     newRess.Add(record);         
                 }
-
+                var newresss = newRess.OrderByDescending(x => x.quantity).ToList();
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = newRess;
+                result.Data = newresss;
             }
             catch (Exception e)
             {
