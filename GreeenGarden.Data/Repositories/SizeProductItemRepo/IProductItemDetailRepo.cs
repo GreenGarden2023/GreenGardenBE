@@ -15,6 +15,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
         Task<List<TblProductItemDetail>> GetSizeProductItemByItemID(Guid productItemID);
         Task<List<TblProductItemDetail>> GetItemDetailsByRentOrderID(Guid orderID);
         Task<List<TblProductItemDetail>> GetItemDetailsBySaleOrderID(Guid orderID);
+        Task<ProductItemDetailResModel> GetItemDetailsByID(Guid productItemDetailID);
         Task<double[]> getMinMaxItemPrice(Guid productItemID);
     }
 }
