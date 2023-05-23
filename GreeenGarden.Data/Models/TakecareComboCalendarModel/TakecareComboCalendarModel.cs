@@ -7,14 +7,14 @@ namespace GreeenGarden.Data.Models.TakecareComboCalendarModel
         {
             public Guid ServiceOrderId { get; set; }
 
-            public DateTime ServiceDate { get; set; }
+            public string ServiceDate { get; set; }
 
         }
         public class TakecareComboCalendarUpdateModel
         {
             public Guid ServiceCalendarId { get; set; }
 
-            public DateTime? NextServiceDate { get; set; }
+            public string? NextServiceDate { get; set; }
 
             public string? Sumary { get; set; }
 
