@@ -110,6 +110,72 @@ namespace GreeenGarden.Business.Service.RevenueService
             return result;
         }
 
+        public async Task<ResultModel> GetRentRevenueByDateRange(string token, RevenueReqByDateModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+
+                DateTime fromDate = ConvertUtil.convertStringToDateTime(model.fromDate);
+                DateTime toDate = ConvertUtil.convertStringToDateTime(model.toDate);
+
+                var newRes = new List<ProductItemDetailRevenueResModel>();
+                var newRess = new List<TblProductItemDetailRevenueResModel>();
+                var tblRentOrder = await _revenueRepo.getTotalRentOrderCompletedByDateRange(fromDate, toDate);
+
+                double? revenue = 0;
+                foreach (var rentOrder in tblRentOrder)
+                {
+                    var rentOrderDetails = await _rentOrderDetailRepo.GetRentOrderDetailsByRentOrderID(rentOrder.Id);
+                    foreach (var rentOrderDetail in rentOrderDetails)
+                    {
+                        var tblItemDetail = await _productItemDetailRepo.Get((Guid)rentOrderDetail.ProductItemDetailId);
+
+                        var itemDetailRecord = new ProductItemDetailRevenueResModel();
+                        itemDetailRecord.productItemDetailId = tblItemDetail.Id;
+                        itemDetailRecord.quantity = (int)rentOrderDetail.Quantity;
+                        itemDetailRecord.revenueProductItemDetail = rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity;
+                        newRes.Add(itemDetailRecord);
+                    }
+                    revenue += rentOrder.TotalPrice;
+                }
+                var groupedItems = newRes.GroupBy(x => x.productItemDetailId)
+                        .Select(g => new ProductItemDetailRevenueResModel
+                        {
+                            productItemDetailId = g.Key,
+                            quantity = g.Sum(x => x.quantity),
+                            revenueProductItemDetail = g.Sum(x => x.revenueProductItemDetail)
+                        });
+                foreach (var i in groupedItems)
+                {
+                    var productItemDetail = await _productItemDetailRepo.GetItemDetailsByID((Guid)i.productItemDetailId);
+
+                    var record = new TblProductItemDetailRevenueResModel();
+                    record.productItemDetail = productItemDetail;
+                    record.quantity = i.quantity;
+                    record.revenueProductItemDetail = i.revenueProductItemDetail;
+                    newRess.Add(record);
+                }
+
+                var finalResult = new rentRevenueResModel()
+                {
+                    itemDetailRevenue = newRess,
+                    orderNumer = tblRentOrder.Count(),
+                    rentRevenue = revenue
+                };
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = finalResult;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> GetRevenueByDateRange(string token, RevenueReqByDateModel model)
         {
             var result = new ResultModel();
@@ -162,6 +228,72 @@ namespace GreeenGarden.Business.Service.RevenueService
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.Data = newRes;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GetSaleRevenueByDateRange(string token, RevenueReqByDateModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+
+                DateTime fromDate = ConvertUtil.convertStringToDateTime(model.fromDate);
+                DateTime toDate = ConvertUtil.convertStringToDateTime(model.toDate);
+
+                var newRes = new List<ProductItemDetailRevenueResModel>();
+                var newRess = new List<TblProductItemDetailRevenueResModel>();
+                var tblSaleOrder = await _revenueRepo.getTotalSaleOrderCompletedByDateRange(fromDate, toDate);
+
+                double? revenue = 0;
+                foreach (var saleOrder in tblSaleOrder)
+                {
+                    var saleOrderDetails = await _saleOrderDetailRepo.GetSaleOrderDetailByOrderId(saleOrder.Id);
+                    foreach (var saleOrderDetail in saleOrderDetails)
+                    {
+                        var tblItemDetail = await _productItemDetailRepo.Get((Guid)saleOrderDetail.ProductItemDetailId);
+
+                        var itemDetailRecord = new ProductItemDetailRevenueResModel();
+                        itemDetailRecord.productItemDetailId = tblItemDetail.Id;
+                        itemDetailRecord.quantity = (int)saleOrderDetail.Quantity;
+                        itemDetailRecord.revenueProductItemDetail = saleOrderDetail.SalePricePerUnit * (int)saleOrderDetail.Quantity;
+                        newRes.Add(itemDetailRecord);
+                    }
+                    revenue += saleOrder.TotalPrice;
+                }
+                var groupedItems = newRes.GroupBy(x => x.productItemDetailId)
+                        .Select(g => new ProductItemDetailRevenueResModel
+                        {
+                            productItemDetailId = g.Key,
+                            quantity = g.Sum(x => x.quantity),
+                            revenueProductItemDetail = g.Sum(x => x.revenueProductItemDetail)
+                        });
+                foreach (var i in groupedItems)
+                {
+                    var productItemDetail = await _productItemDetailRepo.GetItemDetailsByID((Guid)i.productItemDetailId);
+
+                    var record = new TblProductItemDetailRevenueResModel();
+                    record.productItemDetail = productItemDetail;
+                    record.quantity = i.quantity;
+                    record.revenueProductItemDetail = i.revenueProductItemDetail;
+                    newRess.Add(record);
+                }
+
+                var finalResult = new rentRevenueResModel()
+                {
+                    itemDetailRevenue = newRess,
+                    orderNumer = tblSaleOrder.Count(),
+                    rentRevenue = revenue
+                };
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = finalResult;
             }
             catch (Exception e)
             {

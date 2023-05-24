@@ -32,4 +32,12 @@ namespace GreeenGarden.Data.Models.RevenueModel
         public int quantity { get; set; }
         public double? revenueProductItemDetail { get; set; }
     }
+
+    public class rentRevenueResModel
+    {
+        public int orderNumer { get; set; }
+        public double? rentRevenue { get; set; }
+        public List<TblProductItemDetailRevenueResModel> itemDetailRevenue { get; set; }
+    }
+
 }
