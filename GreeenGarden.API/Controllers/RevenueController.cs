@@ -34,5 +34,21 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _service.GetBestProductDetailByDateRange(token, model);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-rent-revenue-by-date-range")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetRentRevenueByDateRange([FromQuery]RevenueReqByDateModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.GetRentRevenueByDateRange(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-sale-revenue-by-date-range")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetSaleRevenueByDateRange([FromQuery]RevenueReqByDateModel model)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _service.GetSaleRevenueByDateRange(token, model);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
