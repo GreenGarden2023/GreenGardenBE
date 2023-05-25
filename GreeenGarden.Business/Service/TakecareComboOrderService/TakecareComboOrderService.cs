@@ -13,6 +13,7 @@ using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Models.PaginationModel;
 using Newtonsoft.Json.Linq;
 using System.Net.NetworkInformation;
+using GreeenGarden.Data.Repositories.UserRepo;
 
 namespace GreeenGarden.Business.Service.TakecareComboOrderService
 {
@@ -21,13 +22,16 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
 		private readonly ITakecareComboOrderRepo _takecareComboOrderRepo;
 		private readonly ITakecareComboServiceRepo _takecareComboServiceRepo;
         private readonly ITakecareComboServiceDetailRepo _takecareComboServiceDetailRepo;
+        private readonly IUserRepo _userRepo;
         private readonly DecodeToken _decodeToken;
-        public TakecareComboOrderService(ITakecareComboOrderRepo takecareComboOrderRepo, ITakecareComboServiceRepo takecareComboServiceRepo, ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo)
+        public TakecareComboOrderService(ITakecareComboOrderRepo takecareComboOrderRepo, ITakecareComboServiceRepo takecareComboServiceRepo, 
+            ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo, IUserRepo userRepo)
 		{
 			_takecareComboOrderRepo = takecareComboOrderRepo;
 			_takecareComboServiceRepo = takecareComboServiceRepo;
             _decodeToken = new DecodeToken();
             _takecareComboServiceDetailRepo = takecareComboServiceDetailRepo;
+            _userRepo = userRepo;
         }
 
         public async Task<ResultModel> CancelTakecareComboOrder(Guid id, string cancelReason, string token)
@@ -279,6 +283,39 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             ResultModel result = new();
             try
             {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (userRole.Equals(Commons.CUSTOMER))
+                {
+                    string userID = _decodeToken.Decode(token, "userid");
+                    var tblUser = await _userRepo.Get(Guid.Parse(userID));
+
+                    Page<TblTakecareComboOrder> userTakecareComboOrders = await _takecareComboOrderRepo.GetAllTakecreComboOrderForCustomer(pagingModel, status, tblUser.Id);
+                    if (userTakecareComboOrders != null)
+                    {
+                        List<TakecareComboOrderModel> takecareComboOrderModelList = new();
+                        foreach (var item in userTakecareComboOrders.Results)
+                        {
+                            TakecareComboOrderModel takecareComboOrderModelAdd = await GetTakecareComboOrder(item.Id);
+                            takecareComboOrderModelList.Add(takecareComboOrderModelAdd);
+                        }
+                        PaginationResponseModel paging = new PaginationResponseModel()
+                            .PageSize(userTakecareComboOrders.PageSize)
+                            .CurPage(userTakecareComboOrders.CurrentPage)
+                            .RecordCount(userTakecareComboOrders.RecordCount)
+                            .PageCount(userTakecareComboOrders.PageCount);
+                        GetTakecareComboOrderResModel getTakecareComboOrderResModel = new()
+                        {
+                            Paging = paging,
+                            TakecareComboOrderList = takecareComboOrderModelList
+                        };
+                        result.IsSuccess = true;
+                        result.Code = 200;
+                        result.Data = getTakecareComboOrderResModel;
+                        result.Message = "Get Takecare combo service orders success.";
+                        return result;
+                    }
+                }
+
                 Page<TblTakecareComboOrder> takecareComboOrders = await _takecareComboOrderRepo.GetAllTakecreComboOrder(pagingModel, status);
                 if (takecareComboOrders != null)
                 {

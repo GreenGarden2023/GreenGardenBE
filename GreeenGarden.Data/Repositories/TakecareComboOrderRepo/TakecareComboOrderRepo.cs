@@ -68,6 +68,20 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
             }
         }
 
+        public async Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrderForCustomer(PaginationRequestModel paginationRequestModel, string status, Guid userID)
+        {
+            if (status.Trim().ToLower().Equals("all"))
+            {
+                Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x=>x.UserId.Equals(userID)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return listTblOrder;
+            }
+            else
+            {
+                Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(status) && x.UserId.Equals(userID)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                return listTblOrder;
+            }
+        }
+
         public async Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrderForTech(PaginationRequestModel paginationRequestModel, TakecareComboOrderTechnicianReqModel model)
         {
             if (model.status.Trim().ToLower().Equals("all"))
