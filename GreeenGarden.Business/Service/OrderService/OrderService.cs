@@ -3703,6 +3703,8 @@ namespace GreeenGarden.Business.Service.OrderService
                     var service = await _serviceRepo.Get(order.ServiceId);
                     var serviceDetail = await _serviceDetailRepo.GetServiceDetailByServiceID(service.Id);
 
+                    await _serviceRepo.ChangeServiceStatus(service.Id, Status.COMPLETED);
+
                     ResultModel resultCareGuideGen = await GenerateCareGuidePDFForService(serviceDetail);
                     FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
                     _ = await _eMailService.SendEmailCareGuideForService(user.Mail, serviceDetail, fileCareGuide);
