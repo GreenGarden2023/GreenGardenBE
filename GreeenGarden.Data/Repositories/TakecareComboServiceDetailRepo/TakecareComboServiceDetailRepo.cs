@@ -15,6 +15,11 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo
             _context = context;
         }
 
+        public async Task<TblTakecareComboOrder> getComboOrderByServiceID(Guid takecareComboServiceID)
+        {
+            return await _context.TblTakecareComboOrders.Where(x => x.TakecareComboServiceId.Equals(takecareComboServiceID)).FirstOrDefaultAsync();
+        }
+
         public async Task<TakecareComboServiceDetail> GetTakecareComboServiceDetail(Guid takecareComboServiceID)
         {
             try

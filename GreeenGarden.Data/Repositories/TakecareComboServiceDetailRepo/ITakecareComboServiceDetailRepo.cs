@@ -9,6 +9,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo
     {
 		Task<TakecareComboServiceDetail> GetTakecareComboServiceDetail(Guid takecareComboServiceID);
 		Task<bool> UpdateTakecareComboServiceDetail(Guid takecareComboServiceID, Guid newTakecareComboID);
+		Task<TblTakecareComboOrder> getComboOrderByServiceID(Guid takecareComboServiceID);
 
     }
 }
