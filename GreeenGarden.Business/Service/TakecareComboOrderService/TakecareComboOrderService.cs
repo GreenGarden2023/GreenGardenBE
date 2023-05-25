@@ -126,6 +126,12 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 bool update = await _takecareComboOrderRepo.ChangeTakecareComboOrderStatus(id, status);
                 if (update == true)
                 {
+                    if (status == Status.COMPLETED)
+                    {
+                        var comboServiceOrder = await _takecareComboOrderRepo.Get(id);
+                        await _takecareComboServiceRepo.ChangeTakecareComboServiceStatus(comboServiceOrder.TakecareComboServiceId, Status.COMPLETED);
+                    }
+
                     TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(id);
                     result.Code = 200;
                     result.IsSuccess = true;
