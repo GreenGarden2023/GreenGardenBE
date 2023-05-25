@@ -36,6 +36,7 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
         public int NumOfMonths { get; set; }
 
         public string Status { get; set; } = null!;
+        public TakecereComboOrderServiceResModel? takecareComboOrder { get; set; }   
     }
     public class TakecareComboServiceInsertModel
     {
@@ -109,6 +110,34 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
         public string? TakecareComboDescription { get; set; }
 
         public string? TakecareComboGuarantee { get; set; }
+    }
+    public class TakecereComboOrderServiceResModel
+    {
+        public Guid Id { get; set; }
+
+        public string OrderCode { get; set; } = null!;
+
+        public DateTime CreateDate { get; set; }
+
+        public DateTime ServiceStartDate { get; set; }
+
+        public DateTime ServiceEndDate { get; set; }
+
+        public double? Deposit { get; set; }
+
+        public double TotalPrice { get; set; }
+
+        public double RemainAmount { get; set; }
+
+        public Guid? TechnicianId { get; set; }
+
+        public Guid? UserId { get; set; }
+
+        public string Status { get; set; } = null!;
+
+        public string? Description { get; set; }
+
+        public Guid? CancelBy { get; set; }
     }
 }
 

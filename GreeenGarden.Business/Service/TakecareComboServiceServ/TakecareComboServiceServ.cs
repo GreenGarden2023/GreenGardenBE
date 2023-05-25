@@ -10,6 +10,9 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.TakecareComboRepo;
 using GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo;
+using GreeenGarden.Data.Models.TakecareComboOrder;
+using GreeenGarden.Business.Service.TakecareComboService;
+using GreeenGarden.Data.Repositories.TakecareComboOrderRepo;
 
 namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 {
@@ -19,14 +22,19 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         private readonly ITakecareComboRepo _takecareComboRepo;
         public readonly IUserRepo _userRepo;
         private readonly ITakecareComboServiceDetailRepo _takecareComboServiceDetailRepo;
+        private readonly ITakecareComboOrderRepo _takecareComboOrderRepo;
+
         private readonly DecodeToken _decodeToken;
-        public TakecareComboServiceServ(ITakecareComboServiceRepo takecareComboServiceRepo, IUserRepo userRepo, ITakecareComboRepo takecareComboRepo, ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo)
+        public TakecareComboServiceServ(ITakecareComboServiceRepo takecareComboServiceRepo, IUserRepo userRepo, 
+            ITakecareComboRepo takecareComboRepo, ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo,
+            ITakecareComboOrderRepo takecareComboOrderRepo)
 		{
             _takecareComboServiceRepo = takecareComboServiceRepo;
             _decodeToken = new DecodeToken();
             _takecareComboRepo = takecareComboRepo;
             _userRepo = userRepo;
             _takecareComboServiceDetailRepo = takecareComboServiceDetailRepo;
+            _takecareComboOrderRepo = takecareComboOrderRepo;
         }
 
         public async Task<ResultModel> AssignTechnicianTakecareComboService(TakecareComboServiceAssignTechModel takecareComboServiceAssignTechModel, string token)
@@ -307,6 +315,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 foreach (var item in getList)
                 {
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
+                    var order = await GetTakecareComboOrder(item.Id);
                     TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = item.Id,
@@ -326,6 +335,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         IsAtShop = (bool)item.IsAtShop,
                         NumOfMonths = item.NumberOfMonths,
                         Status = item.Status,
+                        takecareComboOrder= order,
                     };
                     resList.Add(returnModel);
                 }
@@ -343,7 +353,41 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
             return result;
         }
 
-        public async Task<ResultModel> GetTakecareComboServiceByID(Guid takecareComboServiceId, string token)
+        private async Task<TakecereComboOrderServiceResModel> GetTakecareComboOrder(Guid takecareServiceID)
+        {
+            try
+            {
+                TblTakecareComboOrder tblTakecareComboOrderGet = await _takecareComboServiceDetailRepo.getComboOrderByServiceID(takecareServiceID);
+                if (tblTakecareComboOrderGet == null)
+                {
+                    return null;
+                }
+                TakecereComboOrderServiceResModel takecareComboOrderModel = new()
+                {
+                    Id = tblTakecareComboOrderGet.Id,
+                    OrderCode = tblTakecareComboOrderGet.OrderCode,
+                    CreateDate = tblTakecareComboOrderGet.CreateDate,
+                    ServiceStartDate = tblTakecareComboOrderGet.ServiceStartDate,
+                    ServiceEndDate = tblTakecareComboOrderGet.ServiceEndDate,
+                    Deposit = tblTakecareComboOrderGet.Deposit,
+                    TotalPrice = tblTakecareComboOrderGet.TotalPrice,
+                    RemainAmount = tblTakecareComboOrderGet.RemainAmount,
+                    TechnicianId = tblTakecareComboOrderGet.TechnicianId,
+                    UserId = tblTakecareComboOrderGet.UserId,
+                    Status = tblTakecareComboOrderGet.Status,
+                    Description = tblTakecareComboOrderGet.Description,
+                    CancelBy = tblTakecareComboOrderGet.CancelBy,
+                };
+                return takecareComboOrderModel;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return null;
+            }
+        }
+
+            public async Task<ResultModel> GetTakecareComboServiceByID(Guid takecareComboServiceId, string token)
         {
             ResultModel result = new();
             try
@@ -361,6 +405,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 
                 if (tblTakecareComboServiceGet != null)
                 {
+                    var order = await GetTakecareComboOrder(tblTakecareComboServiceGet.Id);
                     TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = tblTakecareComboServiceGet.Id,
@@ -380,6 +425,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
                         NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                         Status = tblTakecareComboServiceGet.Status,
+                        takecareComboOrder = order,
                     };
                     result.IsSuccess = true;
                     result.Code = 200;
@@ -590,6 +636,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 foreach (var item in getList)
                 {
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
+                    var order = await GetTakecareComboOrder(item.Id);
                     TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = item.Id,
@@ -609,6 +656,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         IsAtShop = (bool)item.IsAtShop,
                         NumOfMonths = item.NumberOfMonths,
                         Status = item.Status,
+                        takecareComboOrder = order 
                     };
                     resList.Add(returnModel);
                 }
