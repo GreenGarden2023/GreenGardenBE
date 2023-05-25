@@ -464,7 +464,33 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             ResultModel result = new();
             try
             {
-                TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(takecareComboOdderID);
+
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (userRole.Equals(Commons.CUSTOMER))
+                {
+                    string userID = _decodeToken.Decode(token, "userid");
+                    var tblUser = await _userRepo.Get(Guid.Parse(userID));
+                    TakecareComboOrderModel cutomerTakecareComboOrderModel = await GetTakecareComboOrder(takecareComboOdderID);
+                    if (cutomerTakecareComboOrderModel != null)
+                    {
+                        if (cutomerTakecareComboOrderModel.TakecareComboService.UserId.Equals(tblUser.Id))
+                        {
+                            result.Code = 200;
+                            result.IsSuccess = true;
+                            result.Data = cutomerTakecareComboOrderModel;
+                            result.Message = "Get Takecare combo service order success.";
+                            return result;
+                        }
+                        else
+                        {
+                            result.Code = 401;
+                            result.IsSuccess = false;
+                            result.Message = "Unauthorized error.";
+                            return result;
+                        }
+                    }
+                }
+                    TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(takecareComboOdderID);
                 if (takecareComboOrderModel != null)
                 {
                     result.Code = 200;
