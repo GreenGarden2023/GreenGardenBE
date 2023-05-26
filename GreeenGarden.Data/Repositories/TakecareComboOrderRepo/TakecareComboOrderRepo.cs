@@ -132,6 +132,11 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
             }
         }
 
+        public async Task<TblTakecareComboOrder> GetTakecareComboOrderByCode(string orderCode)
+        {
+            return await _context.TblTakecareComboOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
+        }
+
         public async Task<ResultModel> UpdateOrderDeposit(Guid orderID)
         {
             ResultModel result = new();

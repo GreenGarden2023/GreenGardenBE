@@ -517,6 +517,91 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             }
         }
 
+        public async Task<ResultModel> GetTakecareComboOrderByOrderCode(string orderCode, string token)
+        {
+            if (!string.IsNullOrEmpty(token))
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.MANAGER)
+                    && !userRole.Equals(Commons.STAFF)
+                    && !userRole.Equals(Commons.ADMIN)
+                    && !userRole.Equals(Commons.TECHNICIAN)
+                    && !userRole.Equals(Commons.CUSTOMER))
+                {
+                    return new ResultModel()
+                    {
+                        IsSuccess = false,
+                        Code = 403,
+                        Message = "User not allowed"
+                    };
+                }
+            }
+            else
+            {
+                return new ResultModel()
+                {
+                    IsSuccess = false,
+                    Code = 403,
+                    Message = "User not allowed"
+                };
+            }
+            ResultModel result = new();
+            try
+            {
+
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                var takecareComboOrder = await _takecareComboOrderRepo.GetTakecareComboOrderByCode(orderCode);
+                if (userRole.Equals(Commons.CUSTOMER))
+                {
+                    string userID = _decodeToken.Decode(token, "userid");
+                    var tblUser = await _userRepo.Get(Guid.Parse(userID));
+                    TakecareComboOrderModel cutomerTakecareComboOrderModel = await GetTakecareComboOrder(takecareComboOrder.Id);
+                    if (cutomerTakecareComboOrderModel != null)
+                    {
+                        if (cutomerTakecareComboOrderModel.TakecareComboService.UserId.Equals(tblUser.Id))
+                        {
+                            result.Code = 200;
+                            result.IsSuccess = true;
+                            result.Data = cutomerTakecareComboOrderModel;
+                            result.Message = "Get Takecare combo service order success.";
+                            return result;
+                        }
+                        else
+                        {
+                            result.Code = 401;
+                            result.IsSuccess = false;
+                            result.Message = "Unauthorized error.";
+                            return result;
+                        }
+                    }
+                }
+                TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(takecareComboOrder.Id);
+                if (takecareComboOrderModel != null)
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = takecareComboOrderModel;
+                    result.Message = "Get Takecare combo service order success.";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Get Takecare combo service order failed.";
+                    return result;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+                return result;
+            }
+        }
+
         private async Task<string> GenerateOrderCode()
         {
             TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");

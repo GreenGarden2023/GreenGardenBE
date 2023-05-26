@@ -35,6 +35,14 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _takecareComboOrderService.GetTakecareComboOrderByID(orderID, token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-order-by-order-code")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetTakecareComboOrderByOrderCode(string orderCode)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _takecareComboOrderService.GetTakecareComboOrderByOrderCode(orderCode, token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpGet("get-all-orders")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> GetAllOrder([FromQuery] PaginationRequestModel pagingModel, string status)

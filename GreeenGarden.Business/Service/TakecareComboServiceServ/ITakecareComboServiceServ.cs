@@ -9,6 +9,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 	{
 		Task<ResultModel> CreateTakecareComboService(TakecareComboServiceInsertModel takecareComboServiceInsertModel, string token);
         Task<ResultModel> GetTakecareComboServiceByID(Guid takecareComboServiceId, string token);
+        Task<ResultModel> GetTakecareComboServiceByCode(string code, string token);
         Task<ResultModel> GetAllTakecareComboService(string status, string token);
         Task<ResultModel> GetAllTakecareComboServiceForTechnician(string status, string token, Guid technician);
         Task<ResultModel> ChangeTakecareComboServiceStatus(TakecareComboServiceChangeStatusModel takecareComboServiceChangeStatusModel, string token);

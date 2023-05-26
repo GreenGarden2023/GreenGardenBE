@@ -16,8 +16,8 @@ using GreeenGarden.Data.Repositories.TakecareComboOrderRepo;
 
 namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 {
-	public class TakecareComboServiceServ : ITakecareComboServiceServ
-	{
+    public class TakecareComboServiceServ : ITakecareComboServiceServ
+    {
         public readonly ITakecareComboServiceRepo _takecareComboServiceRepo;
         private readonly ITakecareComboRepo _takecareComboRepo;
         public readonly IUserRepo _userRepo;
@@ -25,10 +25,10 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         private readonly ITakecareComboOrderRepo _takecareComboOrderRepo;
 
         private readonly DecodeToken _decodeToken;
-        public TakecareComboServiceServ(ITakecareComboServiceRepo takecareComboServiceRepo, IUserRepo userRepo, 
+        public TakecareComboServiceServ(ITakecareComboServiceRepo takecareComboServiceRepo, IUserRepo userRepo,
             ITakecareComboRepo takecareComboRepo, ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo,
             ITakecareComboOrderRepo takecareComboOrderRepo)
-		{
+        {
             _takecareComboServiceRepo = takecareComboServiceRepo;
             _decodeToken = new DecodeToken();
             _takecareComboRepo = takecareComboRepo;
@@ -51,7 +51,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     return result;
                 }
                 TblTakecareComboService tblTakecareComboService = await _takecareComboServiceRepo.Get(takecareComboServiceAssignTechModel.TakecareComboServiceId);
-                if (tblTakecareComboService == null )
+                if (tblTakecareComboService == null)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
@@ -117,7 +117,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
             }
-            
+
         }
 
         public async Task<ResultModel> ChangeTakecareComboServiceStatus(TakecareComboServiceChangeStatusModel takecareComboServiceChangeStatusModel, string token)
@@ -335,7 +335,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         IsAtShop = (bool)item.IsAtShop,
                         NumOfMonths = item.NumberOfMonths,
                         Status = item.Status,
-                        takecareComboOrder= order,
+                        takecareComboOrder = order,
                     };
                     resList.Add(returnModel);
                 }
@@ -397,7 +397,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
             }
         }
 
-            public async Task<ResultModel> GetTakecareComboServiceByID(Guid takecareComboServiceId, string token)
+        public async Task<ResultModel> GetTakecareComboServiceByID(Guid takecareComboServiceId, string token)
         {
             ResultModel result = new();
             try
@@ -446,7 +446,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.Message = "Can not find takecare combo service with id "+ takecareComboServiceId + ".";
+                    result.Message = "Can not find takecare combo service with id " + takecareComboServiceId + ".";
                 }
             }
             catch (Exception e)
@@ -491,48 +491,48 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     }
                 }
                 bool update = await _takecareComboServiceRepo.UpdateTakecareComboService(takecareComboServiceUpdateModel);
-                    if (update == true)
-                    {
-                        TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
+                if (update == true)
+                {
+                    TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
                     TakecareComboServiceViewModel returnModel = new()
-                        {
-                            Id = tblTakecareComboServiceGet.Id,
-                            Code = tblTakecareComboServiceGet.Code,
-                            TakecareComboDetail = takecareComboServiceDetailGet,
-                            CreateDate = tblTakecareComboServiceGet.CreateDate,
-                            StartDate = tblTakecareComboServiceGet.StartDate,
-                            EndDate = tblTakecareComboServiceGet.EndDate,
-                            Name = tblTakecareComboServiceGet.Name,
-                            Phone = tblTakecareComboServiceGet.Phone,
-                            Email = tblTakecareComboServiceGet.Email,
-                            Address = tblTakecareComboServiceGet.Address,
-                            UserId = tblTakecareComboServiceGet.UserId,
-                            TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
-                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
-                            TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
-                            IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
-                            NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
-                            Status = tblTakecareComboServiceGet.Status,
-                        };
-                        result.Code = 200;
-                        result.IsSuccess = true;
-                        result.Data = returnModel;
-                        result.Message = "Update takecare combo service successful.";
-                        return result;
-                    }
-                    else
                     {
-                        result.Code = 400;
-                        result.IsSuccess = false;
-                        result.Message = "Update takecare combo service failed.";
-                        return result;
-                    }
+                        Id = tblTakecareComboServiceGet.Id,
+                        Code = tblTakecareComboServiceGet.Code,
+                        TakecareComboDetail = takecareComboServiceDetailGet,
+                        CreateDate = tblTakecareComboServiceGet.CreateDate,
+                        StartDate = tblTakecareComboServiceGet.StartDate,
+                        EndDate = tblTakecareComboServiceGet.EndDate,
+                        Name = tblTakecareComboServiceGet.Name,
+                        Phone = tblTakecareComboServiceGet.Phone,
+                        Email = tblTakecareComboServiceGet.Email,
+                        Address = tblTakecareComboServiceGet.Address,
+                        UserId = tblTakecareComboServiceGet.UserId,
+                        TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
+                        TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
+                        TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                        IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                        NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
+                        Status = tblTakecareComboServiceGet.Status,
+                    };
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = returnModel;
+                    result.Message = "Update takecare combo service successful.";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Update takecare combo service failed.";
+                    return result;
+                }
 
             }
             catch (Exception e)
             {
-                result.IsSuccess = false;
+                result.IsSuccess = false; 
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
@@ -543,7 +543,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         {
             TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
             DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
-            string orderCode = "COMBO_SERV_"+currentTime.ToString("ddMMyyyy")+"_"; 
+            string orderCode = "COMBO_SERV_" + currentTime.ToString("ddMMyyyy") + "_";
             bool dup = true;
             while (dup == true)
             {
@@ -579,44 +579,44 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 }
                 Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
                 bool change = await _takecareComboServiceRepo.CancelService(takecareComboServiceCancelModel.TakecareComboServiceId, takecareComboServiceCancelModel.CancelReason, userID);
-                    if (change == true)
-                    {
-                        TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
-                        TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+                if (change == true)
+                {
+                    TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
+                    TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
 
-                        TakecareComboServiceViewModel returnModel = new()
-                        {
-                            Id = tblTakecareComboServiceGet.Id,
-                            Code = tblTakecareComboServiceGet.Code,
-                            TakecareComboDetail = takecareComboServiceDetailGet,
-                            CreateDate = tblTakecareComboServiceGet.CreateDate,
-                            StartDate = tblTakecareComboServiceGet.StartDate,
-                            EndDate = tblTakecareComboServiceGet.EndDate,
-                            Name = tblTakecareComboServiceGet.Name,
-                            Phone = tblTakecareComboServiceGet.Phone,
-                            Email = tblTakecareComboServiceGet.Email,
-                            Address = tblTakecareComboServiceGet.Address,
-                            UserId = tblTakecareComboServiceGet.UserId,
-                            TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
-                            TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
-                            TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
-                            IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
-                            NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
-                            Status = tblTakecareComboServiceGet.Status,
-                        };
-                        result.Code = 200;
-                        result.IsSuccess = true;
-                        result.Data = returnModel;
-                        result.Message = "Cancel Takecare Combo Service status successful";
-                        return result;
-                    }
-                    else
+                    TakecareComboServiceViewModel returnModel = new()
                     {
-                        result.Code = 400;
-                        result.IsSuccess = false;
-                        result.Message = "Cancel Takecare Combo Service status failed.";
-                        return result;
-                    }
+                        Id = tblTakecareComboServiceGet.Id,
+                        Code = tblTakecareComboServiceGet.Code,
+                        TakecareComboDetail = takecareComboServiceDetailGet,
+                        CreateDate = tblTakecareComboServiceGet.CreateDate,
+                        StartDate = tblTakecareComboServiceGet.StartDate,
+                        EndDate = tblTakecareComboServiceGet.EndDate,
+                        Name = tblTakecareComboServiceGet.Name,
+                        Phone = tblTakecareComboServiceGet.Phone,
+                        Email = tblTakecareComboServiceGet.Email,
+                        Address = tblTakecareComboServiceGet.Address,
+                        UserId = tblTakecareComboServiceGet.UserId,
+                        TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
+                        TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
+                        TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                        IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                        NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
+                        Status = tblTakecareComboServiceGet.Status,
+                    };
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.Data = returnModel;
+                    result.Message = "Cancel Takecare Combo Service status successful";
+                    return result;
+                }
+                else
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.Message = "Cancel Takecare Combo Service status failed.";
+                    return result;
+                }
 
             }
             catch (Exception e)
@@ -666,7 +666,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         IsAtShop = (bool)item.IsAtShop,
                         NumOfMonths = item.NumberOfMonths,
                         Status = item.Status,
-                        takecareComboOrder = order 
+                        takecareComboOrder = order
                     };
                     resList.Add(returnModel);
                 }
@@ -674,6 +674,67 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 result.Code = 200;
                 result.Data = resList;
                 result.Message = "Get takecare combo services successful.";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> GetTakecareComboServiceByCode(string code, string token)
+        {
+            ResultModel result = new();
+            try
+            {
+                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
+                if (!userRole.Equals(Commons.CUSTOMER) && !userRole.Equals(Commons.MANAGER) && !userRole.Equals(Commons.TECHNICIAN))
+                {
+                    result.Code = 403;
+                    result.IsSuccess = false;
+                    result.Message = "User role invalid";
+                    return result;
+                }
+                TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.GetTakecareComboServiceByCode(code);
+                TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+
+                if (tblTakecareComboServiceGet != null)
+                {
+                    var order = await GetTakecareComboOrder(tblTakecareComboServiceGet.Id);
+                    TakecareComboServiceViewModel returnModel = new()
+                    {
+                        Id = tblTakecareComboServiceGet.Id,
+                        Code = tblTakecareComboServiceGet.Code,
+                        TakecareComboDetail = takecareComboServiceDetailGet,
+                        CreateDate = tblTakecareComboServiceGet.CreateDate,
+                        StartDate = tblTakecareComboServiceGet.StartDate,
+                        EndDate = tblTakecareComboServiceGet.EndDate,
+                        Name = tblTakecareComboServiceGet.Name,
+                        Phone = tblTakecareComboServiceGet.Phone,
+                        Email = tblTakecareComboServiceGet.Email,
+                        Address = tblTakecareComboServiceGet.Address,
+                        UserId = tblTakecareComboServiceGet.UserId,
+                        TechnicianId = tblTakecareComboServiceGet.TechnicianId ?? Guid.Empty,
+                        TechnicianName = tblTakecareComboServiceGet.TechnicianName ?? "",
+                        TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
+                        IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
+                        NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
+                        Status = tblTakecareComboServiceGet.Status,
+                        takecareComboOrder = order,
+                    };
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.Data = returnModel;
+                    result.Message = "Get takecare combo service successful.";
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "Can not find takecare combo service with code " + code + ".";
+                }
             }
             catch (Exception e)
             {
