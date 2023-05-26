@@ -541,6 +541,16 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 TblTakecareComboOrder tblTakecareComboOrderGet = await _takecareComboOrderRepo.Get(takecareComboOrderID);
                 TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboOrderGet.TakecareComboServiceId);
                 TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
+
+                string nameCancelBy = null;
+                try
+                {
+                    nameCancelBy = await _userRepo.GetFullNameByID((Guid)tblTakecareComboOrderGet.CancelBy);
+                }
+                catch (Exception)
+                {
+                    nameCancelBy = null;
+                }
                 TakecareComboServiceViewModel takecareComboService = new()
                 {
                     Id = tblTakecareComboServiceGet.Id,
@@ -560,6 +570,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
                     NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                     Status = tblTakecareComboServiceGet.Status,
+                    Reason = tblTakecareComboServiceGet.CancelReason
                 };
                 TakecareComboOrderModel takecareComboOrderModel = new()
                 {
@@ -577,6 +588,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     Description = tblTakecareComboOrderGet.Description,
                     CancelBy = tblTakecareComboOrderGet.CancelBy,
                     TakecareComboService = takecareComboService ?? null,
+                    NameCancelBy = nameCancelBy,
                 };
                 return takecareComboOrderModel;
             }
