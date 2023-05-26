@@ -1,14 +1,23 @@
 ﻿using GreeenGarden.Business.Utilities.Convert;
 using GreeenGarden.Business.Utilities.TokenService;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.CategoryModel;
+using GreeenGarden.Data.Models.ProductItemDetailModel;
+using GreeenGarden.Data.Models.ProductItemModel;
+using GreeenGarden.Data.Models.ProductModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.RevenueModel;
 using GreeenGarden.Data.Repositories.CartRepo;
+using GreeenGarden.Data.Repositories.CategoryRepo;
+using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
+using GreeenGarden.Data.Repositories.ProductRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
 using GreeenGarden.Data.Repositories.RevenueRepo;
 using GreeenGarden.Data.Repositories.SaleOrderDetailRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
+using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities;
 using System;
 using System.Collections.Generic;
@@ -25,15 +34,25 @@ namespace GreeenGarden.Business.Service.RevenueService
         private readonly IRentOrderDetailRepo _rentOrderDetailRepo;
         private readonly ISaleOrderDetailRepo _saleOrderDetailRepo;
         private readonly IProductItemDetailRepo _productItemDetailRepo;
+        private readonly IProductItemRepo _proItemRepo;
+        private readonly IImageRepo _imageRepo;
+        private readonly IProductRepo _productRepo;
+        private readonly ICategoryRepo _categoryRepo; 
 
         public RevenueService(IRevenueRepo revenueRepo, IRentOrderDetailRepo rentOrderDetailRepo
-            , IProductItemDetailRepo productItemDetailRepo, ISaleOrderDetailRepo saleOrderDetailRepo)
+            , IProductItemDetailRepo productItemDetailRepo, ISaleOrderDetailRepo saleOrderDetailRepo
+            , IProductItemRepo productItemRepo, IImageRepo imageRepo, IProductRepo productRepo
+            , ICategoryRepo categoryRepo)
         {
             _decodeToken = new DecodeToken();
             _revenueRepo = revenueRepo;
             _rentOrderDetailRepo = rentOrderDetailRepo;
             _productItemDetailRepo = productItemDetailRepo;
             _saleOrderDetailRepo = saleOrderDetailRepo;
+            _proItemRepo = productItemRepo;
+            _imageRepo= imageRepo;
+            _productRepo= productRepo;
+            _categoryRepo= categoryRepo;
         }
 
         public async Task<ResultModel> GetBestProductDetailByDateRange(string token, RevenueReqByDateModel model)
@@ -89,9 +108,10 @@ namespace GreeenGarden.Business.Service.RevenueService
                 foreach (var i in groupedItems)
                 {
                     var productItemDetail = await _productItemDetailRepo.GetItemDetailsByID((Guid)i.productItemDetailId);
-
+                    var product = await getInforProductAndProductItem((Guid)i.productItemDetailId);
                     var record = new TblProductItemDetailRevenueResModel();
                     record.productItemDetail = productItemDetail;
+                    record.productItemDetail.Product = product;
                     record.quantity = i.quantity;
                     record.revenueProductItemDetail = i.revenueProductItemDetail;
                     newRess.Add(record);         
@@ -149,9 +169,11 @@ namespace GreeenGarden.Business.Service.RevenueService
                 foreach (var i in groupedItems)
                 {
                     var productItemDetail = await _productItemDetailRepo.GetItemDetailsByID((Guid)i.productItemDetailId);
+                    var product = await getInforProductAndProductItem((Guid)i.productItemDetailId);
 
                     var record = new TblProductItemDetailRevenueResModel();
                     record.productItemDetail = productItemDetail;
+                    record.productItemDetail.Product = product;
                     record.quantity = i.quantity;
                     record.revenueProductItemDetail = i.revenueProductItemDetail;
                     newRess.Add(record);
@@ -277,9 +299,11 @@ namespace GreeenGarden.Business.Service.RevenueService
                 foreach (var i in groupedItems)
                 {
                     var productItemDetail = await _productItemDetailRepo.GetItemDetailsByID((Guid)i.productItemDetailId);
+                    var product = await getInforProductAndProductItem((Guid)i.productItemDetailId);
 
                     var record = new TblProductItemDetailRevenueResModel();
                     record.productItemDetail = productItemDetail;
+                    record.productItemDetail.Product = product;
                     record.quantity = i.quantity;
                     record.revenueProductItemDetail = i.revenueProductItemDetail;
                     newRess.Add(record);
@@ -300,6 +324,42 @@ namespace GreeenGarden.Business.Service.RevenueService
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ProductRevenueResModel> getInforProductAndProductItem(Guid productItemDetailId)
+        {
+            var result = new ProductRevenueResModel();
+            try
+            {
+                var tblItemDetail = await _productItemDetailRepo.Get(productItemDetailId);
+                var tblProductItem = await _proItemRepo.Get(tblItemDetail.ProductItemId);
+                var tblProduct = await _productRepo.Get(tblProductItem.ProductId);
+
+                var imgProductItem = await _imageRepo.GetImgUrlProductItem(tblProductItem.Id);
+                var imgProduct = await _imageRepo.GetImgUrlProduct(tblProduct.Id);
+
+                var itemRecord = new ProductItemRevenueResModel()
+                {
+                    ImageURL = imgProductItem.ImageUrl,
+                    ProductItemId = tblProductItem.Id,
+                    ProductItemName = tblProductItem.Name
+                };
+
+
+                result.ProductId = tblProduct.Id;
+                result.ProductName = tblProduct.Name;
+                result.Status = tblProduct.Status;
+                result.IsForRent = tblProduct.IsForRent;
+                result.IsForSale = tblProduct.IsForSale;
+                result.ImageURL = imgProduct.ImageUrl;
+                result.productItem = itemRecord;
+                
+            }
+            catch (Exception e)
+            {
+                return null;
             }
             return result;
         }
