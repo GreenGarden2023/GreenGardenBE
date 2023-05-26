@@ -30,6 +30,7 @@ namespace GreeenGarden.Data.Models.TakecareComboOrder
         public string? Description { get; set; }
 
         public Guid? CancelBy { get; set; }
+        public string? NameCancelBy { get; set; }
 
         public TakecareComboServiceViewModel? TakecareComboService { get; set; }
     }

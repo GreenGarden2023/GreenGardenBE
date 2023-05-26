@@ -362,6 +362,15 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 {
                     return null;
                 }
+                string nameCancelBy = null;
+                try
+                {
+                    nameCancelBy = await _userRepo.GetFullNameByID((Guid)tblTakecareComboOrderGet.CancelBy);
+                }
+                catch (Exception)
+                {
+                    nameCancelBy = null;
+                }
                 TakecereComboOrderServiceResModel takecareComboOrderModel = new()
                 {
                     Id = tblTakecareComboOrderGet.Id,
@@ -377,6 +386,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     Status = tblTakecareComboOrderGet.Status,
                     Description = tblTakecareComboOrderGet.Description,
                     CancelBy = tblTakecareComboOrderGet.CancelBy,
+                    NameCancelBy = nameCancelBy,
                 };
                 return takecareComboOrderModel;
             }
