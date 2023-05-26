@@ -206,7 +206,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 TblService tblService = new()
                 {
                     Id = Guid.NewGuid(),
-                    ServiceCode = "SERVICE_" + await GenerateServiceCode(),
+                    ServiceCode = await GenerateServiceCode(),
                     UserId = Guid.Parse(userID),
                     CreateDate = currentTime,
                     StartDate = serviceInsertModel.StartDate,
@@ -986,17 +986,22 @@ namespace GreeenGarden.Business.Service.TakecareService
 
         private async Task<string> GenerateServiceCode()
         {
-            string serviceCode = "";
+
+
+            TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
+            string orderCode = "SERV_" + currentTime.ToString("ddMMyyyy") + "_";
             bool dup = true;
             while (dup == true)
             {
                 Random random = new();
-                serviceCode = new string(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 10).Select(s => s[random.Next(s.Length)]).ToArray());
-                bool checkServiceCode = await _serviceRepo.CheckServiceCode(serviceCode);
-                dup = checkServiceCode != false;
+                orderCode += new string(Enumerable.Repeat("0123456789", 5).Select(s => s[random.Next(s.Length)]).ToArray());
+                bool checkCodeDup = await _serviceRepo.CheckServiceCode(orderCode);
+                dup = checkCodeDup != false;
             }
 
-            return serviceCode;
+            return orderCode;
+
         }
         public async Task<ResultModel> GetRequestDetailByServiceOrder(string token, string serviceOrder)
         {

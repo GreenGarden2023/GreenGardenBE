@@ -15,6 +15,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
 		Task<Page<TblTakecareComboOrder>> GetAllTakecreComboOrderForTech(PaginationRequestModel paginationRequestModel, TakecareComboOrderTechnicianReqModel model);
         Task<bool> ChangeTakecareComboOrderStatus(Guid id, string status);
         Task<ResultModel> UpdateOrderDeposit(Guid orderID);
+        Task<TblTakecareComboOrder> GetTakecareComboOrderByCode(string orderCode);
         Task<ResultModel> UpdateOrderRemain(Guid orderID, double payAmount);
         Task<bool> CancelOrder(Guid orderID, string cancelReason, Guid cancelBy);
     }

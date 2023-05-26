@@ -135,6 +135,11 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             }
         }
 
+        public async Task<TblTakecareComboService> GetTakecareComboServiceByCode(string code)
+        {
+            return await _context.TblTakecareComboServices.Where(x => x.Code.Equals(code)).FirstOrDefaultAsync();
+        }
+
         public async Task<bool> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel)
         {
             try
