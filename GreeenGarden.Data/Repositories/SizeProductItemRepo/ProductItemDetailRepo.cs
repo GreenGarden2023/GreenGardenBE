@@ -24,6 +24,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 
         public async Task<List<ProductItemDetailResModel>> GetSizeProductItems(Guid ProductItemID, string? status)
         {
+
             if (string.IsNullOrEmpty(status))
             {
                 List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Quantity != 0).ToListAsync();
@@ -56,7 +57,7 @@ namespace GreeenGarden.Data.Repositories.SizeProductItemRepo
 
                 }
                 return listSizeProd;
-            }
+            } 
             else
             {
                 List<TblProductItemDetail> result = await _context.TblProductItemDetails.Where(x => x.ProductItemId.Equals(ProductItemID) && x.Quantity != 0 && x.Status.Trim().ToLower().Equals(status.Trim().ToLower())).ToListAsync();
