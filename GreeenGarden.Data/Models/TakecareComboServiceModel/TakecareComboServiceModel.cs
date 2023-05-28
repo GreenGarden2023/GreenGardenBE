@@ -37,6 +37,8 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 
         public string Status { get; set; } = null!;
         public string? Reason { get; set; } 
+        public Guid? CancelBy { get; set; } 
+        public string? NameCancelBy { get; set; } 
         public TakecereComboOrderServiceResModel? takecareComboOrder { get; set; }   
     }
     public class TakecareComboServiceInsertModel
