@@ -778,12 +778,21 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     return result;
                 }
                 Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
-                bool change = await _takecareComboServiceRepo.RejectService(takecareComboServiceRejectModel.TakecareComboServiceId);
+                bool change = await _takecareComboServiceRepo.RejectService(takecareComboServiceRejectModel.TakecareComboServiceId, takecareComboServiceRejectModel.RejectReason);
                 if (change == true)
                 {
                     TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
 
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)tblTakecareComboServiceGet.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = tblTakecareComboServiceGet.Id,
@@ -803,6 +812,10 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
                         NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                         Status = tblTakecareComboServiceGet.Status,
+                        Reason = tblTakecareComboServiceGet.CancelReason,
+                        CancelBy = tblTakecareComboServiceGet.CancelBy,
+                        NameCancelBy = nameCancelBy,
+
                     };
                     result.Code = 200;
                     result.IsSuccess = true;

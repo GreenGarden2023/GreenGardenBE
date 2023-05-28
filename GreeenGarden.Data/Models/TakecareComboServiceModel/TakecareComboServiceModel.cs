@@ -83,6 +83,8 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
     {
         public Guid TakecareComboServiceId { get; set; }
 
+        public string RejectReason { get; set; }
+
     }
     public class TakecareComboServiceUpdateModel
     {
