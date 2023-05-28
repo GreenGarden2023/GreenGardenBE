@@ -99,6 +99,14 @@ namespace GreeenGarden.API.Controllers
             Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.CancelService(takecareComboServiceCancelModel, token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpPost("reject-takecare-combo-service")]
+        [Authorize(Roles = "Technician, Manager, Customer")]
+        public async Task<IActionResult> RejectService(TakecareComboServiceRejectModel takecareComboServiceRejectModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.RejectService(takecareComboServiceRejectModel, token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 }
 
