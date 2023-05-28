@@ -346,6 +346,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         Status = item.Status,
                         takecareComboOrder = order,
                         CancelBy = item.CancelBy,
+                        Reason = item.CancelReason,
                         NameCancelBy= nameCancelBy,
                     };
                     resList.Add(returnModel);
@@ -595,6 +596,15 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(tblTakecareComboServiceGet.Id);
 
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)tblTakecareComboServiceGet.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = tblTakecareComboServiceGet.Id,
@@ -613,6 +623,9 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         TreeQuantity = tblTakecareComboServiceGet.TreeQuantity,
                         IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
                         NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
+                        CancelBy = tblTakecareComboServiceGet.CancelBy,
+                        NameCancelBy= nameCancelBy,
+                        Reason = tblTakecareComboServiceGet.CancelReason,
                         Status = tblTakecareComboServiceGet.Status,
                     };
                     result.Code = 200;
