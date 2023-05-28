@@ -140,6 +140,22 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             return await _context.TblTakecareComboServices.Where(x => x.Code.Equals(code)).FirstOrDefaultAsync();
         }
 
+        public async Task<bool> RejectService(Guid takecareComboServiceID)
+        {
+            try
+            {
+                TblTakecareComboService tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Id.Equals(takecareComboServiceID)).FirstOrDefaultAsync();
+                tblTakecareComboService.Status = TakecareComboServiceStatus.REJECTED;
+                _ = _context.Update(tblTakecareComboService);
+                _ = await _context.SaveChangesAsync();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public async Task<bool> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel)
         {
             try

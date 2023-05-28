@@ -16,6 +16,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         Task<ResultModel> AssignTechnicianTakecareComboService(TakecareComboServiceAssignTechModel takecareComboServiceAssignTechModel, string token);
         Task<ResultModel> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel, string token);
         Task<ResultModel> CancelService(TakecareComboServiceCancelModel takecareComboServiceCancelModel, string token);
+        Task<ResultModel> RejectService(TakecareComboServiceRejectModel takecareComboServiceRejectModel, string token);
 
     }
 }

@@ -15,6 +15,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
 		Task<bool> AssignTechnicianTakecareComboService(Guid takecareComboServiceID, Guid technicianID);
 		Task<bool> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel);
         Task<bool> CancelService(Guid takecareComboServiceID, string cancelReason, Guid cancelBy);
+        Task<bool> RejectService(Guid takecareComboServiceID);
     }
 }
 
