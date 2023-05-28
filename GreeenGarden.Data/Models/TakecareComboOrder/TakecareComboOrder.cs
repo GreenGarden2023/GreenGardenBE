@@ -27,7 +27,7 @@ namespace GreeenGarden.Data.Models.TakecareComboOrder
 
         public string Status { get; set; } = null!;
 
-        public string? Description { get; set; }
+        public string? Reason { get; set; }
 
         public Guid? CancelBy { get; set; }
         public string? NameCancelBy { get; set; }

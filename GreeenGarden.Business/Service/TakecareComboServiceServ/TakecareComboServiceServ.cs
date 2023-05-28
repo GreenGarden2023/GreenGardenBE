@@ -316,6 +316,15 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 {
                     TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
                     var order = await GetTakecareComboOrder(item.Id);
+                    string nameCancelBy = null;
+                    try
+                    {
+                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)item.CancelBy);
+                    }
+                    catch (Exception)
+                    {
+                        nameCancelBy = null;
+                    }
                     TakecareComboServiceViewModel returnModel = new()
                     {
                         Id = item.Id,
@@ -336,6 +345,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         NumOfMonths = item.NumberOfMonths,
                         Status = item.Status,
                         takecareComboOrder = order,
+                        CancelBy = item.CancelBy,
+                        NameCancelBy= nameCancelBy,
                     };
                     resList.Add(returnModel);
                 }

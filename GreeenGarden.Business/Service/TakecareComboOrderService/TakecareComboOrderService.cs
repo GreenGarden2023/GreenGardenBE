@@ -636,6 +636,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 {
                     nameCancelBy = null;
                 }
+
                 TakecareComboServiceViewModel takecareComboService = new()
                 {
                     Id = tblTakecareComboServiceGet.Id,
@@ -670,7 +671,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     TechnicianId = tblTakecareComboOrderGet.TechnicianId,
                     UserId = tblTakecareComboOrderGet.UserId,
                     Status = tblTakecareComboOrderGet.Status,
-                    Description = tblTakecareComboOrderGet.Description,
+                    Reason = tblTakecareComboOrderGet.Description,
                     CancelBy = tblTakecareComboOrderGet.CancelBy,
                     TakecareComboService = takecareComboService ?? null,
                     NameCancelBy = nameCancelBy,
