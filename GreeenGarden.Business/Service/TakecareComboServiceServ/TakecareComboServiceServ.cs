@@ -841,7 +841,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     return result;
                 }
                 Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
-                bool change = await _takecareComboServiceRepo.RejectService(takecareComboServiceRejectModel.TakecareComboServiceId, takecareComboServiceRejectModel.RejectReason);
+                bool change = await _takecareComboServiceRepo.RejectService(takecareComboServiceRejectModel.TakecareComboServiceId, takecareComboServiceRejectModel.RejectReason, userID);
                 if (change == true)
                 {
                     TblTakecareComboService tblTakecareComboServiceGet = await _takecareComboServiceRepo.Get(tblTakecareComboService.Id);
