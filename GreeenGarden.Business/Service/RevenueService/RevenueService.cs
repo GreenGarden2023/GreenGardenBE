@@ -38,7 +38,7 @@ namespace GreeenGarden.Business.Service.RevenueService
         private readonly IProductItemRepo _proItemRepo;
         private readonly IImageRepo _imageRepo;
         private readonly IProductRepo _productRepo;
-        private readonly ICategoryRepo _categoryRepo; 
+        private readonly ICategoryRepo _categoryRepo;
 
         public RevenueService(IRevenueRepo revenueRepo, IRentOrderDetailRepo rentOrderDetailRepo
             , IProductItemDetailRepo productItemDetailRepo, ISaleOrderDetailRepo saleOrderDetailRepo
@@ -51,9 +51,9 @@ namespace GreeenGarden.Business.Service.RevenueService
             _productItemDetailRepo = productItemDetailRepo;
             _saleOrderDetailRepo = saleOrderDetailRepo;
             _proItemRepo = productItemRepo;
-            _imageRepo= imageRepo;
-            _productRepo= productRepo;
-            _categoryRepo= categoryRepo;
+            _imageRepo = imageRepo;
+            _productRepo = productRepo;
+            _categoryRepo = categoryRepo;
         }
 
         public async Task<ResultModel> GetBestProductDetailByDateRange(string token, RevenueReqByDateModel model)
@@ -115,7 +115,7 @@ namespace GreeenGarden.Business.Service.RevenueService
                     record.productItemDetail.Product = product;
                     record.quantity = i.quantity;
                     record.revenueProductItemDetail = i.revenueProductItemDetail;
-                    newRess.Add(record);         
+                    newRess.Add(record);
                 }
                 var newresss = newRess.OrderByDescending(x => x.quantity).ToList();
                 result.Code = 200;
@@ -356,7 +356,7 @@ namespace GreeenGarden.Business.Service.RevenueService
                 result.IsForSale = tblProduct.IsForSale;
                 result.ImageURL = imgProduct.ImageUrl;
                 result.productItem = itemRecord;
-                
+
             }
             catch (Exception e)
             {
@@ -434,5 +434,73 @@ namespace GreeenGarden.Business.Service.RevenueService
             }
             return result;
         }
+
+        public async Task<ResultModel> GetRevenueInMonth(string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var returnResult = new List<revenueByMonthResModel>();
+                int month = DateTime.Now.Month;
+                int year = DateTime.Now.Year;
+                var fromDate = new DateTime(year, month, 1);
+                var toDate = fromDate.AddMonths(1).AddDays(-1);
+                var tblRentOrder = await _revenueRepo.getTotalRentOrderCompletedByDateRange(fromDate, toDate);
+                var tblSaleOrder = await _revenueRepo.getTotalSaleOrderCompletedByDateRange(fromDate, toDate);
+                var tblServiceOrder = await _revenueRepo.getTotalServiceOrderCompletedByDateRange(fromDate, toDate);
+                var tblTakeCareComboOrder = await _revenueRepo.getTotalServiceComboOrderCompletedByDateRange(fromDate, toDate);
+
+                double? totalRevenue = 0;
+                double? rentRevenue = 0;
+                double? saleRevenue = 0;
+                double? serviceRevenue = 0;
+                double? serviceComboRevenue = 0;
+                foreach (var rentOrder in tblRentOrder)
+                {
+                    totalRevenue += rentOrder.TotalPrice;
+                    rentRevenue += rentOrder.TotalPrice;
+                }
+                foreach (var saleOrder in tblSaleOrder)
+                {
+                    totalRevenue += saleOrder.TotalPrice;
+                    saleRevenue += saleOrder.TotalPrice;
+                }
+                foreach (var serviceOrder in tblServiceOrder)
+                {
+                    totalRevenue += serviceOrder.TotalPrice;
+                    serviceRevenue += serviceOrder.TotalPrice;
+                }
+                foreach (var comboOrder in tblTakeCareComboOrder)
+                {
+                    totalRevenue += comboOrder.TotalPrice;
+                    serviceComboRevenue += comboOrder.TotalPrice;
+                }
+                var revenueByMonth = new RevenueResByDateModel()
+                {
+                    totalRevenue = totalRevenue,
+                    rentRevenue = rentRevenue,
+                    saleRevenue = saleRevenue,
+                    serviceRevenue = serviceRevenue,
+                    serviceComboRevenue = serviceComboRevenue,
+                };
+                var recordItem = new revenueByMonthResModel()
+                {
+                    month = month,
+                    revenues = revenueByMonth
+                };
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = recordItem;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }
+

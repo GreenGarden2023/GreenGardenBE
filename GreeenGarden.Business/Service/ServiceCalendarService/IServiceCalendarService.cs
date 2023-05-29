@@ -8,6 +8,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
         Task<ResultModel> CreateServiceCalendar(string token, ServiceCalendarInsertModel serviceCalendarInsertModel);
         Task<ResultModel> GetServiceCalendarsByUser(string token, GetServiceCalendarsByUser getServiceCalendarsByUser);
         Task<ResultModel> GetServiceCalendarsByTechnician(string token, GetServiceCalendarsByTechnician getServiceCalendarsByTechnician);
+        Task<ResultModel> GetServiceCalendarsTodayByTechnician(string token);
         Task<ResultModel> GetServiceCalendarsByServiceOrder(string token, Guid serviceOrderID);
     }
 }
