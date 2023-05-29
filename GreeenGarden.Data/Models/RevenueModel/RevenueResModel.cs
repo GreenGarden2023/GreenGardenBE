@@ -39,5 +39,10 @@ namespace GreeenGarden.Data.Models.RevenueModel
         public double? rentRevenue { get; set; }
         public List<TblProductItemDetailRevenueResModel> itemDetailRevenue { get; set; }
     }
+    public class revenueByMonthResModel
+    {
+        public int month { get; set; }
+        public RevenueResByDateModel revenues { get; set; }
+    }
 
 }

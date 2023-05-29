@@ -13,5 +13,6 @@ namespace GreeenGarden.Data.Repositories.RevenueRepo
         Task<List<TblSaleOrder>> getTotalSaleOrderCompletedByDateRange(DateTime startDate, DateTime endDate);
         Task<List<TblServiceOrder>> getTotalServiceOrderCompletedByDateRange(DateTime startDate, DateTime endDate);
         Task<List<TblTakecareComboOrder>> getTotalServiceComboOrderCompletedByDateRange(DateTime startDate, DateTime endDate);
+
     }
 }
