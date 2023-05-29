@@ -310,46 +310,96 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     result.Message = "User role invalid";
                     return result;
                 }
-                List<TblTakecareComboService> getList = await _takecareComboServiceRepo.GetAllTakecareComboService(status);
                 List<TakecareComboServiceViewModel> resList = new List<TakecareComboServiceViewModel>();
-                foreach (var item in getList)
+                if (userRole.Equals(Commons.CUSTOMER))
                 {
-                    TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
-                    var order = await GetTakecareComboOrder(item.Id);
-                    string nameCancelBy = null;
-                    try
+
+                    string userID =  _decodeToken.Decode(token, "userid");
+                    List<TblTakecareComboService> getList = await _takecareComboServiceRepo.GetAllTakecareComboServiceByCustomer(status, Guid.Parse(userID));
+                    foreach (var item in getList)
                     {
-                        nameCancelBy = await _userRepo.GetFullNameByID((Guid)item.CancelBy);
+                        TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
+                        var order = await GetTakecareComboOrder(item.Id);
+                        string nameCancelBy = null;
+                        try
+                        {
+                            nameCancelBy = await _userRepo.GetFullNameByID((Guid)item.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            nameCancelBy = null;
+                        }
+                        TakecareComboServiceViewModel returnModel = new()
+                        {
+                            Id = item.Id,
+                            Code = item.Code,
+                            TakecareComboDetail = takecareComboServiceDetailGet,
+                            CreateDate = item.CreateDate,
+                            StartDate = item.StartDate,
+                            EndDate = item.EndDate,
+                            Name = item.Name,
+                            Phone = item.Phone,
+                            Email = item.Email,
+                            Address = item.Address,
+                            UserId = item.UserId,
+                            TechnicianId = item.TechnicianId ?? Guid.Empty,
+                            TechnicianName = item.TechnicianName ?? "",
+                            TreeQuantity = item.TreeQuantity,
+                            IsAtShop = (bool)item.IsAtShop,
+                            NumOfMonths = item.NumberOfMonths,
+                            Status = item.Status,
+                            takecareComboOrder = order,
+                            CancelBy = item.CancelBy,
+                            Reason = item.CancelReason,
+                            NameCancelBy = nameCancelBy,
+                        };
+                        resList.Add(returnModel);
+
                     }
-                    catch (Exception)
+                }
+                else
+                {
+                    List<TblTakecareComboService> getList = await _takecareComboServiceRepo.GetAllTakecareComboService(status);
+                    foreach (var item in getList)
                     {
-                        nameCancelBy = null;
+                        TakecareComboServiceDetail takecareComboServiceDetailGet = await _takecareComboServiceDetailRepo.GetTakecareComboServiceDetail(item.Id);
+                        var order = await GetTakecareComboOrder(item.Id);
+                        string nameCancelBy = null;
+                        try
+                        {
+                            nameCancelBy = await _userRepo.GetFullNameByID((Guid)item.CancelBy);
+                        }
+                        catch (Exception)
+                        {
+                            nameCancelBy = null;
+                        }
+                        TakecareComboServiceViewModel returnModel = new()
+                        {
+                            Id = item.Id,
+                            Code = item.Code,
+                            TakecareComboDetail = takecareComboServiceDetailGet,
+                            CreateDate = item.CreateDate,
+                            StartDate = item.StartDate,
+                            EndDate = item.EndDate,
+                            Name = item.Name,
+                            Phone = item.Phone,
+                            Email = item.Email,
+                            Address = item.Address,
+                            UserId = item.UserId,
+                            TechnicianId = item.TechnicianId ?? Guid.Empty,
+                            TechnicianName = item.TechnicianName ?? "",
+                            TreeQuantity = item.TreeQuantity,
+                            IsAtShop = (bool)item.IsAtShop,
+                            NumOfMonths = item.NumberOfMonths,
+                            Status = item.Status,
+                            takecareComboOrder = order,
+                            CancelBy = item.CancelBy,
+                            Reason = item.CancelReason,
+                            NameCancelBy = nameCancelBy,
+                        };
+                        resList.Add(returnModel);
                     }
-                    TakecareComboServiceViewModel returnModel = new()
-                    {
-                        Id = item.Id,
-                        Code = item.Code,
-                        TakecareComboDetail = takecareComboServiceDetailGet,
-                        CreateDate = item.CreateDate,
-                        StartDate = item.StartDate,
-                        EndDate = item.EndDate,
-                        Name = item.Name,
-                        Phone = item.Phone,
-                        Email = item.Email,
-                        Address = item.Address,
-                        UserId = item.UserId,
-                        TechnicianId = item.TechnicianId ?? Guid.Empty,
-                        TechnicianName = item.TechnicianName ?? "",
-                        TreeQuantity = item.TreeQuantity,
-                        IsAtShop = (bool)item.IsAtShop,
-                        NumOfMonths = item.NumberOfMonths,
-                        Status = item.Status,
-                        takecareComboOrder = order,
-                        CancelBy = item.CancelBy,
-                        Reason = item.CancelReason,
-                        NameCancelBy= nameCancelBy,
-                    };
-                    resList.Add(returnModel);
+
                 }
                 result.IsSuccess = true;
                 result.Code = 200;

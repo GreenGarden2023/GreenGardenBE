@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
 {
+
+
 	public class TakecareComboServiceRepo : Repository<TblTakecareComboService>, ITakecareComboServiceRepo
     {
         private readonly GreenGardenDbContext _context;
@@ -107,6 +109,30 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             else
             {
                 List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+        }
+
+        public async Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByCustomer(string status, Guid userId)
+        {
+            if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.PENDING))
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Status.Equals(TakecareComboServiceStatus.PENDING) && x.UserId.Equals(userId)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+            else if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.ACCEPTED))
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Status.Equals(TakecareComboServiceStatus.ACCEPTED) && x.UserId.Equals(userId)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+            else if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.REJECTED))
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Status.Equals(TakecareComboServiceStatus.REJECTED) && x.UserId.Equals(userId)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                return tblTakecareComboService;
+            }
+            else
+            {
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x=>x.UserId.Equals(userId)).OrderByDescending(y => y.CreateDate).ToListAsync();
                 return tblTakecareComboService;
             }
         }
