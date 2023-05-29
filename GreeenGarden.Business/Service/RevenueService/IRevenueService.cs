@@ -12,6 +12,7 @@ namespace GreeenGarden.Business.Service.RevenueService
     {
         Task<ResultModel> GetRevenueByDateRange(string token, RevenueReqByDateModel model);
         Task<ResultModel> GetRevenueByMonth(string token);
+        Task<ResultModel> GetRevenueInMonth(string token);
         Task<ResultModel> GetRentRevenueByDateRange(string token, RevenueReqByDateModel model);
         Task<ResultModel> GetSaleRevenueByDateRange(string token, RevenueReqByDateModel model);
         Task<ResultModel> GetBestProductDetailByDateRange(string token, RevenueReqByDateModel model);
