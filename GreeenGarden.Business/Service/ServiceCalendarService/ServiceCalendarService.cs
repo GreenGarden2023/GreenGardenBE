@@ -404,41 +404,32 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
             }
         }
 
-        public async Task<ResultModel> GetServiceCalendarsTodayByTechnician(string token)
+        public async Task<ResultModel> GetServiceCalendarsTodayByTechnician()
         {
-            if (!string.IsNullOrEmpty(token))
-            {
-                string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                if (!userRole.Equals(Commons.TECHNICIAN))
-                {
-                    return new ResultModel()
-                    {
-                        IsSuccess = false,
-                        Code = 403,
-                        Message = "User not allowed"
-                    };
-                }
-            }
-            else
-            {
-                return new ResultModel()
-                {
-                    IsSuccess = false,
-                    Code = 403,
-                    Message = "User not allowed"
-                };
-            }
             ResultModel result = new();
             try
             {
                 DateTime now = DateTime.Now.AddTicks(-DateTime.Now.TimeOfDay.Ticks);
-                string userID = _decodeToken.Decode(token, "userid");
-                ServiceCalendarGetModel res = await _serviceCalendarRepo.GetServiceCalendarsTodayByTechnician(Guid.Parse(userID), now);
-                if (res != null)
+                var technicians = await _userRepo.GetUsersByRole("technician");
+                var returnResult = new List<CarlendarToDayResModel>();
+                foreach (var i in technicians)
+                {
+                    var techCalendar = new CarlendarToDayResModel();
+                    var res = await _serviceCalendarRepo.GetServiceCalendarsTodayByTechnician(now, i.ID);
+                    techCalendar.TechnicianMail = i.Email;
+                    techCalendar.TechnicianId = i.ID;
+                    techCalendar.TechnicianName = i.FullName;
+                    techCalendar.listCarlendar = res;
+
+                    returnResult.Add(techCalendar);
+                }
+
+
+                if (returnResult != null)
                 {
                     result.Code = 200;
                     result.IsSuccess = true;
-                    result.Data = res;
+                    result.Data = returnResult;
                     result.Message = "Get calendar success";
                     return result;
                 }
