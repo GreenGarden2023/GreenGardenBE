@@ -92,7 +92,8 @@
         public Guid TechnicianId { get; set; }
         public string TechnicianName { get; set; }
         public string TechnicianMail { get; set; }
-        public List<ServiceCalendarTodayResModel> listCarlendar { get; set; }
+        public List<ServiceCalendarTodayResModel> listServiceCarlendar { get; set; }
+        public List<ServiceCalendarTodayResModel> listComboCarlendar { get; set; }
     }
 
 }

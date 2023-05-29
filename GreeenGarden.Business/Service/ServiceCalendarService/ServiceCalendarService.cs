@@ -4,6 +4,7 @@ using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ServiceCalendarModel;
+using GreeenGarden.Data.Repositories.ComboServiceCalendarRepo;
 using GreeenGarden.Data.Repositories.ImageRepo;
 using GreeenGarden.Data.Repositories.ServiceCalendarRepo;
 using GreeenGarden.Data.Repositories.ServiceOrderRepo;
@@ -22,7 +23,10 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
         private readonly IServiceOrderRepo _serviceOrderRepo;
         private readonly IEMailService _emailService;
         private readonly IUserRepo _userRepo;
-        public ServiceCalendarService(IUserRepo userRepo, IServiceCalendarRepo serviceCalendarRepo, IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceOrderRepo serviceOrderRepo, IEMailService eMailService)
+        private readonly IComboServiceCalendarRepo _comboServiceCalendarRepo;
+        public ServiceCalendarService(IUserRepo userRepo, IServiceCalendarRepo serviceCalendarRepo, 
+            IImageRepo imageRepo, IServiceRepo serviceRepo, IServiceOrderRepo serviceOrderRepo, 
+            IEMailService eMailService, IComboServiceCalendarRepo comboServiceCalendarRepo)
         {
             _decodeToken = new DecodeToken();
             _serviceCalendarRepo = serviceCalendarRepo;
@@ -31,6 +35,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
             _serviceOrderRepo = serviceOrderRepo;
             _emailService = eMailService;
             _userRepo = userRepo;
+            _comboServiceCalendarRepo= comboServiceCalendarRepo;
         }
 
         public async Task<ResultModel> CreateServiceCalendar(string token, ServiceCalendarInsertModel serviceCalendarInsertModel)
@@ -416,10 +421,12 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                 {
                     var techCalendar = new CarlendarToDayResModel();
                     var res = await _serviceCalendarRepo.GetServiceCalendarsTodayByTechnician(now, i.ID);
+                    var res2 = await _comboServiceCalendarRepo.GetComboCalendarsTodayByTechnician(now, i.ID);
                     techCalendar.TechnicianMail = i.Email;
                     techCalendar.TechnicianId = i.ID;
                     techCalendar.TechnicianName = i.FullName;
-                    techCalendar.listCarlendar = res;
+                    techCalendar.listServiceCarlendar = res;
+                    techCalendar.listComboCarlendar = res2;
 
                     returnResult.Add(techCalendar);
                 }
