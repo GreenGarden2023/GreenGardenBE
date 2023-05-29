@@ -409,11 +409,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
             if (!string.IsNullOrEmpty(token))
             {
                 string userRole = _decodeToken.Decode(token, ClaimsIdentity.DefaultRoleClaimType);
-                if (!userRole.Equals(Commons.MANAGER)
-                    && !userRole.Equals(Commons.STAFF)
-                    && !userRole.Equals(Commons.ADMIN)
-                    && !userRole.Equals(Commons.CUSTOMER)
-                    && !userRole.Equals(Commons.TECHNICIAN))
+                if (!userRole.Equals(Commons.TECHNICIAN))
                 {
                     return new ResultModel()
                     {
@@ -435,8 +431,9 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
             ResultModel result = new();
             try
             {
-
-                /*ServiceCalendarGetModel res = await _serviceCalendarRepo.GetServiceCalendarsByTechnician(getServiceCalendarsByTechnician.TechnicianID, getServiceCalendarsByTechnician.Date);
+                DateTime now = DateTime.Now.AddTicks(-DateTime.Now.TimeOfDay.Ticks);
+                string userID = _decodeToken.Decode(token, "userid");
+                ServiceCalendarGetModel res = await _serviceCalendarRepo.GetServiceCalendarsTodayByTechnician(Guid.Parse(userID), now);
                 if (res != null)
                 {
                     result.Code = 200;
@@ -451,7 +448,7 @@ namespace GreeenGarden.Business.Service.ServiceCalendarService
                     result.IsSuccess = false;
                     result.Message = "Get calendar failed.";
                     return result;
-                }*/
+                }
             }
             catch (Exception e)
             {

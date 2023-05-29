@@ -132,6 +132,35 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
             }
         }
 
+        public async Task<ServiceCalendarGetModel> GetServiceCalendarsTodayByTechnician(Guid technicianID, DateTime date)
+        {
+            var query = from sc in context.TblServiceCalendars
+                        join so in context.TblServiceOrders
+                        on sc.ServiceOrderId equals so.Id
+                        where so.TechnicianId.Equals(technicianID) && sc.ServiceDate.Equals(date) && sc.Status.Equals(ServiceCalendarStatus.PENDING)
+                        select new { sc, so };
+            List<ServiceCalendarResModel> listServiceCalendar = await query.Select(x => new ServiceCalendarResModel()
+            {
+                Id = x.sc.Id,
+                ServiceOrderId = x.so.Id,
+                ServiceDate = x.sc.ServiceDate,
+                NextServiceDate = x.sc.NextServiceDate,
+                Sumary = x.sc.Sumary,
+                Status = x.sc.Status,
+            }).OrderByDescending(x => x.ServiceDate).ToListAsync();
+            foreach (ServiceCalendarResModel serviceCalendar in listServiceCalendar)
+            {
+                serviceCalendar.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendar.Id);
+            }
+            ServiceCalendarGetModel serviceCalendarGetModel = new()
+            {
+                TechnicianId = technicianID,
+                Date = date,
+                CalendarQuantity = listServiceCalendar.Count(),
+                CalendarList = listServiceCalendar
+            };
+            return serviceCalendarGetModel;
+        }
     }
 }
 

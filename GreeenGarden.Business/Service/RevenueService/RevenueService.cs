@@ -365,7 +365,7 @@ namespace GreeenGarden.Business.Service.RevenueService
             return result;
         }
 
-        public async Task<ResultModel> GetRevenueByMonth(string token)
+        public async Task<ResultModel> GetRevenueByMonth()
         {
             var result = new ResultModel();
             try
@@ -435,7 +435,7 @@ namespace GreeenGarden.Business.Service.RevenueService
             return result;
         }
 
-        public async Task<ResultModel> GetRevenueInMonth(string token)
+        public async Task<ResultModel> GetRevenueInMonth()
         {
             var result = new ResultModel();
             try
