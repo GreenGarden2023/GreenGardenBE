@@ -132,14 +132,14 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
             }
         }
 
-        public async Task<ServiceCalendarGetModel> GetServiceCalendarsTodayByTechnician(Guid technicianID, DateTime date)
+        public async Task<List<ServiceCalendarTodayResModel>> GetServiceCalendarsTodayByTechnician( DateTime date, Guid technicianId)
         {
             var query = from sc in context.TblServiceCalendars
                         join so in context.TblServiceOrders
                         on sc.ServiceOrderId equals so.Id
-                        where so.TechnicianId.Equals(technicianID) && sc.ServiceDate.Equals(date) && sc.Status.Equals(ServiceCalendarStatus.PENDING)
+                        where so.TechnicianId.Equals(technicianId) && sc.ServiceDate.Equals(date) && sc.Status.Equals(ServiceCalendarStatus.PENDING)
                         select new { sc, so };
-            List<ServiceCalendarResModel> listServiceCalendar = await query.Select(x => new ServiceCalendarResModel()
+            List<ServiceCalendarTodayResModel> listServiceCalendar = await query.Select(x => new ServiceCalendarTodayResModel()
             {
                 Id = x.sc.Id,
                 ServiceOrderId = x.so.Id,
@@ -148,18 +148,13 @@ namespace GreeenGarden.Data.Repositories.ServiceCalendarRepo
                 Sumary = x.sc.Sumary,
                 Status = x.sc.Status,
             }).OrderByDescending(x => x.ServiceDate).ToListAsync();
-            foreach (ServiceCalendarResModel serviceCalendar in listServiceCalendar)
+            foreach (ServiceCalendarTodayResModel serviceCalendar in listServiceCalendar)
             {
+                var order = await _context.TblServiceOrders.Where(x=>x.Id.Equals(serviceCalendar.ServiceOrderId)).FirstOrDefaultAsync();
+                serviceCalendar.ServiceOrderCode = order.OrderCode;
                 serviceCalendar.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendar.Id);
             }
-            ServiceCalendarGetModel serviceCalendarGetModel = new()
-            {
-                TechnicianId = technicianID,
-                Date = date,
-                CalendarQuantity = listServiceCalendar.Count(),
-                CalendarList = listServiceCalendar
-            };
-            return serviceCalendarGetModel;
+            return listServiceCalendar;
         }
     }
 }

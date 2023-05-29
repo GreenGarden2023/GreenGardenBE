@@ -39,11 +39,9 @@ namespace GreeenGarden.API.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-service-calendars-today-by-technician")]
-        [Authorize(Roles = "Manager, Admin, Technician, Customer")]
         public async Task<IActionResult> GetServiceCalendarsTodayByTechnician()
         {
-            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
-            Data.Models.ResultModel.ResultModel result = await _serviceCalendarService.GetServiceCalendarsTodayByTechnician(token);
+            Data.Models.ResultModel.ResultModel result = await _serviceCalendarService.GetServiceCalendarsTodayByTechnician();
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-service-calendar-by-user")]
