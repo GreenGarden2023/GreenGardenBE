@@ -21,6 +21,31 @@ namespace GreeenGarden.Data.Repositories.ComboServiceCalendarRepo
             _imageRepo = imageRepo;
         }
 
+        public async Task<List<ServiceCalendarTodayResModel>> GetComboCalendarsTodayByTechnician(DateTime date, Guid technicianId)
+        {
+            var query = from sc in context.TblComboServiceCalendars
+                        join so in context.TblTakecareComboOrders
+                        on sc.TakecareComboOrderId equals so.Id
+                        where so.TechnicianId.Equals(technicianId) && sc.ServiceDate.Equals(date) && sc.Status.Equals(ServiceCalendarStatus.PENDING)
+                        select new { sc, so };
+            List<ServiceCalendarTodayResModel> listServiceCalendar = await query.Select(x => new ServiceCalendarTodayResModel()
+            {
+                Id = x.sc.Id,
+                ServiceOrderId = x.so.Id,
+                ServiceDate = x.sc.ServiceDate,
+                NextServiceDate = x.sc.NextServiceDate,
+                Sumary = x.sc.Sumary,
+                Status = x.sc.Status,
+            }).OrderByDescending(x => x.ServiceDate).ToListAsync();
+            foreach (ServiceCalendarTodayResModel serviceCalendar in listServiceCalendar)
+            {
+                var order = await _context.TblTakecareComboOrders.Where(x => x.Id.Equals(serviceCalendar.ServiceOrderId)).FirstOrDefaultAsync();
+                serviceCalendar.ServiceOrderCode = order.OrderCode;
+                serviceCalendar.Images = await _imageRepo.GetImgUrlServiceCalendar(serviceCalendar.Id);
+            }
+            return listServiceCalendar;
+        }
+
         public async Task<Page<TblTakecareComboService>> GetServiceByTechnician(PaginationRequestModel paginationRequestModel, Guid technicianID)
         {
             return await _context.TblTakecareComboServices.Where(x => x.TechnicianId.Equals(technicianID)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
