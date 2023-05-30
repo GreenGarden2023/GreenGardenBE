@@ -2862,6 +2862,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         itemDetail.Quantity += i.Quantity;
                         _ = await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
                     }
+                    await _rewardRepo.AddUserRewardPointByUserID((Guid)tblSaleOrder.UserId, (int)tblSaleOrder.RewardPointGain);
                 }
                 result.Code = 200;
                 result.IsSuccess = true;
