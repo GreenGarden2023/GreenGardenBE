@@ -12,7 +12,8 @@ namespace GreeenGarden.Business.Service.UserService
         Task<ResultModel> UpdateUser(string token, UserUpdateModel userUpdateModel);
         Task<ResultModel> UpdateUserByAdmin(string token, UserUpdateByAdminModel model);
         Task<ResultModel> ResetPassword(PasswordResetModel passwordResetModel);
-        Task<ResultModel> GetListUserByFullName(string token, string fullName);
+        Task<ResultModel> GetListUserByFullName(string token, string fullName, PaginationRequestModel pagingModel);
+        Task<ResultModel> GetListUserByMail(string token, string mail, PaginationRequestModel pagingModel);
         Task<ResultModel> GetUsersByRole(string token, string role);
         Task<ResultModel> VerifyRegisterOTPCode(OTPVerifyModel oTPVerifyModel);
         Task<ResultModel> UpdateUserStatus(string token, UserUpdateStatusModel userUpdateStatusModel);
