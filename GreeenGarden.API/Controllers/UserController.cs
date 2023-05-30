@@ -80,6 +80,34 @@ namespace GreeenGarden.API.Controllers
                 return BadRequest(e.ToString());
             }
         }
+        [HttpGet("get-user-by-fullName")]
+        public async Task<ActionResult<ResultModel>> GetListUserByFullName([FromQuery]string fullName, [FromQuery] PaginationRequestModel pagingModel)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.GetListUserByFullName(token, fullName, pagingModel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
+        [HttpGet("get-user-by-mail")]
+        public async Task<ActionResult<ResultModel>> GetListUserByMail([FromQuery]string mail, [FromQuery] PaginationRequestModel pagingModel)
+        {
+            try
+            {
+                string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+                ResultModel result = await _userService.GetListUserByMail(token, mail, pagingModel);
+                return result;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.ToString());
+            }
+        }
         [HttpGet("get-user-list-by-role")]
         [SwaggerOperation(Summary = "admin/technician/customer/manager")]
         [Authorize(Roles = "Admin, Manager")]

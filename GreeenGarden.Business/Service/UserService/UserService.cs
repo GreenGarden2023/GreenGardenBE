@@ -16,7 +16,6 @@ using System.Security.Cryptography;
 
 namespace GreeenGarden.Business.Service.UserService
 {
-
     public class UserService : IUserService
     {
         private readonly IUserRepo _userRepo;
@@ -376,24 +375,17 @@ namespace GreeenGarden.Business.Service.UserService
             }
         }
 
-        public async Task<ResultModel> GetListUserByFullName(string token, string fullName)
+        public async Task<ResultModel> GetListUserByFullName(string token, string fullName, PaginationRequestModel pagingModel)
         {
             ResultModel result = new();
             try
             {
-                UserLoginResModel tblUser = await _userRepo.GetUser(_decodeToken.Decode(token, "username"));
-                if (!tblUser.UserName.Equals(Commons.MANAGER))
-                {
-                    result.IsSuccess = false;
-                    result.Code = 200;
-                    result.Message = "user role invalid!";
-                    return result;
-                }
+                var returnResult = await _userRepo.GetUsersByFullname(fullName, pagingModel);
 
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = "";
+                result.Data = returnResult;
             }
             catch (Exception e)
             {
@@ -837,6 +829,27 @@ namespace GreeenGarden.Business.Service.UserService
                 result.Message = e.ToString();
                 return result;
             }
+        }
+
+        public async Task<ResultModel> GetListUserByMail(string token, string mail, PaginationRequestModel pagingModel)
+        {
+            ResultModel result = new();
+            try
+            {
+                var returnResult = await _userRepo.GetUsersByMail(mail, pagingModel);
+
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = returnResult;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }

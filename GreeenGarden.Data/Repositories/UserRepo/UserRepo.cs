@@ -4,7 +4,9 @@ using GreeenGarden.Data.Enums;
 using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.UserModels;
 using GreeenGarden.Data.Repositories.GenericRepository;
+using GreeenGarden.Data.Utilities.Convert;
 using Microsoft.EntityFrameworkCore;
+using GreeenGarden.Data.Utilities.Convert;
 
 namespace GreeenGarden.Data.Repositories.UserRepo
 {
@@ -392,6 +394,62 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 return null;
             }
             return user.FullName;
+        }
+
+        public async Task<Page<UserCurrResModel>> GetUsersByFullname(string fullname, PaginationRequestModel pagingModel)
+        {
+            var returnResult = new List<UserCurrResModel>();
+            var listUsers = await _context.TblUsers.Where(x => x.FullName.Contains(fullname)).ToListAsync();
+            foreach (var user in listUsers)
+            {
+                var record = new UserCurrResModel()
+                {
+                    Id= user.Id,
+                    FullName= user.FullName,
+                    Address= user.Address,
+                    DistrictID= user.DistrictId,
+                    Favorite= user.Favorite,
+                    Mail= user.Mail,
+                    Phone= user.Phone,
+                    UserName= user.UserName
+                };
+                var role = await _context.TblRoles.Where(x => x.Id.Equals(user.RoleId)).FirstOrDefaultAsync();
+                var reward = await _context.TblRewards.Where(x => x.UserId.Equals(user.Id)).FirstOrDefaultAsync();
+                record.RoleName = role.RoleName;
+                record.CurrentPoint= reward.CurrentPoint;
+                returnResult.Add(record);
+            }
+            var returnResult1 = returnResult.Paginate(pagingModel.curPage, pagingModel.pageSize);
+
+            return returnResult1;
+        }
+
+        public async Task<Page<UserCurrResModel>> GetUsersByMail(string mail, PaginationRequestModel pagingModel)
+        {
+            var returnResult = new List<UserCurrResModel>();
+            var listUsers = await _context.TblUsers.Where(x => x.Mail.Contains(mail)).ToListAsync();
+            foreach (var user in listUsers)
+            {
+                var record = new UserCurrResModel()
+                {
+                    Id = user.Id,
+                    FullName = user.FullName,
+                    Address = user.Address,
+                    DistrictID = user.DistrictId,
+                    Favorite = user.Favorite,
+                    Mail = user.Mail,
+                    Phone = user.Phone,
+                    UserName = user.UserName
+                };
+                var role = await _context.TblRoles.Where(x => x.Id.Equals(user.RoleId)).FirstOrDefaultAsync();
+                var reward = await _context.TblRewards.Where(x => x.UserId.Equals(user.Id)).FirstOrDefaultAsync();
+                record.RoleName = role.RoleName;
+                record.CurrentPoint = reward.CurrentPoint;
+                returnResult.Add(record);
+            }
+            var returnResult1 = returnResult.Paginate(pagingModel.curPage, pagingModel.pageSize);
+
+            return returnResult1;
         }
     }
 }

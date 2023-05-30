@@ -2862,7 +2862,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         itemDetail.Quantity += i.Quantity;
                         _ = await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
                     }
-                    await _rewardRepo.AddUserRewardPointByUserID((Guid)tblSaleOrder.UserId, (int)tblSaleOrder.RewardPointGain);
+                    await _rewardRepo.AddUserRewardPointByUserID((Guid)tblSaleOrder.UserId, (int)tblSaleOrder.RewardPointUsed);
                 }
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -2897,7 +2897,7 @@ namespace GreeenGarden.Business.Service.OrderService
                         itemDetail.Quantity += i.Quantity;
                         _ = await _productItemDetailRepo.UpdateProductItemDetail(itemDetail);
                     }
-                    await _rewardRepo.AddUserRewardPointByUserID((Guid)rentOrder.UserId, (int)rentOrder.RewardPointGain);
+                    await _rewardRepo.AddUserRewardPointByUserID((Guid)rentOrder.UserId, (int)rentOrder.RewardPointUsed);
                 }
                 else
                 {
