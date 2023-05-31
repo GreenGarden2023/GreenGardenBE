@@ -692,6 +692,7 @@ public partial class GreenGardenDbContext : DbContext
                 .HasColumnName("ID");
             entity.Property(e => e.Address).HasMaxLength(200);
             entity.Property(e => e.CancelReason).HasMaxLength(500);
+            entity.Property(e => e.CareGuide).HasMaxLength(500);
             entity.Property(e => e.Code).HasMaxLength(50);
             entity.Property(e => e.CreateDate).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(200);

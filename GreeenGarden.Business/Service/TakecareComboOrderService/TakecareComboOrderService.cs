@@ -656,6 +656,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     IsAtShop = (bool)tblTakecareComboServiceGet.IsAtShop,
                     NumOfMonths = tblTakecareComboServiceGet.NumberOfMonths,
                     Status = tblTakecareComboServiceGet.Status,
+                    CareGuide = tblTakecareComboServiceGet.CareGuide,
                     Reason = tblTakecareComboServiceGet.CancelReason
                 };
                 TakecareComboOrderModel takecareComboOrderModel = new()
