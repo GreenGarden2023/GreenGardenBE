@@ -213,6 +213,10 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
                 {
                     tblTakecareComboService.TreeQuantity = (int)takecareComboServiceUpdateModel.TreeQuantity;
                 }
+                if (takecareComboServiceUpdateModel.CareGuide != null  && takecareComboServiceUpdateModel.CareGuide != tblTakecareComboService.CareGuide)
+                {
+                    tblTakecareComboService.CareGuide = takecareComboServiceUpdateModel.CareGuide;
+                }
                 if (takecareComboServiceUpdateModel.IsAtShop != null && takecareComboServiceUpdateModel.IsAtShop != tblTakecareComboService.IsAtShop)
                 {
                     tblTakecareComboService.IsAtShop = takecareComboServiceUpdateModel.IsAtShop;

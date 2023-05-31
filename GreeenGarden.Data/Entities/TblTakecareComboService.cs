@@ -43,6 +43,8 @@ public partial class TblTakecareComboService
 
     public string? CancelReason { get; set; }
 
+    public string? CareGuide { get; set; }
+
     public virtual TblUser? CancelByNavigation { get; set; }
 
     public virtual TblTakecareCombo TakecareCombo { get; set; } = null!;
