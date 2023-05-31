@@ -14,6 +14,7 @@ namespace GreeenGarden.Business.Service.EMailService
         Task<ResultModel> SendEmailRentOrderContract(string email, Guid orderID, FileData file);
         Task<ResultModel> SendEmailCareGuide(string email, Guid orderID, FileData file, int flag);
         Task<ResultModel> SendEmailServiceCareGuide(string email, Guid orderID, FileData file);
+        Task<ResultModel> SendEmailComboServiceCareGuide(string email, Guid orderID, FileData file);
         Task<ResultModel> SendEmailCareGuideForService(string email, List<ServiceDetailResModel> listItem, FileData file);
         Task<ResultModel> SendEmailAssignTechnician(string email, string serviceCode);
         Task<ResultModel> SendEmailSupport(string supportName, string supportPhone);

@@ -184,6 +184,19 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             }
         }
 
+        public async Task<bool> UpdateServiceOrderCareGuide(Guid takecareComboServiceOrderID, string careGuideUrl)
+        {
+            var order = await _context.TblTakecareComboOrders.Where(x => x.Id.Equals(takecareComboServiceOrderID)).FirstOrDefaultAsync();
+            if (careGuideUrl != null)
+            {
+                order.CareGuideUrl = careGuideUrl;
+                _context.TblTakecareComboOrders.Update(order);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel)
         {
             try

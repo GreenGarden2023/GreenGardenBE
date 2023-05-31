@@ -33,6 +33,8 @@ public partial class TblTakecareComboOrder
 
     public Guid? CancelBy { get; set; }
 
+    public string? CareGuideUrl { get; set; }
+
     public virtual TblUser? CancelByNavigation { get; set; }
 
     public virtual TblTakecareComboService TakecareComboService { get; set; } = null!;
