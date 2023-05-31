@@ -1,6 +1,7 @@
 
 using System.Globalization;
 using GreeenGarden.Business.Service.OrderService;
+using GreeenGarden.Business.Service.TakecareComboService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.FileModel;
@@ -18,6 +19,8 @@ using GreeenGarden.Data.Repositories.ServiceOrderRepo;
 using GreeenGarden.Data.Repositories.ServiceRepo;
 using GreeenGarden.Data.Repositories.SizeProductItemRepo;
 using GreeenGarden.Data.Repositories.SizeRepo;
+using GreeenGarden.Data.Repositories.TakecareComboOrderRepo;
+using GreeenGarden.Data.Repositories.TakecareComboServiceRepo;
 using GreeenGarden.Data.Repositories.UserRepo;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
 using MailKit.Net.Smtp;
@@ -41,14 +44,17 @@ namespace GreeenGarden.Business.Service.EMailService
         private readonly IRentOrderDetailRepo _rentOrderDetailRepo;
         private readonly ISaleOrderDetailRepo _saleOrderDetailRepo;
         private readonly IProductItemDetailRepo _productItemDetailRepo;
+        private readonly ITakecareComboOrderRepo _takecareComboOrderRepo;
+        private readonly ITakecareComboServiceRepo _takecareComboServiceRepo;
         private readonly IProductItemRepo _productItemRepo;
         private readonly ISizeRepo _sizeRepo;
         private readonly IUserTreeRepo _userTreeRepo;
-        public EMailService(ISizeRepo sizeRepo, IProductItemRepo productItemRepo, IProductItemDetailRepo productItemDetailRepo,  
-            IRentOrderRepo rentOrderRepo, IRentOrderDetailRepo rentOrderDetailRepo, IServiceRepo serviceRepo, 
-            IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo, IServiceCalendarRepo serviceCalendarRepo, 
+        public EMailService(ISizeRepo sizeRepo, IProductItemRepo productItemRepo, IProductItemDetailRepo productItemDetailRepo,
+            IRentOrderRepo rentOrderRepo, IRentOrderDetailRepo rentOrderDetailRepo, IServiceRepo serviceRepo,
+            IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo, IServiceCalendarRepo serviceCalendarRepo,
             IServiceOrderRepo serviceOrderRepo, ISaleOrderRepo saleOrderRepo, ISaleOrderDetailRepo saleOrderDetailRepo,
-            IServiceDetailRepo serviceDetailRepo, IUserTreeRepo userTreeRepo)
+            IServiceDetailRepo serviceDetailRepo, IUserTreeRepo userTreeRepo, ITakecareComboOrderRepo takecareComboOrderRepo,
+            ITakecareComboServiceRepo takecareComboServiceRepo)
         {
             _emailOTPCodeRepo = emailOTPCodeRepo;
             _userRepo = userRepo;
@@ -60,10 +66,12 @@ namespace GreeenGarden.Business.Service.EMailService
             _productItemDetailRepo = productItemDetailRepo;
             _productItemRepo = productItemRepo;
             _sizeRepo = sizeRepo;
-            _saleOrderRepo= saleOrderRepo;
-            _saleOrderDetailRepo= saleOrderDetailRepo;
-            _serviceDetailRepo= serviceDetailRepo;
-            _userTreeRepo= userTreeRepo;
+            _saleOrderRepo = saleOrderRepo;
+            _saleOrderDetailRepo = saleOrderDetailRepo;
+            _serviceDetailRepo = serviceDetailRepo;
+            _userTreeRepo = userTreeRepo;
+            _takecareComboOrderRepo = takecareComboOrderRepo;
+            _takecareComboServiceRepo = takecareComboServiceRepo;
         }
 
         public async Task<ResultModel> SendEmailRegisterVerificationOTP(string email, string userName)
@@ -265,7 +273,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     "<h1>GreenGarden<h1>" +
                     "<h3>Lịch chăm sóc ngày " + tblServiceCalendar.ServiceDate + " cho đơn hàng " + tblServiceOrder.OrderCode + " đã có cập nhật.</h3>" +
                     "<p>Vui lòng kiểm tra cập nhật tại: </p>" +
-                    "<p>https://ggarden.shop/order/service/"+ tblServiceOrder.Id + "</p>" +
+                    "<p>https://ggarden.shop/order/service/" + tblServiceOrder.Id + "</p>" +
                     "<p> Trân trọng,</p>" +
                     "<h3>GreenGarden.</h3>" +
                     "</body>" +
@@ -324,7 +332,7 @@ namespace GreeenGarden.Business.Service.EMailService
 
                 htmlContent += "<div style='width:100%'>";
                 htmlContent += "<h1>HỢP ĐỒNG THUÊ CÂY</h1>";
-                htmlContent += "<p style='width:100%;'>Cảm ơn bạn đã sử dụng dịch vụ thuê cây của chúng tôi. Đơn hàng "+ tblRentOrder.OrderCode + " của bạn được tạo lúc "+tblRentOrder.CreateDate.Value.ToString("dd/MM/yyyy") +".</p>";
+                htmlContent += "<p style='width:100%;'>Cảm ơn bạn đã sử dụng dịch vụ thuê cây của chúng tôi. Đơn hàng " + tblRentOrder.OrderCode + " của bạn được tạo lúc " + tblRentOrder.CreateDate.Value.ToString("dd/MM/yyyy") + ".</p>";
                 htmlContent += "<p>Vui lòng xem hợp đồng thuê bên dưới hoặc qua file đính kèm <br></p";
                 htmlContent += "</div>";
 
@@ -448,7 +456,7 @@ namespace GreeenGarden.Business.Service.EMailService
                 htmlContent += "</div>";
                 htmlContent += "</body>";
                 htmlContent += "</html>";
-                
+
 
                 var pdfAttachment = new MimePart("application", "pdf")
                 {
@@ -490,7 +498,7 @@ namespace GreeenGarden.Business.Service.EMailService
             ResultModel result = new();
             try
             {
-                var listManager  = await _userRepo.GetUsersByRole("manager");
+                var listManager = await _userRepo.GetUsersByRole("manager");
                 foreach (var manager in listManager)
                 {
                     string from = SecretService.SecretService.GetEmailCred().EmailAddress;
@@ -574,8 +582,8 @@ namespace GreeenGarden.Business.Service.EMailService
                     }
                     var itemDetails = new List<TblProductItemDetail>();
                     var productItems = new List<TblProductItem>();
-                        itemDetails = await _productItemDetailRepo.GetItemDetailsByRentOrderID(orderID);
-                        productItems = await _productItemRepo.GetItemsByItemDetail(itemDetails);
+                    itemDetails = await _productItemDetailRepo.GetItemDetailsByRentOrderID(orderID);
+                    productItems = await _productItemRepo.GetItemsByItemDetail(itemDetails);
 
 
                     var document = new PdfDocument();
@@ -745,7 +753,7 @@ namespace GreeenGarden.Business.Service.EMailService
             ResultModel result = new();
             try
             {
-                
+
 
 
                 string from = SecretService.SecretService.GetEmailCred().EmailAddress;
@@ -766,7 +774,7 @@ namespace GreeenGarden.Business.Service.EMailService
                 htmlContent += "<div style='width:100%; font: bold'>";
                 htmlContent += "<h2 style='width:100%;text-align:center'>Yêu cầu mới đã được giao cho bạn </h2>";
                 htmlContent += "<h3 style='width:100%;text-align:center'>Vui lòng kiểm tra yêu cầu: </h2>";
-                htmlContent += "<h3 style='width:100%;text-align:center'>Mã yêu cầu: "+serviceCode+"</h2>";
+                htmlContent += "<h3 style='width:100%;text-align:center'>Mã yêu cầu: " + serviceCode + "</h2>";
 
                 htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
 
@@ -904,12 +912,12 @@ namespace GreeenGarden.Business.Service.EMailService
                 TblUser tblUser = await _userRepo.Get((Guid)tblServiceOrder.UserId);
 
 
-                    string from = SecretService.SecretService.GetEmailCred().EmailAddress;
-                    string password = SecretService.SecretService.GetEmailCred().EmailPassword;
-                    MimeMessage message = new();
-                    message.From.Add(MailboxAddress.Parse(from));
-                    message.Subject = "GreenGarden hướng dẫn chăm sóc";
-                    message.To.Add(MailboxAddress.Parse(email));
+                string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                MimeMessage message = new();
+                message.From.Add(MailboxAddress.Parse(from));
+                message.Subject = "GreenGarden hướng dẫn chăm sóc";
+                message.To.Add(MailboxAddress.Parse(email));
 
 
 
@@ -918,60 +926,152 @@ namespace GreeenGarden.Business.Service.EMailService
 
 
                 var document = new PdfDocument();
-                    string htmlContent = "";
-                    htmlContent += "<html>";
-                    htmlContent += "<body>";
-                    htmlContent += "<div style='width:100%; font: bold'>";
-                    htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN THUÊ CÂY </h2>";
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN THUÊ CÂY </h2>";
 
 
-                    int count = 1;
-                    foreach (var serviceDetail in serviceDetails)
+                int count = 1;
+                foreach (var serviceDetail in serviceDetails)
+                {
+                    if (!String.IsNullOrEmpty(serviceDetail.CareGuide))
                     {
-                        if (!String.IsNullOrEmpty(serviceDetail.CareGuide))
-                        {
                         var tblUserTree = await _userTreeRepo.Get((Guid)serviceDetail.UserTreeId);
-                            htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + tblUserTree.TreeName + "</h3>";
+                        htmlContent += count + "<h3> Hướng dẫn chăm sóc với " + tblUserTree.TreeName + "</h3>";
 
 
-                            string a = serviceDetail.CareGuide;
-                            List<string> splitted = a.Split('.').ToList();
+                        string a = serviceDetail.CareGuide;
+                        List<string> splitted = a.Split('.').ToList();
 
-                            foreach (string b in splitted)
+                        foreach (string b in splitted)
+                        {
+                            if (!b.Equals(splitted.Last()))
                             {
-                                if (!b.Equals(splitted.Last()))
-                                {
-                                    htmlContent += "<p>-" + b + ".</p>";
-                                }
-
+                                htmlContent += "<p>-" + b + ".</p>";
                             }
+
                         }
-                        count++;
                     }
-                    htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
+                    count++;
+                }
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
 
 
 
-                    var pdfAttachment = new MimePart("application", "pdf")
+                var pdfAttachment = new MimePart("application", "pdf")
+                {
+                    Content = new MimeContent(new MemoryStream(file.bytes)),
+                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                    ContentTransferEncoding = ContentEncoding.Base64,
+                    FileName = Path.GetFileName("HUONG_DAN_CHAM_SOC.pdf")
+                };
+
+
+                var multipart = new Multipart("mixed");
+                multipart.Add(new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlContent });
+                multipart.Add(pdfAttachment);
+                message.Body = multipart;
+
+
+                using SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, password);
+                _ = await smtp.SendAsync(message);
+                await smtp.DisconnectAsync(true);
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Email send successful";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
+        public async Task<ResultModel> SendEmailComboServiceCareGuide(string email, Guid orderID, FileData file)
+        {
+            ResultModel result = new();
+            try
+            {
+                var tblComboServiceOrder = await _takecareComboOrderRepo.Get(orderID);
+                if (tblComboServiceOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "OrderID invalid.";
+                    return result;
+                }
+                TblUser tblUser = await _userRepo.Get((Guid)tblComboServiceOrder.UserId);
+
+
+                string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                MimeMessage message = new();
+                message.From.Add(MailboxAddress.Parse(from));
+                message.Subject = "GreenGarden hướng dẫn chăm sóc";
+                message.To.Add(MailboxAddress.Parse(email));
+
+
+
+                var comboService = await _takecareComboServiceRepo.Get(tblComboServiceOrder.TakecareComboServiceId);
+
+
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN THUÊ CÂY </h2>";
+
+
+                if (!String.IsNullOrEmpty(comboService.CareGuide))
+                {
+                    htmlContent += "<h3> Hướng dẫn chăm sóc </h3>";
+
+
+                    string a = comboService.CareGuide;
+                    List<string> splitted = a.Split('.').ToList();
+
+                    foreach (string b in splitted)
                     {
-                        Content = new MimeContent(new MemoryStream(file.bytes)),
-                        ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
-                        ContentTransferEncoding = ContentEncoding.Base64,
-                        FileName = Path.GetFileName("HUONG_DAN_CHAM_SOC.pdf")
-                    };
+                        if (!b.Equals(splitted.Last()))
+                        {
+                            htmlContent += "<p>-" + b + ".</p>";
+                        }
+
+                    }
+                }
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
 
 
-                    var multipart = new Multipart("mixed");
-                    multipart.Add(new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlContent });
-                    multipart.Add(pdfAttachment);
-                    message.Body = multipart;
+
+                var pdfAttachment = new MimePart("application", "pdf")
+                {
+                    Content = new MimeContent(new MemoryStream(file.bytes)),
+                    ContentDisposition = new ContentDisposition(ContentDisposition.Attachment),
+                    ContentTransferEncoding = ContentEncoding.Base64,
+                    FileName = Path.GetFileName("HUONG_DAN_CHAM_SOC.pdf")
+                };
 
 
-                    using SmtpClient smtp = new();
-                    await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-                    await smtp.AuthenticateAsync(from, password);
-                    _ = await smtp.SendAsync(message);
-                    await smtp.DisconnectAsync(true);
+                var multipart = new Multipart("mixed");
+                multipart.Add(new TextPart(MimeKit.Text.TextFormat.Html) { Text = htmlContent });
+                multipart.Add(pdfAttachment);
+                message.Body = multipart;
+
+
+                using SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, password);
+                _ = await smtp.SendAsync(message);
+                await smtp.DisconnectAsync(true);
 
                 result.IsSuccess = true;
                 result.Code = 200;

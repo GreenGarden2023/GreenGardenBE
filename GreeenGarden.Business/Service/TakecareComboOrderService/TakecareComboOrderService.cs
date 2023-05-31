@@ -14,24 +14,36 @@ using GreeenGarden.Data.Models.PaginationModel;
 using Newtonsoft.Json.Linq;
 using System.Net.NetworkInformation;
 using GreeenGarden.Data.Repositories.UserRepo;
+using GreeenGarden.Data.Models.FileModel;
+using PdfSharpCore.Pdf;
+using PdfSharpCore;
+using TheArtOfDev.HtmlRenderer.PdfSharp;
+using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Data.Repositories.ImageRepo;
+using GreeenGarden.Business.Service.ImageService;
 
 namespace GreeenGarden.Business.Service.TakecareComboOrderService
 {
-	public class TakecareComboOrderService : ITakecareComboOrderService
-	{
-		private readonly ITakecareComboOrderRepo _takecareComboOrderRepo;
-		private readonly ITakecareComboServiceRepo _takecareComboServiceRepo;
+    public class TakecareComboOrderService : ITakecareComboOrderService
+    {
+        private readonly ITakecareComboOrderRepo _takecareComboOrderRepo;
+        private readonly ITakecareComboServiceRepo _takecareComboServiceRepo;
         private readonly ITakecareComboServiceDetailRepo _takecareComboServiceDetailRepo;
         private readonly IUserRepo _userRepo;
+        private readonly IEMailService _emailService;
+        private readonly IImageService _imageService;
         private readonly DecodeToken _decodeToken;
-        public TakecareComboOrderService(ITakecareComboOrderRepo takecareComboOrderRepo, ITakecareComboServiceRepo takecareComboServiceRepo, 
-            ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo, IUserRepo userRepo)
-		{
-			_takecareComboOrderRepo = takecareComboOrderRepo;
-			_takecareComboServiceRepo = takecareComboServiceRepo;
+        public TakecareComboOrderService(ITakecareComboOrderRepo takecareComboOrderRepo, ITakecareComboServiceRepo takecareComboServiceRepo,
+            ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo, IUserRepo userRepo, IEMailService emailService,
+            IImageService imageService)
+        {
+            _takecareComboOrderRepo = takecareComboOrderRepo;
+            _takecareComboServiceRepo = takecareComboServiceRepo;
             _decodeToken = new DecodeToken();
             _takecareComboServiceDetailRepo = takecareComboServiceDetailRepo;
             _userRepo = userRepo;
+            _emailService = emailService;
+            _imageService = imageService;
         }
 
         public async Task<ResultModel> CancelTakecareComboOrder(Guid id, string cancelReason, string token)
@@ -134,6 +146,15 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     {
                         var comboServiceOrder = await _takecareComboOrderRepo.Get(id);
                         await _takecareComboServiceRepo.ChangeTakecareComboServiceStatus(comboServiceOrder.TakecareComboServiceId, Status.COMPLETED);
+
+                        TblUser tblUser = await _userRepo.Get((Guid)comboServiceOrder.UserId);
+                        ResultModel resultCareGuideGen = await GenerateComboServiceCareGuidePDF(comboServiceOrder.Id);
+                        FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
+                        var checkMail = await _emailService.SendEmailComboServiceCareGuide(tblUser.Mail, comboServiceOrder.Id, fileCareGuide);
+
+
+                        ResultModel careGuideURLResult = await _imageService.UploadAPDF(fileCareGuide);
+                        var checkUpload = await _takecareComboServiceRepo.UpdateServiceOrderCareGuide(comboServiceOrder.Id, careGuideURLResult.Data.ToString());
                     }
 
                     TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(id);
@@ -161,7 +182,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             }
         }
 
-        public async Task<ResultModel>  CreateTakecareComboOrder(TakecareComboOrderCreateModel takecareComboOrderCreateModel, string token)
+        public async Task<ResultModel> CreateTakecareComboOrder(TakecareComboOrderCreateModel takecareComboOrderCreateModel, string token)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -219,6 +240,8 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     Guid insert = await _takecareComboOrderRepo.Insert(tblTakecareComboOrder);
                     if (insert != Guid.Empty)
                     {
+
+
                         var updateTakecareComboServiceStatus = await _takecareComboServiceRepo.ChangeTakecareComboServiceStatus(tblTakecareComboOrder.TakecareComboServiceId, TakecareComboServiceStatus.TAKINGCARE);
                         result.Code = 200;
                         result.IsSuccess = true;
@@ -252,7 +275,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             }
         }
 
-        public async Task<ResultModel> GetAllTakcareComboOrder(PaginationRequestModel pagingModel,string status, string token)
+        public async Task<ResultModel> GetAllTakcareComboOrder(PaginationRequestModel pagingModel, string status, string token)
         {
             if (!string.IsNullOrEmpty(token))
             {
@@ -490,12 +513,12 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                         }
                     }
                 }
-                    TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(takecareComboOdderID);
+                TakecareComboOrderModel takecareComboOrderModel = await GetTakecareComboOrder(takecareComboOdderID);
                 if (takecareComboOrderModel != null)
                 {
                     result.Code = 200;
                     result.IsSuccess = true;
-                    result.Data =  takecareComboOrderModel;
+                    result.Data = takecareComboOrderModel;
                     result.Message = "Get Takecare combo service order success.";
                     return result;
                 }
@@ -679,12 +702,76 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 };
                 return takecareComboOrderModel;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
                 return null;
             }
-        } 
+        }
+        public async Task<ResultModel> GenerateComboServiceCareGuidePDF(Guid orderId)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var tblComboServiceOrder = await _takecareComboOrderRepo.Get(orderId);
+                if (tblComboServiceOrder == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.Message = "OrderID invalid.";
+                    return result;
+                }
+                var service = await _takecareComboServiceRepo.Get(tblComboServiceOrder.TakecareComboServiceId);
+
+
+                var document = new PdfDocument();
+                string htmlContent = "";
+                htmlContent += "<html>";
+                htmlContent += "<body>";
+                htmlContent += "<div style='width:100%; font: bold'>";
+                htmlContent += "<h2 style='width:100%;text-align:center'>HƯỚNG DẪN CHĂM SÓC CÂY </h2>";
+
+                if (!String.IsNullOrEmpty(service.CareGuide))
+                {
+
+                    htmlContent += "<h3> Hướng dẫn chăm sóc </h3>";
+
+
+                    string a = service.CareGuide;
+                    List<string> splitted = a.Split('.').ToList();
+
+                    foreach (string b in splitted)
+                    {
+                        if (!b.Equals(splitted.Last()))
+                        {
+                            htmlContent += "<p>-" + b + ".</p>";
+                        }
+
+                    }
+                }
+                htmlContent += "<h4 style='width:100%;text-align:center'>Quý khách vui lòng làm theo hướng dẫn. Nếu có gì thắc mắc xin liên hệ 0833 449 449 </h2>";
+
+                PdfGenerator.AddPdfPages(document, htmlContent, PageSize.A4);
+                byte[]? response = null;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    document.Save(ms);
+                    response = ms.ToArray();
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = new FileData(response, "application/pdf", Guid.NewGuid().ToString() + ".pdf");
+                result.Message = "Generate PDF successful.";
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }
 
