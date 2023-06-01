@@ -67,6 +67,14 @@ namespace GreeenGarden.API.Controllers
             ResultModel result = await _takecareComboOrderService.GetAllTakcareComboOrderForTechnician(pagingModel, model, token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+        [HttpGet("get-combo-order-detail-by-range-date")]
+        [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
+        public async Task<IActionResult> GetServiceOrderDetailByRangeDate([FromQuery] OrderRangeDateReqModel model, [FromQuery] PaginationRequestModel pagingModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            ResultModel result = await _takecareComboOrderService.GetServiceOrderDetailByRangeDate(model, pagingModel, token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
         [HttpPost("update-order-status")]
         [Authorize(Roles = "Staff, Manager, Admin, Customer, Technician")]
         public async Task<IActionResult> UpdateOrderStatus(TakecareComboOrderUpdateStatusModel orderUpdateModel)
