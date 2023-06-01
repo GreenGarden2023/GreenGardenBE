@@ -18,7 +18,7 @@ namespace GreeenGarden.Data.Repositories.RentOrderGroupRepo
 
         public async Task<Page<TblRentOrderGroup>> GetAllRentOrderGroup(PaginationRequestModel paginationRequestModel)
         {
-            Page<TblRentOrderGroup> tblRentOrderGroups = await _context.TblRentOrderGroups.PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            Page<TblRentOrderGroup> tblRentOrderGroups = await _context.TblRentOrderGroups.OrderByDescending(x=>x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             return tblRentOrderGroups;
         }
 
