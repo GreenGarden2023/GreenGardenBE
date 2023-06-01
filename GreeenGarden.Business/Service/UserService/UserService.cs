@@ -838,10 +838,21 @@ namespace GreeenGarden.Business.Service.UserService
             {
                 var returnResult = await _userRepo.GetUsersByMail(mail, pagingModel);
 
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(returnResult.PageSize)
+                    .CurPage(returnResult.CurrentPage)
+                    .RecordCount(returnResult.RecordCount)
+                    .PageCount(returnResult.PageCount);
+                var res = new ListUserByMail
+                {
+                    Paging = paging,
+                    UserList = returnResult.Results
+                };
+
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.Data = returnResult;
+                result.Data = res;
             }
             catch (Exception e)
             {

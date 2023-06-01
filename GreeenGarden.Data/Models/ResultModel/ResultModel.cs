@@ -72,6 +72,11 @@
         public object? Paging { get; set; }
         public object? ServiceOrderList { get; set; }
     }
+    public class ListUserByMail
+    {
+        public object? Paging { get; set; }
+        public object? UserList { get; set; }
+    }
     public class RequestListRes
     {
         public object? Paging { get; set; }
