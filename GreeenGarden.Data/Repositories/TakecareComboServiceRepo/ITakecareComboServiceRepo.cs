@@ -1,5 +1,7 @@
 ﻿using System;
+using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.TakecareComboServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 
@@ -11,6 +13,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
 		Task<List<TblTakecareComboService>> GetAllTakecareComboService(string status);
 		Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByCustomer(string status, Guid userId);
 		Task<TblTakecareComboService> GetTakecareComboServiceByCode(string code);
+		Task<Page<TblTakecareComboService>> GetTakecareComboServiceByPhone(GetServiceByPhoneModel model, PaginationRequestModel pagingModel);
 		Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByTech(string status, Guid technician);
 		Task<bool> ChangeTakecareComboServiceStatus(Guid takecareComboServiceID, string status);
 		Task<bool> UpdateServiceOrderCareGuide(Guid takecareComboServiceOrderID, string careGuideUrl);

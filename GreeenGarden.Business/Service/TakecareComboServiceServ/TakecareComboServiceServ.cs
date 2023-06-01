@@ -13,6 +13,7 @@ using GreeenGarden.Data.Repositories.TakecareComboServiceDetailRepo;
 using GreeenGarden.Data.Models.TakecareComboOrder;
 using GreeenGarden.Business.Service.TakecareComboService;
 using GreeenGarden.Data.Repositories.TakecareComboOrderRepo;
+using GreeenGarden.Data.Models.PaginationModel;
 
 namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 {
@@ -916,6 +917,35 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
                 return result;
             }
+        }
+
+        public async Task<ResultModel> GetTakecareComboServiceByPhone(GetServiceByPhoneModel model, PaginationRequestModel pagingModel, string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var listService = await _takecareComboServiceRepo.GetTakecareComboServiceByPhone(model, pagingModel);
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(listService.PageSize)
+                    .CurPage(listService.CurrentPage)
+                    .RecordCount(listService.RecordCount)
+                    .PageCount(listService.PageCount);
+                var res = new ServiceByPhoneResModel()
+                {
+                    Paging = paging,
+                    TakecareComboServiceList = listService.Results
+                };
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = res;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }

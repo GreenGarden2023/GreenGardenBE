@@ -68,6 +68,12 @@ namespace GreeenGarden.Data.Models.TakecareComboServiceModel
 
         public string Status { get; set; } = null!;
     }
+    public class GetServiceByPhoneModel
+    {
+        public string Phone { get; set; }
+
+        public string Status { get; set; } 
+    }
     public class TakecareComboServiceAssignTechModel
     {
         public Guid TakecareComboServiceId { get; set; }
