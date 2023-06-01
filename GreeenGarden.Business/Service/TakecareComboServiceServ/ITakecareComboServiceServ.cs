@@ -13,7 +13,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         Task<ResultModel> GetTakecareComboServiceByCode(string code, string token);
         Task<ResultModel> GetTakecareComboServiceByPhone(GetServiceByPhoneModel model, PaginationRequestModel pagingModel, string token);
         Task<ResultModel> GetAllTakecareComboService(string status, string token);
-        Task<ResultModel> GetAllTakecareComboServiceForTechnician(string status, string token, Guid technician);
+        Task<ResultModel> GetAllTakecareComboServiceForTechnician(string? serviceCode, string status, string token, Guid technician);
         Task<ResultModel> ChangeTakecareComboServiceStatus(TakecareComboServiceChangeStatusModel takecareComboServiceChangeStatusModel, string token);
         Task<ResultModel> AssignTechnicianTakecareComboService(TakecareComboServiceAssignTechModel takecareComboServiceAssignTechModel, string token);
         Task<ResultModel> UpdateTakecareComboService(TakecareComboServiceUpdateModel takecareComboServiceUpdateModel, string token);

@@ -714,7 +714,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
             }
         }
 
-        public async Task<ResultModel> GetAllTakecareComboServiceForTechnician(string status, string token, Guid technician)
+        public async Task<ResultModel> GetAllTakecareComboServiceForTechnician(string? serviceCode, string status, string token, Guid technician)
         {
             ResultModel result = new();
             try
@@ -727,7 +727,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     result.Message = "User role invalid";
                     return result;
                 }
-                List<TblTakecareComboService> getList = await _takecareComboServiceRepo.GetAllTakecareComboServiceByTech(status, technician);
+                List<TblTakecareComboService> getList = await _takecareComboServiceRepo.GetAllTakecareComboServiceByTech(serviceCode,status, technician);
                 List<TakecareComboServiceViewModel> resList = new List<TakecareComboServiceViewModel>();
                 foreach (var item in getList)
                 {
