@@ -16,7 +16,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
 {
 
 
-	public class TakecareComboServiceRepo : Repository<TblTakecareComboService>, ITakecareComboServiceRepo
+    public class TakecareComboServiceRepo : Repository<TblTakecareComboService>, ITakecareComboServiceRepo
     {
         private readonly GreenGardenDbContext _context;
         private readonly IUserRepo _userRepo;
@@ -24,7 +24,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
         {
             _context = context;
             _userRepo = userRepo;
-		}
+        }
 
         public async Task<bool> AssignTechnicianTakecareComboService(Guid takecareComboServiceID, Guid technicianID)
         {
@@ -134,13 +134,24 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             }
             else
             {
-                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x=>x.UserId.Equals(userId)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.UserId.Equals(userId)).OrderByDescending(y => y.CreateDate).ToListAsync();
                 return tblTakecareComboService;
             }
         }
 
-        public async Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByTech(string status, Guid technician)
+        public async Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByTech(string serviceCode, string status, Guid technician)
         {
+            if (serviceCode != null)
+            {
+                if (status == "all" || status== null)
+                {
+                    return await _context.TblTakecareComboServices.Where(x => x.TechnicianId.Equals(technician) && x.Code.Equals(serviceCode)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                }
+                else
+                {
+                    return await _context.TblTakecareComboServices.Where(x => x.TechnicianId.Equals(technician) && x.Status.Equals(status) && x.Code.Equals(serviceCode)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                }
+            }
             if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.PENDING))
             {
                 List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.Status.Equals(TakecareComboServiceStatus.PENDING) && x.TechnicianId.Equals(technician)).OrderByDescending(y => y.CreateDate).ToListAsync();
@@ -158,7 +169,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             }
             else
             {
-                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x=>x.TechnicianId.Equals(technician)).OrderByDescending(y => y.CreateDate).ToListAsync();
+                List<TblTakecareComboService> tblTakecareComboService = await _context.TblTakecareComboServices.Where(x => x.TechnicianId.Equals(technician)).OrderByDescending(y => y.CreateDate).ToListAsync();
                 return tblTakecareComboService;
             }
         }
@@ -236,11 +247,11 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
                 {
                     tblTakecareComboService.Address = takecareComboServiceUpdateModel.Address;
                 }
-                if (takecareComboServiceUpdateModel.TreeQuantity != null  && takecareComboServiceUpdateModel.TreeQuantity != tblTakecareComboService.TreeQuantity)
+                if (takecareComboServiceUpdateModel.TreeQuantity != null && takecareComboServiceUpdateModel.TreeQuantity != tblTakecareComboService.TreeQuantity)
                 {
                     tblTakecareComboService.TreeQuantity = (int)takecareComboServiceUpdateModel.TreeQuantity;
                 }
-                if (takecareComboServiceUpdateModel.CareGuide != null  && takecareComboServiceUpdateModel.CareGuide != tblTakecareComboService.CareGuide)
+                if (takecareComboServiceUpdateModel.CareGuide != null && takecareComboServiceUpdateModel.CareGuide != tblTakecareComboService.CareGuide)
                 {
                     tblTakecareComboService.CareGuide = takecareComboServiceUpdateModel.CareGuide;
                 }
@@ -248,23 +259,24 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
                 {
                     tblTakecareComboService.IsAtShop = takecareComboServiceUpdateModel.IsAtShop;
                 }
-                
-                    if (takecareComboServiceUpdateModel.StartDate!= null && takecareComboServiceUpdateModel.NumOfMonth == null)
-                    {
-                        tblTakecareComboService.StartDate = DateTime.ParseExact(takecareComboServiceUpdateModel.StartDate, "dd/MM/yyyy", null);
-                        tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
 
-                    }
-                    else if (takecareComboServiceUpdateModel.StartDate == null && takecareComboServiceUpdateModel.NumOfMonth != null)
-                    {
-                        tblTakecareComboService.NumberOfMonths = (int)takecareComboServiceUpdateModel.NumOfMonth ;
-                        tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
+                if (takecareComboServiceUpdateModel.StartDate != null && takecareComboServiceUpdateModel.NumOfMonth == null)
+                {
+                    tblTakecareComboService.StartDate = DateTime.ParseExact(takecareComboServiceUpdateModel.StartDate, "dd/MM/yyyy", null);
+                    tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
 
-                    }else if (takecareComboServiceUpdateModel.StartDate != null && takecareComboServiceUpdateModel.NumOfMonth != null)
-                    {
-                        tblTakecareComboService.StartDate = DateTime.ParseExact(takecareComboServiceUpdateModel.StartDate, "dd/MM/yyyy", null);
-                        tblTakecareComboService.NumberOfMonths = (int)takecareComboServiceUpdateModel.NumOfMonth;
-                        tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
+                }
+                else if (takecareComboServiceUpdateModel.StartDate == null && takecareComboServiceUpdateModel.NumOfMonth != null)
+                {
+                    tblTakecareComboService.NumberOfMonths = (int)takecareComboServiceUpdateModel.NumOfMonth;
+                    tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
+
+                }
+                else if (takecareComboServiceUpdateModel.StartDate != null && takecareComboServiceUpdateModel.NumOfMonth != null)
+                {
+                    tblTakecareComboService.StartDate = DateTime.ParseExact(takecareComboServiceUpdateModel.StartDate, "dd/MM/yyyy", null);
+                    tblTakecareComboService.NumberOfMonths = (int)takecareComboServiceUpdateModel.NumOfMonth;
+                    tblTakecareComboService.EndDate = tblTakecareComboService.StartDate.AddMonths(tblTakecareComboService.NumberOfMonths);
                 }
                 else
                 {
@@ -274,7 +286,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
                 _ = await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 e.ToString();
                 return false;

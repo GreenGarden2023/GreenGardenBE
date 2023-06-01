@@ -14,7 +14,7 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
 		Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByCustomer(string status, Guid userId);
 		Task<TblTakecareComboService> GetTakecareComboServiceByCode(string code);
 		Task<Page<TblTakecareComboService>> GetTakecareComboServiceByPhone(GetServiceByPhoneModel model, PaginationRequestModel pagingModel);
-		Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByTech(string status, Guid technician);
+		Task<List<TblTakecareComboService>> GetAllTakecareComboServiceByTech(string serviceCode, string status, Guid technician);
 		Task<bool> ChangeTakecareComboServiceStatus(Guid takecareComboServiceID, string status);
 		Task<bool> UpdateServiceOrderCareGuide(Guid takecareComboServiceOrderID, string careGuideUrl);
 		Task<bool> AssignTechnicianTakecareComboService(Guid takecareComboServiceID, Guid technicianID);
