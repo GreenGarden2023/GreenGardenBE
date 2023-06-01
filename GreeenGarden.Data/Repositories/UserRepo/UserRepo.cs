@@ -158,7 +158,10 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 {
                     var orderNumber = 0;
                     var orderTakeCare = await _context.TblServiceOrders.Where(x => x.TechnicianId.Equals(user.Id)&&x.Status!=Status.CANCEL).ToListAsync();
-                    if (orderTakeCare != null) orderNumber = orderTakeCare.Count();
+                    var comboOrder = await _context.TblTakecareComboOrders.Where(x => x.TechnicianId.Equals(user.Id) && x.Status != Status.CANCEL).ToListAsync();
+                    if (orderTakeCare != null) orderNumber += orderTakeCare.Count();
+                    if (comboOrder != null) orderNumber += comboOrder.Count();
+                    
                     UserByRoleResModel resModel = new()
                     {
                         ID = user.Id,
