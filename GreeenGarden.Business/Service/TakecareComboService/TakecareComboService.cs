@@ -47,6 +47,7 @@ namespace GreeenGarden.Business.Service.TakecareComboService
                         Name = tblTakecareCombo.Name,
                         Description = tblTakecareCombo.Description,
                         Guarantee = tblTakecareCombo.Guarantee,
+                        CareGuide = tblTakecareCombo.Careguide,
                         Price = tblTakecareCombo.Price,
                         Status = tblTakecareCombo.Status,
                     };
@@ -83,6 +84,7 @@ namespace GreeenGarden.Business.Service.TakecareComboService
                         Description = item.Description,
                         Guarantee = item.Guarantee,
                         Price = item.Price,
+                        CareGuide = item.Careguide,
                         Status = item.Status,
                     };
                     resList.Add(takecareComboModel);
@@ -134,6 +136,7 @@ namespace GreeenGarden.Business.Service.TakecareComboService
                     Description = takecareComboInsertModel.Description,
                     Guarantee = takecareComboInsertModel.Guarantee,
                     Price = takecareComboInsertModel.Price,
+                    Careguide = takecareComboInsertModel.CareGuide
                 };
 
                 Guid insert = await _takecareComboRepo.Insert(tblTakecareCombo);
@@ -148,6 +151,7 @@ namespace GreeenGarden.Business.Service.TakecareComboService
                         Guarantee = GetTakecareCombo.Guarantee,
                         Price = GetTakecareCombo.Price,
                         Status = GetTakecareCombo.Status,
+                        CareGuide = GetTakecareCombo.Careguide
                     };
                     result.IsSuccess = true;
                     result.Code = 200;
@@ -207,6 +211,7 @@ namespace GreeenGarden.Business.Service.TakecareComboService
                         Description = GetTakecareCombo.Description,
                         Guarantee = GetTakecareCombo.Guarantee,
                         Price = GetTakecareCombo.Price,
+                        CareGuide = GetTakecareCombo.Careguide,
                         Status = GetTakecareCombo.Status,
                     };
                     result.IsSuccess = true;

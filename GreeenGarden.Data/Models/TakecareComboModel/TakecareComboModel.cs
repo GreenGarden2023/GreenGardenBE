@@ -12,6 +12,7 @@ namespace GreeenGarden.Data.Models.TakecareComboModel
         public string? Description { get; set; }
 
         public string? Guarantee { get; set; }
+        public string? CareGuide { get; set; }
 
         public bool? Status { get; set; }
     }
@@ -24,6 +25,7 @@ namespace GreeenGarden.Data.Models.TakecareComboModel
         public string? Description { get; set; }
 
         public string? Guarantee { get; set; }
+        public string? CareGuide { get; set; }
     }
     public class TakecareComboUpdateModel
     {
