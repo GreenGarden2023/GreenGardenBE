@@ -640,6 +640,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.Careguide).HasMaxLength(1000);
             entity.Property(e => e.Description).HasMaxLength(4000);
             entity.Property(e => e.Guarantee).HasMaxLength(2000);
             entity.Property(e => e.Name).HasMaxLength(500);
@@ -733,6 +734,7 @@ public partial class GreenGardenDbContext : DbContext
             entity.Property(e => e.Id)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("ID");
+            entity.Property(e => e.TakecareComboCareguide).HasMaxLength(1000);
             entity.Property(e => e.TakecareComboDescription).HasMaxLength(4000);
             entity.Property(e => e.TakecareComboGuarantee).HasMaxLength(2000);
             entity.Property(e => e.TakecareComboId).HasColumnName("TakecareComboID");

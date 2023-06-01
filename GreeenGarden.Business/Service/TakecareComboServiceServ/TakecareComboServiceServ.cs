@@ -223,6 +223,8 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                 DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                 var test1 = DateTime.ParseExact(takecareComboServiceInsertModel.StartDate, "dd/MM/yyyy", null);
                 var test2 = DateTime.ParseExact(takecareComboServiceInsertModel.StartDate, "dd/MM/yyyy", null).AddMonths(takecareComboServiceInsertModel.NumOfMonth);
+
+                TblTakecareCombo tblTakecareCombo = await _takecareComboRepo.Get(takecareComboServiceInsertModel.TakecareComboId);
                 TblTakecareComboService tblTakecareComboService = new()
                 {
                     Id = Guid.NewGuid(),
@@ -239,12 +241,12 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                     Address = takecareComboServiceInsertModel.Address,
                     UserId = userID,
                     TreeQuantity = takecareComboServiceInsertModel.TreeQuantity,
+                    CareGuide = tblTakecareCombo.Careguide,
                     Status = TakecareComboServiceStatus.PENDING,
                 };
                 Guid insert = await _takecareComboServiceRepo.Insert(tblTakecareComboService);
                 if (insert != Guid.Empty)
                 {
-                    TblTakecareCombo tblTakecareCombo = await _takecareComboRepo.Get(tblTakecareComboService.TakecareComboId);
                     TblTakecareComboServiceDetail takecareComboServiceDetail = new()
                     {
                         Id = Guid.NewGuid(),
@@ -253,6 +255,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         TakecareComboName = tblTakecareCombo.Name,
                         TakecareComboDescription = tblTakecareCombo.Description,
                         TakecareComboGuarantee = tblTakecareCombo.Guarantee,
+                        TakecareComboCareguide= tblTakecareCombo.Careguide,
                         TakecareComboPrice = tblTakecareCombo.Price
                     };
                     Guid insertDetail = await _takecareComboServiceDetailRepo.Insert(takecareComboServiceDetail);

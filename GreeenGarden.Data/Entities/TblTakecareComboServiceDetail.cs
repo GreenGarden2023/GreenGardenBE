@@ -19,6 +19,8 @@ public partial class TblTakecareComboServiceDetail
 
     public string? TakecareComboGuarantee { get; set; }
 
+    public string? TakecareComboCareguide { get; set; }
+
     public virtual TblTakecareCombo TakecareCombo { get; set; } = null!;
 
     public virtual TblTakecareComboService TakecareComboService { get; set; } = null!;
