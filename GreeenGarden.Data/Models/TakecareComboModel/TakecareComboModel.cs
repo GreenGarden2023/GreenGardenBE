@@ -40,6 +40,7 @@ namespace GreeenGarden.Data.Models.TakecareComboModel
         public string? Guarantee { get; set; }
 
         public bool? Status { get; set; }
+        public string? CareGuide { get; set; }
     }
 }
 
