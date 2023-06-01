@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GreeenGarden.Business.Service.ShippingFeeService;
 using GreeenGarden.Business.Service.TakecareComboServiceServ;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.ShippingFeeModel;
 using GreeenGarden.Data.Models.TakecareComboServiceModel;
 using Microsoft.AspNetCore.Authorization;
@@ -46,6 +47,13 @@ namespace GreeenGarden.API.Controllers
         {
             string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
             Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.GetTakecareComboServiceByCode(code, token);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+        [HttpGet("get-takecare-combo-service-by-phone")]
+        public async Task<IActionResult> GetTakecareComboServiceByPhone([FromQuery]GetServiceByPhoneModel model, [FromQuery] PaginationRequestModel pagingModel)
+        {
+            string token = Request.Headers["Authorization"].ToString().Split(" ")[1];
+            Data.Models.ResultModel.ResultModel result = await _takecareComboServiceServ.GetTakecareComboServiceByPhone(model, pagingModel, token);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
         [HttpGet("get-all-takecare-combo-service")]

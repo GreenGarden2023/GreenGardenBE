@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using EntityFrameworkPaginateCore;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Enums;
+using GreeenGarden.Data.Models.PaginationModel;
 using GreeenGarden.Data.Models.TakecareComboServiceModel;
 using GreeenGarden.Data.Repositories.GenericRepository;
 using GreeenGarden.Data.Repositories.ServiceRepo;
@@ -164,6 +166,18 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
         public async Task<TblTakecareComboService> GetTakecareComboServiceByCode(string code)
         {
             return await _context.TblTakecareComboServices.Where(x => x.Code.Equals(code)).FirstOrDefaultAsync();
+        }
+
+        public async Task<Page<TblTakecareComboService>> GetTakecareComboServiceByPhone(GetServiceByPhoneModel model, PaginationRequestModel pagingModel)
+        {
+            if (model.Status == "all" || model.Status == null)
+            {
+                return await _context.TblTakecareComboServices.Where(x => x.Phone.Contains(model.Phone)).OrderBy(x => x.CreateDate).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
+            else
+            {
+                return await _context.TblTakecareComboServices.Where(x => x.Phone.Contains(model.Phone) && x.Status.Equals(model.Status)).OrderBy(x => x.CreateDate).PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+            }
         }
 
         public async Task<bool> RejectService(Guid takecareComboServiceID, string reason, Guid userId)
