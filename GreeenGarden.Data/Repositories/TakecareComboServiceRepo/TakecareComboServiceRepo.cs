@@ -91,6 +91,13 @@ namespace GreeenGarden.Data.Repositories.TakecareComboServiceRepo
             }
         }
 
+        public async Task<Page<TblTakecareComboOrder>> GetAllServiceOrderByRangDate(PaginationRequestModel pagingModel, DateTime fromDate, DateTime toDate)
+        {
+            return await _context.TblTakecareComboOrders.Where(x => x.ServiceEndDate >= fromDate && x.ServiceEndDate <= toDate)
+                .OrderByDescending(x => x.ServiceEndDate)
+                .PaginateAsync(pagingModel.curPage, pagingModel.pageSize);
+        }
+
         public async Task<List<TblTakecareComboService>> GetAllTakecareComboService(string status)
         {
             if (status.Trim().ToLower().Equals(TakecareComboServiceStatus.PENDING))
