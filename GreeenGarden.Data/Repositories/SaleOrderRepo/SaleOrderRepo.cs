@@ -96,7 +96,6 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
                 if (order.RemainMoney == 0)
                 {
                     order.Status = Status.PAID;
-                    _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)order.UserId, (int)order.RewardPointGain);
                 }
                
                 _ = _context.Update(order);
