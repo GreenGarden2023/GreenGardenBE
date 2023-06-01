@@ -42,6 +42,7 @@ using GreeenGarden.Business.Service.EMailService;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Repositories.UserTreeRepo;
 using Microsoft.EntityFrameworkCore;
+using static TheArtOfDev.HtmlRenderer.Adapters.RGraphicsPath;
 
 namespace GreeenGarden.Business.Service.OrderService
 {
@@ -273,6 +274,10 @@ namespace GreeenGarden.Business.Service.OrderService
                 if (updateResult.IsSuccess == true)
                 {
                     TblSaleOrder saleOrder = await _saleOrderRepo.Get(saleOrderID);
+                    if (status.Equals(Status.COMPLETED))
+                    {
+                        _ = await _rewardRepo.AddUserRewardPointByUserID((Guid)saleOrder.UserId, (int)saleOrder.RewardPointGain);
+                    }
                     List<SaleOrderDetailResModel> saleOrderDetailResModels = await _saleOrderDetailRepo.GetSaleOrderDetails(saleOrderID);
                     string userCancelBy = null;
                     try
