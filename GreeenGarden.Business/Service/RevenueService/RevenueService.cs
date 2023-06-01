@@ -441,8 +441,10 @@ namespace GreeenGarden.Business.Service.RevenueService
             try
             {
                 var returnResult = new List<revenueByMonthResModel>();
-                int month = DateTime.Now.Month;
+                int month = DateTime.Now.AddMonths(-1).Month;
                 int year = DateTime.Now.Year;
+                if (month == 12)
+                    year = DateTime.Now.AddYears(-1).Year;
                 var fromDate = new DateTime(year, month, 1);
                 var toDate = fromDate.AddMonths(1).AddDays(-1);
                 var tblRentOrder = await _revenueRepo.getTotalRentOrderCompletedByDateRange(fromDate, toDate);
