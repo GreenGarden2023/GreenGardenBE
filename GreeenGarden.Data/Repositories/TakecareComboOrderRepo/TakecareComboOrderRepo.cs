@@ -137,6 +137,32 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
             return await _context.TblTakecareComboOrders.Where(x => x.OrderCode.Equals(orderCode)).FirstOrDefaultAsync();
         }
 
+        public async Task<Page<TblTakecareComboOrder>> GetTakecreComboOrderByPhone(PaginationRequestModel paginationRequestModel, string status, string phone)
+        {
+            var services = await _context.TblTakecareComboServices.Where(x => x.Phone.Contains(phone)).ToListAsync();
+            var listOrderOrderBy = new List<TblTakecareComboOrder>();
+            if (status == "all" || status == null)
+            {
+                foreach (var service in services)
+                {
+                   var record = await _context.TblTakecareComboOrders.Where(x => x.TakecareComboServiceId.Equals(service.Id)).FirstOrDefaultAsync();
+                    if (record != null)
+                        listOrderOrderBy.Add(record);
+                }
+            }
+            else
+            {
+                foreach (var service in services)
+                {
+                    var record = await _context.TblTakecareComboOrders.Where(x => x.TakecareComboServiceId.Equals(service.Id) && x.Status.Equals(status)).FirstOrDefaultAsync();
+                    if (record != null)
+                        listOrderOrderBy.Add(record);
+                }
+            }
+            var listOrderOrderedBy = listOrderOrderBy.OrderBy(x=>x.CreateDate).ToList();
+            return listOrderOrderedBy.Paginate(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+        }
+
         public async Task<ResultModel> UpdateOrderDeposit(Guid orderID)
         {
             ResultModel result = new();
