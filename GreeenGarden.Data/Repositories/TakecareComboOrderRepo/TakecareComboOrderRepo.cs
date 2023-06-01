@@ -122,11 +122,19 @@ namespace GreeenGarden.Data.Repositories.TakecareComboOrderRepo
         {
             if (model.status.Trim().ToLower().Equals("all"))
             {
+                if (paginationRequestModel.searchText != null )
+                {
+                    return await _context.TblTakecareComboOrders.Where(x => x.TechnicianId.Equals(model.technicianId) && x.OrderCode.Equals(paginationRequestModel.searchText)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                }
                 Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.TechnicianId.Equals(model.technicianId)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
                 return listTblOrder;
             }
             else
             {
+                if (paginationRequestModel.searchText != null )
+                {
+                    return await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(model.status) && x.OrderCode.Equals(paginationRequestModel.searchText) && x.TechnicianId.Equals(model.technicianId)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+                }
                 Page<TblTakecareComboOrder> listTblOrder = await _context.TblTakecareComboOrders.Where(x => x.Status.Trim().ToLower().Equals(model.status) && x.TechnicianId.Equals(model.technicianId)).OrderByDescending(x => x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
                 return listTblOrder;
             }
