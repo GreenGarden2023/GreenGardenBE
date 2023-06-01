@@ -773,6 +773,35 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
             }
             return result;
         }
+
+        public async Task<ResultModel> GetTakecareComboOrderByPhone(TakecareComboOrderSearchPhoneModel model, PaginationRequestModel pagingModel, string token)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var listOrder = await _takecareComboOrderRepo.GetTakecreComboOrderByPhone(pagingModel, model.Status, model.Phone);
+                PaginationResponseModel paging = new PaginationResponseModel()
+                    .PageSize(listOrder.PageSize)
+                    .CurPage(listOrder.CurrentPage)
+                    .RecordCount(listOrder.RecordCount)
+                    .PageCount(listOrder.PageCount);
+                var res = new OrderByPhoneResModel()
+                {
+                    Paging = paging,
+                    TakecareComboOrderList = listOrder.Results
+                };
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.Data = res;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
     }
 }
 

@@ -40,7 +40,17 @@ namespace GreeenGarden.Data.Models.TakecareComboOrder
     {
         public Guid TakecareComboServiceId { get; set; }
     }
+    public class TakecareComboOrderSearchPhoneModel
+    {
+        public string Phone { get; set; }
+        public string Status{ get; set; }
+    }
     public class GetTakecareComboOrderResModel
+    {
+        public object? Paging { get; set; }
+        public object? TakecareComboOrderList { get; set; }
+    }
+    public class OrderByPhoneResModel
     {
         public object? Paging { get; set; }
         public object? TakecareComboOrderList { get; set; }
