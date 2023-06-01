@@ -63,7 +63,11 @@ namespace GreeenGarden.Data.Repositories.TakecareComboRepo
                 {
                     tblTakecareCombo.Status = takecareComboUpdateModel.Status;
                 }
-                _ = _context.Update(tblTakecareCombo);
+                if (takecareComboUpdateModel.CareGuide != null && !takecareComboUpdateModel.CareGuide.Equals(tblTakecareCombo.Careguide))
+                {
+                    tblTakecareCombo.Careguide = takecareComboUpdateModel.CareGuide;
+                }
+                _ = _context.TblTakecareCombos.Update(tblTakecareCombo);
                 _ = await _context.SaveChangesAsync();
                 result.IsSuccess = true;
                 result.Code = 200;
