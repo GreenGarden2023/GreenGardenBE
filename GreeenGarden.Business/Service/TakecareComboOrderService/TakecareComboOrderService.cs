@@ -697,6 +697,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                     Status = tblTakecareComboOrderGet.Status,
                     Reason = tblTakecareComboOrderGet.Description,
                     CancelBy = tblTakecareComboOrderGet.CancelBy,
+                    CareGuideURL = tblTakecareComboOrderGet.CareGuideUrl,
                     TakecareComboService = takecareComboService ?? null,
                     NameCancelBy = nameCancelBy,
                 };

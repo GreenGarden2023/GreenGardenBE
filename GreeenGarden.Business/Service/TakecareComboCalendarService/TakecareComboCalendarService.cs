@@ -251,7 +251,7 @@ namespace GreeenGarden.Business.Service.TakecareComboCalendarService
                     List<ComboServiceCalendarResModel> resModel = new();
                     foreach (TblComboServiceCalendar calendar in resGet)
                     {
-                        List<string> ImgUrls = await _imageRepo.GetImgUrlServiceCalendar(calendar.Id);
+                        List<string> ImgUrls = await _imageRepo.GetImgUrlComboServiceCalendar(calendar.Id);
                         ComboServiceCalendarResModel serviceCalendarResModel = new()
                         {
                             Id = calendar.Id,
