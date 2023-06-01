@@ -58,7 +58,7 @@ namespace GreeenGarden.Data.Repositories.SaleOrderRepo
 
         public async Task<Page<TblSaleOrder>> GetAllSaleOrders(PaginationRequestModel paginationRequestModel)
         {
-            Page<TblSaleOrder> listTblOrder = await _context.TblSaleOrders.PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
+            Page<TblSaleOrder> listTblOrder = await _context.TblSaleOrders.OrderByDescending(x=>x.CreateDate).PaginateAsync(paginationRequestModel.curPage, paginationRequestModel.pageSize);
             return listTblOrder;
         }
 
