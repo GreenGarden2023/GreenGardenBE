@@ -153,7 +153,7 @@ namespace GreeenGarden.Business.Service.TakecareComboCalendarService
                                 };
                                 TblTakecareComboOrder tblServiceOrder = await _takecareComboOrderRepo.Get(oldCalendarRes.ServiceOrderId);
                                 TblUser tblUser = await _userRepo.Get((Guid)tblServiceOrder.UserId);
-                                _ = await _emailService.SendEmailReportUpdate(tblUser.Mail, oldCalendarRes.Id);
+                                _ = await _emailService.SendEmailComboReportUpdate(tblUser.Mail, oldCalendarRes.Id);
                                 result.Code = 200;
                                 result.IsSuccess = true;
                                 result.Data = serviceCalendarUpdateResModel;
@@ -180,7 +180,7 @@ namespace GreeenGarden.Business.Service.TakecareComboCalendarService
                                 NextCalendar = null
                             };
                             TblUser tblUser = await _userRepo.Get((Guid)tblServiceOrder.UserId);
-                            _ = await _emailService.SendEmailReportUpdate(tblUser.Mail, oldCalendarRes.Id);
+                            _ = await _emailService.SendEmailComboReportUpdate(tblUser.Mail, oldCalendarRes.Id);
                             result.Code = 200;
                             result.IsSuccess = true;
                             result.Data = serviceCalendarUpdateResModel;

@@ -1,12 +1,14 @@
 
 using System.Globalization;
 using GreeenGarden.Business.Service.OrderService;
+using GreeenGarden.Business.Service.TakecareComboCalendarService;
 using GreeenGarden.Business.Service.TakecareComboService;
 using GreeenGarden.Data.Entities;
 using GreeenGarden.Data.Models.CartModel;
 using GreeenGarden.Data.Models.FileModel;
 using GreeenGarden.Data.Models.ResultModel;
 using GreeenGarden.Data.Models.ServiceModel;
+using GreeenGarden.Data.Repositories.ComboServiceCalendarRepo;
 using GreeenGarden.Data.Repositories.EmailOTPCodeRepo;
 using GreeenGarden.Data.Repositories.ProductItemRepo;
 using GreeenGarden.Data.Repositories.RentOrderDetailRepo;
@@ -49,12 +51,13 @@ namespace GreeenGarden.Business.Service.EMailService
         private readonly IProductItemRepo _productItemRepo;
         private readonly ISizeRepo _sizeRepo;
         private readonly IUserTreeRepo _userTreeRepo;
+        private readonly IComboServiceCalendarRepo _comboServiceCalendarRepo;
         public EMailService(ISizeRepo sizeRepo, IProductItemRepo productItemRepo, IProductItemDetailRepo productItemDetailRepo,
             IRentOrderRepo rentOrderRepo, IRentOrderDetailRepo rentOrderDetailRepo, IServiceRepo serviceRepo,
             IEmailOTPCodeRepo emailOTPCodeRepo, IUserRepo userRepo, IServiceCalendarRepo serviceCalendarRepo,
             IServiceOrderRepo serviceOrderRepo, ISaleOrderRepo saleOrderRepo, ISaleOrderDetailRepo saleOrderDetailRepo,
             IServiceDetailRepo serviceDetailRepo, IUserTreeRepo userTreeRepo, ITakecareComboOrderRepo takecareComboOrderRepo,
-            ITakecareComboServiceRepo takecareComboServiceRepo)
+            ITakecareComboServiceRepo takecareComboServiceRepo, IComboServiceCalendarRepo comboServiceCalendarRepo)
         {
             _emailOTPCodeRepo = emailOTPCodeRepo;
             _userRepo = userRepo;
@@ -72,6 +75,7 @@ namespace GreeenGarden.Business.Service.EMailService
             _userTreeRepo = userTreeRepo;
             _takecareComboOrderRepo = takecareComboOrderRepo;
             _takecareComboServiceRepo = takecareComboServiceRepo;
+            _comboServiceCalendarRepo= comboServiceCalendarRepo;
         }
 
         public async Task<ResultModel> SendEmailRegisterVerificationOTP(string email, string userName)
@@ -1132,6 +1136,54 @@ namespace GreeenGarden.Business.Service.EMailService
                 result.Message = e.ToString();
                 return result;
             }
+        }
+
+        public async Task<ResultModel> SendEmailComboReportUpdate(string email, Guid serviceCalendarId)
+        {
+            ResultModel result = new();
+            try
+            {
+                var tblServiceCalendar = await _comboServiceCalendarRepo.Get(serviceCalendarId);
+                var tblServiceOrder = await _takecareComboOrderRepo.Get(tblServiceCalendar.TakecareComboOrderId);
+                string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                MimeMessage message = new();
+                message.From.Add(MailboxAddress.Parse(from));
+                message.Subject = "GreenGarden cập nhật chăm sóc";
+                message.To.Add(MailboxAddress.Parse(email));
+                message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                {
+                    Text =
+                    "<html>" +
+                    "<body>" +
+                    "<h1>GreenGarden<h1>" +
+                    "<h3>Lịch chăm sóc ngày " + tblServiceCalendar.ServiceDate + " cho đơn hàng " + tblServiceOrder.OrderCode + " đã có cập nhật.</h3>" +
+                    "<p>Vui lòng kiểm tra cập nhật tại: </p>" +
+                    "<p>https://ggarden.shop/order/service/ </p>" +
+                    "<p> Trân trọng,</p>" +
+                    "<h3>GreenGarden.</h3>" +
+                    "</body>" +
+                    "</html>"
+                };
+
+                using SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, password);
+                _ = await smtp.SendAsync(message);
+                await smtp.DisconnectAsync(true);
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Email send successful";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }
