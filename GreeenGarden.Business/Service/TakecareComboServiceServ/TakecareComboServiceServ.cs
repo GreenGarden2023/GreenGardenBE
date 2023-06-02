@@ -14,6 +14,8 @@ using GreeenGarden.Data.Models.TakecareComboOrder;
 using GreeenGarden.Business.Service.TakecareComboService;
 using GreeenGarden.Data.Repositories.TakecareComboOrderRepo;
 using GreeenGarden.Data.Models.PaginationModel;
+using GreeenGarden.Business.Service.EMailService;
+using GreeenGarden.Data.Models.ServiceModel;
 
 namespace GreeenGarden.Business.Service.TakecareComboServiceServ
 {
@@ -24,11 +26,12 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
         public readonly IUserRepo _userRepo;
         private readonly ITakecareComboServiceDetailRepo _takecareComboServiceDetailRepo;
         private readonly ITakecareComboOrderRepo _takecareComboOrderRepo;
+        private readonly IEMailService _eMailService;
 
         private readonly DecodeToken _decodeToken;
         public TakecareComboServiceServ(ITakecareComboServiceRepo takecareComboServiceRepo, IUserRepo userRepo,
             ITakecareComboRepo takecareComboRepo, ITakecareComboServiceDetailRepo takecareComboServiceDetailRepo,
-            ITakecareComboOrderRepo takecareComboOrderRepo)
+            ITakecareComboOrderRepo takecareComboOrderRepo, IEMailService eMailService)
         {
             _takecareComboServiceRepo = takecareComboServiceRepo;
             _decodeToken = new DecodeToken();
@@ -36,6 +39,7 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
             _userRepo = userRepo;
             _takecareComboServiceDetailRepo = takecareComboServiceDetailRepo;
             _takecareComboOrderRepo = takecareComboOrderRepo;
+            _eMailService= eMailService;
         }
 
         public async Task<ResultModel> AssignTechnicianTakecareComboService(TakecareComboServiceAssignTechModel takecareComboServiceAssignTechModel, string token)
@@ -89,6 +93,9 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                             Status = tblTakecareComboServiceGet.Status,
                             CareGuide = tblTakecareComboServiceGet.CareGuide,
                         };
+
+                        var tblUser = await _userRepo.Get((Guid)tblTakecareComboServiceGet.TechnicianId);
+                        _ = await _eMailService.SendEmailAssignTechnician(tblUser.Mail, tblTakecareComboServiceGet.Code);
                         result.Code = 200;
                         result.IsSuccess = true;
                         result.Data = returnModel;
@@ -588,6 +595,9 @@ namespace GreeenGarden.Business.Service.TakecareComboServiceServ
                         CareGuide = tblTakecareComboServiceGet.CareGuide,
                         Status = tblTakecareComboServiceGet.Status,
                     };
+
+                    TblUser user = await _userRepo.Get(tblTakecareComboServiceGet.UserId);
+                    _ = await _eMailService.SendEmailComboServiceUpdate(user.Mail, tblTakecareComboServiceGet.Code);
                     result.Code = 200;
                     result.IsSuccess = true;
                     result.Data = returnModel;
