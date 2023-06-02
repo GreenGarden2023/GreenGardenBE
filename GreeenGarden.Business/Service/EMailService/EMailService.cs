@@ -1086,6 +1086,53 @@ namespace GreeenGarden.Business.Service.EMailService
             }
             return result;
         }
+
+        public async Task<ResultModel> SendEmailComboServiceUpdate(string email, string serviceCode)
+        {
+            ResultModel result = new();
+            try
+            {
+                TblService tblService = await _serviceRepo.GetServiceByServiceCode(serviceCode);
+                string from = SecretService.SecretService.GetEmailCred().EmailAddress;
+                string password = SecretService.SecretService.GetEmailCred().EmailPassword;
+                MimeMessage message = new();
+                message.From.Add(MailboxAddress.Parse(from));
+                message.Subject = "GreenGarden cập nhật yêu cầu chăm sóc.";
+                message.To.Add(MailboxAddress.Parse(email));
+                message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                {
+                    Text =
+                    "<html>" +
+                    "<body>" +
+                    "<h1>GreenGarden<h1>" +
+                    "<h3>Yêu cầu chăm sóc " + serviceCode + " đã được cập nhật.</h3>" +
+                    "<p>Vui lòng xác nhận qua đường dẫn bên dưới: </p>" +
+                    "<p> https://ggarden.shop/take-care-service/me/ </p>" +
+                    "<p> Best regards,</p>" +
+                    "<h3>GreenGarden.</h3>" +
+                    "</body>" +
+                    "</html>"
+                };
+
+                using SmtpClient smtp = new();
+                await smtp.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
+                await smtp.AuthenticateAsync(from, password);
+                _ = await smtp.SendAsync(message);
+                await smtp.DisconnectAsync(true);
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.Message = "Email send successful";
+                return result;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.Message = e.ToString();
+                return result;
+            }
+        }
     }
 }
 

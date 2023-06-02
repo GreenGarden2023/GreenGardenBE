@@ -235,6 +235,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                 Favorite = x.u.Favorite,
                 Mail = x.u.Mail,
                 RoleName = x.ur.RoleName,
+                Status = x.u.Status,
             }).FirstOrDefaultAsync();
             return userModel;
         }
@@ -414,6 +415,7 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                     Favorite= user.Favorite,
                     Mail= user.Mail,
                     Phone= user.Phone,
+                    Status= user.Status,
                     UserName= user.UserName
                 };
                 var role = await _context.TblRoles.Where(x => x.Id.Equals(user.RoleId)).FirstOrDefaultAsync();
@@ -442,7 +444,8 @@ namespace GreeenGarden.Data.Repositories.UserRepo
                     Favorite = user.Favorite,
                     Mail = user.Mail,
                     Phone = user.Phone,
-                    UserName = user.UserName
+                    UserName = user.UserName,
+                    Status = user.Status,
                 };
                 var role = await _context.TblRoles.Where(x => x.Id.Equals(user.RoleId)).FirstOrDefaultAsync();
                 var reward = await _context.TblRewards.Where(x => x.UserId.Equals(user.Id)).FirstOrDefaultAsync();

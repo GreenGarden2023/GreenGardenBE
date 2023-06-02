@@ -19,6 +19,7 @@
         public string? Mail { get; set; }
 
         public string? RoleName { get; set; }
+        public string? Status { get; set; }
 
 
         public int? CurrentPoint { get; set; }
