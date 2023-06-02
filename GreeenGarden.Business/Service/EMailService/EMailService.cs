@@ -1159,7 +1159,7 @@ namespace GreeenGarden.Business.Service.EMailService
                     "<h1>GreenGarden<h1>" +
                     "<h3>Lịch chăm sóc ngày " + tblServiceCalendar.ServiceDate + " cho đơn hàng " + tblServiceOrder.OrderCode + " đã có cập nhật.</h3>" +
                     "<p>Vui lòng kiểm tra cập nhật tại: </p>" +
-                    "<p>https://ggarden.shop/order/service/ </p>" +
+                    "<p>https://ggarden.shop/orders?page=1 </p>" +
                     "<p> Trân trọng,</p>" +
                     "<h3>GreenGarden.</h3>" +
                     "</body>" +
