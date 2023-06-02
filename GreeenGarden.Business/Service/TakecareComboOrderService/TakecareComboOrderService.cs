@@ -221,6 +221,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                 if (tblTakecareComboService != null)
                 {
                     Guid userID = Guid.Parse(_decodeToken.Decode(token, "userid"));
+
                     TimeZoneInfo tz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
                     DateTime currentTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tz);
                     double total = (double)takecareComboServiceDetail.TakecareComboPrice * tblTakecareComboService.NumberOfMonths * tblTakecareComboService.TreeQuantity;
@@ -230,7 +231,7 @@ namespace GreeenGarden.Business.Service.TakecareComboOrderService
                         Id = Guid.NewGuid(),
                         OrderCode = await GenerateOrderCode(),
                         CreateDate = currentTime,
-                        UserId = userID,
+                        UserId = tblTakecareComboService.UserId,
                         ServiceStartDate = tblTakecareComboService.StartDate,
                         ServiceEndDate = tblTakecareComboService.EndDate,
                         Deposit = deposit,
