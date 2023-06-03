@@ -2152,12 +2152,10 @@ namespace GreeenGarden.Business.Service.OrderService
 
                     TransportFee = tblService.TransportFee,
                 };
-                _ = await _rewardRepo.RemoveUserRewardPointByUserID(tblService.UserId, (int)tblService.RewardPointUsed);
                 Guid insert = await _serviceOrderRepo.Insert(tblServiceOrder);
                 _ = await _serviceRepo.ChangeServiceStatus(tblServiceOrder.ServiceId, ServiceStatus.CONFIRMED);
                 if (insert != Guid.Empty)
                 {
-
                     //
                     TblUser tblUser = await _userRepo.Get(tblService.UserId);
                     ResultModel resultCareGuideGen = await GenerateServiceCareGuidePDF(tblServiceOrder.Id);
@@ -3715,7 +3713,6 @@ namespace GreeenGarden.Business.Service.OrderService
                     ResultModel resultCareGuideGen = await GenerateCareGuidePDFForService(serviceDetail);
                     FileData fileCareGuide = (FileData)resultCareGuideGen.Data;
                     _ = await _eMailService.SendEmailCareGuideForService(user.Mail, serviceDetail, fileCareGuide);
-
                 }
 
                 result.Code = 200;
