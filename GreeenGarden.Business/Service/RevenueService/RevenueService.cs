@@ -151,14 +151,14 @@ namespace GreeenGarden.Business.Service.RevenueService
                     foreach (var rentOrderDetail in rentOrderDetails)
                     {
                         var tblItemDetail = await _productItemDetailRepo.Get((Guid)rentOrderDetail.ProductItemDetailId);
-
+                        int dateRange = (rentOrder.EndDateRent - rentOrder.StartDateRent).Days;
                         var itemDetailRecord = new ProductItemDetailRevenueResModel();
                         itemDetailRecord.productItemDetailId = tblItemDetail.Id;
                         itemDetailRecord.quantity = (int)rentOrderDetail.Quantity;
-                        itemDetailRecord.revenueProductItemDetail = rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity;
+                        itemDetailRecord.revenueProductItemDetail = (rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity)*dateRange;
                         newRes.Add(itemDetailRecord);
+                        revenue += (rentOrderDetail.RentPricePerUnit * (int)rentOrderDetail.Quantity)* dateRange;
                     }
-                    revenue += rentOrder.TotalPrice;
                 }
                 var groupedItems = newRes.GroupBy(x => x.productItemDetailId)
                         .Select(g => new ProductItemDetailRevenueResModel
@@ -179,7 +179,6 @@ namespace GreeenGarden.Business.Service.RevenueService
                     record.revenueProductItemDetail = i.revenueProductItemDetail;
                     newRess.Add(record);
                 }
-
                 var finalResult = new rentRevenueResModel()
                 {
                     itemDetailRevenue = newRess,
