@@ -220,7 +220,7 @@ namespace GreeenGarden.Business.Service.RevenueService
                 foreach (var rentOrder in tblRentOrder)
                 {
                     totalRevenue += rentOrder.TotalPrice;
-                    rentRevenue += rentOrder.TotalPrice;
+                    rentRevenue += (rentOrder.TotalPrice - rentOrder.TransportFee);
                 }
                 foreach (var saleOrder in tblSaleOrder)
                 {
