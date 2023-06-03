@@ -760,6 +760,10 @@ namespace GreeenGarden.Business.Service.TakecareService
                 bool update = await _serviceRepo.ChangeServiceStatus(serviceStatusModel.ServiceID, serviceStatusModel.status);
                 if (update == true)
                 {
+                    if (serviceStatusModel.status == ServiceStatus.REJECTED)
+                    {
+                        await _rewardRepo.AddUserRewardPointByUserID(tblService.UserId, (int)tblService.RewardPointUsed);
+                    }
                     TblService resService = await _serviceRepo.Get(tblService.Id);
                     string nameCancelBy = null;
                     try
