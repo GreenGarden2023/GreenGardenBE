@@ -224,6 +224,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 Guid insert = await _serviceRepo.Insert(tblService);
                 if (insert != Guid.Empty)
                 {
+                    _ = await _rewardRepo.RemoveUserRewardPointByUserID(tblService.UserId, (int)tblService.RewardPointUsed);
                     foreach (Guid id in serviceInsertModel.UserTreeIDList)
                     {
                         TblUserTree tblUserTree = await _userTreeRepo.Get(id);
@@ -1144,6 +1145,7 @@ namespace GreeenGarden.Business.Service.TakecareService
                 service.Status = ServiceStatus.CANCEL;
                 service.CancelBy = user.Id;
                 service.Reason = model.reason;
+                await _rewardRepo.AddUserRewardPointByUserID(service.UserId,(int) service.RewardPointUsed);
                 await _serviceRepo.UpdateService(service);
 
                 result.Code = 200;
